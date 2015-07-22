@@ -1,0 +1,43 @@
+ __   ___    ___    __           _____ _             
+ \ \ / / |  / __|  / _|___ _ _  |_   _(_)______ _ _  
+  \ V /| |_| (__  |  _/ _ \ '_|   | | | |_ / -_) ' \ 
+   \_/ |____\___| |_| \___/_|     |_| |_/__\___|_||_|
+                                                     
+
+# Requirements
+
+* Tizen SDK available on www.tizen.org
+* Tizen Extension SDK for Certificate available on the Samsung developer website
+  (only if you're using a Samsung device)
+
+# Build libvlc
+
+Define the TIZEN_SDK path  : export TIZEN_SDK=/path/to/tizen-sdk
+Define the target TIZEN_ABI: export TIZEN_ABI=armv7l
+
+Launch the ./buildvlc.sh and please be patient, grab a beer or a coffee, since
+it's going to take a while. 
+
+# Setting up the IDE
+
+Open the Tizen IDE and import the project directory (the directory containing
+this file).
+
+In the project properties, look for the "Path and Symbols" section:
+- in the configuration combobox select "All configurations".
+- in the "Includes" tab, locate the "GNU C" panel and append
+  /${ProjName}/vlc/include to the list and tick the "Is a workspace path" checkbox.
+- in the "Libraries" tab add "vlc".
+- in the "Library Paths" ensure "/${ProjName}/lib" is there.
+
+If you're using a Samsung device (like the Z1) you must request certificates (even
+for development purpose!). Use the "Register Certificate" icon in the IDE toolbar
+and request a developer certificate as well as a device certificate.
+
+# Build the VLC app
+
+Connect your device, you should be able to see it in the Connection Explorer, right
+click on it and select "Permit to install applications".
+
+Press build and if everything's fine you should end up with the working app on your
+device.
