@@ -1,4 +1,5 @@
 #include <tizen.h>
+#include <vlc/vlc.h>
 #include "vlc.h"
 
 typedef struct appdata {
@@ -63,6 +64,25 @@ app_create(void *data)
 		If this function returns true, the main loop of application starts
 		If this function returns false, the application is terminated */
 	appdata_s *ad = data;
+
+	/* Testing libvlc */
+	libvlc_instance_t* vlc = libvlc_new(0, NULL);
+	if (vlc != NULL) {
+		dlog_print(DLOG_ERROR, LOG_TAG, "Libvlc loaded");
+		libvlc_module_description_t* modules = libvlc_audio_filter_list_get(vlc);
+		if (modules != NULL) {
+				do {
+					dlog_print(DLOG_ERROR, LOG_TAG, "Module %s loaded.", modules->psz_name);
+					modules = modules->p_next;
+				} while (modules->p_next != NULL);
+
+			} else {
+				dlog_print(DLOG_ERROR, LOG_TAG, "No module found");
+			}
+
+	} else {
+		dlog_print(DLOG_ERROR, LOG_TAG, "Libvlc not loaded");
+	}
 
 	create_base_gui(ad);
 
