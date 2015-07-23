@@ -290,6 +290,16 @@ if [ -z "$MAKEFLAGS" ]; then
     fi
 fi
 
+###########
+# FIX SDK #
+###########
+
+LIBSTDCPP=${TIZEN_SDK}/tools/arm-linux-gnueabi-gcc-4.8/arm-linux-gnueabi/lib/libstdc++.la
+
+if [ -f "${LIBSTDCPP}" ] ; then
+	mv -f ${LIBSTDCPP} ${LIBSTDCPP}.bak
+fi
+
 ##########
 # CFLAGS #
 ##########
