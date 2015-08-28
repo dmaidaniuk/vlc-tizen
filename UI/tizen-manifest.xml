@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<manifest xmlns="http://tizen.org/ns/packages" api-version="2.3" package="org.videolan.vlc" version="0.0.1">
+    <author email="videolan@videolan.org" href="http://www.videolan.org">VideoLAN</author>
+    <profile name="mobile"/>
+    <ui-application appid="org.videolan.vlc" exec="vlc" multiple="false" nodisplay="false" taskmanage="true" type="capp">
+        <label>VLC for Tizen</label>
+        <icon>VLC Media Player.png</icon>
+    </ui-application>
+    <privileges>
+        <privilege>http://tizen.org/privilege/mediastorage</privilege>
+        <privilege>http://tizen.org/privilege/systemsettings</privilege>
+    </privileges>
+</manifest>
