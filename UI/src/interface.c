@@ -68,7 +68,11 @@ win_back_cb(void *data, Evas_Object *obj, void *event_info)
 {
 	gui_data_s *gd = data;
 	/* Let window go to hide state. */
-	elm_win_lower(gd->win);
+	if (!elm_object_disabled_get(gd->panel) && !elm_panel_hidden_get(gd->panel)) {
+		elm_panel_toggle(gd->panel);
+	} else {
+		elm_win_lower(gd->win);
+	}
 }
 
 static Evas_Object *
