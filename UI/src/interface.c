@@ -107,14 +107,6 @@ list_clicked_cb(void *data, Evas_Object *obj, void *event_info)
 	if (!elm_object_disabled_get(gd->panel)) elm_panel_toggle(gd->panel);
 }
 
-static void
-list_back_cb(void *data, Evas_Object *obj, void *event_info)
-{
-	gui_data_s *gd = data;
-	/* Disable the panel when then back key is pressed */
-	if (!elm_object_disabled_get(gd->panel)) elm_panel_toggle(gd->panel);
-}
-
 static Evas_Object *
 create_button(Evas_Object *parent, char *style, char *text)
 {
@@ -278,8 +270,6 @@ create_panel(Evas_Object *layout, gui_data_s *gd)
 
 	/* */
 	evas_object_smart_callback_add(panel_genlist, "selected", list_clicked_cb, gd);
-	/* Back key callback */
-	eext_object_event_callback_add(gd->panel, EEXT_CALLBACK_BACK, list_back_cb, gd->panel);
 
 	/* */
 	elm_object_content_set(gd->panel, panel_genlist);
