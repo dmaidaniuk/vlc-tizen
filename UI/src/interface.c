@@ -187,6 +187,22 @@ fetching_media_path(gui_data_s *gd)
 	}
 }
 
+static const char*
+get_type_tag(int panel){
+	switch(panel)
+		{
+		case VIEW_AUDIO:
+			return "Audio";
+		case VIEW_FILES:
+			return "Directory";
+		case VIEW_SETTINGS:
+			return "Settings";
+		case VIEW_ABOUT:
+			return "About";
+		default:
+			return "Video";
+		}
+}
 
 void
 create_view(gui_data_s *gd, int panel)
@@ -200,43 +216,24 @@ create_view(gui_data_s *gd, int panel)
 	case VIEW_VIDEO:
 	case VIEW_AUTO:
 		view = create_video_view(gd->media_path, content);
-		/* Push the view in the naviframe with the corresponding header */
-		elm_naviframe_item_push(content, "Video", NULL, NULL, view, "basic");
-		evas_object_show(view);
-
 		break;
-
 	case VIEW_AUDIO:
-
 		view = create_audio_view(gd, content);
-		/* Push the view in the naviframe with the corresponding header */
-		elm_naviframe_item_push(content, "Audio", NULL, NULL, view, "basic");
-		evas_object_show(view);
 		break;
-
 	case VIEW_FILES:
-
 		view = create_directory_view(gd->rmp, content);
-		evas_object_show(view);
-		/* Push the view in the naviframe with the corresponding header */
-		elm_naviframe_item_push(content, "Directory", NULL, NULL, view, "basic");
 		break;
-
 	case VIEW_SETTINGS:
 		view = create_setting_view(content);
-		evas_object_show(view);
-		/* Push the view in the naviframe with the corresponding header */
-		elm_naviframe_item_push(content, "Settings", NULL, NULL, view, "basic");
 		break;
-
 	case VIEW_ABOUT:
 		view = create_about_view(content);
-		evas_object_show(view);
-		/* Push the view in the naviframe with the corresponding header */
-		elm_naviframe_item_push(content, "About", NULL, NULL, view, "basic");
 		break;
 
 	}
+	evas_object_show(view);
+	/* Push the view in the naviframe with the corresponding header */
+	elm_naviframe_item_push(content, get_type_tag(panel), NULL, NULL, view, "basic");
 
 	/* Create then set the panel toggle btn and add his callbacks */
 	gd->panel_toggle_btn = create_button(gd->content, "naviframe/drawers", NULL);
