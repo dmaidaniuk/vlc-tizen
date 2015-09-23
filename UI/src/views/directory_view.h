@@ -2,8 +2,8 @@
 #define VIDEO_VIEW_H_
 
 typedef struct directory_data {
-	Evas_Object *parent;
-	char *file_path;
+    Evas_Object *parent;
+    char *file_path;
 } directory_data_s;
 
 Evas_Object*

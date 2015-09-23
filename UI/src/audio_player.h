@@ -30,20 +30,20 @@
 
 
 typedef struct mini_player_data {
-	bool visible_state;
-	bool play_state, save_state, shuffle_state, playlist_state, more_state, fs_state;
-	int repeat_state;
-	char *file_path;
-	player_h player;
-	Evas_Object *parent, *table, *fs_table, *popup;
-	Evas_Object *mini_player_box, *box, *fullscreen_box;
-	Evas_Object *cover, *fs_cover, *fs_view, *fs_time, *fs_total_time;
-	Evas_Object *title, *sub_title, *fs_title, *fs_sub_title;
-	Evas_Object *play_pause_img;
-	Evas_Object *fs_play_pause_img;
-	Evas_Object *fs_save_btn, *fs_playlist_btn, *fs_more_btn;
-	Evas_Object *fs_repeat_btn, *fs_shuffle_btn;
-	gui_data_s *gd;
+    bool visible_state;
+    bool play_state, save_state, shuffle_state, playlist_state, more_state, fs_state;
+    int repeat_state;
+    char *file_path;
+    player_h player;
+    Evas_Object *parent, *table, *fs_table, *popup;
+    Evas_Object *mini_player_box, *box, *fullscreen_box;
+    Evas_Object *cover, *fs_cover, *fs_view, *fs_time, *fs_total_time;
+    Evas_Object *title, *sub_title, *fs_title, *fs_sub_title;
+    Evas_Object *play_pause_img;
+    Evas_Object *fs_play_pause_img;
+    Evas_Object *fs_save_btn, *fs_playlist_btn, *fs_more_btn;
+    Evas_Object *fs_repeat_btn, *fs_shuffle_btn;
+    gui_data_s *gd;
 
 } mini_player_data_s;
 

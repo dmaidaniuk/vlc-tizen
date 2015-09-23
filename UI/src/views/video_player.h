@@ -34,10 +34,10 @@
 
 typedef struct videodata
 {
-	player_h player;
-	Evas_Object *parent, *box;
-	bool play_state;
-	char *file_path;
+    player_h player;
+    Evas_Object *parent, *box;
+    bool play_state;
+    char *file_path;
 
 } videodata_s;
 

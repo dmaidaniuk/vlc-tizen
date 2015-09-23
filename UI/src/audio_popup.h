@@ -31,10 +31,10 @@
 
 typedef struct audio_popup_data
 {
-	int index;
-	Evas_Object *box, *genlist;
-	Elm_Object_Item *item;
-	mini_player_data_s *mpd;
+    int index;
+    Evas_Object *box, *genlist;
+    Elm_Object_Item *item;
+    mini_player_data_s *mpd;
 
 } audio_popup_data_s;
 

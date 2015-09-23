@@ -30,9 +30,9 @@
 
 typedef struct menu_cb_data
 {
-	int index;
-	Elm_Object_Item *item;
-	gui_data_s *gd;
+    int index;
+    Elm_Object_Item *item;
+    gui_data_s *gd;
 
 } menu_cb_data_s;
 

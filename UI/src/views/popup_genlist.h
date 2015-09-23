@@ -31,13 +31,13 @@
 
 typedef struct popup_genlist_data
 {
-	int index;
-	int nb_item;
-	popup_menu_item_s *menu_item;
-	Evas_Object *box, *genlist;
-	Evas_Object *img;
-	Elm_Object_Item *item;
-	Evas_Object *parent;
+    int index;
+    int nb_item;
+    popup_menu_item_s *menu_item;
+    Evas_Object *box, *genlist;
+    Evas_Object *img;
+    Elm_Object_Item *item;
+    Evas_Object *parent;
 
 
 } popup_genlist_data_s;

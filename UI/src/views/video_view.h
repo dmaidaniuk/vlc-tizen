@@ -28,10 +28,10 @@
 #define FILES_H_
 
 typedef struct video_list_data {
-	Evas_Object *parent;
-	char *file_path;
-	const char *str;
-	Elm_Object_Item *item;
+    Evas_Object *parent;
+    char *file_path;
+    const char *str;
+    Elm_Object_Item *item;
 
 } video_list_data_s;
 

@@ -30,154 +30,154 @@
 
 /* Set the panel list labels */
 const char *popup_list[] = {
-		"Refresh", "Equalizer"
+        "Refresh", "Equalizer"
 };
 
 /* Set the panel list icons */
 const char *popup_icon_names[] = {
-		"repeat", "equalizer"
+        "repeat", "equalizer"
 };
 
 static Evas_Object*
 create_icon(Evas_Object *parent, int count)
 {
-	char buf[PATH_MAX];
-	Evas_Object *img = elm_image_add(parent);
+    char buf[PATH_MAX];
+    Evas_Object *img = elm_image_add(parent);
 
-	/* Create then set panel genlist used icones */
-	snprintf(buf, sizeof(buf), "%s/ic_%s_normal.png", ICON_DIR, popup_icon_names[count]);
-	elm_image_file_set(img, buf, NULL);
+    /* Create then set panel genlist used icones */
+    snprintf(buf, sizeof(buf), "%s/ic_%s_normal.png", ICON_DIR, popup_icon_names[count]);
+    elm_image_file_set(img, buf, NULL);
 
-	/* The object will align and expand in the space the container will give him */
-	evas_object_size_hint_align_set(img, EVAS_HINT_FILL, EVAS_HINT_FILL);
-	evas_object_size_hint_weight_set(img, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+    /* The object will align and expand in the space the container will give him */
+    evas_object_size_hint_align_set(img, EVAS_HINT_FILL, EVAS_HINT_FILL);
+    evas_object_size_hint_weight_set(img, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 
-	return img;
+    return img;
 }
 
 static char *
 gl_text_get_cb(void *data, Evas_Object *obj, const char *part)
 {
-	general_popup_data_s *gpd = data;
-	const Elm_Genlist_Item_Class *itc = elm_genlist_item_item_class_get(gpd->item);
-	char *buf;
+    general_popup_data_s *gpd = data;
+    const Elm_Genlist_Item_Class *itc = elm_genlist_item_item_class_get(gpd->item);
+    char *buf;
 
-	/* Check the item class style and put the current folder or file name as a string */
-	/* Then put this string as the genlist item label */
-	if (itc->item_style && !strcmp(itc->item_style, "1line")) {
-		if (part && !strcmp(part, "elm.text.main.left")) {
-			asprintf(&buf, "%s", popup_list[gpd->index]);
+    /* Check the item class style and put the current folder or file name as a string */
+    /* Then put this string as the genlist item label */
+    if (itc->item_style && !strcmp(itc->item_style, "1line")) {
+        if (part && !strcmp(part, "elm.text.main.left")) {
+            asprintf(&buf, "%s", popup_list[gpd->index]);
 
-			return buf;
-		}
-	}
-	return NULL;
+            return buf;
+        }
+    }
+    return NULL;
 }
 
 static Evas_Object*
 gl_content_get_cb(void *data, Evas_Object *obj, const char *part)
 {
-	general_popup_data_s *gpd = data;
-	const Elm_Genlist_Item_Class *itc = elm_genlist_item_item_class_get(gpd->item);
-	Evas_Object *content = NULL;
+    general_popup_data_s *gpd = data;
+    const Elm_Genlist_Item_Class *itc = elm_genlist_item_item_class_get(gpd->item);
+    Evas_Object *content = NULL;
 
-	/* Check the item class style and add the object needed in the item class*/
-	/* Here, puts the icon in the item class to add it to genlist items */
-	if (itc->item_style && !strcmp(itc->item_style, "1line")) {
-		if (part && !strcmp(part, "elm.icon.1")) {
-			content = elm_layout_add(obj);
-			elm_layout_theme_set(content, "layout", "list/B/type.3", "default");
-			Evas_Object *icon = create_icon(content, gpd->index);
-			elm_layout_content_set(content, "elm.swallow.content", icon);
-		}
-	}
+    /* Check the item class style and add the object needed in the item class*/
+    /* Here, puts the icon in the item class to add it to genlist items */
+    if (itc->item_style && !strcmp(itc->item_style, "1line")) {
+        if (part && !strcmp(part, "elm.icon.1")) {
+            content = elm_layout_add(obj);
+            elm_layout_theme_set(content, "layout", "list/B/type.3", "default");
+            Evas_Object *icon = create_icon(content, gpd->index);
+            elm_layout_content_set(content, "elm.swallow.content", icon);
+        }
+    }
 
-	return content;
+    return content;
 }
 
 
 static void
 popup_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
-	general_popup_data_s *gpd = data;
-	/* Generate the view depending on which panel genlist item is selected */
-	switch(gpd->index){
+    general_popup_data_s *gpd = data;
+    /* Generate the view depending on which panel genlist item is selected */
+    switch(gpd->index){
 
-	case 0:
-		elm_popup_timeout_set(gpd->gd->popup, 0.1);
+    case 0:
+        elm_popup_timeout_set(gpd->gd->popup, 0.1);
 
-		//TODO : Add an equalizer function
+        //TODO : Add an equalizer function
 
-		free(gpd);
-		break;
+        free(gpd);
+        break;
 
-	case 1:
-		elm_popup_timeout_set(gpd->gd->popup, 0.1);
+    case 1:
+        elm_popup_timeout_set(gpd->gd->popup, 0.1);
 
-		//TODO : Add a refresh function of the current list
+        //TODO : Add a refresh function of the current list
 
-		free(gpd);
-		break;
-	}
+        free(gpd);
+        break;
+    }
 }
 
 Evas_Object *
 create_popup_genlist(gui_data_s *gd)
 {
 
-	Evas_Object *genlist;
-	Elm_Object_Item *it;
+    Evas_Object *genlist;
+    Elm_Object_Item *it;
 
-	Evas_Object *box = elm_box_add(gd->popup);
-	evas_object_size_hint_min_set(box, 200, 200);
-	evas_object_size_hint_max_set(box, 200, 200);
+    Evas_Object *box = elm_box_add(gd->popup);
+    evas_object_size_hint_min_set(box, 200, 200);
+    evas_object_size_hint_max_set(box, 200, 200);
 
-	/* Set then create the Genlist object */
-	Elm_Genlist_Item_Class *itc = elm_genlist_item_class_new();
-	itc->item_style = "1line";
-	itc->func.text_get = gl_text_get_cb;
-	itc->func.content_get = gl_content_get_cb;
+    /* Set then create the Genlist object */
+    Elm_Genlist_Item_Class *itc = elm_genlist_item_class_new();
+    itc->item_style = "1line";
+    itc->func.text_get = gl_text_get_cb;
+    itc->func.content_get = gl_content_get_cb;
 
-	genlist = elm_genlist_add(box);
+    genlist = elm_genlist_add(box);
 
-	general_popup_data_s *gpd = malloc(sizeof(*gpd));
-	gpd->box = box;
-	gpd->genlist = genlist;
+    general_popup_data_s *gpd = malloc(sizeof(*gpd));
+    gpd->box = box;
+    gpd->genlist = genlist;
 
-	/* Set the genlist scoller mode */
-	elm_scroller_single_direction_set(genlist, ELM_SCROLLER_SINGLE_DIRECTION_HARD);
-	/* Enable the genlist HOMOGENEOUS mode */
-	elm_genlist_homogeneous_set(genlist, EINA_TRUE);
-	/* Enable the genlist COMPRESS mode */
-	elm_genlist_mode_set(genlist, ELM_LIST_COMPRESS);
+    /* Set the genlist scoller mode */
+    elm_scroller_single_direction_set(genlist, ELM_SCROLLER_SINGLE_DIRECTION_HARD);
+    /* Enable the genlist HOMOGENEOUS mode */
+    elm_genlist_homogeneous_set(genlist, EINA_TRUE);
+    /* Enable the genlist COMPRESS mode */
+    elm_genlist_mode_set(genlist, ELM_LIST_COMPRESS);
 
-	free(gpd);
+    free(gpd);
 
-	/* Stop when the panel list names is all used */
-	for (int index = 0; index < 2; index++) {
+    /* Stop when the panel list names is all used */
+    for (int index = 0; index < 2; index++) {
 
-		general_popup_data_s *gpd = malloc(sizeof(*gpd));
-		/* Put the index and the gui_data in the cb_data struct for callbacks */
-		gpd->index = index;
-		gpd->gd = gd;
+        general_popup_data_s *gpd = malloc(sizeof(*gpd));
+        /* Put the index and the gui_data in the cb_data struct for callbacks */
+        gpd->index = index;
+        gpd->gd = gd;
 
-		it = elm_genlist_item_append(genlist,
-				itc,							/* genlist item class               */
-				gpd,						    /* genlist item class user data     */
-				NULL,							/* genlist parent item              */
-				ELM_GENLIST_ITEM_NONE,			/* genlist item type                */
-				popup_selected_cb,				/* genlist select smart callback    */
-				gpd);							/* genlist smart callback user data */
+        it = elm_genlist_item_append(genlist,
+                itc,                            /* genlist item class               */
+                gpd,                            /* genlist item class user data     */
+                NULL,                            /* genlist parent item              */
+                ELM_GENLIST_ITEM_NONE,            /* genlist item type                */
+                popup_selected_cb,                /* genlist select smart callback    */
+                gpd);                            /* genlist smart callback user data */
 
-		gpd->item = it;
-	}
+        gpd->item = it;
+    }
 
-	elm_box_pack_end(box, genlist);
-	evas_object_size_hint_weight_set(genlist, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-	evas_object_size_hint_align_set(genlist, EVAS_HINT_FILL, EVAS_HINT_FILL);
-	evas_object_show(genlist);
+    elm_box_pack_end(box, genlist);
+    evas_object_size_hint_weight_set(genlist, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+    evas_object_size_hint_align_set(genlist, EVAS_HINT_FILL, EVAS_HINT_FILL);
+    evas_object_show(genlist);
 
-	elm_genlist_item_class_free(itc);
+    elm_genlist_item_class_free(itc);
 
-	return box;
+    return box;
 }

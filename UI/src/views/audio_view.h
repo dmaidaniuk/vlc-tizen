@@ -31,11 +31,11 @@
 
 typedef struct audio_list_data {
 
-	char *file_path;
-	const char *str;
-	Evas_Object *parent;
-	Elm_Object_Item *item;
-	gui_data_s *gd;
+    char *file_path;
+    const char *str;
+    Evas_Object *parent;
+    Elm_Object_Item *item;
+    gui_data_s *gd;
 
 } audio_list_data_s;
 

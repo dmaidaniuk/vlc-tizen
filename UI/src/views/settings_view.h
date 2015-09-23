@@ -29,24 +29,24 @@
 
 typedef struct setting_data
 {
-	int index;
-	Elm_Object_Item *item;
-	Evas_Object *parent;
-	Evas_Object *genlist_test;
+    int index;
+    Elm_Object_Item *item;
+    Evas_Object *parent;
+    Evas_Object *genlist_test;
 
 } setting_data_s;
 
 typedef struct settings_item
 {
-	const char* title;
-	const char* icon;
+    const char* title;
+    const char* icon;
 
 } settings_item_s;
 
 typedef struct popup_menu_item
 {
-	const char* title;
-	const char* icon;
+    const char* title;
+    const char* icon;
 
 } popup_menu_item_s;
 

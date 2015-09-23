@@ -30,10 +30,10 @@
 
 typedef struct general_popup_data
 {
-	int index;
-	Evas_Object *box, *genlist;
-	Elm_Object_Item *item;
-	gui_data_s *gd;
+    int index;
+    Evas_Object *box, *genlist;
+    Elm_Object_Item *item;
+    gui_data_s *gd;
 
 } general_popup_data_s;
 

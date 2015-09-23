@@ -30,29 +30,29 @@
 struct mini_player_data;
 struct video_player_data;
 typedef struct gui_data {
-	Evas_Object *win;
-	Evas_Object *conform, *nf_toolbar;
-	Evas_Object *content;
-	Evas_Object *panel;
-	int panel_choice;
-	Evas_Object *panel_toggle_btn,*popup_toggle_btn;
-	Evas_Object *popup;
-	Evas_Object *current_view;
-	Evas_Object *content_box;
-	struct mini_player_data *mini_player;
-	struct video_player_data *video_player;
-	char *media_path, *rmp;
+    Evas_Object *win;
+    Evas_Object *conform, *nf_toolbar;
+    Evas_Object *content;
+    Evas_Object *panel;
+    int panel_choice;
+    Evas_Object *panel_toggle_btn,*popup_toggle_btn;
+    Evas_Object *popup;
+    Evas_Object *current_view;
+    Evas_Object *content_box;
+    struct mini_player_data *mini_player;
+    struct video_player_data *video_player;
+    char *media_path, *rmp;
 
 } gui_data_s;
 
 enum {
-	VIEW_AUTO = -1,
-	VIEW_VIDEO,
-	VIEW_AUDIO,
-	VIEW_FILES,
-	VIEW_SETTINGS,
-	VIEW_ABOUT,
-	VIEW_MAX,
+    VIEW_AUTO = -1,
+    VIEW_VIDEO,
+    VIEW_AUDIO,
+    VIEW_FILES,
+    VIEW_SETTINGS,
+    VIEW_ABOUT,
+    VIEW_MAX,
 };
 
 void
