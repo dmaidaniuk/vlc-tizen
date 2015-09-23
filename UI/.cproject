@@ -216,20 +216,6 @@
 							<tool id="org.tizen.nativecore.tool.sbi.gnu.archiver.mergelib.903113472" name="Archive Generator" superClass="org.tizen.nativecore.tool.sbi.gnu.archiver.mergelib"/>
 						</toolChain>
 					</folderInfo>
-					<fileInfo id="org.tizen.nativecore.config.sbi.gcc45.app.debug.1214474332.522216507" name="navigation_menu.c" rcbsApplicability="disable" resourcePath="src/navigation_menu.c" toolsToInvoke="org.tizen.nativecore.tool.sbi.gnu.c.compiler.1048910331.1148617240">
-						<tool id="org.tizen.nativecore.tool.sbi.gnu.c.compiler.1048910331.1148617240" name="C Compiler" superClass="org.tizen.nativecore.tool.sbi.gnu.c.compiler.1048910331">
-							<option id="gnu.c.compiler.option.include.paths.2096368244" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
-								<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/inc}&quot;"/>
-							</option>
-							<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.1080742933" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
-						</tool>
-						<tool customBuildStep="true" id="org.eclipse.cdt.managedbuilder.ui.rcbs.1529651541" name="Resource Custom Build Step">
-							<inputType id="org.eclipse.cdt.managedbuilder.ui.rcbs.inputtype.432543374" name="Resource Custom Build Step Input Type">
-								<additionalInput kind="additionalinputdependency" paths=""/>
-							</inputType>
-							<outputType id="org.eclipse.cdt.managedbuilder.ui.rcbs.outputtype.493784738" name="Resource Custom Build Step Output Type"/>
-						</tool>
-					</fileInfo>
 					<sourceEntries>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="inc"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="res"/>
