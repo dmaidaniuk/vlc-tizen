@@ -2,3 +2,6 @@ vlc
 Debug
 Release
 .sign
+emotion
+emotion_utils/*.c
+emotion_utils/*.so
