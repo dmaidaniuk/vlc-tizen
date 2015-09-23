@@ -1,64 +1,10 @@
 #!/bin/bash
 
-#############
-#  DEFINES  #
-#############
-
 VLC_TESTED_HASH=044730b
-GCCVER=4.8
-GCCVERFULL=4.8.3
-source ${TIZEN_SDK}/sdk.version
-
-#############
-# FUNCTIONS #
-#############
-
-checkfail()
-{
-    if [ ! $? -eq 0 ];then
-        echo -e "\e[1m\e[31m$1\e[0m"
-        exit 1
-    fi
-}
-
-#############
-# ARGUMENTS #
-#############
 
 SCRIPT=$(readlink -f "$0")
 PROJECTPATH=$(dirname "$SCRIPT")
-
-RELEASE=0
-while [ $# -gt 0 ]; do
-    case $1 in
-        help|--help)
-            echo "Use -a to set the ARCH"
-            echo "Use --release to build in release mode"
-            exit 1
-            ;;
-        a|-a)
-            TIZEN_ABI=$2
-            shift
-            ;;
-        release|--release)
-            RELEASE=1
-            ;;
-    esac
-    shift
-done
-
-if [ -z "$TIZEN_SDK" ]; then
-    echo "Please set the TIZEN_SDK environment variable with its path."
-    exit 1
-fi
-
-if [ -z "$TIZEN_ABI" ]; then
-    echo "Please pass the TIZEN_ABI to the correct architecture, using
-                ${SCRIPT} -a ARCH
-    ARM:     armv7l
-    X86:     x86_64"
-    exit 1
-fi
+source ${PROJECTPATH}/buildcommon
 
 #####################
 # FETCH VLC SOURCES #
