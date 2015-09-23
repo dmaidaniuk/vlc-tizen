@@ -124,6 +124,27 @@ create_image(Evas_Object *parent, const char *image_path)
 }
 
 static void
+update_mini_player_display(mini_player_data_s* mpd) {
+	char *song_title, *song_artist;
+	int error_code = player_get_content_info(mpd->player, PLAYER_CONTENT_INFO_TITLE,
+			&song_title);
+	if (error_code == 0)
+		elm_object_text_set(mpd->title, song_title);
+	error_code = player_get_content_info(mpd->player, PLAYER_CONTENT_INFO_ARTIST,
+			&song_artist);
+	if (error_code == 0)
+			elm_object_text_set(mpd->sub_title, song_artist);
+
+	free(song_title);
+	free(song_artist);
+
+	/* Change the play/pause button img */
+	elm_image_file_set(mpd->play_pause_img, mpd->play_state ? ICON_DIR "ic_play_circle_normal_o.png" : ICON_DIR "ic_pause_circle_normal_o.png", NULL);
+
+	evas_object_show(mpd->play_pause_img);
+}
+
+static void
 play_pause_mini_player_cb(void *data, Evas_Object *obstopj EINA_UNUSED, void *event_info)
 {
 	mini_player_data_s *mpd = data;
@@ -131,30 +152,17 @@ play_pause_mini_player_cb(void *data, Evas_Object *obstopj EINA_UNUSED, void *ev
 
 	if(play_state(mpd) == true)
 	{
-		/* Stop the player */
+		/* Pause the player */
 		error_code = player_pause(mpd->player);
-
-		/* Change the play/pause button img */
-		elm_image_file_set(mpd->play_pause_img, ICON_DIR"ic_play_circle_normal_o.png", NULL);
-		/* */
-		evas_object_show(mpd->play_pause_img);
-
-		/* Update the play/pause state of the player */
-		mpd->play_state = false;
 	}
 	else
 	{
 		/* Start the player */
 		error_code = player_start(mpd->player);
-
-		/* Change the play/pause button img */
-		elm_image_file_set(mpd->play_pause_img, ICON_DIR"ic_pause_circle_normal_o.png", NULL);
-		/* */
-		evas_object_show(mpd->play_pause_img);
-
-		/* Update the play/pause state of the player */
-		mpd->play_state = true;
 	}
+	/* Update the play/pause state of the player */
+	mpd->play_state = !mpd->play_state;
+	update_mini_player_display(mpd);
 }
 
 static void
@@ -737,6 +745,7 @@ create_base_player(mini_player_data_s *mpd, char *file_path)
 
 	/* Start the player instantly when the file is selected in the list */
 	error_code = player_start(mpd->player);
+	update_mini_player_display(mpd);
 	mpd->play_state = true;
 
 	/* Set all button to their default state */
