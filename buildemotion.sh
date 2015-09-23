@@ -224,5 +224,3 @@ if [ "$RELEASE" = 1 ]; then
     ${CROSS_COMPILE}strip ${PROJECTPATH}/lib/libemotion.so.1.7.99
     checkfail "stripping"
 fi
-
-echo -e "\e[1m\e[32mDone! You can now build the Tizen application.\e[0m"
