@@ -231,7 +231,6 @@ create_view(gui_data_s *gd, int panel)
 		break;
 
 	}
-	evas_object_show(view);
 	/* Push the view in the naviframe with the corresponding header */
 	elm_naviframe_item_push(content, get_type_tag(panel), NULL, NULL, view, "basic");
 
