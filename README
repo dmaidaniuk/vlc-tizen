@@ -15,20 +15,18 @@
 Define the TIZEN_SDK path  : export TIZEN_SDK=/path/to/tizen-sdk
 Define the target TIZEN_ABI: export TIZEN_ABI=armv7l
 
-Launch the ./buildvlc.sh and please be patient, grab a beer or a coffee, since
+Launch the ./buildall.sh and please be patient, grab a beer or a coffee, since
 it's going to take a while. 
 
 # Setting up the IDE
 
 Open the Tizen IDE and import the project directory (the directory containing
-this file).
-
-In the project properties, look for the "Path and Symbols" section:
-- in the configuration combobox select "All configurations".
-- in the "Includes" tab, locate the "GNU C" panel and append
-  /${ProjName}/vlc/include to the list and tick the "Is a workspace path" checkbox.
-- in the "Libraries" tab add "vlc".
-- in the "Library Paths" ensure "/${ProjName}/lib" is there.
+this file). In order to have your mike git imported in the Tizen IDE workspace:
+- clone the mike git into "$HOME/workspace/mike",
+- in the IDE, import the project via File/Import/Tizen/Tizen Project,
+- select "$HOME/workspace/mike", select a platform, a SDK version, enter a
+  name, and click next,
+- Answer "No to all" when the IDE ask you to overwrite the mike/src folder.
 
 If you're using a Samsung device (like the Z1) you must request certificates (even
 for development purpose!). Use the "Register Certificate" icon in the IDE toolbar
