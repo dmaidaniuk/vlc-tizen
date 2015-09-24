@@ -56,3 +56,113 @@ fi
 source ${TIZEN_SDK}/sdk.version
 
 mkdir -p ${PROJECTPATH}/lib
+
+#########
+# FLAGS #
+#########
+
+# Set up ABI variables
+if [ "${TIZEN_ABI}" = "x86" ] ; then
+    TARGET_TUPLE="i386-linux-gnueabi"
+    PATH_HOST="x86"
+    PLATFORM_SHORT_ARCH="x86"
+    TIZEN_DEVICE="emulator"
+elif [ "${TIZEN_ABI}" = "armv7l" ] ; then
+    TARGET_TUPLE="arm-linux-gnueabi"
+    PATH_HOST=$TARGET_TUPLE
+    HAVE_ARM=1
+    PLATFORM_SHORT_ARCH="arm"
+    TIZEN_DEVICE="device"
+else
+    echo -e "\e[1m\e[31mUnknown ABI: '${TIZEN_ABI}'\e[0m"
+    exit 2
+fi
+
+SYSROOT=${TIZEN_SDK}/tools/${TARGET_TUPLE}-gcc-${GCCVER}
+LIBEXEC=${TIZEN_SDK}/tools/${TARGET_TUPLE}-gcc-${GCCVER}/libexec/gcc/${TARGET_TUPLE}/${GCCVERFULL}
+TIZEN_TOOLCHAIN_PATH=${SYSROOT}/bin
+
+export PATH=${TIZEN_TOOLCHAIN_PATH}:${LIBEXEC}:${PATH}
+
+###############
+# DISPLAY ABI #
+###############
+echo -e "\e[1m\e[36mABI:        $TIZEN_ABI\e[0m"
+echo -e "\e[1m\e[36mTIZEN SDK:  $TIZEN_SDK\e[0m"
+echo -e "\e[1m\e[36mSYSROOT:    $SYSROOT\e[0m"
+echo -e "\e[1m\e[36mPATH:       $PATH\e[0m"
+
+# Make in //
+if [ -z "$MAKEFLAGS" ]; then
+    UNAMES=$(uname -s)
+    MAKEFLAGS=
+    if which nproc >/dev/null; then
+        MAKEFLAGS=-j`nproc`
+    elif [ "$UNAMES" == "Darwin" ] && which sysctl >/dev/null; then
+        MAKEFLAGS=-j`sysctl -n machdep.cpu.thread_count`
+    fi
+fi
+
+###########
+# FIX SDK #
+###########
+
+LIBSTDCPP=${TIZEN_SDK}/tools/${TARGET_TUPLE}-gcc-${GCCVER}/${TARGET_TUPLE}/lib/libstdc++.la
+
+if [ -f "${LIBSTDCPP}" ] ; then
+    mv -f ${LIBSTDCPP} ${LIBSTDCPP}.bak
+fi
+
+##########
+# CFLAGS #
+##########
+
+CFLAGS="${CFLAGS} -fstrict-aliasing -funsafe-math-optimizations"
+
+EXTRA_CFLAGS="-fPIC"
+# Setup CFLAGS per ABI
+if [ "${TIZEN_ABI}" = "armv7l" ] ; then
+    EXTRA_CFLAGS="${EXTRA_CFLAGS} -march=armv7-a -mtune=cortex-a8 -mfpu=vfpv3-d16 -mthumb -mfloat-abi=softfp"
+elif [ "${TIZEN_ABI}" = "x86" ] ; then
+    EXTRA_CFLAGS="${EXTRA_CFLAGS} -mtune=atom -msse3 -mfpmath=sse -m32"
+fi
+
+TIZEN_CORE="${TIZEN_SDK}/platforms/mobile-${TIZEN_SDK_VERSION}/rootstraps/mobile-${TIZEN_SDK_VERSION}-${TIZEN_DEVICE}.core"
+EXTRA_CFLAGS="${EXTRA_CFLAGS} -I${SYSROOT}/include/c++/${GCCVERFULL}"
+EXTRA_CFLAGS="${EXTRA_CFLAGS} -I${SYSROOT}/include/c++/${GCCVERFULL}/${TARGET_TUPLE}"
+EXTRA_CFLAGS="${EXTRA_CFLAGS} -I${TIZEN_CORE}/usr/include -I${TIZEN_CORE}/usr/include/media"
+
+EXTRA_CXXFLAGS="-D__STDC_FORMAT_MACROS=1 -D__STDC_CONSTANT_MACROS=1 -D__STDC_LIMIT_MACROS=1"
+
+CPPFLAGS="-I${SYSROOT}/include/c++/${GCCVERFULL} -I${SYSROOT}/include/c++/${GCCVERFULL}/${TARGET_TUPLE} -I${TIZEN_CORE}/usr/include -I${TIZEN_CORE}/usr/include/media"
+
+#################
+# Setup LDFLAGS #
+#################
+
+TIZEN_TOOLS=${TIZEN_SDK}/tools/${TARGET_TUPLE}-gcc-${GCCVER}/bin/${TARGET_TUPLE}-
+CROSS_COMPILE=${TIZEN_TOOLS}
+TIZEN_FLAGS="--sysroot=${TIZEN_CORE}"
+export CC="${TIZEN_TOOLS}gcc ${TIZEN_FLAGS}"
+export CXX="${TIZEN_TOOLS}g++ ${TIZEN_FLAGS}"
+export AR="${TIZEN_TOOLS}ar"
+export LD="${TIZEN_TOOLS}ld ${TIZEN_FLAGS}"
+
+EXTRA_LDFLAGS="-L${TIZEN_CORE}/usr/lib"
+
+LDFLAGS="${TIZEN_FLAGS} -Wl,-Bdynamic -Wl,--no-undefined -lrt"
+
+if [ -n "$HAVE_ARM" ]; then
+        EXTRA_PARAMS=" --enable-neon"
+        LDFLAGS="${LDFLAGS} -Wl,--fix-cortex-a8"
+fi
+
+LDFLAGS="${LDFLAGS} -L${SYSROOT}/lib"
+
+# Release or not?
+if [ "$RELEASE" = 1 ]; then
+    EXTRA_CFLAGS="${EXTRA_CFLAGS} -DNDEBUG "
+fi
+
+echo -e "\e[1m\e[36mCFLAGS:            ${CFLAGS}\e[0m"
+echo -e "\e[1m\e[36mEXTRA_CFLAGS:      ${EXTRA_CFLAGS}\e[0m"
