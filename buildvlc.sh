@@ -261,13 +261,14 @@ elif [ "${TIZEN_ABI}" = "x86" ] ; then
     EXTRA_CFLAGS="${EXTRA_CFLAGS} -mtune=atom -msse3 -mfpmath=sse -m32"
 fi
 
+TIZEN_CORE="${TIZEN_SDK}/platforms/mobile-${TIZEN_SDK_VERSION}/rootstraps/mobile-${TIZEN_SDK_VERSION}-device.core"
 EXTRA_CFLAGS="${EXTRA_CFLAGS} -I${SYSROOT}/include/c++/${GCCVERFULL}"
 EXTRA_CFLAGS="${EXTRA_CFLAGS} -I${SYSROOT}/include/c++/${GCCVERFULL}/${TARGET_TUPLE}"
-EXTRA_CFLAGS="${EXTRA_CFLAGS} -I${TIZEN_SDK}/platforms/mobile-${TIZEN_SDK_VERSION}/rootstraps/mobile-${TIZEN_SDK_VERSION}-device.core/usr/include"
+EXTRA_CFLAGS="${EXTRA_CFLAGS} -I${TIZEN_CORE}/usr/include"
 
 EXTRA_CXXFLAGS="-D__STDC_FORMAT_MACROS=1 -D__STDC_CONSTANT_MACROS=1 -D__STDC_LIMIT_MACROS=1"
 
-CPPFLAGS="-I${SYSROOT}/include/c++/${GCCVERFULL} -I${SYSROOT}/include/c++/${GCCVERFULL}/${TARGET_TUPLE} -I${TIZEN_SDK}/platforms/mobile-${TIZEN_SDK_VERSION}/rootstraps/mobile-${TIZEN_SDK_VERSION}-device.core/usr/include"
+CPPFLAGS="-I${SYSROOT}/include/c++/${GCCVERFULL} -I${SYSROOT}/include/c++/${GCCVERFULL}/${TARGET_TUPLE} -I${TIZEN_CORE}/usr/include"
 
 #################
 # Setup LDFLAGS #
@@ -275,13 +276,13 @@ CPPFLAGS="-I${SYSROOT}/include/c++/${GCCVERFULL} -I${SYSROOT}/include/c++/${GCCV
 
 TIZEN_TOOLS=${TIZEN_SDK}/tools/arm-linux-gnueabi-gcc-${GCCVER}/bin/arm-linux-gnueabi-
 CROSS_COMPILE=${TIZEN_TOOLS}
-TIZEN_FLAGS="--sysroot=${TIZEN_SDK}/platforms/mobile-${TIZEN_SDK_VERSION}/rootstraps/mobile-${TIZEN_SDK_VERSION}-device.core"
+TIZEN_FLAGS="--sysroot=${TIZEN_CORE}"
 export CC="${TIZEN_TOOLS}gcc ${TIZEN_FLAGS}"
 export CXX="${TIZEN_TOOLS}g++ ${TIZEN_FLAGS}"
 export AR="${TIZEN_TOOLS}ar"
 export LD="${TIZEN_TOOLS}ld ${TIZEN_FLAGS}"
 
-EXTRA_LDFLAGS="-L${TIZEN_SDK}/platforms/mobile-${TIZEN_SDK_VERSION}/rootstraps/mobile-${TIZEN_SDK_VERSION}-device.core/usr/lib"
+EXTRA_LDFLAGS="-L${TIZEN_CORE}/usr/lib"
 
 LDFLAGS="${TIZEN_FLAGS} -Wl,-Bdynamic -Wl,--no-undefined -lrt"
 
