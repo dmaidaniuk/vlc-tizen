@@ -21,11 +21,11 @@
 							<targetPlatform binaryParser="org.eclipse.cdt.core.ELF" id="org.tizen.nativeide.target.sbi.gnu.platform.base.98876963" osList="linux,win32" superClass="org.tizen.nativeide.target.sbi.gnu.platform.base"/>
 							<builder autoBuildTarget="all" buildPath="${workspace_loc:/VLC_UI}/Debug" enableAutoBuild="true" id="org.tizen.nativecore.target.sbi.gnu.builder.12097760" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="Tizen Application Builder" superClass="org.tizen.nativecore.target.sbi.gnu.builder"/>
 							<tool id="org.tizen.nativecore.tool.sbi.gnu.archiver.2094199420" name="Archiver" superClass="org.tizen.nativecore.tool.sbi.gnu.archiver"/>
-							<tool command="clang++" id="org.tizen.nativecore.tool.sbi.gnu.cpp.compiler.2072525905" name="C++ Compiler" superClass="org.tizen.nativecore.tool.sbi.gnu.cpp.compiler">
+							<tool command="arm-linux-gnueabi-g++" id="org.tizen.nativecore.tool.sbi.gnu.cpp.compiler.2072525905" name="C++ Compiler" superClass="org.tizen.nativecore.tool.sbi.gnu.cpp.compiler">
 								<option id="gnu.cpp.compiler.option.optimization.level.910589310" name="Optimization Level" superClass="gnu.cpp.compiler.option.optimization.level" value="gnu.cpp.compiler.optimization.level.none" valueType="enumerated"/>
 								<option id="sbi.gnu.cpp.compiler.option.debugging.level.core.403154691" name="Debug level" superClass="sbi.gnu.cpp.compiler.option.debugging.level.core" value="gnu.cpp.compiler.debugging.level.max" valueType="enumerated"/>
 								<option id="sbi.gnu.cpp.compiler.option.1947186532" name="Tizen-Target" superClass="sbi.gnu.cpp.compiler.option" valueType="userObjs">
-									<listOptionValue builtIn="false" value="mobile-2.3.1-device.core_llvm34.armel.core.app"/>
+									<listOptionValue builtIn="false" value="mobile-2.3.1-device.core_gcc48.armel.core.app"/>
 								</option>
 								<option id="sbi.gnu.cpp.compiler.option.frameworks_inc.core.1676091090" name="Tizen-Frameworks-Include-Path" superClass="sbi.gnu.cpp.compiler.option.frameworks_inc.core" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${SBI_SYSROOT}/usr/include/libxml2&quot;"/>
@@ -100,13 +100,15 @@
 								<option id="gnu.cpp.compiler.option.preprocessor.def.728477468" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="_DEBUG"/>
 								</option>
+								<option id="gnu.cpp.compiler.option.warnings.toerrors.361648454" name="Warnings as errors (-Werror)" superClass="gnu.cpp.compiler.option.warnings.toerrors" value="false" valueType="boolean"/>
+								<option id="gnu.cpp.compiler.option.dialect.std.2027917307" name="Language standard" superClass="gnu.cpp.compiler.option.dialect.std" value="gnu.cpp.compiler.dialect.c++11" valueType="enumerated"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.1722031451" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
-							<tool command="clang" id="org.tizen.nativecore.tool.sbi.gnu.c.compiler.1048910331" name="C Compiler" superClass="org.tizen.nativecore.tool.sbi.gnu.c.compiler">
+							<tool command="arm-linux-gnueabi-gcc" id="org.tizen.nativecore.tool.sbi.gnu.c.compiler.1048910331" name="C Compiler" superClass="org.tizen.nativecore.tool.sbi.gnu.c.compiler">
 								<option defaultValue="gnu.c.optimization.level.none" id="gnu.c.compiler.option.optimization.level.770718035" name="Optimization Level" superClass="gnu.c.compiler.option.optimization.level" valueType="enumerated"/>
 								<option id="sbi.gnu.c.compiler.option.debugging.level.core.1981437306" name="Debug level" superClass="sbi.gnu.c.compiler.option.debugging.level.core" value="gnu.c.debugging.level.max" valueType="enumerated"/>
 								<option id="sbi.gnu.c.compiler.option.1581844421" name="Tizen-Target" superClass="sbi.gnu.c.compiler.option" valueType="userObjs">
-									<listOptionValue builtIn="false" value="mobile-2.3.1-device.core_llvm34.armel.core.app"/>
+									<listOptionValue builtIn="false" value="mobile-2.3.1-device.core_gcc48.armel.core.app"/>
 								</option>
 								<option id="sbi.gnu.c.compiler.option.frameworks_inc.core.467310575" name="Tizen-Frameworks-Include-Path" superClass="sbi.gnu.c.compiler.option.frameworks_inc.core" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${SBI_SYSROOT}/usr/include/libxml2&quot;"/>
@@ -182,10 +184,12 @@
 								<option id="gnu.c.compiler.option.preprocessor.def.symbols.1366588849" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="_DEBUG"/>
 								</option>
+								<option id="gnu.c.compiler.option.dialect.std.1897886913" name="Language standard" superClass="gnu.c.compiler.option.dialect.std" value="gnu.c.compiler.dialect.c11" valueType="enumerated"/>
+								<option id="gnu.c.compiler.option.warnings.toerrors.1094237689" name="Warnings as errors (-Werror)" superClass="gnu.c.compiler.option.warnings.toerrors" value="false" valueType="boolean"/>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.2048528090" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
 							<tool id="org.tizen.nativeide.tool.sbi.gnu.c.linker.base.851948202" name="C Linker" superClass="org.tizen.nativeide.tool.sbi.gnu.c.linker.base"/>
-							<tool command="clang++" id="org.tizen.nativecore.tool.sbi.gnu.cpp.linker.1621003008" name="C++ Linker" superClass="org.tizen.nativecore.tool.sbi.gnu.cpp.linker">
+							<tool command="arm-linux-gnueabi-g++" id="org.tizen.nativecore.tool.sbi.gnu.cpp.linker.1621003008" name="C++ Linker" superClass="org.tizen.nativecore.tool.sbi.gnu.cpp.linker">
 								<option id="sbi.gnu.cpp.linker.option.frameworks_lflags.core.2126557633" name="Tizen-Frameworks-Other-Lflags" superClass="sbi.gnu.cpp.linker.option.frameworks_lflags.core" valueType="stringList">
 									<listOptionValue builtIn="false" value="${TC_LINKER_MISC}"/>
 									<listOptionValue builtIn="false" value="${RS_LINKER_MISC}"/>
@@ -245,11 +249,11 @@
 							<targetPlatform binaryParser="org.eclipse.cdt.core.ELF" id="org.tizen.nativeide.target.sbi.gnu.platform.base.1705973196" osList="linux,win32" superClass="org.tizen.nativeide.target.sbi.gnu.platform.base"/>
 							<builder buildPath="${workspace_loc:/VLC_UI}/Release" id="org.tizen.nativecore.target.sbi.gnu.builder.1431516207" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="Tizen Application Builder" superClass="org.tizen.nativecore.target.sbi.gnu.builder"/>
 							<tool id="org.tizen.nativecore.tool.sbi.gnu.archiver.1808810475" name="Archiver" superClass="org.tizen.nativecore.tool.sbi.gnu.archiver"/>
-							<tool command="clang++" id="org.tizen.nativecore.tool.sbi.gnu.cpp.compiler.1647089399" name="C++ Compiler" superClass="org.tizen.nativecore.tool.sbi.gnu.cpp.compiler">
+							<tool command="i386-linux-gnueabi-g++" id="org.tizen.nativecore.tool.sbi.gnu.cpp.compiler.1647089399" name="C++ Compiler" superClass="org.tizen.nativecore.tool.sbi.gnu.cpp.compiler">
 								<option id="gnu.cpp.compiler.option.optimization.level.2025694121" name="Optimization Level" superClass="gnu.cpp.compiler.option.optimization.level" value="gnu.cpp.compiler.optimization.level.most" valueType="enumerated"/>
 								<option id="sbi.gnu.cpp.compiler.option.debugging.level.core.1497280164" name="Debug level" superClass="sbi.gnu.cpp.compiler.option.debugging.level.core"/>
 								<option id="sbi.gnu.cpp.compiler.option.756571150" name="Tizen-Target" superClass="sbi.gnu.cpp.compiler.option" valueType="userObjs">
-									<listOptionValue builtIn="false" value="mobile-2.3.1-emulator.core_llvm34.i386.core.app"/>
+									<listOptionValue builtIn="false" value="mobile-2.3.1-emulator.core_gcc48.i386.core.app"/>
 								</option>
 								<option id="sbi.gnu.cpp.compiler.option.frameworks_inc.core.1699193008" name="Tizen-Frameworks-Include-Path" superClass="sbi.gnu.cpp.compiler.option.frameworks_inc.core" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${SBI_SYSROOT}/usr/include/libxml2&quot;"/>
@@ -322,11 +326,11 @@
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.1436342112" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
-							<tool command="clang" id="org.tizen.nativecore.tool.sbi.gnu.c.compiler.1624776640" name="C Compiler" superClass="org.tizen.nativecore.tool.sbi.gnu.c.compiler">
+							<tool command="i386-linux-gnueabi-gcc" id="org.tizen.nativecore.tool.sbi.gnu.c.compiler.1624776640" name="C Compiler" superClass="org.tizen.nativecore.tool.sbi.gnu.c.compiler">
 								<option defaultValue="gnu.c.optimization.level.most" id="gnu.c.compiler.option.optimization.level.569576047" name="Optimization Level" superClass="gnu.c.compiler.option.optimization.level" valueType="enumerated"/>
 								<option id="sbi.gnu.c.compiler.option.debugging.level.core.590303356" name="Debug level" superClass="sbi.gnu.c.compiler.option.debugging.level.core"/>
 								<option id="sbi.gnu.c.compiler.option.1178094192" name="Tizen-Target" superClass="sbi.gnu.c.compiler.option" valueType="userObjs">
-									<listOptionValue builtIn="false" value="mobile-2.3.1-emulator.core_llvm34.i386.core.app"/>
+									<listOptionValue builtIn="false" value="mobile-2.3.1-emulator.core_gcc48.i386.core.app"/>
 								</option>
 								<option id="sbi.gnu.c.compiler.option.frameworks_inc.core.453964467" name="Tizen-Frameworks-Include-Path" superClass="sbi.gnu.c.compiler.option.frameworks_inc.core" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${SBI_SYSROOT}/usr/include/libxml2&quot;"/>
@@ -400,7 +404,7 @@
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.1740946228" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
 							<tool id="org.tizen.nativeide.tool.sbi.gnu.c.linker.base.652448501" name="C Linker" superClass="org.tizen.nativeide.tool.sbi.gnu.c.linker.base"/>
-							<tool command="clang++" id="org.tizen.nativecore.tool.sbi.gnu.cpp.linker.1140038795" name="C++ Linker" superClass="org.tizen.nativecore.tool.sbi.gnu.cpp.linker">
+							<tool command="i386-linux-gnueabi-g++" id="org.tizen.nativecore.tool.sbi.gnu.cpp.linker.1140038795" name="C++ Linker" superClass="org.tizen.nativecore.tool.sbi.gnu.cpp.linker">
 								<option id="sbi.gnu.cpp.linker.option.frameworks_lflags.core.412316917" name="Tizen-Frameworks-Other-Lflags" superClass="sbi.gnu.cpp.linker.option.frameworks_lflags.core" valueType="stringList">
 									<listOptionValue builtIn="false" value="${TC_LINKER_MISC}"/>
 									<listOptionValue builtIn="false" value="${RS_LINKER_MISC}"/>
