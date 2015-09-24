@@ -4,7 +4,7 @@
     <profile name="mobile"/>
     <ui-application appid="org.videolan.vlc" exec="vlc" multiple="false" nodisplay="false" taskmanage="true" type="capp">
         <label>VLC for Tizen</label>
-        <icon>VLC Media Player.png</icon>
+        <icon>VLC.png</icon>
     </ui-application>
     <privileges>
         <privilege>http://tizen.org/privilege/systemsettings</privilege>
