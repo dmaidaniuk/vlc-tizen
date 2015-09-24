@@ -1,8 +1,6 @@
-vlc
-Debug
-Release
-.sign
-lib/*.so*
-emotion
-emotion_utils/*.c
-emotion_utils/*.so
+/vlc
+/Debug
+/Release
+/.sign
+/lib/*.so*
+/emotion
