@@ -51,12 +51,12 @@ fi
 
 EMOTION_BUILD_DIR=${PROJECTPATH}/emotion/build-tizen-${TARGET_TUPLE}
 EMOTION_PREFIX=${EMOTION_BUILD_DIR}/prefix
-EFL_INCLUDES="${PROJECTPATH}/emotion_utils/include"
-EFL_LIB="${EMOTION_PREFIX}/prefix/lib"
+EFL_INCLUDES="${PROJECTPATH}/hacks/emotion/include"
+EFL_LIB="${EMOTION_PREFIX}/lib"
 
 mkdir -p $EFL_LIB
 
-cd ${PROJECTPATH}/emotion_utils
+cd ${PROJECTPATH}/hacks/emotion
 
 for symbols in *.symbols; do
     so_file="`basename $symbols .symbols`"
