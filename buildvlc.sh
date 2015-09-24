@@ -6,6 +6,15 @@ SCRIPT=$(readlink -f "$0")
 PROJECTPATH=$(dirname "$SCRIPT")
 source ${PROJECTPATH}/buildcommon
 
+# atomics are broken for x86 on 2.3, dirty hacks since it's used only from emulator
+if [ ${TIZEN_SDK_VERSION} = "2.3.1" -a "${TIZEN_ABI}" = "x86" ];then
+VLC_INCLUDE_HACKS=" -I${PROJECTPATH}/hacks/vlc/2.3-x86-include"
+VLC_TAGLIB="--disable-taglib"
+else
+VLC_INCLUDE_HACKS=""
+VLC_TAGLIB="--enable-taglib"
+fi
+
 #####################
 # FETCH VLC SOURCES #
 #####################
@@ -80,7 +89,7 @@ VLC_CONFIGURE_ARGS="\
     --enable-opus \
     --enable-opensles \
     --enable-mkv \
-    --enable-taglib \
+    ${VLC_TAGLIB} \
     --enable-dvbpsi \
     --disable-vlc \
     --disable-shared \
@@ -288,7 +297,7 @@ CPPFLAGS="$CPPFLAGS" \
 CFLAGS="$CFLAGS ${EXTRA_CFLAGS}" \
 CXXFLAGS="$CFLAGS ${EXTRA_CXXFLAGS}" \
 LDFLAGS="$LDFLAGS" \
-CC="${CROSS_COMPILE}gcc -fPIC --sysroot=${SYSROOT}" \
+CC="${CROSS_COMPILE}gcc -fPIC --sysroot=${SYSROOT}${VLC_INCLUDE_HACKS}" \
 CXX="${CROSS_COMPILE}g++ -fPIC --sysroot=${SYSROOT} -D__cpp_static_assert=200410" \
 NM="${CROSS_COMPILE}nm" \
 STRIP="${CROSS_COMPILE}strip" \
