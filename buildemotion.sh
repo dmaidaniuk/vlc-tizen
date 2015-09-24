@@ -10,7 +10,7 @@ source ${PROJECTPATH}/buildcommon
 
 if [ ! -d "${PROJECTPATH}/emotion" ]; then
     echo -e "\e[1m\e[32mEMOTION source not found, cloning\e[0m"
-    git clone https://github.com/tguillem/tizen_emotion.git "${PROJECTPATH}/emotion"
+    git clone http://code.videolan.org/videolan/tizen_emotion.git "${PROJECTPATH}/emotion"
     checkfail "emotion source: git clone failed"
 fi
 
