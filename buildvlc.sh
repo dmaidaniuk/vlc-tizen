@@ -142,7 +142,6 @@ VLC_CONFIGURE_ARGS="\
     --disable-faad \
     --disable-x264 \
     --disable-schroedinger \
-    --disable-png \
 "
 
 ########################
@@ -421,7 +420,7 @@ ${CC} -fPIC -rdynamic -shared \
     -lavformat -lavcodec -lswscale -lavutil -lpostproc -lgsm -lopenjpeg \
     -lliveMedia -lUsageEnvironment -lBasicUsageEnvironment -lgroupsock \
     -lspeex -lspeexdsp \
-    -lxml2 -lgnutls -lgcrypt -lgpg-error \
+    -lxml2 -lpng -lgnutls -lgcrypt -lgpg-error \
     -lnettle -lhogweed -lgmp \
     -lfreetype -liconv -lass -lfribidi -lopus \
     -ljpeg \
