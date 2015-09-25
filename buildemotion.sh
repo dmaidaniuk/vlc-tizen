@@ -45,33 +45,15 @@ if [ ! -f configure ]; then
     checkfail "emotion: bootstrap failed"
 fi
 
-#####################
-# FAKE EMOTION DEPS #
-#####################
-
-EMOTION_BUILD_DIR=${PROJECTPATH}/emotion/build-tizen-${TARGET_TUPLE}
-EMOTION_PREFIX=${EMOTION_BUILD_DIR}/prefix
-EFL_INCLUDES="${PROJECTPATH}/hacks/emotion/include"
-EFL_LIB="${EMOTION_PREFIX}/lib"
-
-mkdir -p $EFL_LIB
-
-cd ${PROJECTPATH}/hacks/emotion
-
-for symbols in *.symbols; do
-    so_file="`basename $symbols .symbols`"
-    c_file="`basename $so_file .so`.c"
-    rm -f ${EMOTION_PREFIX}/$c_file ${EFL_LIB}/$so_file*
-    for s in `cat $symbols`; do echo "void $s() {}" >> ${EMOTION_PREFIX}/$c_file; done
-    ${CC} ${EMOTION_PREFIX}/$c_file -shared -o ${EFL_LIB}/$so_file.1.7.99 -fPIC
-    ln -sf $so_file.1.7.99 ${EFL_LIB}/$so_file.1
-done
-
 #############
 # CONFIGURE #
 #############
 
-cd $EMOTION_BUILD_DIR
+EMOTION_BUILD_DIR=${PROJECTPATH}/emotion/build-tizen-${TARGET_TUPLE}
+EMOTION_PREFIX=${EMOTION_BUILD_DIR}/prefix
+mkdir -p ${EMOTION_PREFIX}
+
+cd ${EMOTION_BUILD_DIR}
 
 if [ ! -e ./config.h -o "$RELEASE" = 1 ]; then
 CPPFLAGS="$CPPFLAGS" \
@@ -84,18 +66,18 @@ NM="${CROSS_COMPILE}nm" \
 STRIP="${CROSS_COMPILE}strip" \
 RANLIB="${CROSS_COMPILE}ranlib" \
 AR="${CROSS_COMPILE}ar" \
-ECORE_X_CFLAGS="-I${EFL_INCLUDES}/ecore-1" \
-ECORE_X_LIBS="-L${EFL_LIB} -lecore_x" \
-ECORE_FB_CFLAGS="-I${EFL_INCLUDES}/ecore-1" \
-ECORE_FB_LIBS="-L${EFL_LIB} -lecore_fb" \
-EDJE_EXTERNAL_CFLAGS="-I${EFL_INCLUDES}/edje-1" \
-EDJE_EXTERNAL_LIBS="-L${EFL_LIB} -ledje" \
+ECORE_X_CFLAGS="-I${TIZEN_INCLUDES}/ecore-1" \
+ECORE_X_LIBS="-L${TIZEN_LIBS} -lecore_x" \
+ECORE_FB_CFLAGS="-I${TIZEN_INCLUDES}/ecore-1" \
+ECORE_FB_LIBS="-L${TIZEN_LIBS} -lecore_fb" \
+EDJE_EXTERNAL_CFLAGS="-I${TIZEN_INCLUDES}/edje-1" \
+EDJE_EXTERNAL_LIBS="-L${TIZEN_LIBS} -ledje" \
 LIBVLC_CFLAGS="-I${PROJECTPATH}/vlc/include" \
 LIBVLC_LIBS="-L${PROJECTPATH}/lib -lvlc" \
-EMOTION_CFLAGS="-I${EFL_INCLUDES}/ecore-1 -I${EFL_INCLUDES}/evas-1 \
--I${EFL_INCLUDES}/eet-1 -I${EFL_INCLUDES}/eina-1 -I${EFL_INCLUDES}/eina-1/eina \
+EMOTION_CFLAGS="-I${TIZEN_INCLUDES}/ecore-1 -I${TIZEN_INCLUDES}/evas-1 \
+-I${TIZEN_INCLUDES}/eet-1 -I${TIZEN_INCLUDES}/eina-1 -I${TIZEN_INCLUDES}/eina-1/eina \
 ${LIBVLC_CFLAGS}" \
-EMOTION_LIBS="-L${EFL_LIB} -lecore -levas -leet -leina -lpthread ${LIBVLC_LIBS}" \
+EMOTION_LIBS="-L${TIZEN_LIBS} -lecore -levas -leet -leina -lpthread ${LIBVLC_LIBS}" \
 sh ../configure --host=$TARGET_TUPLE --build=x86_64-unknown-linux \
                 ${EXTRA_PARAMS} ${EMOTION_CONFIGURE_ARGS} ${OPTS} \
                 --prefix=${EMOTION_PREFIX}
