@@ -403,7 +403,7 @@ ${CC} -fPIC -rdynamic -shared \
     -Lvlc/contrib/${TARGET_TUPLE}/lib \
     -Wl,-soname -Wl,libvlc.so.5 -Wl,-version-script \
     -Wl,${PROJECTPATH}/$VER_FILE \
-    -o ${PROJECTPATH}/lib/libvlc.so \
+    -o ${PROJECTPATH}/lib/libvlc.so.5 \
     ${PROJECTPATH}/vlc/.modules/libvlc-modules.c \
     -Wl,--whole-archive \
     ${PROJECTPATH}/vlc/build-tizen-${TARGET_TUPLE}/lib/.libs/libvlc.a \
@@ -437,6 +437,8 @@ ${CC} -fPIC -rdynamic -shared \
 
 # Missing:f
 # -lEGL -lGLESv2 -ldsm
+
+cd ${PROJECTPATH}/lib/ && ln -sf libvlc.so.5 libvlc.so && cd -
 
 checkfail "linker: libvlc.so"
 
