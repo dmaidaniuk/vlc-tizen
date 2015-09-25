@@ -29,4 +29,33 @@
 		<nature>org.eclipse.cdt.managedbuilder.core.ScannerConfigNature</nature>
 		<nature>org.tizen.nativecore.apichecker.core.tizenCppNature</nature>
 	</natures>
+	<filteredResources>
+		<filter>
+			<id>1443170524146</id>
+			<name></name>
+			<type>30</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-projectRelativePath-matches-false-false-vlc/contrib</arguments>
+			</matcher>
+		</filter>
+		<filter>
+			<id>1443170524152</id>
+			<name></name>
+			<type>30</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-projectRelativePath-matches-false-false-vlc/build-*</arguments>
+			</matcher>
+		</filter>
+		<filter>
+			<id>1443170524157</id>
+			<name></name>
+			<type>30</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-emotion/build-*</arguments>
+			</matcher>
+		</filter>
+	</filteredResources>
 </projectDescription>
