@@ -7,7 +7,6 @@
         <icon>VLC.png</icon>
     </ui-application>
     <privileges>
-        <privilege>http://tizen.org/privilege/systemsettings</privilege>
         <privilege>http://tizen.org/privilege/mediastorage</privilege>
     </privileges>
 </manifest>
