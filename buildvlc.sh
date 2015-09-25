@@ -437,8 +437,6 @@ ${CC} -fPIC -rdynamic -shared \
 # Missing:f
 # -lEGL -lGLESv2 -ldsm
 
-cd ${PROJECTPATH}/lib/ && ln -sf libvlc.so.5 libvlc.so && cd -
-
 checkfail "linker: libvlc.so"
 
-
+cd ${PROJECTPATH}/lib/ && ln -sf libvlc.so.5 libvlc.so && cd -
