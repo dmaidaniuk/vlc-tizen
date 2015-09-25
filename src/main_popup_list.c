@@ -121,6 +121,13 @@ popup_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
     }
 }
 
+static void
+popup_block_cb(void *data, Evas_Object *obj, void *event_info)
+{
+	gui_data_s *gd = data;
+	elm_popup_timeout_set(gd->popup, 0.1);
+}
+
 Evas_Object *
 create_popup_genlist(gui_data_s *gd)
 {
@@ -169,6 +176,7 @@ create_popup_genlist(gui_data_s *gd)
     elm_box_pack_end(box, genlist);
     evas_object_size_hint_weight_set(genlist, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
     evas_object_size_hint_align_set(genlist, EVAS_HINT_FILL, EVAS_HINT_FILL);
+    evas_object_smart_callback_add(gd->popup, "block,clicked", popup_block_cb, gd);
     evas_object_show(genlist);
 
     elm_genlist_item_class_free(itc);
