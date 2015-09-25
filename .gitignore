@@ -10,3 +10,6 @@
 /Release/
 /lib/*.so*
 /emotion/
+libvlcpp
+medialibrary
+*~
