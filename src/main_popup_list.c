@@ -30,6 +30,13 @@
 
 #include "main_popup_list.h"
 
+enum
+{
+    ACTION_REFRESH,
+    ACTION_EQUALIZER,
+    ACTION_MAX,
+};
+
 /* Set the panel list labels */
 const char *popup_list[] = {
         "Refresh", "Equalizer"
@@ -105,20 +112,23 @@ popup_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
     /* Generate the view depending on which panel genlist item is selected */
     switch(gpd->index){
 
-    case 0:
+    case ACTION_REFRESH:
         evas_object_del(gpd->gd->popup);
 
-        //TODO : Add an equalizer function
+        //TODO : Add a refresh function
 
         free(gpd);
         break;
 
-    case 1:
+    case ACTION_EQUALIZER:
         evas_object_del(gpd->gd->popup);
 
-        //TODO : Add a refresh function of the current list
+        //TODO : Add an equalizer function of the current list
 
         free(gpd);
+        break;
+    case ACTION_MAX:
+    default:
         break;
     }
 }
@@ -157,7 +167,7 @@ create_popup_genlist(gui_data_s *gd)
     elm_genlist_mode_set(genlist, ELM_LIST_COMPRESS);
 
     /* Stop when the panel list names is all used */
-    for (int index = 0; index < 2; index++) {
+    for (int index = 0; index < ACTION_MAX; index++) {
 
         general_popup_data_s *gpd = malloc(sizeof(*gpd));
         /* Put the index and the gui_data in the cb_data struct for callbacks */
@@ -167,10 +177,10 @@ create_popup_genlist(gui_data_s *gd)
         it = elm_genlist_item_append(genlist,
                 itc,                            /* genlist item class               */
                 gpd,                            /* genlist item class user data     */
-                NULL,                            /* genlist parent item              */
-                ELM_GENLIST_ITEM_NONE,            /* genlist item type                */
-                popup_selected_cb,                /* genlist select smart callback    */
-                gpd);                            /* genlist smart callback user data */
+                NULL,                           /* genlist parent item              */
+                ELM_GENLIST_ITEM_NONE,          /* genlist item type                */
+                popup_selected_cb,              /* genlist select smart callback    */
+                gpd);                           /* genlist smart callback user data */
 
         gpd->item = it;
     }
