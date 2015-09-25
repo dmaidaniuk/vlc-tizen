@@ -40,8 +40,6 @@
 #include <efl_extension.h>
 #include <dlog.h>
 
-#define ICON_DIR "/opt/usr/apps/org.videolan.vlc/res/images/"
-
 #ifdef  LOG_TAG
 # undef  LOG_TAG
 #endif
@@ -50,5 +48,7 @@
 #if !defined(PACKAGE)
 # define PACKAGE "org.videolan.vlc"
 #endif
+
+#define ICON_DIR "/opt/usr/apps/"PACKAGE"/res/images/"
 
 #endif /* __vlc_common_H__ */
