@@ -56,6 +56,7 @@ cmake \
     -DSQLITE3_INCLUDE_DIR="${TIZEN_INCLUDES}/" \
     -DSQLITE3_LIBRARY_DEBUG="${TIZEN_LIBS}/libsqlite3.so" \
     -DSQLITE3_LIBRARY_RELEASE="${TIZEN_LIBS}/libsqlite3.so" \
+    -DCMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS="-static-libstdc++" \
     ..
 checkfail "medialibrary: cmake failed"
 fi
