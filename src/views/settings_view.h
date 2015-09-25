@@ -45,13 +45,6 @@ typedef struct settings_item
 
 } settings_item_s;
 
-typedef struct popup_menu_item
-{
-    const char* title;
-    const char* icon;
-
-} popup_menu_item_s;
-
 Evas_Object*
 create_setting_view(Evas_Object *parent);
 

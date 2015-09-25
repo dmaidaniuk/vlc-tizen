@@ -26,12 +26,6 @@
 
 #include "common.h"
 
-#include <dirent.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <limits.h>
-#include <unistd.h>
-
 #include <Elementary.h>
 #include <storage.h>
 #include <app.h>
@@ -274,7 +268,6 @@ tabbar_item_selected(gui_data_s *gd, Elm_Object_Item *audio_it)
     }
     else     {
         current_audio_view = create_audio_list(audio_path, gd);
-
     }
 
     elm_object_content_set(gd->nf_toolbar, current_audio_view );

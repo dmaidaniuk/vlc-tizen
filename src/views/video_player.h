@@ -24,11 +24,9 @@
  * compatibility with the Store
  *****************************************************************************/
 
-
 #include "common.h"
-#include <tizen.h>
-#include <Elementary.h>
 
+#include <Elementary.h>
 #include <player.h>
 
 #ifndef VIDEOP_H_

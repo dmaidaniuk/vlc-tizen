@@ -26,13 +26,8 @@
 
 #include "common.h"
 
-#include <dirent.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <limits.h>
-#include <unistd.h>
-
 #include <Elementary.h>
+
 #include "views/directory_view.h"
 
 void

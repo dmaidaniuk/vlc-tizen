@@ -25,7 +25,6 @@
  *****************************************************************************/
 
 #include "common.h"
-#include <Edje.h>
 #include <Emotion.h>
 
 #include <app.h>

@@ -23,11 +23,9 @@
  * the code to a different OSI approved license, in case it is required for
  * compatibility with the Store
  *****************************************************************************/
-#include "interface.h"
-#include <player.h>
+
 #ifndef MINI_PLAYER_H_
 #define MINI_PLAYER_H_
-
 
 typedef struct mini_player_data {
     bool visible_state;

@@ -26,11 +26,9 @@
 
 #include "common.h"
 #include "interface.h"
+
 #include "popup_genlist.h"
 #include "efl_extension.h"
-#include "settings_view.h"
-
-
 
 static Evas_Object*
 create_icon(popup_genlist_data_s *pgd, int count)

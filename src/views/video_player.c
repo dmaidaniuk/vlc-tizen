@@ -25,7 +25,6 @@
  *****************************************************************************/
 #include "common.h"
 
-#include <Eina.h>
 #include <Evas.h>
 #include <Evas_GL.h>
 #include <player.h>

@@ -30,7 +30,6 @@
 #include "interface.h"
 #include "popup_genlist.h"
 
-
 settings_item_s settings_menu[] =
 {
         {"General", ""},
@@ -449,15 +448,10 @@ create_setting_list(Evas_Object *parent)
 Evas_Object*
 create_setting_view(Evas_Object *parent)
 {
-
-    Evas_Object *setting_list;
-    Elm_Object_Item *nf_it;
-
-
-    setting_list = create_setting_list(parent);
+    Evas_Object *setting_list = create_setting_list(parent);
 
     /* Set the parent naviframe header label on content */
-    nf_it = elm_naviframe_item_push(parent, "Settings", NULL, NULL, setting_list, NULL);
+    elm_naviframe_item_push(parent, "Settings", NULL, NULL, setting_list, NULL);
 
     return setting_list;
 }

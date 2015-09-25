@@ -26,8 +26,15 @@
 
 #ifndef MAIN_POPUP_LIST_H_
 #define MAIN_POPUP_LIST_H_
+
 #include "interface.h"
-#include "settings_view.h"
+#include <Elementary.h>
+
+typedef struct popup_menu_item
+{
+    const char* title;
+    const char* icon;
+} popup_menu_item_s;
 
 typedef struct popup_genlist_data
 {
@@ -38,7 +45,6 @@ typedef struct popup_genlist_data
     Evas_Object *img;
     Elm_Object_Item *item;
     Evas_Object *parent;
-
 
 } popup_genlist_data_s;
 

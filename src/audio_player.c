@@ -28,7 +28,6 @@
 
 #include <Elementary.h>
 #include <Emotion.h>
-#include <glib.h>
 
 #include "interface.h"
 #include "audio_player.h"

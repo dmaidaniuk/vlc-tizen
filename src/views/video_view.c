@@ -26,14 +26,9 @@
 
 #include "common.h"
 
-#include <dirent.h>
-#include <limits.h>
-#include <unistd.h>
-
 #include "interface.h"
 #include "video_view.h"
 #include "video_player.h"
-
 
 void
 video_gl_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
