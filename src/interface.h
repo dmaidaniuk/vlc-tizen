@@ -27,6 +27,8 @@
 #ifndef INTERFACE_H_
 #define INTERFACE_H_
 
+#include "common.h"
+
 struct mini_player_data;
 struct video_player_data;
 typedef struct gui_data {
@@ -57,6 +59,9 @@ enum {
 
 void
 create_view(gui_data_s *gd, int panel);
+
+void
+create_base_gui(gui_data_s *gd);
 
 
 #endif /* INTERFACE_H_ */
