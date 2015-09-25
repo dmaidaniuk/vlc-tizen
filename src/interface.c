@@ -25,7 +25,6 @@
  *****************************************************************************/
 
 #include "common.h"
-#include <Edje.h>
 
 #include "interface.h"
 #include "navigation_menu.h"
