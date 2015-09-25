@@ -1,7 +1,12 @@
 /.cproject
-/vlc
-/Debug
-/Release
+/.checkers
+/.rds_delta
+/.sdk_delta.info
 /.sign
+/crash-info/
+/res/res.xml
+/vlc/
+/Debug/
+/Release/
 /lib/*.so*
-/emotion
+/emotion/
