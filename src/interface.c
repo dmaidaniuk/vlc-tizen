@@ -25,6 +25,8 @@
  *****************************************************************************/
 
 #include "common.h"
+#include <Edje.h>
+#include <Emotion.h>
 
 #include "interface.h"
 #include "navigation_menu.h"
@@ -422,7 +424,7 @@ app_terminate(void *data)
 {
     gui_data_s *gd = data;
     free(gd->mini_player);
-
+    emotion_shutdown();
 }
 
 static void
@@ -466,6 +468,8 @@ main(int argc, char *argv[])
 {
     gui_data_s gd = {0};
     int ret = 0;
+
+    emotion_init();
 
     ui_app_lifecycle_callback_s event_callback = {0,};
     app_event_handler_h handlers[5] = {NULL, };

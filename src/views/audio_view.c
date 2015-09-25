@@ -40,26 +40,14 @@ static void
 audio_gl_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
     audio_list_data_s *ald = data;
-    int error_code = 0;
     struct stat sb;
     stat(ald->file_path, &sb);
 
     if (S_ISREG(sb.st_mode))
     {
-        if(ald->gd->mini_player->player == NULL)
-        {
-            /* Launch the media player */
-            create_base_player(ald->gd->mini_player, ald->file_path);
-            dlog_print(DLOG_INFO, LOG_TAG, "VLC Player launch");
-        }
-        else
-        {
-            /* Stop the player */
-            error_code = player_stop(ald->gd->mini_player->player);
-            /* Launch the media player */
-            create_base_player(ald->gd->mini_player, ald->file_path);
-            dlog_print(DLOG_INFO, LOG_TAG, "VLC Player launch");
-        }
+        /* Launch the media player */
+        create_base_player(ald->gd->mini_player, ald->file_path);
+        dlog_print(DLOG_INFO, LOG_TAG, "VLC Player launch");
     }
 
     else if (S_ISDIR(sb.st_mode))

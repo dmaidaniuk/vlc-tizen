@@ -26,13 +26,24 @@
 
 #include "common.h"
 
-#include <player.h>
 #include <Elementary.h>
+#include <Emotion.h>
 #include <glib.h>
 
 #include "interface.h"
 #include "audio_player.h"
 #include "audio_popup.h"
+
+static void
+mini_player_reset_states(mini_player_data_s *mpd)
+{
+    mpd->fs_state = false;
+    mpd->save_state = false;
+    mpd->shuffle_state = false;
+    mpd->playlist_state = false;
+    mpd->more_state = false;
+    mpd->repeat_state = 0;
+}
 
 bool
 mini_player_visibility_state(mini_player_data_s *mpd)
@@ -124,23 +135,25 @@ create_image(Evas_Object *parent, const char *image_path)
 }
 
 static void
-update_player_display(mini_player_data_s* mpd) {
-    char *song_title, *song_artist;
-    int error_code = player_get_content_info(mpd->player, PLAYER_CONTENT_INFO_TITLE,
-            &song_title);
-    if (error_code == 0) {
-        elm_object_text_set(mpd->title, song_title);
-        elm_object_text_set(mpd->fs_title, song_title);
-    }
-    error_code = player_get_content_info(mpd->player, PLAYER_CONTENT_INFO_ARTIST,
-            &song_artist);
-    if (error_code == 0) {
-            elm_object_text_set(mpd->sub_title, song_artist);
-            elm_object_text_set(mpd->fs_sub_title, song_artist);
+update_player_display(mini_player_data_s* mpd)
+{
+    const char *meta;
+
+    if (!mpd->emotion)
+        return;
+    meta = emotion_object_meta_info_get(mpd->emotion, EMOTION_META_INFO_TRACK_TITLE);
+    if (meta)
+    {
+        elm_object_text_set(mpd->title, meta);
+        elm_object_text_set(mpd->fs_title, meta);
     }
 
-    free(song_title);
-    free(song_artist);
+    meta = emotion_object_meta_info_get(mpd->emotion, EMOTION_META_INFO_TRACK_ARTIST);
+    if (meta)
+    {
+        elm_object_text_set(mpd->sub_title, meta);
+        elm_object_text_set(mpd->fs_sub_title, meta);
+    }
 
     /* Change the play/pause button img */
     elm_image_file_set(mpd->play_pause_img, mpd->play_state ? ICON_DIR "ic_play_circle_normal_o.png" : ICON_DIR "ic_pause_circle_normal_o.png", NULL);
@@ -153,20 +166,14 @@ static void
 play_pause_mini_player_cb(void *data, Evas_Object *obstopj EINA_UNUSED, void *event_info)
 {
     mini_player_data_s *mpd = data;
-    int error_code = 0;
 
-    if(play_state(mpd) == true)
-    {
-    	/* Pause the player */
-    	error_code = player_pause(mpd->player);
-    }
-    else
-    {
-    	/* Start the player */
-    	error_code = player_start(mpd->player);
-    }
-    /* Update the play/pause state of the player */
+    if (!mpd->emotion)
+        return;
+
+    mpd->play_state = emotion_object_play_get(mpd->emotion);
+    emotion_object_play_set(mpd->emotion, !mpd->play_state);
     mpd->play_state = !mpd->play_state;
+
     update_player_display(mpd);
 }
 
@@ -174,18 +181,14 @@ static void
 play_pause_fs_player_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
     mini_player_data_s *mpd = data;
-    int error_code = 0;
 
-    if(play_state(mpd) == true)
-    {
-    	/* Pause the player */
-    	error_code = player_pause(mpd->player);
-    } else {
-    	/* Start the player */
-    	error_code = player_start(mpd->player);
-    }
-    /* Update the play/pause state of the player */
+    if (!mpd->emotion)
+        return;
+
+    mpd->play_state = emotion_object_play_get(mpd->emotion);
+    emotion_object_play_set(mpd->emotion, !mpd->play_state);
     mpd->play_state = !mpd->play_state;
+
     evas_object_show(mpd->fs_play_pause_img);
     update_player_display(mpd);
 }
@@ -194,18 +197,9 @@ static void
 stop_mini_player_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
     mini_player_data_s *mpd = data;
-    int error_code = 0;
 
-    /* Stop the player */
-    error_code = player_stop(mpd->player);
-    /* */
-    player_destroy (mpd->player);
+    mini_player_stop(mpd);
 
-    /* Hide the player */
-    mini_player_hide(mpd);
-
-    /* And free player_data struct */
-    mpd->player = NULL;
     free(mpd);
 }
 
@@ -725,28 +719,21 @@ mini_player_fullscreen_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_
 }
 
 void
-create_base_player(mini_player_data_s *mpd, char *file_path)
+create_base_player(mini_player_data_s *mpd, const char *file_path)
 {
-    /* Add the given file path in the audio player structure */
-    mpd->file_path = file_path;
-    int error_code = 0;
-    /* */
-    error_code = player_create(&mpd->player);
-    error_code = player_set_uri(mpd->player, mpd->file_path);
-    error_code = player_prepare(mpd->player);
+    mini_player_reset_states(mpd);
 
-    /* Start the player instantly when the file is selected in the list */
-    error_code = player_start(mpd->player);
+    if (!mpd->emotion)
+    {
+        setenv("EMOTION_LIBVLC_DEBUG", "1", 1);
+        mpd->emotion =  emotion_object_add(evas_object_evas_get(mpd->gd->win));
+        emotion_object_init(mpd->emotion, "libvlc");
+    }
+    emotion_object_file_set(mpd->emotion, file_path);
+    emotion_object_play_set(mpd->emotion, 1);
+
     update_player_display(mpd);
     mpd->play_state = true;
-
-    /* Set all button to their default state */
-    mpd->fs_state = false;
-    mpd->save_state = false;
-    mpd->shuffle_state = false;
-    mpd->playlist_state = false;
-    mpd->more_state = false;
-    mpd->repeat_state = 0;
 
     /* Show the mini player only if it isn't already shown */
     if (mini_player_visibility_state(mpd) == false){
@@ -763,7 +750,6 @@ mini_player_create(gui_data_s *gd, Evas_Object *parent)
     mini_player_data_s *mpd = malloc(sizeof(*mpd));
 
     /* */
-    mpd->player = NULL;
     mpd->gd = gd;
     mpd->play_state = false;
     mpd->visible_state = false;
@@ -785,4 +771,20 @@ mini_player_create(gui_data_s *gd, Evas_Object *parent)
     evas_object_smart_callback_add(mpd->sub_title, "clicked", mini_player_fullscreen_cb, mpd);
 
     return mpd;
+}
+
+void
+mini_player_stop(mini_player_data_s *mpd)
+{
+    /* Stop the player */
+    if (mpd->emotion)
+    {
+        emotion_object_play_set(mpd->emotion, EINA_FALSE);
+        emotion_object_file_set(mpd->emotion, NULL);
+        evas_object_del(mpd->emotion);
+        mpd->emotion = NULL;
+    }
+
+    /* Hide the player */
+    mini_player_hide(mpd);
 }

@@ -33,8 +33,7 @@ typedef struct mini_player_data {
     bool visible_state;
     bool play_state, save_state, shuffle_state, playlist_state, more_state, fs_state;
     int repeat_state;
-    char *file_path;
-    player_h player;
+    Evas_Object *emotion;
     Evas_Object *parent, *table, *fs_table, *popup;
     Evas_Object *mini_player_box, *box, *fullscreen_box;
     Evas_Object *cover, *fs_cover, *fs_view, *fs_time, *fs_total_time;
@@ -50,6 +49,9 @@ typedef struct mini_player_data {
 mini_player_data_s*
 mini_player_create(gui_data_s *gd, Evas_Object *parent);
 
+void
+mini_player_stop(mini_player_data_s*);
+
 bool
 mini_player_visibility_state(mini_player_data_s *mpd);
 
@@ -60,6 +62,6 @@ void
 mini_player_hide(mini_player_data_s *mpd);
 
 void
-create_base_player(mini_player_data_s *mpd, char *file_path);
+create_base_player(mini_player_data_s *mpd, const char *file_path);
 
 #endif /* MINI_PLAYER_H_ */

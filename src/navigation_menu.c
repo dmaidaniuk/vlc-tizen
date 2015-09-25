@@ -109,13 +109,7 @@ gl_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 
     if((cd->gd->mini_player->play_state == false) && (cd->gd->mini_player->fs_state == true))
     {
-        int error_code = 0;
-
-        /* Stop the player */
-        error_code = player_stop(cd->gd->mini_player->player);
-        /* */
-        player_destroy (cd->gd->mini_player->player);
-        /* Update fullscreen state bool */
+        mini_player_stop(cd->gd->mini_player);
         cd->gd->mini_player->fs_state = false;
     }
 
