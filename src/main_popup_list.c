@@ -104,7 +104,7 @@ popup_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
     switch(gpd->index){
 
     case 0:
-        elm_popup_timeout_set(gpd->gd->popup, 0.1);
+        evas_object_del(gpd->gd->popup);
 
         //TODO : Add an equalizer function
 
@@ -112,7 +112,7 @@ popup_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
         break;
 
     case 1:
-        elm_popup_timeout_set(gpd->gd->popup, 0.1);
+        evas_object_del(gpd->gd->popup);
 
         //TODO : Add a refresh function of the current list
 
@@ -124,8 +124,8 @@ popup_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 static void
 popup_block_cb(void *data, Evas_Object *obj, void *event_info)
 {
-	gui_data_s *gd = data;
-	elm_popup_timeout_set(gd->popup, 0.1);
+    gui_data_s *gd = data;
+    evas_object_del(gd->popup);
 }
 
 Evas_Object *
