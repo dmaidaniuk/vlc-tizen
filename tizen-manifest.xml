@@ -5,7 +5,7 @@
 
 VLC media player supports many audio and video compression methods and file formats and streaming protocols.</description>
     <profile name="mobile"/>
-    <ui-application appid="org.videolan.vlc" exec="vlc" hw-acceleration="on" multiple="false" nodisplay="false" taskmanage="true" type="capp">
+    <ui-application appid="org.videolan.vlc" exec="vlc" multiple="false" nodisplay="false" taskmanage="true" type="capp">
         <label>VLC for Tizen</label>
         <icon>VLC.png</icon>
     </ui-application>
@@ -16,5 +16,4 @@ VLC media player supports many audio and video compression methods and file form
         <privilege>http://tizen.org/privilege/volume.set</privilege>
         <privilege>http://tizen.org/privilege/externalstorage</privilege>
     </privileges>
-    <feature name="http://tizen.org/feature/graphics.acceleration">true</feature>
 </manifest>
