@@ -29,6 +29,8 @@
 #include "interface.h"
 #include "audio_player.h"
 
+#include <Elementary.h>
+
 /* Set the panel list labels */
 const char *menu_list[] = {
         "Video", "Audio", "Directory", "Settings", "About"

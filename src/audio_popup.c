@@ -29,6 +29,8 @@
 #include "audio_popup.h"
 #include "audio_player.h"
 
+#include <Elementary.h>
+
 /* Set the panel list labels */
 const char *audio_popup_list[] = {
         "Jump to Time", "PLayback Speed", "Sleep in"

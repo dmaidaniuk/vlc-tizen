@@ -32,6 +32,10 @@
 #include <limits.h>
 #include <unistd.h>
 
+#include <Elementary.h>
+#include <storage.h>
+#include <app.h>
+
 #include "interface.h"
 #include "views/audio_view.h"
 #include "audio_player.h"

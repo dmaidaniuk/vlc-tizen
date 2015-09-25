@@ -28,6 +28,8 @@
 #define PANEL_GENLIST_H_
 #include "interface.h"
 
+#include <Elementary.h>
+
 typedef struct menu_cb_data
 {
     int index;

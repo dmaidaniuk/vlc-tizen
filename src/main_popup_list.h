@@ -26,7 +26,9 @@
 
 #ifndef MAIN_POPUP_LIST_H_
 #define MAIN_POPUP_LIST_H_
+
 #include "interface.h"
+#include <Elementary.h>
 
 typedef struct general_popup_data
 {

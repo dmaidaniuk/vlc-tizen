@@ -26,8 +26,11 @@
 
 #ifndef MAIN_POPUP_LIST_H_
 #define MAIN_POPUP_LIST_H_
+
 #include "interface.h"
 #include "audio_player.h"
+
+#include <Elementary.h>
 
 typedef struct audio_popup_data
 {

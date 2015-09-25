@@ -27,6 +27,8 @@
 #ifndef FILES_H_
 #define FILES_H_
 
+#include <Elementary.h>
+
 typedef struct video_list_data {
     Evas_Object *parent;
     char *file_path;

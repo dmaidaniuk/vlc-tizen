@@ -29,6 +29,8 @@
 #include <tizen.h>
 #include <Elementary.h>
 
+#include <player.h>
+
 #ifndef VIDEOP_H_
 #define VIDEOP_H_
 

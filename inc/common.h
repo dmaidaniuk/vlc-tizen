@@ -29,15 +29,10 @@
 
 #define _GNU_SOURCE
 
-#include <tizen.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <storage.h>
-#include <app.h>
-#include <player.h>
-#include <Elementary.h>
-#include <system_settings.h>
-#include <efl_extension.h>
+
+#include <tizen.h>
 #include <dlog.h>
 
 #ifdef  LOG_TAG
@@ -50,5 +45,7 @@
 #endif
 
 #define ICON_DIR "/opt/usr/apps/"PACKAGE"/res/images/"
+
+#include <Evas.h>
 
 #endif /* __vlc_common_H__ */

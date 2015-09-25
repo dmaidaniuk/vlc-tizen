@@ -29,6 +29,8 @@
 
 #include "audio_player.h"
 
+#include <Elementary.h>
+
 typedef struct audio_list_data {
 
     char *file_path;

@@ -28,6 +28,11 @@
 #include <Edje.h>
 #include <Emotion.h>
 
+#include <app.h>
+#include <efl_extension.h>
+#include <storage.h>
+#include <system_settings.h>
+
 #include "interface.h"
 #include "navigation_menu.h"
 #include "audio_player.h"

@@ -27,6 +27,8 @@
 #ifndef SETTINGS_VIEW_H_
 #define SETTINGS_VIEW_H_
 
+#include <Elementary.h>
+
 typedef struct setting_data
 {
     int index;

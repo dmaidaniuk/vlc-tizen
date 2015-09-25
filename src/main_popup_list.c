@@ -27,6 +27,7 @@
 #include "common.h"
 #include "interface.h"
 #include "main_popup_list.h"
+#include <Elementary.h>
 
 /* Set the panel list labels */
 const char *popup_list[] = {
