@@ -441,8 +441,4 @@ cd ${PROJECTPATH}/lib/ && ln -sf libvlc.so.5 libvlc.so && cd -
 
 checkfail "linker: libvlc.so"
 
-if [ "$RELEASE" = 1 ]; then
-	echo -e "\e[1m\e[32mStripping\e[0m"
-    ${CROSS_COMPILE}strip ${PROJECTPATH}/lib/libvlc.so
-    checkfail "stripping"
-fi
+
