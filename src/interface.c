@@ -68,7 +68,9 @@ win_back_cb(void *data, Evas_Object *obj, void *event_info)
     gui_data_s *gd = data;
     /* Let window go to hide state. */
     if (!elm_object_disabled_get(gd->panel) && !elm_panel_hidden_get(gd->panel)) {
-        elm_panel_toggle(gd->panel);
+        elm_panel_hidden_set(gd->panel, EINA_TRUE);
+    } else if (evas_object_visible_get(gd->popup)) {
+        evas_object_del(gd->popup); //since elm_popup_dismiss doesn't work
     } else {
         elm_win_lower(gd->win);
     }
