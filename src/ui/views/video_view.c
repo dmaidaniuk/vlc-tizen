@@ -26,7 +26,7 @@
 
 #include "common.h"
 
-#include "interface.h"
+#include "ui/interface.h"
 #include "video_view.h"
 #include "video_player.h"
 

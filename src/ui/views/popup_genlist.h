@@ -27,7 +27,7 @@
 #ifndef MAIN_POPUP_LIST_H_
 #define MAIN_POPUP_LIST_H_
 
-#include "interface.h"
+#include "ui/interface.h"
 #include <Elementary.h>
 
 typedef struct popup_menu_item

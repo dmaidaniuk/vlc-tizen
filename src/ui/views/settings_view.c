@@ -27,7 +27,7 @@
 #include "common.h"
 
 #include "settings_view.h"
-#include "interface.h"
+#include "ui/interface.h"
 #include "popup_genlist.h"
 
 settings_item_s settings_menu[] =

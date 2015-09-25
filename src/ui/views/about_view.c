@@ -26,8 +26,8 @@
 
 #include "common.h"
 
-#include "../interface.h"
-#include "views/about_view.h"
+#include "ui/interface.h"
+#include "ui/views/about_view.h"
 
 #include <Elementary.h>
 

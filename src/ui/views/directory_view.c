@@ -28,7 +28,7 @@
 
 #include <Elementary.h>
 
-#include "views/directory_view.h"
+#include "directory_view.h"
 
 void
 list_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)

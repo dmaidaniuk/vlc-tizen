@@ -25,7 +25,7 @@
  *****************************************************************************/
 
 #include "common.h"
-#include "interface.h"
+#include "ui/interface.h"
 
 #include "popup_genlist.h"
 #include "efl_extension.h"

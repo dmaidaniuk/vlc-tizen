@@ -27,7 +27,7 @@
 #ifndef AUDIO_VIEW_H_
 #define AUDIO_VIEW_H_
 
-#include "audio_player.h"
+#include "ui/audio_player.h"
 
 #include <Elementary.h>
 

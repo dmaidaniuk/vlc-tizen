@@ -24,7 +24,7 @@
  * compatibility with the Store
  *****************************************************************************/
 
-#include "interface.h"
+#include "ui/interface.h"
 
 #include <app.h>
 #include <storage.h>

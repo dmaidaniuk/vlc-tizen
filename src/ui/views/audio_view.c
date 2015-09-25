@@ -30,9 +30,9 @@
 #include <storage.h>
 #include <app.h>
 
-#include "interface.h"
-#include "views/audio_view.h"
-#include "audio_player.h"
+#include "ui/interface.h"
+#include "ui/views/audio_view.h"
+#include "ui/audio_player.h"
 
 static void
 audio_gl_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)

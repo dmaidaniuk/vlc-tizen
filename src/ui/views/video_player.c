@@ -29,7 +29,7 @@
 #include <Evas_GL.h>
 #include <player.h>
 
-#include "interface.h"
+#include "ui/interface.h"
 #include "video_player.h"
 
 static void
