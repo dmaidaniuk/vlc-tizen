@@ -27,10 +27,20 @@
 
 #include <Evas.h>
 #include <Evas_GL.h>
+#include <Elementary.h>
 #include <player.h>
 
 #include "ui/interface.h"
 #include "video_player.h"
+
+typedef struct videodata
+{
+    player_h player;
+    Evas_Object *parent, *box;
+    bool play_state;
+    char *file_path;
+
+} videodata_s;
 
 static void
 init_base_player(void *data, Evas_Object *obj, void *event_info)

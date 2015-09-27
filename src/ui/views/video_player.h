@@ -26,23 +26,10 @@
 
 #include "common.h"
 
-#include <Elementary.h>
-#include <player.h>
-
 #ifndef VIDEOP_H_
 #define VIDEOP_H_
 
-typedef struct videodata
-{
-    player_h player;
-    Evas_Object *parent, *box;
-    bool play_state;
-    char *file_path;
-
-} videodata_s;
-
 Evas_Object*
 create_video_gui(Evas_Object *parent, char* file_path);
-
 
 #endif /* VIDEOP_H_ */
