@@ -39,24 +39,26 @@ typedef struct menu_cb_data
 
 } menu_cb_data_s;
 
-/* Set the panel list labels */
-const char *menu_list[] = {
-        "Video", "Audio", "Directory", "Settings", "About"
-};
-
-/* Set the panel list icons */
-const char *icon_names[] = {
-        "video", "audio", "folder", "preferences", "cone"
+typedef struct {
+    const char* label;
+    const char* icon_name;
+} menu_entry;
+static const menu_entry menu_entries[] = {
+        { "Video",      "video" },
+        { "Audio",      "audio" },
+        { "Directory",  "folder" },
+        { "Settings",   "preferences" },
+        { "About",      "cone" }
 };
 
 static Evas_Object*
-create_icon(Evas_Object *parent, int count)
+create_icon(Evas_Object *parent, int idx)
 {
     char buf[PATH_MAX];
     Evas_Object *img = elm_image_add(parent);
 
     /* Create then set panel genlist used icones */
-    snprintf(buf, sizeof(buf), "%s/ic_menu_%s.png", ICON_DIR, icon_names[count]);
+    snprintf(buf, sizeof(buf), "%s/ic_menu_%s.png", ICON_DIR, menu_entries[idx].icon_name);
     elm_image_file_set(img, buf, NULL);
 
     /* The object will align and expand in the space the container will give him */
@@ -71,15 +73,12 @@ gl_text_get_cb(void *data, Evas_Object *obj, const char *part)
 {
     menu_cb_data_s *cd = data;
     const Elm_Genlist_Item_Class *itc = elm_genlist_item_item_class_get(cd->item);
-    char *buf;
 
     /* Check the item class style and put the current folder or file name as a string */
     /* Then put this string as the genlist item label */
     if (itc->item_style && !strcmp(itc->item_style, "1line")) {
         if (part && !strcmp(part, "elm.text.main.left")) {
-            asprintf(&buf, "%s", menu_list[cd->index]);
-
-            return buf;
+            return strdup(menu_entries[cd->index].label);
         }
     }
     return NULL;
@@ -89,8 +88,9 @@ static Evas_Object*
 gl_content_get_cb(void *data, Evas_Object *obj, const char *part)
 {
     menu_cb_data_s *cd = data;
-    const Elm_Genlist_Item_Class *itc = elm_genlist_item_item_class_get(cd->item);
     Evas_Object *content = NULL;
+
+    const Elm_Genlist_Item_Class *itc = elm_genlist_item_item_class_get(cd->item);
 
     /* Check the item class style and add the object needed in the item class*/
     /* Here, puts the icon in the item class to add it to genlist items */
@@ -143,7 +143,6 @@ gl_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 Evas_Object *
 create_panel_genlist(interface_sys *intf)
 {
-
     Evas_Object *genlist;
     Elm_Object_Item *it;
 
