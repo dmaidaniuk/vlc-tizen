@@ -117,7 +117,7 @@ ui_app_low_memory(app_event_info_h event_info, void *user_data)
 int
 main(int argc, char *argv[])
 {
-    application_sys *app =malloc(sizeof(*app));
+    application_sys *app = malloc(sizeof(*app));
 
     /* Emotion start */
     emotion_init();

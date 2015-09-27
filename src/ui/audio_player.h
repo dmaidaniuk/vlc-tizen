@@ -27,41 +27,40 @@
 #ifndef MINI_PLAYER_H_
 #define MINI_PLAYER_H_
 
-typedef struct mini_player_data {
-    interface_sys *gd;
+#include "ui/interface.h"
 
-    bool visible_state;
-    bool play_state, save_state, shuffle_state, playlist_state, more_state, fs_state;
-    int repeat_state;
-    Evas_Object *emotion;
-    Evas_Object *parent, *table, *fs_table, *popup;
-    Evas_Object *mini_player_box, *box, *fullscreen_box;
-    Evas_Object *cover, *fs_cover, *fs_view, *fs_time, *fs_total_time;
-    Evas_Object *title, *sub_title, *fs_title, *fs_sub_title;
-    Evas_Object *play_pause_img;
-    Evas_Object *fs_play_pause_img;
-    Evas_Object *fs_save_btn, *fs_playlist_btn, *fs_more_btn;
-    Evas_Object *fs_repeat_btn, *fs_shuffle_btn;
+struct audio_player_priv;
 
+typedef struct mini_player_instance
+{
+    struct audio_player_priv *p;
+} mini_player_instance;
 
-} mini_player_data_s;
-
-mini_player_data_s*
+mini_player_instance*
 mini_player_create(interface_sys *gd, Evas_Object *parent);
 
 void
-mini_player_stop(mini_player_data_s*);
+mini_player_stop(mini_player_instance *);
 
 bool
-mini_player_visibility_state(mini_player_data_s *mpd);
+mini_player_visibility_state(mini_player_instance *);
 
 void
-mini_player_show(mini_player_data_s *mpd);
+mini_player_show(mini_player_instance *);
 
 void
-mini_player_hide(mini_player_data_s *mpd);
+mini_player_hide(mini_player_instance *);
+
+bool
+mini_player_visibility_state(mini_player_instance *);
+
+bool
+mini_player_play_state(mini_player_instance *);
+
+bool
+mini_player_fs_state(mini_player_instance *);
 
 void
-create_base_player(mini_player_data_s *mpd, const char *file_path);
+create_base_player(mini_player_instance *mpd, const char *file_path);
 
 #endif /* MINI_PLAYER_H_ */

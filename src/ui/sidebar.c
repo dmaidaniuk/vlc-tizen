@@ -35,7 +35,7 @@ typedef struct menu_cb_data
 {
     int index;
     Elm_Object_Item *item;
-    interface_sys *gd;
+    interface_sys *intf;
 
 } menu_cb_data_s;
 
@@ -112,37 +112,28 @@ gl_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
     menu_cb_data_s *cd = data;
     /* Generate the view depending on which panel genlist item is selected */
 
-    if((cd->gd->mini_player->play_state == true) && (cd->gd->mini_player->visible_state == false))
-    {
-        mini_player_show(cd->gd->mini_player);
-    }
-
-    if((cd->gd->mini_player->play_state == false) && (cd->gd->mini_player->fs_state == true))
-    {
-        mini_player_stop(cd->gd->mini_player);
-        cd->gd->mini_player->fs_state = false;
-    }
+    update_mini_player(cd->intf);
 
     switch(cd->index){
 
     case VIEW_VIDEO:
-        create_view(cd->gd, VIEW_VIDEO);
+        create_view(cd->intf, VIEW_VIDEO);
         break;
 
     case VIEW_AUDIO:
-        create_view(cd->gd, VIEW_AUDIO);
+        create_view(cd->intf, VIEW_AUDIO);
         break;
 
     case VIEW_FILES:
-        create_view(cd->gd, VIEW_FILES);
+        create_view(cd->intf, VIEW_FILES);
         break;
 
     case VIEW_SETTINGS:
-        create_view(cd->gd, VIEW_SETTINGS);
+        create_view(cd->intf, VIEW_SETTINGS);
         break;
 
     case VIEW_ABOUT:
-        create_view(cd->gd, VIEW_ABOUT);
+        create_view(cd->intf, VIEW_ABOUT);
         break;
 
         free(cd);
@@ -150,7 +141,7 @@ gl_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 }
 
 Evas_Object *
-create_panel_genlist(interface_sys *gd)
+create_panel_genlist(interface_sys *intf)
 {
 
     Evas_Object *genlist;
@@ -162,7 +153,7 @@ create_panel_genlist(interface_sys *gd)
     itc->func.text_get = gl_text_get_cb;
     itc->func.content_get = gl_content_get_cb;
 
-    genlist = elm_genlist_add(get_sidebar(gd));
+    genlist = elm_genlist_add(get_sidebar(intf));
 
     /* Set the genlist scoller mode */
     elm_scroller_single_direction_set(genlist, ELM_SCROLLER_SINGLE_DIRECTION_HARD);
@@ -177,7 +168,7 @@ create_panel_genlist(interface_sys *gd)
         menu_cb_data_s *cd = malloc(sizeof(*cd));
         /* Put the index and the gui_data in the cb_data struct for callbacks */
         cd->index = index;
-        cd->gd = gd;
+        cd->intf = intf;
 
         it = elm_genlist_item_append(genlist,
                 itc,                            /* genlist item class               */

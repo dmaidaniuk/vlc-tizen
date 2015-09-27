@@ -245,35 +245,31 @@ create_panel(Evas_Object *layout, interface_sys *gd)
 }
 
 static Evas_Object*
-create_main_content(interface_sys *gd, Evas_Object *parent)
+create_main_content(interface_sys *intf, Evas_Object *parent)
 {
     /* Create a content box to display the content and the mini player */
-    gd->intf_p->content_box = elm_box_add(parent);
-    elm_box_horizontal_set(gd->intf_p->content_box, EINA_FALSE);
+    intf->intf_p->content_box = elm_box_add(parent);
+    elm_box_horizontal_set(intf->intf_p->content_box, EINA_FALSE);
 
     /* Create both of the content_box subObjects */
-    gd->mini_player = mini_player_create(gd, gd->intf_p->content_box);
-    gd->intf_p->content = elm_naviframe_add(gd->intf_p->content_box);
+    intf->mini_player = mini_player_create(intf, intf->intf_p->content_box);
+    intf->intf_p->content = elm_naviframe_add(intf->intf_p->content_box);
 
     /* Put the naviframe at the top of the content_box */
-    evas_object_size_hint_align_set(gd->intf_p->content, EVAS_HINT_FILL, 0.0);
-    evas_object_size_hint_weight_set(gd->intf_p->content, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-
-    /* Put the mini player at the bottom of the content_box */
-    /* Then set the vertical offset of the player */
-    evas_object_size_hint_align_set(gd->mini_player->mini_player_box, EVAS_HINT_FILL, 1.0);
-    evas_object_size_hint_min_set(gd->mini_player->mini_player_box, 0, 100);
+    evas_object_size_hint_align_set(intf->intf_p->content, EVAS_HINT_FILL, 0.0);
+    evas_object_size_hint_weight_set(intf->intf_p->content, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 
     /* Add the content naviframe in the content_box */
-    elm_box_pack_end(gd->intf_p->content_box, gd->intf_p->content);
+    elm_box_pack_end(intf->intf_p->content_box, intf->intf_p->content);
+
     /* */
-    evas_object_show(gd->intf_p->content);
+    evas_object_show(intf->intf_p->content);
 
     /* Ask the box to recalculate her current children dislay */
-    elm_box_recalculate(gd->intf_p->content_box);
+    elm_box_recalculate(intf->intf_p->content_box);
 
 
-    return gd->intf_p->content_box;
+    return intf->intf_p->content_box;
 }
 
 static Evas_Object*
@@ -398,4 +394,18 @@ create_base_gui(application_sys *app)
 
     /* */
     evas_object_show(gd->intf_p->win);
+}
+
+void
+update_mini_player(interface_sys *intf)
+{
+    if((mini_player_play_state(intf->mini_player) == true) && (mini_player_visibility_state(intf->mini_player) == false))
+    {
+        mini_player_show(intf->mini_player);
+    }
+
+    if((mini_player_play_state(intf->mini_player) == false) && (mini_player_fs_state(intf->mini_player) == true))
+    {
+        mini_player_stop(intf->mini_player);
+    }
 }
