@@ -28,18 +28,8 @@
 #define MAIN_POPUP_LIST_H_
 
 #include "interface.h"
-#include <Elementary.h>
-
-typedef struct general_popup_data
-{
-    int index;
-    Evas_Object *box, *genlist;
-    Elm_Object_Item *item;
-    gui_data_s *gd;
-
-} general_popup_data_s;
 
 Evas_Object *
-create_popup_genlist(gui_data_s *gd);
+create_popup(Evas_Object *parent, interface_sys *intf);
 
 #endif /* MAIN_POPUP_LIST_H_ */

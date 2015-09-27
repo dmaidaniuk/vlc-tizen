@@ -40,14 +40,14 @@
 static bool
 app_create(void *data)
 {
-    gui_data_s *gd = data;
+    application_sys *app = data;
 
     /* Fetching the media path and keep it in memory as soon as the app is create */
-    gd->media_path = fetching_media_path();
-    dlog_print(DLOG_ERROR, LOG_TAG, "Media Path %s", gd->media_path);
+    app->media_path = fetching_media_path();
+    dlog_print(DLOG_ERROR, LOG_TAG, "Media Path %s", app->media_path);
 
     /* */
-    create_base_gui(gd);
+    create_base_gui(app);
 
     return true;
 }
@@ -73,7 +73,7 @@ app_resume(void *data)
 static void
 app_terminate(void *data)
 {
-    gui_data_s *gd = data;
+    interface_sys *gd = data;
     free(gd->mini_player);
     emotion_shutdown();
 }
@@ -117,9 +117,9 @@ ui_app_low_memory(app_event_info_h event_info, void *user_data)
 int
 main(int argc, char *argv[])
 {
-    gui_data_s gd = {0};
-    int ret = 0;
+    application_sys *app =malloc(sizeof(*app));
 
+    /* Emotion start */
     emotion_init();
 
     ui_app_lifecycle_callback_s event_callback = {0,};
@@ -131,14 +131,14 @@ main(int argc, char *argv[])
     event_callback.resume = app_resume;
     event_callback.app_control = app_control;
 
-    ui_app_add_event_handler(&handlers[APP_EVENT_LOW_BATTERY], APP_EVENT_LOW_BATTERY, ui_app_low_battery, &gd);
-    ui_app_add_event_handler(&handlers[APP_EVENT_LOW_MEMORY], APP_EVENT_LOW_MEMORY, ui_app_low_memory, &gd);
-    ui_app_add_event_handler(&handlers[APP_EVENT_DEVICE_ORIENTATION_CHANGED], APP_EVENT_DEVICE_ORIENTATION_CHANGED, ui_app_orient_changed, &gd);
-    ui_app_add_event_handler(&handlers[APP_EVENT_LANGUAGE_CHANGED], APP_EVENT_LANGUAGE_CHANGED, ui_app_lang_changed, &gd);
-    ui_app_add_event_handler(&handlers[APP_EVENT_REGION_FORMAT_CHANGED], APP_EVENT_REGION_FORMAT_CHANGED, ui_app_region_changed, &gd);
+    ui_app_add_event_handler(&handlers[APP_EVENT_LOW_BATTERY], APP_EVENT_LOW_BATTERY, ui_app_low_battery, app);
+    ui_app_add_event_handler(&handlers[APP_EVENT_LOW_MEMORY], APP_EVENT_LOW_MEMORY, ui_app_low_memory, app);
+    ui_app_add_event_handler(&handlers[APP_EVENT_DEVICE_ORIENTATION_CHANGED], APP_EVENT_DEVICE_ORIENTATION_CHANGED, ui_app_orient_changed, app);
+    ui_app_add_event_handler(&handlers[APP_EVENT_LANGUAGE_CHANGED], APP_EVENT_LANGUAGE_CHANGED, ui_app_lang_changed, app);
+    ui_app_add_event_handler(&handlers[APP_EVENT_REGION_FORMAT_CHANGED], APP_EVENT_REGION_FORMAT_CHANGED, ui_app_region_changed, app);
     ui_app_remove_event_handler(handlers[APP_EVENT_LOW_MEMORY]);
 
-    ret = ui_app_main(argc, argv, &event_callback, &gd);
+    int ret = ui_app_main(argc, argv, &event_callback, app);
     if (ret != APP_ERROR_NONE) {
         dlog_print(DLOG_ERROR, LOG_TAG, "app_main() is failed. err = %d", ret);
     }

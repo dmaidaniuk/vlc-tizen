@@ -27,6 +27,7 @@
 #include "common.h"
 
 #include <Elementary.h>
+#include <efl_extension.h>
 
 #include "main_popup_list.h"
 
@@ -36,6 +37,14 @@ enum
     ACTION_EQUALIZER,
     ACTION_MAX,
 };
+
+typedef struct general_popup_data
+{
+    int index;
+    Evas_Object *box, *genlist;
+    Elm_Object_Item *item;
+
+} general_popup_data_s;
 
 /* Set the panel list labels */
 const char *popup_list[] = {
@@ -113,7 +122,7 @@ popup_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
     switch(gpd->index){
 
     case ACTION_REFRESH:
-        evas_object_del(gpd->gd->popup);
+        //evas_object_del(gpd->gd->intf->popup);
 
         //TODO : Add a refresh function
 
@@ -121,7 +130,7 @@ popup_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
         break;
 
     case ACTION_EQUALIZER:
-        evas_object_del(gpd->gd->popup);
+        //evas_object_del(gpd->gd->intf->popup);
 
         //TODO : Add an equalizer function of the current list
 
@@ -136,18 +145,18 @@ popup_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 static void
 popup_block_cb(void *data, Evas_Object *obj, void *event_info)
 {
-    gui_data_s *gd = data;
-    evas_object_del(gd->popup);
+    Evas_Object *popup = data;
+    evas_object_del(popup);
 }
 
 Evas_Object *
-create_popup_genlist(gui_data_s *gd)
+create_popup_genlist(Evas_Object* popup)
 {
 
     Evas_Object *genlist;
     Elm_Object_Item *it;
 
-    Evas_Object *box = elm_box_add(gd->popup);
+    Evas_Object *box = elm_box_add(popup);
     evas_object_size_hint_min_set(box, 200, 200);
     evas_object_size_hint_max_set(box, 200, 200);
 
@@ -172,7 +181,6 @@ create_popup_genlist(gui_data_s *gd)
         general_popup_data_s *gpd = malloc(sizeof(*gpd));
         /* Put the index and the gui_data in the cb_data struct for callbacks */
         gpd->index = index;
-        gpd->gd = gd;
 
         it = elm_genlist_item_append(genlist,
                 itc,                            /* genlist item class               */
@@ -188,10 +196,34 @@ create_popup_genlist(gui_data_s *gd)
     elm_box_pack_end(box, genlist);
     evas_object_size_hint_weight_set(genlist, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
     evas_object_size_hint_align_set(genlist, EVAS_HINT_FILL, EVAS_HINT_FILL);
-    evas_object_smart_callback_add(gd->popup, "block,clicked", popup_block_cb, gd);
+    evas_object_smart_callback_add(popup, "block,clicked", popup_block_cb, popup);
     evas_object_show(genlist);
 
     elm_genlist_item_class_free(itc);
 
     return box;
+}
+
+Evas_Object *
+create_popup(Evas_Object *parent, interface_sys *gd)
+{
+    Evas_Object *popup_list;
+    Evas_Object *popup = elm_popup_add(parent);
+    //elm_object_style_set(popup, style);
+
+    evas_object_show(popup);
+    evas_object_size_hint_min_set(popup, 200, 200);
+    evas_object_size_hint_max_set(popup, 200, 200);
+
+    /* Add the panel genlist in the panel */
+    popup_list = create_popup_genlist(popup);
+    elm_object_content_set(popup, popup_list);
+    evas_object_show(popup_list);
+
+    /* */
+    //evas_object_smart_callback_add(gd->intf_p->popup, "clicked", cancel_cb, gd);
+    /* Callback for the back key */
+    eext_object_event_callback_add(popup, EEXT_CALLBACK_LAST, eext_popup_back_cb, NULL);
+
+    return popup;
 }

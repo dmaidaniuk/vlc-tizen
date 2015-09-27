@@ -28,27 +28,34 @@
 #define INTERFACE_H_
 
 #include "common.h"
+#include "application.h"
 
 struct mini_player_data;
-struct video_player_data;
-typedef struct gui_data {
-    Evas_Object *win;
-    Evas_Object *conform, *nf_toolbar;
-    Evas_Object *content;
-    Evas_Object *panel;
-    int panel_choice;
-    Evas_Object *panel_toggle_btn,*popup_toggle_btn;
-    Evas_Object *popup;
-    Evas_Object *current_view;
-    Evas_Object *content_box;
+struct interface_priv_sys;
+
+typedef struct interface_sys {
+    application_sys *app;
+
+    struct interface_priv_sys *intf_p;
     struct mini_player_data *mini_player;
-    struct video_player_data *video_player;
+} interface_sys;
 
-    char *media_path;
-} gui_data_s;
+Evas*
+get_window(interface_sys *intf);
 
+Evas_Object*
+get_sidebar(interface_sys *intf);
 
-enum {
+Evas_Object *
+get_miniplayer_content_box(interface_sys *intf);
+
+Evas_Object *
+get_content(interface_sys *intf);
+
+Evas_Object *
+get_toolbar(interface_sys *intf);
+
+typedef enum view_e {
     VIEW_AUTO = -1,
     VIEW_VIDEO,
     VIEW_AUDIO,
@@ -56,13 +63,16 @@ enum {
     VIEW_SETTINGS,
     VIEW_ABOUT,
     VIEW_MAX,
-};
+} view_e;
 
 void
-create_view(gui_data_s *gd, int panel);
+create_view(interface_sys *gd, view_e panel);
 
 void
-create_base_gui(gui_data_s *gd);
+show_previous_view(interface_sys *);
+
+void
+create_base_gui(application_sys *);
 
 
 #endif /* INTERFACE_H_ */

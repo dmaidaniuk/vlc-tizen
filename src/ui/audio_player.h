@@ -28,6 +28,8 @@
 #define MINI_PLAYER_H_
 
 typedef struct mini_player_data {
+    interface_sys *gd;
+
     bool visible_state;
     bool play_state, save_state, shuffle_state, playlist_state, more_state, fs_state;
     int repeat_state;
@@ -40,12 +42,12 @@ typedef struct mini_player_data {
     Evas_Object *fs_play_pause_img;
     Evas_Object *fs_save_btn, *fs_playlist_btn, *fs_more_btn;
     Evas_Object *fs_repeat_btn, *fs_shuffle_btn;
-    gui_data_s *gd;
+
 
 } mini_player_data_s;
 
 mini_player_data_s*
-mini_player_create(gui_data_s *gd, Evas_Object *parent);
+mini_player_create(interface_sys *gd, Evas_Object *parent);
 
 void
 mini_player_stop(mini_player_data_s*);

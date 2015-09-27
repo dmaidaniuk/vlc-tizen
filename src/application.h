@@ -2,7 +2,7 @@
  * Copyright © 2015 VideoLAN, VideoLabs SAS
  *****************************************************************************
  *
- * Authors: Nicolas Rechatin [nicolas@videolabs.io]
+ * Authors: Jean-Baptiste Kempf <jb@videolan.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,21 +24,8 @@
  * compatibility with the Store
  *****************************************************************************/
 
-#ifndef PANEL_GENLIST_H_
-#define PANEL_GENLIST_H_
-#include "interface.h"
-
-#include <Elementary.h>
-
-typedef struct menu_cb_data
-{
-    int index;
-    Elm_Object_Item *item;
-    interface_sys *gd;
-
-} menu_cb_data_s;
-
-Evas_Object *
-create_panel_genlist(interface_sys *gd);
-
-#endif /* PANEL_GENLIST_H_ */
+typedef struct application_sys {
+    const char *media_path;
+    /* settings */
+    /* media_library */
+} application_sys;

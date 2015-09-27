@@ -43,6 +43,28 @@
 #include "views/settings_view.h"
 #include "views/about_view.h"
 
+typedef struct interface_priv_sys {
+    Evas_Object *win;
+    Evas_Object *conform;
+
+    Evas_Object *content;
+    Evas_Object *content_box;
+
+    /* */
+    Evas_Object *sidebar;
+    int sidebar_idx;
+    Evas_Object *sidebar_toggle_btn;
+
+    /* */
+    Evas_Object *current_view;
+
+    /* Context popup-menu */
+    Evas_Object *popup_toggle_btn;
+    Evas_Object *popup;
+
+    Evas_Object *nf_toolbar;
+} interface_priv_sys;
+
 /* TODO : A lot of size hints are Hard Coded with pixel values (using a Samsung Z1 phone) */
 /* TODO : the use of Dpi or Aspect Ratio will be mandatory in the futur */
 
@@ -71,47 +93,23 @@ win_delete_request_cb(void *data, Evas_Object *obj, void *event_info)
 static void
 win_back_cb(void *data, Evas_Object *obj, void *event_info)
 {
-    gui_data_s *gd = data;
+    interface_sys *gd = data;
     /* Let window go to hide state. */
-    if (!elm_object_disabled_get(gd->panel) && !elm_panel_hidden_get(gd->panel)) {
-        elm_panel_hidden_set(gd->panel, EINA_TRUE);
-    } else if (evas_object_visible_get(gd->popup)) {
-        evas_object_del(gd->popup); //since elm_popup_dismiss doesn't work
+    if (!elm_object_disabled_get(gd->intf_p->sidebar) && !elm_panel_hidden_get(gd->intf_p->sidebar)) {
+        elm_panel_hidden_set(gd->intf_p->sidebar, EINA_TRUE);
+    } else if (evas_object_visible_get(gd->intf_p->popup)) {
+        evas_object_del(gd->intf_p->popup); //since elm_popup_dismiss doesn't work
     } else {
-        elm_win_lower(gd->win);
+        elm_win_lower(gd->intf_p->win);
     }
-}
-
-static Evas_Object *
-create_popup(Evas_Object *parent, gui_data_s *gd)
-{
-    Evas_Object *popup_list;
-    gd->popup = elm_popup_add(parent);
-    //elm_object_style_set(gd->popup, style);
-
-    evas_object_show(gd->popup);
-    evas_object_size_hint_min_set(gd->popup, 200, 200);
-    evas_object_size_hint_max_set(gd->popup, 200, 200);
-
-    /* Add the panel genlist in the panel */
-    popup_list = create_popup_genlist(gd);
-    elm_object_content_set(gd->popup, popup_list);
-    evas_object_show(popup_list);
-
-    /* */
-    //evas_object_smart_callback_add(gd->popup, "clicked", cancel_cb, gd);
-    /* Callback for the back key */
-    eext_object_event_callback_add(gd->popup, EEXT_CALLBACK_LAST, eext_popup_back_cb, NULL);
-
-    return gd->popup;
 }
 
 static void
 list_clicked_cb(void *data, Evas_Object *obj, void *event_info)
 {
-    gui_data_s *gd = data;
+    interface_sys *gd = data;
     /* Disable the panel when one of the item list is selected */
-    if (!elm_object_disabled_get(gd->panel)) elm_panel_toggle(gd->panel);
+    if (!elm_object_disabled_get(gd->intf_p->sidebar)) elm_panel_toggle(gd->intf_p->sidebar);
 }
 
 static Evas_Object *
@@ -131,18 +129,18 @@ create_button(Evas_Object *parent, char *style, char *text)
 static void
 left_panel_button_clicked_cb(void *data, Evas_Object * obj, void *event_info)
 {
-    gui_data_s *gd = data;
+    interface_sys *gd = data;
     /* Disable the panel when left button is pressed */
-    if (!elm_object_disabled_get(gd->panel)) elm_panel_toggle(gd->panel);
+    if (!elm_object_disabled_get(gd->intf_p->sidebar)) elm_panel_toggle(gd->intf_p->sidebar);
 }
 
 static void
 right_panel_button_clicked_cb(void *data, Evas_Object * obj, void *event_info)
 {
-    gui_data_s *gd = data;
+    interface_sys *gd = data;
 
-    gd->popup = create_popup(gd->content_box,gd);
-    evas_object_size_hint_weight_set(gd->popup, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+    gd->intf_p->popup = create_popup(gd->intf_p->content_box,gd);
+    evas_object_size_hint_weight_set(gd->intf_p->popup, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 
 }
 
@@ -178,23 +176,24 @@ get_type_tag(int panel){
 }
 
 void
-create_view(gui_data_s *gd, int panel)
+create_view(interface_sys *gd, int sidebar_idx)
 {
-    Evas_Object *content = gd->content;
+    Evas_Object *content = gd->intf_p->content;
     Evas_Object *view;
-    gd->panel_choice = panel;
+    gd->intf_p->sidebar_idx = sidebar_idx;
+
     /* Create the view depending on with panel item list is selected */
-    switch(panel)
+    switch(sidebar_idx)
     {
     case VIEW_VIDEO:
     case VIEW_AUTO:
-        view = create_video_view(gd->media_path, content);
+        view = create_video_view(gd->app->media_path, content);
         break;
     case VIEW_AUDIO:
-        view = create_audio_view(gd, content);
+        gd->intf_p->nf_toolbar = view = create_audio_view(gd, content);
         break;
     case VIEW_FILES:
-        view = create_directory_view(gd->media_path, content);
+        view = create_directory_view(gd->app->media_path, content);
         break;
     case VIEW_SETTINGS:
         view = create_setting_view(content);
@@ -205,61 +204,61 @@ create_view(gui_data_s *gd, int panel)
 
     }
     /* Push the view in the naviframe with the corresponding header */
-    elm_naviframe_item_push(content, get_type_tag(panel), NULL, NULL, view, "basic");
+    elm_naviframe_item_push(content, get_type_tag(sidebar_idx), NULL, NULL, view, "basic");
 
     /* Create then set the panel toggle btn and add his callbacks */
-    gd->panel_toggle_btn = create_button(gd->content, "naviframe/drawers", NULL);
-    evas_object_smart_callback_add(gd->panel_toggle_btn, "clicked", left_panel_button_clicked_cb, gd);
-    elm_object_part_content_set(gd->content, "title_left_btn", gd->panel_toggle_btn);
+    gd->intf_p->sidebar_toggle_btn = create_button(gd->intf_p->content, "naviframe/drawers", NULL);
+    evas_object_smart_callback_add(gd->intf_p->sidebar_toggle_btn, "clicked", left_panel_button_clicked_cb, gd);
+    elm_object_part_content_set(gd->intf_p->content, "title_left_btn", gd->intf_p->sidebar_toggle_btn);
 
     /* */
-    gd->popup_toggle_btn = create_button(gd->content, "naviframe/drawers", NULL);
-    evas_object_smart_callback_add(gd->popup_toggle_btn, "clicked", right_panel_button_clicked_cb, gd);
-    elm_object_part_content_set(gd->content, "title_right_btn", gd->popup_toggle_btn);
+    gd->intf_p->popup_toggle_btn = create_button(gd->intf_p->content, "naviframe/drawers", NULL);
+    evas_object_smart_callback_add(gd->intf_p->popup_toggle_btn, "clicked", right_panel_button_clicked_cb, gd);
+    elm_object_part_content_set(gd->intf_p->content, "title_right_btn", gd->intf_p->popup_toggle_btn);
 
 
 }
 
 static Evas_Object*
-create_panel(Evas_Object *layout, gui_data_s *gd)
+create_panel(Evas_Object *layout, interface_sys *gd)
 {
-    Evas_Object *panel_genlist;
+    Evas_Object *sidebar_list;
 
     /* Create then set the panel */
-    gd->panel = elm_panel_add(layout);
-    elm_panel_scrollable_set(gd->panel, EINA_TRUE);
-    elm_panel_hidden_set(gd->panel, EINA_TRUE);
-    elm_panel_orient_set(gd->panel, ELM_PANEL_ORIENT_LEFT);
+    gd->intf_p->sidebar = elm_panel_add(layout);
+    elm_panel_scrollable_set(gd->intf_p->sidebar, EINA_TRUE);
+    elm_panel_hidden_set(gd->intf_p->sidebar, EINA_TRUE);
+    elm_panel_orient_set(gd->intf_p->sidebar, ELM_PANEL_ORIENT_LEFT);
 
     /* Add the panel genlist in the panel */
-    panel_genlist = create_panel_genlist(gd);
-    evas_object_show(panel_genlist);
-    evas_object_size_hint_weight_set(panel_genlist, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-    evas_object_size_hint_align_set(panel_genlist, EVAS_HINT_FILL, EVAS_HINT_FILL);
+    sidebar_list = create_panel_genlist(gd);
+    evas_object_show(sidebar_list);
+    evas_object_size_hint_weight_set(sidebar_list, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+    evas_object_size_hint_align_set(sidebar_list, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
     /* */
-    evas_object_smart_callback_add(panel_genlist, "selected", list_clicked_cb, gd);
+    evas_object_smart_callback_add(sidebar_list, "selected", list_clicked_cb, gd);
 
     /* */
-    elm_object_content_set(gd->panel, panel_genlist);
+    elm_object_content_set(gd->intf_p->sidebar, sidebar_list);
 
-    return gd->panel;
+    return gd->intf_p->sidebar;
 }
 
 static Evas_Object*
-create_main_content(gui_data_s *gd, Evas_Object *parent)
+create_main_content(interface_sys *gd, Evas_Object *parent)
 {
     /* Create a content box to display the content and the mini player */
-    gd->content_box = elm_box_add(parent);
-    elm_box_horizontal_set(gd->content_box, EINA_FALSE);
+    gd->intf_p->content_box = elm_box_add(parent);
+    elm_box_horizontal_set(gd->intf_p->content_box, EINA_FALSE);
 
     /* Create both of the content_box subObjects */
-    gd->mini_player = mini_player_create(gd, gd->content_box);
-    gd->content = elm_naviframe_add(gd->content_box);
+    gd->mini_player = mini_player_create(gd, gd->intf_p->content_box);
+    gd->intf_p->content = elm_naviframe_add(gd->intf_p->content_box);
 
     /* Put the naviframe at the top of the content_box */
-    evas_object_size_hint_align_set(gd->content, EVAS_HINT_FILL, 0.0);
-    evas_object_size_hint_weight_set(gd->content, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+    evas_object_size_hint_align_set(gd->intf_p->content, EVAS_HINT_FILL, 0.0);
+    evas_object_size_hint_weight_set(gd->intf_p->content, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 
     /* Put the mini player at the bottom of the content_box */
     /* Then set the vertical offset of the player */
@@ -267,97 +266,137 @@ create_main_content(gui_data_s *gd, Evas_Object *parent)
     evas_object_size_hint_min_set(gd->mini_player->mini_player_box, 0, 100);
 
     /* Add the content naviframe in the content_box */
-    elm_box_pack_end(gd->content_box, gd->content);
+    elm_box_pack_end(gd->intf_p->content_box, gd->intf_p->content);
     /* */
-    evas_object_show(gd->content);
+    evas_object_show(gd->intf_p->content);
 
     /* Ask the box to recalculate her current children dislay */
-    elm_box_recalculate(gd->content_box);
+    elm_box_recalculate(gd->intf_p->content_box);
 
 
-    return gd->content_box;
+    return gd->intf_p->content_box;
 }
 
 static Evas_Object*
-create_main_view(gui_data_s *gd)
+create_main_view(interface_sys *gd)
 {
     Evas_Object *layout;
 
     /* Add a layout to the conformant */
-    layout = create_base_layout(gd->conform);
+    layout = create_base_layout(gd->intf_p->conform);
 
     /* Create the panel and put it in the layout */
-    gd->panel = create_panel(layout, gd);
-    elm_object_part_content_set(layout, "elm.swallow.left", gd->panel);
+    gd->intf_p->sidebar = create_panel(layout, gd);
+    elm_object_part_content_set(layout, "elm.swallow.left", gd->intf_p->sidebar);
 
     /* Create the content box and put it in the layout */
-    gd->content_box = create_main_content(gd, layout);
-    elm_object_part_content_set(layout, "elm.swallow.content", gd->content_box);
+    gd->intf_p->content_box = create_main_content(gd, layout);
+    elm_object_part_content_set(layout, "elm.swallow.content", gd->intf_p->content_box);
     /* */
-    evas_object_size_hint_weight_set(gd->content, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-    evas_object_size_hint_align_set(gd->content, EVAS_HINT_FILL, EVAS_HINT_FILL);
+    evas_object_size_hint_weight_set(gd->intf_p->content, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+    evas_object_size_hint_align_set(gd->intf_p->content, EVAS_HINT_FILL, EVAS_HINT_FILL);
     /* */
-    evas_object_show(gd->content_box);
+    evas_object_show(gd->intf_p->content_box);
 
     return layout;
 }
 
-void
-create_base_gui(gui_data_s *gd)
+Evas*
+get_window(interface_sys *intf)
 {
+    return evas_object_evas_get(intf->intf_p->win);
+}
+
+Evas_Object*
+get_sidebar(interface_sys *intf)
+{
+    return intf->intf_p->sidebar;
+}
+
+Evas_Object *
+get_miniplayer_content_box(interface_sys *intf)
+{
+    return intf->intf_p->content_box;
+}
+
+Evas_Object *
+get_content(interface_sys *intf)
+{
+    return intf->intf_p->content;
+}
+
+Evas_Object *
+get_toolbar(interface_sys *intf)
+{
+    return intf->intf_p->nf_toolbar;
+}
+
+void
+show_previous_view(interface_sys *intf)
+{
+    create_view(intf, intf->intf_p->sidebar_idx);
+}
+
+
+void
+create_base_gui(application_sys *app)
+{
+    interface_sys *gd = calloc(1, sizeof(*gd));
+    gd->app = app;
+
+    interface_priv_sys *intf = calloc(1, sizeof(*intf));
+    gd->intf_p = intf;
+
+
     Evas_Object *bg, *base_layout;
 
     /* Add and set the main Window */
-    gd->win = elm_win_util_standard_add(PACKAGE, PACKAGE);
-    elm_win_autodel_set(gd->win, EINA_TRUE);
+    gd->intf_p->win = elm_win_util_standard_add(PACKAGE, PACKAGE);
+    elm_win_autodel_set(gd->intf_p->win, EINA_TRUE);
 
     /* Handle rotations */
-    if (elm_win_wm_rotation_supported_get(gd->win)) {
+    if (elm_win_wm_rotation_supported_get(gd->intf_p->win)) {
         int rots[4] = { 0, 90, 180, 270 };
-        elm_win_wm_rotation_available_rotations_set(gd->win, (const int *)(&rots), 4);
+        elm_win_wm_rotation_available_rotations_set(gd->intf_p->win, (const int *)(&rots), 4);
     }
 
     /* Handle callbacks */
-    evas_object_smart_callback_add(gd->win, "delete,request", win_delete_request_cb, NULL);
-    eext_object_event_callback_add(gd->win, EEXT_CALLBACK_BACK, win_back_cb, gd);
+    evas_object_smart_callback_add(gd->intf_p->win, "delete,request", win_delete_request_cb, NULL);
+    eext_object_event_callback_add(gd->intf_p->win, EEXT_CALLBACK_BACK, win_back_cb, gd);
 
     /* Add and set a conformant in the main Window */
-    gd->conform = elm_conformant_add(gd->win);
-    elm_win_conformant_set(gd->win, EINA_TRUE);
-    evas_object_size_hint_weight_set(gd->conform, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+    gd->intf_p->conform = elm_conformant_add(gd->intf_p->win);
+    elm_win_conformant_set(gd->intf_p->win, EINA_TRUE);
+    evas_object_size_hint_weight_set(gd->intf_p->conform, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
     /* */
-    elm_win_indicator_mode_set(gd->win, ELM_WIN_INDICATOR_SHOW);
-    elm_win_indicator_opacity_set(gd->win, ELM_WIN_INDICATOR_OPAQUE);
-    elm_win_resize_object_add(gd->win, gd->conform);
-    evas_object_show(gd->conform);
+    elm_win_indicator_mode_set(gd->intf_p->win, ELM_WIN_INDICATOR_SHOW);
+    elm_win_indicator_opacity_set(gd->intf_p->win, ELM_WIN_INDICATOR_OPAQUE);
+    elm_win_resize_object_add(gd->intf_p->win, gd->intf_p->conform);
+    evas_object_show(gd->intf_p->conform);
 
     /* Add and set a bg in the conformant */
-    bg = elm_bg_add(gd->conform);
+    bg = elm_bg_add(gd->intf_p->conform);
     elm_object_style_set(bg, "indicator/headerbg");
     /* Add the bg in the conformant */
-    elm_object_part_content_set(gd->conform, "elm.swallow.indicator_bg", bg);
+    elm_object_part_content_set(gd->intf_p->conform, "elm.swallow.indicator_bg", bg);
     evas_object_show(bg);
 
     /* Create the main view in the conformant */
     base_layout = create_main_view(gd);
-    elm_object_content_set(gd->conform, base_layout);
+    elm_object_content_set(gd->intf_p->conform, base_layout);
 
     /* Create the default view in the content naviframe */
     create_view(gd, VIEW_AUTO);
 
     /* Add both left and right content naviframe buttons */
-    gd->panel_toggle_btn = create_button(gd->content, "naviframe/drawers", NULL);
-    evas_object_smart_callback_add(gd->panel_toggle_btn, "clicked", left_panel_button_clicked_cb, gd);
-    elm_object_part_content_set(gd->content, "title_left_btn", gd->panel_toggle_btn);
+    gd->intf_p->sidebar_toggle_btn = create_button(gd->intf_p->content, "naviframe/drawers", NULL);
+    evas_object_smart_callback_add(gd->intf_p->sidebar_toggle_btn, "clicked", left_panel_button_clicked_cb, gd);
+    elm_object_part_content_set(gd->intf_p->content, "title_left_btn", gd->intf_p->sidebar_toggle_btn);
 
-    gd->popup_toggle_btn = create_button(gd->content, "naviframe/drawers", NULL);
-    evas_object_smart_callback_add(gd->popup_toggle_btn, "clicked", right_panel_button_clicked_cb, gd);
-    elm_object_part_content_set(gd->content, "title_right_btn", gd->popup_toggle_btn);
+    gd->intf_p->popup_toggle_btn = create_button(gd->intf_p->content, "naviframe/drawers", NULL);
+    evas_object_smart_callback_add(gd->intf_p->popup_toggle_btn, "clicked", right_panel_button_clicked_cb, gd);
+    elm_object_part_content_set(gd->intf_p->content, "title_right_btn", gd->intf_p->popup_toggle_btn);
 
     /* */
-    evas_object_show(gd->win);
+    evas_object_show(gd->intf_p->win);
 }
-
-
-
-

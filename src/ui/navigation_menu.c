@@ -142,7 +142,7 @@ gl_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 }
 
 Evas_Object *
-create_panel_genlist(gui_data_s *gd)
+create_panel_genlist(interface_sys *gd)
 {
 
     Evas_Object *genlist;
@@ -154,7 +154,7 @@ create_panel_genlist(gui_data_s *gd)
     itc->func.text_get = gl_text_get_cb;
     itc->func.content_get = gl_content_get_cb;
 
-    genlist = elm_genlist_add(gd->panel);
+    genlist = elm_genlist_add(get_sidebar(gd));
 
     /* Set the genlist scoller mode */
     elm_scroller_single_direction_set(genlist, ELM_SCROLLER_SINGLE_DIRECTION_HARD);

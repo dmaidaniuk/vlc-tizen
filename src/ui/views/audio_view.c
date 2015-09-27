@@ -138,7 +138,7 @@ gl_content_get_cb(void *data, Evas_Object *obj, const char *part)
 }
 
 Evas_Object*
-create_audio_list(char* path, gui_data_s *gd)
+create_audio_list(char* path, interface_sys *gd)
 {
     char *buff;
     audio_list_data_s *ald = malloc(sizeof(*ald));
@@ -148,7 +148,7 @@ create_audio_list(char* path, gui_data_s *gd)
     struct dirent* current_folder = NULL;
 
     /* Set then create the Genlist object */
-    Evas_Object *parent = gd->nf_toolbar;
+    Evas_Object *parent = get_toolbar(gd);
     Evas_Object *genlist;
     Elm_Object_Item *it;
     Elm_Genlist_Item_Class *itc = elm_genlist_item_class_new();
@@ -242,7 +242,7 @@ static bool audio_storage_cb(int storage_id, storage_type_e type, storage_state_
 }
 
 static void
-tabbar_item_selected(gui_data_s *gd, Elm_Object_Item *audio_it)
+tabbar_item_selected(interface_sys *gd, Elm_Object_Item *audio_it)
 {
     int error;
     char *audio_path;
@@ -270,13 +270,13 @@ tabbar_item_selected(gui_data_s *gd, Elm_Object_Item *audio_it)
         current_audio_view = create_audio_list(audio_path, gd);
     }
 
-    elm_object_content_set(gd->nf_toolbar, current_audio_view );
+    elm_object_content_set(get_toolbar(gd), current_audio_view );
 }
 
 static void
 tabbar_item_cb(void *data, Evas_Object *obj, void *event_info)
 {
-    gui_data_s *gd = data;
+    interface_sys *gd = data;
     Elm_Object_Item *audio_it = event_info;
 
     /* Call the function that creates the views */
@@ -284,10 +284,10 @@ tabbar_item_cb(void *data, Evas_Object *obj, void *event_info)
 }
 
 static Evas_Object*
-create_toolbar(gui_data_s *gd)
+create_toolbar(interface_sys *gd, Evas_Object *nf_toolbar)
 {
     /* Create and set the toolbar */
-    Evas_Object *tabbar = elm_toolbar_add(gd->nf_toolbar);
+    Evas_Object *tabbar = elm_toolbar_add(nf_toolbar);
     elm_object_style_set(tabbar, "tabbar");
 
     /* Set the toolbar shrink mode to NONE */
@@ -310,29 +310,30 @@ create_toolbar(gui_data_s *gd)
 }
 
 Evas_Object *
-create_audio_view(gui_data_s *gd, Evas_Object *parent)
+create_audio_view(interface_sys *gd, Evas_Object *parent)
 {
     Elm_Object_Item *nf_it, *tabbar_it;
     Evas_Object *tabbar;
+    Evas_Object *nf_toolbar;
 
     /* Toolbar Naviframe */
-    gd->nf_toolbar = elm_naviframe_add(parent);
-    evas_object_size_hint_weight_set(gd->nf_toolbar, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-    evas_object_size_hint_align_set(gd->nf_toolbar, EVAS_HINT_FILL, EVAS_HINT_FILL);
+    nf_toolbar = elm_naviframe_add(parent);
+    evas_object_size_hint_weight_set(nf_toolbar, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+    evas_object_size_hint_align_set(nf_toolbar, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
     /* Toolbar Naviframe Settings */
-    elm_object_part_content_set(parent, "elm.swallow.content", gd->nf_toolbar);
-    evas_object_show(gd->nf_toolbar);
-    nf_it = elm_naviframe_item_push(gd->nf_toolbar, NULL, NULL, NULL, NULL, "tabbar/icon/notitle");
-    elm_naviframe_item_push(parent, _("<b>Audio</b>"), NULL, NULL, gd->nf_toolbar, "basic");
+    elm_object_part_content_set(parent, "elm.swallow.content", nf_toolbar);
+    evas_object_show(nf_toolbar);
+    nf_it = elm_naviframe_item_push(nf_toolbar, NULL, NULL, NULL, NULL, "tabbar/icon/notitle");
+    elm_naviframe_item_push(parent, _("<b>Audio</b>"), NULL, NULL, nf_toolbar, "basic");
 
     /* Create the toolbar in the view */
-    tabbar = create_toolbar(gd);
+    tabbar = create_toolbar(gd, nf_toolbar);
     elm_object_item_part_content_set(nf_it, "tabbar", tabbar);
 
     /* Set the first item in the toolbar */
     tabbar_it = elm_toolbar_first_item_get(tabbar);
     elm_toolbar_item_selected_set(tabbar_it, EINA_TRUE);
 
-    return gd->nf_toolbar;
+    return nf_toolbar;
 }
