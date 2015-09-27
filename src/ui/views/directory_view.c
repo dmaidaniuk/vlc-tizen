@@ -83,14 +83,14 @@ create_directory_view(char* path, Evas_Object *parent)
     buff = realpath(path, NULL);
     path = buff;
 
-    /* Open the path repository then put it as a dirent variable */
-    rep = opendir(path);
-
     if (path == NULL)
     {
         dlog_print(DLOG_INFO, LOG_TAG, "No path");
         return NULL ;
     }
+
+    /* Open the path repository then put it as a dirent variable */
+    rep = opendir(path);
 
     if  (rep == NULL)
     {
