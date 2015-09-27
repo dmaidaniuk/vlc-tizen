@@ -29,7 +29,7 @@
 
 #include "interface.h"
 
-Evas_Object *
-create_panel_genlist(interface_sys *);
+Evas_Object*
+create_panel(interface_sys *intf, Evas_Object *layout);
 
 #endif /* PANEL_GENLIST_H_ */

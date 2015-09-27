@@ -140,8 +140,8 @@ gl_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
     }
 }
 
-Evas_Object *
-create_panel_genlist(interface_sys *intf)
+static Evas_Object *
+create_panel_genlist(interface_sys *intf, Evas_Object *sidebar)
 {
     Evas_Object *genlist;
     Elm_Object_Item *it;
@@ -152,7 +152,7 @@ create_panel_genlist(interface_sys *intf)
     itc->func.text_get = gl_text_get_cb;
     itc->func.content_get = gl_content_get_cb;
 
-    genlist = elm_genlist_add(get_sidebar(intf));
+    genlist = elm_genlist_add(sidebar);
 
     /* Set the genlist scoller mode */
     elm_scroller_single_direction_set(genlist, ELM_SCROLLER_SINGLE_DIRECTION_HARD);
@@ -182,4 +182,39 @@ create_panel_genlist(interface_sys *intf)
 
     elm_genlist_item_class_free(itc);
     return genlist;
+}
+
+static void
+list_clicked_cb(void *data, Evas_Object *obj, void *event_info)
+{
+    Evas_Object *sidebar = data;
+    /* Disable the panel when one of the item list is selected */
+    if (!elm_object_disabled_get(sidebar)) elm_panel_toggle(sidebar);
+}
+
+Evas_Object*
+create_panel(interface_sys *intf, Evas_Object *layout)
+{
+    Evas_Object *sidebar_list;
+    Evas_Object *sidebar;
+
+    /* Create then set the panel */
+    sidebar = elm_panel_add(layout);
+    elm_panel_scrollable_set(sidebar, EINA_TRUE);
+    elm_panel_hidden_set(sidebar, EINA_TRUE);
+    elm_panel_orient_set(sidebar, ELM_PANEL_ORIENT_LEFT);
+
+    /* Add the panel genlist in the panel */
+    sidebar_list = create_panel_genlist(intf, sidebar);
+    evas_object_show(sidebar_list);
+    evas_object_size_hint_weight_set(sidebar_list, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+    evas_object_size_hint_align_set(sidebar_list, EVAS_HINT_FILL, EVAS_HINT_FILL);
+
+    /* */
+    evas_object_smart_callback_add(sidebar_list, "selected", list_clicked_cb, sidebar);
+
+    /* */
+    elm_object_content_set(sidebar, sidebar_list);
+
+    return sidebar;
 }

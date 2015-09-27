@@ -103,13 +103,7 @@ win_back_cb(void *data, Evas_Object *obj, void *event_info)
     }
 }
 
-static void
-list_clicked_cb(void *data, Evas_Object *obj, void *event_info)
-{
-    interface_sys *intf = data;
-    /* Disable the panel when one of the item list is selected */
-    if (!elm_object_disabled_get(intf->intf_p->sidebar)) elm_panel_toggle(intf->intf_p->sidebar);
-}
+
 
 static Evas_Object *
 create_button(Evas_Object *parent, char *style, char *text)
@@ -219,32 +213,6 @@ create_view(interface_sys *intf, int sidebar_idx)
 }
 
 static Evas_Object*
-create_panel(Evas_Object *layout, interface_sys *intf)
-{
-    Evas_Object *sidebar_list;
-
-    /* Create then set the panel */
-    intf->intf_p->sidebar = elm_panel_add(layout);
-    elm_panel_scrollable_set(intf->intf_p->sidebar, EINA_TRUE);
-    elm_panel_hidden_set(intf->intf_p->sidebar, EINA_TRUE);
-    elm_panel_orient_set(intf->intf_p->sidebar, ELM_PANEL_ORIENT_LEFT);
-
-    /* Add the panel genlist in the panel */
-    sidebar_list = create_panel_genlist(intf);
-    evas_object_show(sidebar_list);
-    evas_object_size_hint_weight_set(sidebar_list, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-    evas_object_size_hint_align_set(sidebar_list, EVAS_HINT_FILL, EVAS_HINT_FILL);
-
-    /* */
-    evas_object_smart_callback_add(sidebar_list, "selected", list_clicked_cb, intf);
-
-    /* */
-    elm_object_content_set(intf->intf_p->sidebar, sidebar_list);
-
-    return intf->intf_p->sidebar;
-}
-
-static Evas_Object*
 create_main_content(interface_sys *intf, Evas_Object *parent)
 {
     /* Create a content box to display the content and the mini player */
@@ -281,7 +249,7 @@ create_main_view(interface_sys *intf)
     layout = create_base_layout(intf->intf_p->conform);
 
     /* Create the panel and put it in the layout */
-    intf->intf_p->sidebar = create_panel(layout, intf);
+    intf->intf_p->sidebar = create_panel(intf, layout);
     elm_object_part_content_set(layout, "elm.swallow.left", intf->intf_p->sidebar);
 
     /* Create the content box and put it in the layout */
