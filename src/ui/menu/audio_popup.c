@@ -32,6 +32,15 @@
 
 #include <Elementary.h>
 
+typedef struct audio_popup_data
+{
+    int index;
+    Evas_Object *box, *genlist;
+    Elm_Object_Item *item;
+    mini_player_data_s *mpd;
+
+} audio_popup_data_s;
+
 /* Set the panel list labels */
 const char *audio_popup_list[] = {
         "Jump to Time", "PLayback Speed", "Sleep in"
@@ -98,7 +107,6 @@ gl_content_get_cb(void *data, Evas_Object *obj, const char *part)
 
     return content;
 }
-
 
 static void
 popup_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)

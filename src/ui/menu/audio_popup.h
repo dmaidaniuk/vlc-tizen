@@ -30,17 +30,6 @@
 #include "ui/interface.h"
 #include "ui/audio_player.h"
 
-#include <Elementary.h>
-
-typedef struct audio_popup_data
-{
-    int index;
-    Evas_Object *box, *genlist;
-    Elm_Object_Item *item;
-    mini_player_data_s *mpd;
-
-} audio_popup_data_s;
-
 Evas_Object *
 create_audio_popup(mini_player_data_s *mpd);
 
