@@ -73,8 +73,8 @@ app_resume(void *data)
 static void
 app_terminate(void *data)
 {
-    interface_sys *gd = data;
-    free(gd->mini_player);
+    application_sys *app = data;
+    free(app);
     emotion_shutdown();
 }
 
