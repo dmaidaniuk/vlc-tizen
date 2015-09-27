@@ -29,18 +29,6 @@
 
 #include "ui/audio_player.h"
 
-#include <Elementary.h>
-
-typedef struct audio_list_data {
-
-    char *file_path;
-    const char *str;
-    Evas_Object *parent;
-    Elm_Object_Item *item;
-    interface_sys *gd;
-
-} audio_list_data_s;
-
 Evas_Object *
 create_audio_view(interface_sys *gd, Evas_Object *parent);
 

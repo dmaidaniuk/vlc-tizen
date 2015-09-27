@@ -34,6 +34,17 @@
 #include "ui/views/audio_view.h"
 #include "ui/audio_player.h"
 
+
+typedef struct audio_list_data {
+
+    char *file_path;
+    const char *str;
+    Evas_Object *parent;
+    Elm_Object_Item *item;
+    interface_sys *gd;
+
+} audio_list_data_s;
+
 static void
 audio_gl_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
