@@ -27,7 +27,7 @@
 #ifndef MAIN_POPUP_LIST_H_
 #define MAIN_POPUP_LIST_H_
 
-#include "interface.h"
+#include "ui/interface.h"
 
 Evas_Object *
 create_popup(Evas_Object *parent, interface_sys *intf);

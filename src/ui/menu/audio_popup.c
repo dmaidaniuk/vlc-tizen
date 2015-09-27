@@ -25,9 +25,10 @@
  *****************************************************************************/
 
 #include "common.h"
-#include "interface.h"
+
 #include "audio_popup.h"
-#include "audio_player.h"
+#include "ui/interface.h"
+#include "ui/audio_player.h"
 
 #include <Elementary.h>
 

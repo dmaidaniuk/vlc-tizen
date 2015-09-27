@@ -34,7 +34,7 @@
 #include "interface.h"
 #include "sidebar.h"
 #include "audio_player.h"
-#include "main_popup_list.h"
+#include "menu/main_popup_list.h"
 
 #include "views/audio_view.h"
 #include "views/video_view.h"
