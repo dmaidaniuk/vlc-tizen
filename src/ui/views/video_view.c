@@ -30,6 +30,16 @@
 #include "video_view.h"
 #include "video_player.h"
 
+#include <Elementary.h>
+
+typedef struct video_list_data {
+    Evas_Object *parent;
+    char *file_path;
+    const char *str;
+    Elm_Object_Item *item;
+
+} video_list_data_s;
+
 void
 video_gl_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
