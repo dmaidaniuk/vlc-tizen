@@ -194,7 +194,7 @@ create_view(gui_data_s *gd, int panel)
         view = create_audio_view(gd, content);
         break;
     case VIEW_FILES:
-        view = create_directory_view(gd->rmp, content);
+        view = create_directory_view(gd->media_path, content);
         break;
     case VIEW_SETTINGS:
         view = create_setting_view(content);

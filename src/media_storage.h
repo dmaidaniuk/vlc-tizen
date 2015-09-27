@@ -24,45 +24,10 @@
  * compatibility with the Store
  *****************************************************************************/
 
-#ifndef INTERFACE_H_
-#define INTERFACE_H_
+#ifndef MEDIA_LIBRARY_H_
+#define MEDIA_LIBRARY_H_
 
-#include "common.h"
+const char*
+fetching_media_path();
 
-struct mini_player_data;
-struct video_player_data;
-typedef struct gui_data {
-    Evas_Object *win;
-    Evas_Object *conform, *nf_toolbar;
-    Evas_Object *content;
-    Evas_Object *panel;
-    int panel_choice;
-    Evas_Object *panel_toggle_btn,*popup_toggle_btn;
-    Evas_Object *popup;
-    Evas_Object *current_view;
-    Evas_Object *content_box;
-    struct mini_player_data *mini_player;
-    struct video_player_data *video_player;
-
-    char *media_path;
-} gui_data_s;
-
-
-enum {
-    VIEW_AUTO = -1,
-    VIEW_VIDEO,
-    VIEW_AUDIO,
-    VIEW_FILES,
-    VIEW_SETTINGS,
-    VIEW_ABOUT,
-    VIEW_MAX,
-};
-
-void
-create_view(gui_data_s *gd, int panel);
-
-void
-create_base_gui(gui_data_s *gd);
-
-
-#endif /* INTERFACE_H_ */
+#endif /* MEDIA_LIBRARY_H_ */

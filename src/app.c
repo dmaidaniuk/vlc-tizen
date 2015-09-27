@@ -24,7 +24,7 @@
  * compatibility with the Store
  *****************************************************************************/
 
-#include "ui/interface.h"
+#include <common.h>
 
 #include <app.h>
 #include <storage.h>
@@ -33,40 +33,9 @@
 #include <Emotion.h>
 #include <Elementary.h>                 /* Elm_language_set */
 
-static int internal_storage_id;
-static bool storage_cb(int storage_id, storage_type_e type, storage_state_e state, const char *path, void *user_data)
-{
-    if (type == STORAGE_TYPE_INTERNAL)
-    {
-        internal_storage_id = storage_id;
-        dlog_print(DLOG_DEBUG, LOG_TAG, "Storage refreshed");
-        return false;
-    }
+#include "ui/interface.h"
 
-    return true;
-}
-
-void
-fetching_media_path(gui_data_s *gd)
-{
-    int error;
-    char *buff;
-    /* Connect to the device storage */
-    error = storage_foreach_device_supported(storage_cb, NULL);
-    error = storage_get_directory(internal_storage_id, STORAGE_DIRECTORY_VIDEOS, &gd->media_path);
-    gd->rmp = gd->media_path ;
-    /* Concatenate the media path with .. to acces the general media directory */
-    asprintf(&gd->rmp,"%s/%s", gd->rmp, "..");
-    /* Then do a realpath to get a "clean" path */
-    buff = realpath(gd->rmp, NULL);
-    gd->rmp = buff;
-
-    if (error == STORAGE_ERROR_NONE)
-    {
-        dlog_print(DLOG_DEBUG, LOG_TAG, "Connected to storage");
-
-    }
-}
+#include "media_storage.h"
 
 static bool
 app_create(void *data)
@@ -74,7 +43,9 @@ app_create(void *data)
     gui_data_s *gd = data;
 
     /* Fetching the media path and keep it in memory as soon as the app is create */
-    fetching_media_path(gd);
+    gd->media_path = fetching_media_path();
+    dlog_print(DLOG_ERROR, LOG_TAG, "Media Path %s", gd->media_path);
+
     /* */
     create_base_gui(gd);
 

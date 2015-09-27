@@ -24,45 +24,41 @@
  * compatibility with the Store
  *****************************************************************************/
 
-#ifndef INTERFACE_H_
-#define INTERFACE_H_
-
 #include "common.h"
 
-struct mini_player_data;
-struct video_player_data;
-typedef struct gui_data {
-    Evas_Object *win;
-    Evas_Object *conform, *nf_toolbar;
-    Evas_Object *content;
-    Evas_Object *panel;
-    int panel_choice;
-    Evas_Object *panel_toggle_btn,*popup_toggle_btn;
-    Evas_Object *popup;
-    Evas_Object *current_view;
-    Evas_Object *content_box;
-    struct mini_player_data *mini_player;
-    struct video_player_data *video_player;
+#include <storage.h>
 
-    char *media_path;
-} gui_data_s;
+static int internal_storage_id;
+static bool storage_cb(int storage_id, storage_type_e type, storage_state_e state, const char *path, void *user_data)
+{
+    if (type == STORAGE_TYPE_INTERNAL)
+    {
+        internal_storage_id = storage_id;
+        dlog_print(DLOG_DEBUG, LOG_TAG, "Storage refreshed");
+        return false;
+    }
 
+    return true;
+}
 
-enum {
-    VIEW_AUTO = -1,
-    VIEW_VIDEO,
-    VIEW_AUDIO,
-    VIEW_FILES,
-    VIEW_SETTINGS,
-    VIEW_ABOUT,
-    VIEW_MAX,
-};
+const char*
+fetching_media_path()
+{
+    int error;
 
-void
-create_view(gui_data_s *gd, int panel);
+    char *device_storage_path, *directory;
 
-void
-create_base_gui(gui_data_s *gd);
+    /* Connect to the device storage */
+    error = storage_foreach_device_supported(storage_cb, NULL);
+    error = storage_get_directory(internal_storage_id, STORAGE_DIRECTORY_VIDEOS, &directory);
 
+    if (error != STORAGE_ERROR_NONE)
+    {
+        dlog_print(DLOG_DEBUG, LOG_TAG, "Failed storage");
+    }
 
-#endif /* INTERFACE_H_ */
+    /* Concatenate the media path with .. to access the general media directory */
+    asprintf(&device_storage_path,"%s/%s", directory, "..");
+
+    return device_storage_path;
+}

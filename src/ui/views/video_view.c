@@ -164,7 +164,6 @@ gl_contracted_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
 Evas_Object*
 create_video_view(char* path, Evas_Object *parent)
 {
-    char *buff;
     video_list_data_s *vld = malloc(sizeof(*vld));
     const char *str = NULL;
     DIR* rep = NULL;
@@ -193,17 +192,13 @@ create_video_view(char* path, Evas_Object *parent)
     evas_object_smart_callback_add(genlist, "longpressed", gl_longpressed_cb, NULL);
     evas_object_smart_callback_add(genlist, "contracted", gl_contracted_cb, NULL);
 
-    /* Make a realpath to use a clean path in the function */
-    buff = realpath(path, NULL);
-    path = buff;
-
     /* Open the path repository then put it as a dirent variable */
     rep = opendir(path);
 
     if (path == NULL)
     {
         dlog_print(DLOG_INFO, LOG_TAG, "No path");
-        return NULL ;
+        return NULL;
     }
 
     if  (rep == NULL)
