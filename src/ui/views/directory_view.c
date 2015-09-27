@@ -30,6 +30,11 @@
 
 #include "directory_view.h"
 
+typedef struct directory_data {
+    Evas_Object *parent;
+    char *file_path;
+} directory_data_s;
+
 void
 list_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
