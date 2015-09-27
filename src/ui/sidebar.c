@@ -25,7 +25,7 @@
  *****************************************************************************/
 
 #include "common.h"
-#include "navigation_menu.h"
+#include "sidebar.h"
 #include "interface.h"
 #include "audio_player.h"
 

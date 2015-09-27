@@ -33,7 +33,7 @@
 #include <system_settings.h>
 
 #include "interface.h"
-#include "navigation_menu.h"
+#include "sidebar.h"
 #include "audio_player.h"
 #include "main_popup_list.h"
 
