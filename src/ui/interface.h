@@ -66,7 +66,7 @@ typedef enum view_e {
 } view_e;
 
 void
-create_view(interface_sys *gd, view_e panel);
+create_view(interface_sys *, view_e);
 
 void
 show_previous_view(interface_sys *);

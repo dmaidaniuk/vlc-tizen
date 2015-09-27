@@ -122,7 +122,7 @@ popup_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
     switch(gpd->index){
 
     case ACTION_REFRESH:
-        //evas_object_del(gpd->gd->intf->popup);
+        //evas_object_del(gpd->intf->popup);
 
         //TODO : Add a refresh function
 
@@ -130,7 +130,7 @@ popup_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
         break;
 
     case ACTION_EQUALIZER:
-        //evas_object_del(gpd->gd->intf->popup);
+        //evas_object_del(gpd->intf->popup);
 
         //TODO : Add an equalizer function of the current list
 
@@ -205,7 +205,7 @@ create_popup_genlist(Evas_Object* popup)
 }
 
 Evas_Object *
-create_popup(Evas_Object *parent, interface_sys *gd)
+create_popup(Evas_Object *parent, interface_sys *intf)
 {
     Evas_Object *popup_list;
     Evas_Object *popup = elm_popup_add(parent);
@@ -221,7 +221,8 @@ create_popup(Evas_Object *parent, interface_sys *gd)
     evas_object_show(popup_list);
 
     /* */
-    //evas_object_smart_callback_add(gd->intf_p->popup, "clicked", cancel_cb, gd);
+    //evas_object_smart_callback_add(popup, "clicked", cancel_cb, intf); // FIXME
+
     /* Callback for the back key */
     eext_object_event_callback_add(popup, EEXT_CALLBACK_LAST, eext_popup_back_cb, NULL);
 

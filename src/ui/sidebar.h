@@ -30,6 +30,6 @@
 #include "interface.h"
 
 Evas_Object *
-create_panel_genlist(interface_sys *gd);
+create_panel_genlist(interface_sys *);
 
 #endif /* PANEL_GENLIST_H_ */

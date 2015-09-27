@@ -41,7 +41,7 @@ typedef struct audio_list_data {
     const char *str;
     Evas_Object *parent;
     Elm_Object_Item *item;
-    interface_sys *gd;
+    interface_sys *intf;
 
 } audio_list_data_s;
 
@@ -55,14 +55,14 @@ audio_gl_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
     if (S_ISREG(sb.st_mode))
     {
         /* Launch the media player */
-        create_base_player(ald->gd->mini_player, ald->file_path);
+        create_base_player(ald->intf->mini_player, ald->file_path);
         dlog_print(DLOG_INFO, LOG_TAG, "VLC Player launch");
     }
 
     else if (S_ISDIR(sb.st_mode))
     {
         /* Continue to browse media folder */
-        create_audio_list(ald->file_path, ald->gd);
+        create_audio_list(ald->file_path, ald->intf);
     }
     else
     {
@@ -149,17 +149,17 @@ gl_content_get_cb(void *data, Evas_Object *obj, const char *part)
 }
 
 Evas_Object*
-create_audio_list(char* path, interface_sys *gd)
+create_audio_list(char* path, interface_sys *intf)
 {
     char *buff;
     audio_list_data_s *ald = malloc(sizeof(*ald));
-    ald->gd = gd;
+    ald->intf = intf;
     const char *str = NULL;
     DIR* rep = NULL;
     struct dirent* current_folder = NULL;
 
     /* Set then create the Genlist object */
-    Evas_Object *parent = get_toolbar(gd);
+    Evas_Object *parent = get_toolbar(intf);
     Evas_Object *genlist;
     Elm_Object_Item *it;
     Elm_Genlist_Item_Class *itc = elm_genlist_item_class_new();
@@ -202,7 +202,7 @@ create_audio_list(char* path, interface_sys *gd)
     while ((current_folder = readdir(rep)) != NULL)
     {
         audio_list_data_s *ald = malloc(sizeof(*ald));
-        ald->gd = gd;
+        ald->intf = intf;
 
         /* Put the genlist parent in the audio_list_data struct for callbacks */
         ald->parent = parent;
@@ -253,7 +253,7 @@ static bool audio_storage_cb(int storage_id, storage_type_e type, storage_state_
 }
 
 static void
-tabbar_item_selected(interface_sys *gd, Elm_Object_Item *audio_it)
+tabbar_item_selected(interface_sys *intf, Elm_Object_Item *audio_it)
 {
     int error;
     char *audio_path;
@@ -269,33 +269,33 @@ tabbar_item_selected(interface_sys *gd, Elm_Object_Item *audio_it)
 
     /* Create the view depending on the item selected in the toolbar */
     if (str && !strcmp(str, "Songs")) {
-        current_audio_view = create_audio_list(audio_path, gd);
+        current_audio_view = create_audio_list(audio_path, intf);
     }
     else if (str && !strcmp(str, "Artists")) {
-        current_audio_view = create_audio_list(audio_path, gd);
+        current_audio_view = create_audio_list(audio_path, intf);
     }
     else if (str && !strcmp(str, "Albums")) {
-        current_audio_view = create_audio_list(audio_path, gd);
+        current_audio_view = create_audio_list(audio_path, intf);
     }
     else     {
-        current_audio_view = create_audio_list(audio_path, gd);
+        current_audio_view = create_audio_list(audio_path, intf);
     }
 
-    elm_object_content_set(get_toolbar(gd), current_audio_view );
+    elm_object_content_set(get_toolbar(intf), current_audio_view );
 }
 
 static void
 tabbar_item_cb(void *data, Evas_Object *obj, void *event_info)
 {
-    interface_sys *gd = data;
+    interface_sys *intf = data;
     Elm_Object_Item *audio_it = event_info;
 
     /* Call the function that creates the views */
-    tabbar_item_selected(gd, audio_it);
+    tabbar_item_selected(intf, audio_it);
 }
 
 static Evas_Object*
-create_toolbar(interface_sys *gd, Evas_Object *nf_toolbar)
+create_toolbar(interface_sys *intf, Evas_Object *nf_toolbar)
 {
     /* Create and set the toolbar */
     Evas_Object *tabbar = elm_toolbar_add(nf_toolbar);
@@ -312,16 +312,16 @@ create_toolbar(interface_sys *gd, Evas_Object *nf_toolbar)
     evas_object_size_hint_max_set(tabbar, 450, 400);
 
     /* Append new entry in the toolbar with the Icon & Label wanted */
-    elm_toolbar_item_append(tabbar, NULL, "Songs", tabbar_item_cb, gd);
-    elm_toolbar_item_append(tabbar, NULL, "Artists", tabbar_item_cb, gd);
-    elm_toolbar_item_append(tabbar, NULL, "Albums", tabbar_item_cb, gd);
-    elm_toolbar_item_append(tabbar, NULL, "Playlist", tabbar_item_cb, gd);
+    elm_toolbar_item_append(tabbar, NULL, "Songs", tabbar_item_cb, intf);
+    elm_toolbar_item_append(tabbar, NULL, "Artists", tabbar_item_cb, intf);
+    elm_toolbar_item_append(tabbar, NULL, "Albums", tabbar_item_cb, intf);
+    elm_toolbar_item_append(tabbar, NULL, "Playlist", tabbar_item_cb, intf);
 
     return tabbar;
 }
 
 Evas_Object *
-create_audio_view(interface_sys *gd, Evas_Object *parent)
+create_audio_view(interface_sys *intf, Evas_Object *parent)
 {
     Elm_Object_Item *nf_it, *tabbar_it;
     Evas_Object *tabbar;
@@ -339,7 +339,7 @@ create_audio_view(interface_sys *gd, Evas_Object *parent)
     elm_naviframe_item_push(parent, _("<b>Audio</b>"), NULL, NULL, nf_toolbar, "basic");
 
     /* Create the toolbar in the view */
-    tabbar = create_toolbar(gd, nf_toolbar);
+    tabbar = create_toolbar(intf, nf_toolbar);
     elm_object_item_part_content_set(nf_it, "tabbar", tabbar);
 
     /* Set the first item in the toolbar */
