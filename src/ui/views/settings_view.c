@@ -30,6 +30,23 @@
 #include "ui/interface.h"
 #include "popup_genlist.h"
 
+typedef struct setting_data
+{
+    int index;
+    Elm_Object_Item *item;
+    Evas_Object *parent;
+    Evas_Object *genlist_test;
+
+} setting_data_s;
+
+typedef struct settings_item
+{
+    const char* title;
+    const char* icon;
+
+} settings_item_s;
+
+
 settings_item_s settings_menu[] =
 {
         {"General", ""},
