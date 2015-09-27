@@ -57,7 +57,7 @@ create_icon(Evas_Object *parent, int idx)
     char buf[PATH_MAX];
     Evas_Object *img = elm_image_add(parent);
 
-    /* Create then set panel genlist used icones */
+    /* Create then set sidebar genlist used icones */
     snprintf(buf, sizeof(buf), "%s/ic_menu_%s.png", ICON_DIR, menu_entries[idx].icon_name);
     elm_image_file_set(img, buf, NULL);
 
@@ -110,7 +110,7 @@ void
 gl_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
     menu_cb_data_s *cd = data;
-    /* Generate the view depending on which panel genlist item is selected */
+    /* Generate the view depending on which sidebar genlist item is selected */
 
     update_mini_player(cd->intf);
 
@@ -161,7 +161,7 @@ create_panel_genlist(interface_sys *intf, Evas_Object *sidebar)
     /* Enable the genlist COMPRESS mode */
     elm_genlist_mode_set(genlist, ELM_LIST_COMPRESS);
 
-    /* Stop when the panel list names is all used */
+    /* Stop when the sidebar list names is all used */
     for (int index = 0; index < VIEW_MAX; index++) {
 
         menu_cb_data_s *cd = malloc(sizeof(*cd));
@@ -188,23 +188,23 @@ static void
 list_clicked_cb(void *data, Evas_Object *obj, void *event_info)
 {
     Evas_Object *sidebar = data;
-    /* Disable the panel when one of the item list is selected */
+    /* Disable the sidebar when one of the item list is selected */
     if (!elm_object_disabled_get(sidebar)) elm_panel_toggle(sidebar);
 }
 
 Evas_Object*
-create_panel(interface_sys *intf, Evas_Object *layout)
+create_sidebar(interface_sys *intf, Evas_Object *layout)
 {
     Evas_Object *sidebar_list;
     Evas_Object *sidebar;
 
-    /* Create then set the panel */
+    /* Create then set the sidebar */
     sidebar = elm_panel_add(layout);
     elm_panel_scrollable_set(sidebar, EINA_TRUE);
     elm_panel_hidden_set(sidebar, EINA_TRUE);
     elm_panel_orient_set(sidebar, ELM_PANEL_ORIENT_LEFT);
 
-    /* Add the panel genlist in the panel */
+    /* Add the sidebar genlist in the sidebar */
     sidebar_list = create_panel_genlist(intf, sidebar);
     evas_object_show(sidebar_list);
     evas_object_size_hint_weight_set(sidebar_list, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);

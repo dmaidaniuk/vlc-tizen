@@ -249,7 +249,7 @@ create_main_view(interface_sys *intf)
     layout = create_base_layout(intf->intf_p->conform);
 
     /* Create the panel and put it in the layout */
-    intf->intf_p->sidebar = create_panel(intf, layout);
+    intf->intf_p->sidebar = create_sidebar(intf, layout);
     elm_object_part_content_set(layout, "elm.swallow.left", intf->intf_p->sidebar);
 
     /* Create the content box and put it in the layout */
