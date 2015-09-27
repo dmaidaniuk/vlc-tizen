@@ -25,7 +25,6 @@
  *****************************************************************************/
 
 #include "common.h"
-#include <Emotion.h>
 
 #include <app.h>
 #include <efl_extension.h>
