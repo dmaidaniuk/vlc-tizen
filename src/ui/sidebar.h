@@ -26,17 +26,8 @@
 
 #ifndef PANEL_GENLIST_H_
 #define PANEL_GENLIST_H_
+
 #include "interface.h"
-
-#include <Elementary.h>
-
-typedef struct menu_cb_data
-{
-    int index;
-    Elm_Object_Item *item;
-    interface_sys *gd;
-
-} menu_cb_data_s;
 
 Evas_Object *
 create_panel_genlist(interface_sys *gd);

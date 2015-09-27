@@ -31,6 +31,14 @@
 
 #include <Elementary.h>
 
+typedef struct menu_cb_data
+{
+    int index;
+    Elm_Object_Item *item;
+    interface_sys *gd;
+
+} menu_cb_data_s;
+
 /* Set the panel list labels */
 const char *menu_list[] = {
         "Video", "Audio", "Directory", "Settings", "About"
