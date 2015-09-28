@@ -70,7 +70,7 @@ free_list_item_data(void *data, Evas_Object *obj, void *event_info)
 }
 
 Evas_Object*
-create_directory_view(char* path, Evas_Object *parent)
+create_directory_view(const char* path, Evas_Object *parent)
 {
     char *buff;
     directory_data_s *dd = malloc(sizeof(*dd));
@@ -81,22 +81,22 @@ create_directory_view(char* path, Evas_Object *parent)
 
     /* Make a realpath to use a clean path in the function */
     buff = realpath(path, NULL);
-    path = buff;
 
-    if (path == NULL)
+    if (buff == NULL)
     {
         dlog_print(DLOG_INFO, LOG_TAG, "No path");
         return NULL ;
     }
 
     /* Open the path repository then put it as a dirent variable */
-    rep = opendir(path);
+    rep = opendir(buff);
 
     if  (rep == NULL)
     {
         char *error;
         error = strerror(errno);
         dlog_print(DLOG_INFO, LOG_TAG, "Empty repository or Error due to %s", error);
+        free(buff);
 
         return NULL ;
     }
@@ -104,7 +104,7 @@ create_directory_view(char* path, Evas_Object *parent)
     /* Add a first list append with ".." to go back in directory */
     file_list = elm_list_add(parent);
     dd->parent = parent;
-    asprintf(&dd->file_path, "%s/..", path);
+    asprintf(&dd->file_path, "%s/..", buff);
     Elm_Object_Item *item = elm_list_item_append(file_list, dd->file_path, NULL, NULL, list_selected_cb, dd);
     elm_object_item_del_cb_set(item, free_list_item_data);
 
@@ -115,7 +115,7 @@ create_directory_view(char* path, Evas_Object *parent)
         dd->parent = parent;
 
         /* Concatenate the file path and the selected folder or file name */
-        asprintf(&dd->file_path, "%s/%s", path, current_folder->d_name);
+        asprintf(&dd->file_path, "%s/%s", buff, current_folder->d_name);
         /* Put the folder or file name as a usable string for list item label */
         str = current_folder->d_name;
 
@@ -134,6 +134,7 @@ create_directory_view(char* path, Evas_Object *parent)
     /* */
     evas_object_show(file_list);
     elm_object_content_set(parent, file_list);
+    free(buff);
 
     return file_list;
 }
