@@ -24,8 +24,13 @@
  * compatibility with the Store
  *****************************************************************************/
 
+#ifndef APPLICATION_H_
+# define APPLICATION_H_
+
 typedef struct application_sys {
     const char *media_path;
     /* settings */
     /* media_library */
 } application_sys;
+
+#endif
