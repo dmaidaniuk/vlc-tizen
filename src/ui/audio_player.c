@@ -42,7 +42,7 @@ struct mini_player {
     Evas_Object *emotion;
     Evas_Object *parent, *table, *fs_table, *popup;
     Evas_Object *mini_player_box, *box, *fullscreen_box;
-    Evas_Object *progress_bar, *fs_progress_bar;
+    Evas_Object *slider, *fs_slider;
     Evas_Object *cover, *fs_cover, *fs_view, *fs_time, *fs_total_time;
     Evas_Object *title, *sub_title, *fs_title, *fs_sub_title;
     Evas_Object *play_pause_img;
@@ -99,13 +99,13 @@ evas_change_time(Evas_Object *obj, double time)
 
 
 static void
-player_update_progress_bars(mini_player *mpd)
+player_update_sliders(mini_player *mpd)
 {
     double progress = (mpd->pos > 0.0 && mpd->len > 0.0) ? mpd->pos / mpd->len : 0.0;
-    if (mpd->progress_bar)
-        elm_progressbar_value_set (mpd->progress_bar, progress);
-    if (mpd->fs_progress_bar)
-        elm_progressbar_value_set (mpd->fs_progress_bar, progress);
+    if (mpd->slider)
+        elm_slider_value_set (mpd->slider, progress);
+    if (mpd->fs_slider)
+        elm_slider_value_set (mpd->fs_slider, progress);
 }
 
 static Evas_Object*
@@ -627,12 +627,59 @@ fs_shuffle_player_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
     }
 }
 
+
+static void
+slider_delay_changed_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+    mini_player *mpd = data;
+
+    if (mpd->len <= 0)
+        return;
+    LOGE("slider_delay_changed_cb: %f - %f - %f", mpd->len, elm_slider_value_get(obj), (elm_slider_value_get(obj) * mpd->len));
+
+    emotion_object_position_set(mpd->emotion, elm_slider_value_get(obj) * mpd->len);
+}
+
+#if 0
+static void
+slider_changed_cb(void *data, Evas_Object *obj, void *event_info)
+{
+    mini_player *mpd = data;
+    double val = elm_slider_value_get(obj);
+}
+
+static void
+slider_drag_start_cb(void *data, Evas_Object *obj, void *event_info)
+{
+    mini_player *mpd = data;
+    double val = elm_slider_value_get(obj);
+}
+
+static void
+slider_drag_stop_cb(void *data, Evas_Object *obj, void *event_info)
+{
+    mini_player *mpd = data;
+    double val = elm_slider_value_get(obj);
+}
+#endif
+
+static void
+set_sliders_callbacks(mini_player *mpd, Evas_Object *slider)
+{
+    evas_object_smart_callback_add(slider, "delay,changed", slider_delay_changed_cb, mpd);
+#if 0
+    evas_object_smart_callback_add(slider, "changed", slider_changed_cb, mpd);
+    evas_object_smart_callback_add(slider, "slider,drag,start", slider_drag_start_cb, mpd);
+    evas_object_smart_callback_add(slider, "slider,drag,stop", slider_drag_stop_cb, mpd);
+#endif
+}
+
 static Evas_Object*
 add_item_table(mini_player *mpd, Evas_Object *parent)
 {
     Evas_Object *content_table;
     Evas_Object *title, *sub_title;
-    Evas_Object *progress_bar;
+    Evas_Object *slider;
 
     /* */
     content_table = elm_table_add(parent);
@@ -646,15 +693,16 @@ add_item_table(mini_player *mpd, Evas_Object *parent)
 
 
     /* Add then set the progress bar at the top of the table */
-    progress_bar = elm_progressbar_add(content_table);
-    elm_progressbar_horizontal_set(progress_bar, EINA_TRUE);
-    evas_object_size_hint_max_set(progress_bar, 449, 1);
-    evas_object_size_hint_align_set(progress_bar, EVAS_HINT_FILL, 0.0);
-    evas_object_size_hint_weight_set(progress_bar, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-    evas_object_show(progress_bar);
-    elm_table_pack(content_table, progress_bar, 0, 0, 4, 1);
-    mpd->progress_bar = progress_bar;
-    player_update_progress_bars(mpd);
+    slider = elm_slider_add(content_table);
+    elm_slider_horizontal_set(slider, EINA_TRUE);
+    evas_object_size_hint_max_set(slider, 449, 1);
+    evas_object_size_hint_align_set(slider, EVAS_HINT_FILL, 0.5);
+    evas_object_size_hint_weight_set(slider, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+    evas_object_show(slider);
+    elm_table_pack(content_table, slider, 0, 0, 4, 1);
+    mpd->slider = slider;
+    set_sliders_callbacks(mpd, mpd->slider);
+    player_update_sliders(mpd);
 
 
     /* Add then set the cover image */
@@ -724,7 +772,7 @@ fullscreen_player_collapse_cb(void *data, Evas_Object *obj EINA_UNUSED, void *ev
 static Evas_Object*
 add_fullscreen_item_table(mini_player *mpd, Evas_Object *parent)
 {
-    Evas_Object *fs_progress_bar, *fs_padding;
+    Evas_Object *fs_slider, *fs_padding;
 
     /* */
     mpd->fs_table = elm_table_add(parent);
@@ -828,19 +876,20 @@ add_fullscreen_item_table(mini_player *mpd, Evas_Object *parent)
     evas_object_show(fs_padding);
 
     /* */
-    fs_progress_bar = elm_progressbar_add(mpd->fs_table);
-    elm_progressbar_horizontal_set(fs_progress_bar, EINA_TRUE);
+    fs_slider = elm_slider_add(mpd->fs_table);
+    elm_slider_horizontal_set(fs_slider, EINA_TRUE);
 
-    evas_object_size_hint_min_set(fs_progress_bar, 400, 3);
-    evas_object_size_hint_max_set(fs_progress_bar, 400, 3);
-    evas_object_size_hint_align_set(fs_progress_bar, EVAS_HINT_FILL, 0.0);
-    evas_object_size_hint_weight_set(fs_progress_bar, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+    evas_object_size_hint_min_set(fs_slider, 400, 3);
+    evas_object_size_hint_max_set(fs_slider, 400, 3);
+    evas_object_size_hint_align_set(fs_slider, EVAS_HINT_FILL, 0.5);
+    evas_object_size_hint_weight_set(fs_slider, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 
-    evas_object_show(fs_progress_bar);
+    evas_object_show(fs_slider);
     /* Put the object in the chosen slot of the item table */
-    elm_table_pack(mpd->fs_table, fs_progress_bar, 0, 5, 6, 1);
-    mpd->fs_progress_bar = fs_progress_bar;
-    player_update_progress_bars(mpd);
+    elm_table_pack(mpd->fs_table, fs_slider, 0, 5, 6, 1);
+    mpd->fs_slider = fs_slider;
+    set_sliders_callbacks(mpd, mpd->fs_slider);
+    player_update_sliders(mpd);
 
     /* */
     if (mpd->play_state == FALSE)
@@ -978,7 +1027,7 @@ emotion_position_update_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event
     mpd->pos = emotion_object_position_get(mpd->emotion);
     if (mpd->fs_time)
         evas_change_time(mpd->fs_time, mpd->pos);
-    player_update_progress_bars(mpd);
+    player_update_sliders(mpd);
 }
 
 static void
@@ -988,7 +1037,7 @@ emotion_length_change_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event E
     mpd->len = emotion_object_play_length_get(mpd->emotion);
     if (mpd->fs_total_time)
         evas_change_time(mpd->fs_total_time, mpd->len);
-    player_update_progress_bars(mpd);
+    player_update_sliders(mpd);
 }
 
 static void
