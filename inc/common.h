@@ -38,7 +38,7 @@
 #ifdef  LOG_TAG
 # undef  LOG_TAG
 #endif
-#define LOG_TAG "vlc_ui"
+#define LOG_TAG "vlc"
 
 #if !defined(PACKAGE)
 # define PACKAGE "org.videolan.vlc"
