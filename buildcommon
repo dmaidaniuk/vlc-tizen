@@ -30,11 +30,11 @@ while [ $# -gt 0 ]; do
             exit 1
             ;;
         a|-a)
-            TIZEN_ABI=$2
+            export TIZEN_ABI=$2
             shift
             ;;
         release|--release)
-            RELEASE=1
+            export RELEASE=1
             ;;
     esac
     shift
@@ -49,7 +49,7 @@ if [ -z "$TIZEN_ABI" ]; then
     echo "Please pass the TIZEN_ABI to the correct architecture, using
                 ${SCRIPT} -a ARCH
     ARM:     armv7l
-    X86:     x86_64"
+    X86:     x86"
     exit 1
 fi
 
