@@ -26,6 +26,8 @@
 
 #include "common.h"
 
+#include "media_storage.h"
+
 #include <app.h>
 #include <efl_extension.h>
 #include <storage.h>
@@ -180,7 +182,7 @@ create_view(interface_sys *intf, int sidebar_idx)
     {
     case VIEW_VIDEO:
     case VIEW_AUTO:
-        view = create_video_view(intf->app->media_path, content);
+        view = create_video_view(fetch_media_path(MEDIA_DIRECTORY_VIDEOS), content);
         break;
     case VIEW_AUDIO:
         intf->intf_p->nf_toolbar = view = create_audio_view(intf, content);

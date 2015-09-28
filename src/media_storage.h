@@ -27,7 +27,18 @@
 #ifndef MEDIA_LIBRARY_H_
 #define MEDIA_LIBRARY_H_
 
+typedef enum
+{
+    MEDIA_DIRECTORY,
+    MEDIA_DIRECTORY_VIDEOS,           /* Videos directory */
+    MEDIA_DIRECTORY_CAMERA,           /* Camera directory */
+    MEDIA_DIRECTORY_MUSIC,            /* Music directory */
+    MEDIA_DIRECTORY_MAX
+} media_directory_e;
+
+const void
+init_storage_discovery();
 const char*
-fetching_media_path();
+fetch_media_path(media_directory_e);
 
 #endif /* MEDIA_LIBRARY_H_ */

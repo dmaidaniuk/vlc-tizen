@@ -42,8 +42,9 @@ app_create(void *data)
 {
     application_sys *app = data;
 
-    /* Fetching the media path and keep it in memory as soon as the app is create */
-    app->media_path = fetching_media_path();
+    /* Fetch the media path and keep it in memory as soon as the app is create */
+    init_storage_discovery();
+    app->media_path = fetch_media_path(MEDIA_DIRECTORY);
     LOGE("Media Path %s", app->media_path);
 
     /* */

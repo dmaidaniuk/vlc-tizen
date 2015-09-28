@@ -25,10 +25,12 @@
  *****************************************************************************/
 
 #include "common.h"
+#include "media_storage.h"
 
 #include <storage.h>
 
 static int internal_storage_id;
+
 static bool storage_cb(int storage_id, storage_type_e type, storage_state_e state, const char *path, void *user_data)
 {
     if (type == STORAGE_TYPE_INTERNAL)
@@ -41,24 +43,48 @@ static bool storage_cb(int storage_id, storage_type_e type, storage_state_e stat
     return true;
 }
 
-const char*
-fetching_media_path()
+const void
+init_storage_discovery()
 {
-    int error;
-
-    char *device_storage_path, *directory;
-
     /* Connect to the device storage */
-    error = storage_foreach_device_supported(storage_cb, NULL);
-    error = storage_get_directory(internal_storage_id, STORAGE_DIRECTORY_VIDEOS, &directory);
+    storage_foreach_device_supported(storage_cb, NULL);
+}
+
+const char*
+fetch_media_path(media_directory_e type)
+{
+    int error, storage_type;
+
+    if (type < 0 || type >= MEDIA_DIRECTORY_MAX)
+        type = MEDIA_DIRECTORY;
+    switch(type)
+    {
+    case MEDIA_DIRECTORY:
+    case MEDIA_DIRECTORY_VIDEOS:
+        storage_type = STORAGE_DIRECTORY_VIDEOS;
+        break;
+    case MEDIA_DIRECTORY_MUSIC:
+        storage_type = STORAGE_DIRECTORY_MUSIC;
+        break;
+    case MEDIA_DIRECTORY_CAMERA:
+        storage_type = STORAGE_DIRECTORY_CAMERA;
+        break;
+    }
+    char *directory;
+
+    error = storage_get_directory(internal_storage_id, storage_type, &directory);
 
     if (error != STORAGE_ERROR_NONE)
     {
         LOGD("Failed storage");
     }
 
-    /* Concatenate the media path with .. to access the general media directory */
-    asprintf(&device_storage_path,"%s/%s", directory, "..");
+    if (type == MEDIA_DIRECTORY) {
+        char *device_storage_path;
+        /* Concatenate the media path with .. to access the general media directory */
+        asprintf(&device_storage_path,"%s/%s", directory, "..");
+        return device_storage_path;
+    }
 
-    return device_storage_path;
+    return directory;
 }
