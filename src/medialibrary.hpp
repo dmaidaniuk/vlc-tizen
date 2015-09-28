@@ -2,7 +2,7 @@
  * Copyright © 2015 VideoLAN, VideoLabs SAS
  *****************************************************************************
  *
- * Authors: Jean-Baptiste Kempf <jb@videolan.org>
+ * Authors: Hugo Beauzée-Luyssen <hugo@beauzee.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,16 +24,23 @@
  * compatibility with the Store
  *****************************************************************************/
 
-#ifndef APPLICATION_H_
-# define APPLICATION_H_
+#ifndef MEDIALIBRARY_H_
+#define MEDIALIBRARY_H_
 
-#include "medialibrary.hpp"
-
-typedef struct application_sys {
-    const char *media_path;
-    /* settings */
-    /* media_library */
-    media_library* p_mediaLibrary;
-} application_sys;
-
+#ifdef __cplusplus
+extern "C"
+{
 #endif
+
+typedef struct application_sys application_sys;
+
+typedef struct media_library media_library;
+
+media_library* CreateMediaLibrary(application_sys* p_app);
+void DeleteMediaLibrary(application_sys* p_app);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* MEDIALIBRARY_H_ */
