@@ -38,9 +38,11 @@ struct mini_player {
     bool visible_state;
     bool play_state, save_state, shuffle_state, playlist_state, more_state, fs_state;
     int repeat_state;
+    double len, pos;
     Evas_Object *emotion;
     Evas_Object *parent, *table, *fs_table, *popup;
     Evas_Object *mini_player_box, *box, *fullscreen_box;
+    Evas_Object *progress_bar, *fs_progress_bar;
     Evas_Object *cover, *fs_cover, *fs_view, *fs_time, *fs_total_time;
     Evas_Object *title, *sub_title, *fs_title, *fs_sub_title;
     Evas_Object *play_pause_img;
@@ -49,7 +51,7 @@ struct mini_player {
     Evas_Object *fs_repeat_btn, *fs_shuffle_btn;
 };
 
-Evas_Object *
+static Evas_Object *
 create_audio_popup(mini_player *mpd);
 
 
@@ -71,6 +73,41 @@ const char *audio_popup_list[] = {
 const char *audio_popup_icon_names[] = {
         "jumpto", "speed", "sleep"
 };
+
+static void
+time_to_string(char *psz_time, double time)
+{
+    int sec = ((int)time % 60);
+    time /= 60;
+    int min = ((int)time % 60);
+    time /= 60;
+    int hours = (int) time;
+
+    dlog_print(DLOG_ERROR, LOG_TAG, "time_to_string2: %2.2d:%2.2d:%2.2d", hours, min, sec);
+    if (hours)
+        sprintf(psz_time, "%2.2d:%2.2d:%2.2d", hours, min, sec);
+    else
+        sprintf(psz_time, "%2.2d:%2.2d", min, sec);
+}
+
+static void
+evas_change_time(Evas_Object *obj, double time)
+{
+    char psz_time[strlen("00:00:00")];
+    time_to_string(psz_time, time);
+    elm_object_text_set(obj, psz_time);
+}
+
+
+static void
+player_update_progress_bars(mini_player *mpd)
+{
+    double progress = (mpd->pos > 0.0 && mpd->len > 0.0) ? mpd->pos / mpd->len : 0.0;
+    if (mpd->progress_bar)
+        elm_progressbar_value_set (mpd->progress_bar, progress);
+    if (mpd->fs_progress_bar)
+        elm_progressbar_value_set (mpd->fs_progress_bar, progress);
+}
 
 static Evas_Object*
 create_icon(Evas_Object *parent, int count)
@@ -182,7 +219,7 @@ popup_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
     }
 }
 
-Evas_Object *
+static Evas_Object *
 create_audio_popup(mini_player *mpd)
 {
 
@@ -249,6 +286,7 @@ create_audio_popup(mini_player *mpd)
 static void
 mini_player_reset_states(mini_player *mpd)
 {
+    mpd->len = mpd->pos = 0.0;
     mpd->fs_state = false;
     mpd->save_state = false;
     mpd->shuffle_state = false;
@@ -611,13 +649,13 @@ add_item_table(mini_player *mpd, Evas_Object *parent)
     /* Add then set the progress bar at the top of the table */
     progress_bar = elm_progressbar_add(content_table);
     elm_progressbar_horizontal_set(progress_bar, EINA_TRUE);
-    elm_progressbar_value_set (progress_bar, 0.6);
-    /* Scale the progress bar */
     evas_object_size_hint_max_set(progress_bar, 449, 1);
-    evas_object_size_hint_align_set(progress_bar, 0.0, EVAS_HINT_FILL);
-    /* */
+    evas_object_size_hint_align_set(progress_bar, EVAS_HINT_FILL, 0.0);
+    evas_object_size_hint_weight_set(progress_bar, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
     evas_object_show(progress_bar);
     elm_table_pack(content_table, progress_bar, 0, 0, 4, 1);
+    mpd->progress_bar = progress_bar;
+    player_update_progress_bars(mpd);
 
 
     /* Add then set the cover image */
@@ -698,7 +736,6 @@ add_fullscreen_item_table(mini_player *mpd, Evas_Object *parent)
     /* */
     evas_object_show(mpd->fs_table);
 
-
     /* */
     mpd->fs_title = elm_label_add(parent);
     elm_object_text_set(mpd->fs_title, "<b>Title</b>");
@@ -709,7 +746,6 @@ add_fullscreen_item_table(mini_player *mpd, Evas_Object *parent)
     /* Put the object in the chosen slot of the item table */
     elm_table_pack(mpd->fs_table, mpd->fs_title, 0, 0, 3, 1);
 
-
     /* */
     mpd->fs_sub_title = elm_label_add(parent);
     elm_object_text_set(mpd->fs_sub_title, "Subtitle");
@@ -719,7 +755,6 @@ add_fullscreen_item_table(mini_player *mpd, Evas_Object *parent)
     evas_object_size_hint_align_set(mpd->fs_sub_title, 0.0, 1.0);
     /* Put the object in the chosen slot of the item table */
     elm_table_pack(mpd->fs_table, mpd->fs_sub_title, 0, 1, 3, 1);
-
 
     /* */
     if (mpd->save_state == FALSE)
@@ -736,7 +771,6 @@ add_fullscreen_item_table(mini_player *mpd, Evas_Object *parent)
     elm_table_pack(mpd->fs_table, mpd->fs_save_btn, 3, 0, 1, 2);
     evas_object_show(mpd->fs_save_btn);
 
-
     /* */
     if (mpd->playlist_state == FALSE)
     {
@@ -751,7 +785,6 @@ add_fullscreen_item_table(mini_player *mpd, Evas_Object *parent)
     /* Put the object in the chosen slot of the item table */
     elm_table_pack(mpd->fs_table, mpd->fs_playlist_btn, 4, 0, 1, 2);
     evas_object_show(mpd->fs_playlist_btn);
-
 
     /* */
     if (mpd->more_state == FALSE)
@@ -768,7 +801,6 @@ add_fullscreen_item_table(mini_player *mpd, Evas_Object *parent)
     elm_table_pack(mpd->fs_table, mpd->fs_more_btn, 5, 0, 1, 2);
     evas_object_show(mpd->fs_more_btn);
 
-
     /* */
     fs_padding = create_image(parent, "");
     evas_object_size_hint_min_set(fs_padding, 400, 40);
@@ -777,7 +809,6 @@ add_fullscreen_item_table(mini_player *mpd, Evas_Object *parent)
     /* Put the object in the chosen slot of the item table */
     elm_table_pack(mpd->fs_table, fs_padding, 0, 2, 6, 1);
     evas_object_show(fs_padding);
-
 
     /* */
     mpd->fs_cover = create_image(parent, "background_cone.png");
@@ -788,7 +819,6 @@ add_fullscreen_item_table(mini_player *mpd, Evas_Object *parent)
     elm_table_pack(mpd->fs_table, mpd->fs_cover, 0, 3, 6, 1);
     evas_object_show(mpd->fs_cover);
 
-
     /* */
     fs_padding = create_image(parent, "");
     evas_object_size_hint_min_set(fs_padding, 400, 40);
@@ -798,18 +828,20 @@ add_fullscreen_item_table(mini_player *mpd, Evas_Object *parent)
     elm_table_pack(mpd->fs_table, fs_padding, 0, 4, 6, 1);
     evas_object_show(fs_padding);
 
-
     /* */
     fs_progress_bar = elm_progressbar_add(mpd->fs_table);
     elm_progressbar_horizontal_set(fs_progress_bar, EINA_TRUE);
-    elm_progressbar_value_set (fs_progress_bar, 0.5);
+
     evas_object_size_hint_min_set(fs_progress_bar, 400, 3);
     evas_object_size_hint_max_set(fs_progress_bar, 400, 3);
-    evas_object_size_hint_align_set(fs_progress_bar, 0.5, 0.5);
+    evas_object_size_hint_align_set(fs_progress_bar, EVAS_HINT_FILL, 0.0);
+    evas_object_size_hint_weight_set(fs_progress_bar, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+
     evas_object_show(fs_progress_bar);
     /* Put the object in the chosen slot of the item table */
     elm_table_pack(mpd->fs_table, fs_progress_bar, 0, 5, 6, 1);
-
+    mpd->fs_progress_bar = fs_progress_bar;
+    player_update_progress_bars(mpd);
 
     /* */
     if (mpd->play_state == FALSE)
@@ -829,7 +861,7 @@ add_fullscreen_item_table(mini_player *mpd, Evas_Object *parent)
 
     /* */
     mpd->fs_time = elm_label_add(parent);
-    elm_object_text_set(mpd->fs_time, "02:26");
+    evas_change_time(mpd->fs_time, mpd->pos);
     evas_object_size_hint_min_set(mpd->fs_time, 100, 25);
     evas_object_size_hint_max_set(mpd->fs_time, 100, 25);
     evas_object_size_hint_align_set(mpd->fs_time, 1.0, 0.5);
@@ -840,7 +872,7 @@ add_fullscreen_item_table(mini_player *mpd, Evas_Object *parent)
 
     /* */
     mpd->fs_total_time = elm_label_add(parent);
-    elm_object_text_set(mpd->fs_total_time, "04:52");
+    evas_change_time(mpd->fs_total_time, mpd->len);
     evas_object_size_hint_min_set(mpd->fs_total_time, 100, 25);
     evas_object_size_hint_max_set(mpd->fs_total_time, 100, 25);
     evas_object_size_hint_align_set(mpd->fs_total_time, 0.0, 0.5);
@@ -869,7 +901,6 @@ add_fullscreen_item_table(mini_player *mpd, Evas_Object *parent)
     elm_table_pack(mpd->fs_table, mpd->fs_repeat_btn, 0, 7, 1, 1);
     evas_object_show(mpd->fs_repeat_btn);
 
-
     /* */
     if (mpd->shuffle_state == FALSE){
         mpd->fs_shuffle_btn = create_image(parent, "ic_shuffle_normal.png");
@@ -884,7 +915,6 @@ add_fullscreen_item_table(mini_player *mpd, Evas_Object *parent)
     elm_table_pack(mpd->fs_table, mpd->fs_shuffle_btn, 5, 7, 1, 1);
     evas_object_show(mpd->fs_shuffle_btn);
 
-
     /* Add callbacks */
     evas_object_smart_callback_add(mpd->fs_title, "clicked", fullscreen_player_collapse_cb, mpd);
     evas_object_smart_callback_add(mpd->fs_sub_title, "clicked", fullscreen_player_collapse_cb, mpd);
@@ -894,6 +924,7 @@ add_fullscreen_item_table(mini_player *mpd, Evas_Object *parent)
     evas_object_smart_callback_add(mpd->fs_save_btn, "clicked", fs_save_player_cb, mpd);
     evas_object_smart_callback_add(mpd->fs_playlist_btn, "clicked", fs_playlist_player_cb, mpd);
     evas_object_smart_callback_add(mpd->fs_more_btn, "clicked", fs_more_player_cb, mpd);
+    dlog_print(DLOG_ERROR, LOG_TAG, "add_fullscreen_item_table!");
 
     return mpd->fs_table;
 }
@@ -938,7 +969,45 @@ mini_player_fullscreen_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_
     mpd->fs_state = true;
     /* */
     mpd->fs_view = fs_view;
+}
 
+static void
+emotion_position_update_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+{
+    mini_player *mpd = data;
+
+    mpd->pos = emotion_object_position_get(mpd->emotion);
+    if (mpd->fs_time)
+        evas_change_time(mpd->fs_time, mpd->pos);
+    player_update_progress_bars(mpd);
+}
+
+static void
+emotion_length_change_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+{
+    mini_player *mpd = data;
+    mpd->len = emotion_object_play_length_get(mpd->emotion);
+    if (mpd->fs_total_time)
+        evas_change_time(mpd->fs_total_time, mpd->len);
+    player_update_progress_bars(mpd);
+}
+
+static void
+emotion_title_change_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+{
+    update_player_display(data);
+}
+
+static void
+emotion_playback_started_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+{
+    update_player_display(data);
+}
+
+static void
+emotion_playback_finished_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+{
+    mini_player_stop(data);
 }
 
 void
@@ -951,9 +1020,16 @@ create_base_player(mini_player *mpd, const char *file_path)
         setenv("EMOTION_LIBVLC_DEBUG", "1", 1);
         mpd->emotion =  emotion_object_add(get_window(mpd->intf));
         emotion_object_init(mpd->emotion, "libvlc");
+        evas_object_smart_callback_add(mpd->emotion, "position_update", emotion_position_update_cb, mpd);
+        evas_object_smart_callback_add(mpd->emotion, "length_change", emotion_length_change_cb, mpd);
+        evas_object_smart_callback_add(mpd->emotion, "title_change", emotion_title_change_cb, mpd);
+        evas_object_smart_callback_add(mpd->emotion, "playback_started", emotion_playback_started_cb, mpd);
+        evas_object_smart_callback_add(mpd->emotion, "playback_finished", emotion_playback_finished_cb, mpd);
+        //evas_object_smart_callback_add(mpd->emotion, "audio_level_change", emotion_audio_level_change_cb, mpd);
+        //evas_object_smart_callback_add(mpd->emotion, "channels_change", emotion_channels_change_cb, mpd);
     }
     emotion_object_file_set(mpd->emotion, file_path);
-    emotion_object_play_set(mpd->emotion, 1);
+    emotion_object_play_set(mpd->emotion, EINA_TRUE);
 
     update_player_display(mpd);
     mpd->play_state = true;
@@ -970,7 +1046,7 @@ mini_player*
 mini_player_create(interface_sys *intf, Evas_Object *parent)
 {
     Evas_Object *item_table;
-    mini_player *mpd = malloc(sizeof(*mpd));
+    mini_player *mpd = calloc(1, sizeof(*mpd));
 
     /* */
     mpd->intf = intf;
