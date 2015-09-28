@@ -56,13 +56,13 @@ init_base_player(void *data, Evas_Object *obj, void *event_info)
     /* Chose a rendering method by looking with are available on the Evas library */
     /* See more with the evas_render_method_list() int the create_video_gui func */
     int render_method = evas_render_method_lookup("software_generic");
-    dlog_print(DLOG_DEBUG, LOG_TAG, "%i", render_method);
+    LOGD("%i", render_method);
     /* */
     evas_output_method_set(canvas, render_method);
     evas_output_size_set(canvas, 320, 176);
     evas_output_viewport_set(canvas, 0, 0, 320, 176);
     /* */
-    dlog_print(DLOG_INFO, LOG_TAG, "Evas set");
+    LOGI("Evas set");
 
     /* Create an Evas with the previously set canvas */
     Evas_Object *img = evas_object_image_add(canvas);
@@ -79,14 +79,14 @@ init_base_player(void *data, Evas_Object *obj, void *event_info)
     bool is_visible;
     error_code = player_is_display_visible(vd->player, &is_visible);
     /* */
-    dlog_print(DLOG_ERROR, LOG_TAG, "player_is_display_visible = %d", error_code);
+    LOGE("player_is_display_visible = %d", error_code);
 
     if (!is_visible)
     {
         error_code = player_set_display_visible(vd->player, true);
         /* */
-        dlog_print(DLOG_ERROR, LOG_TAG, "player_set_display_visible = %d", error_code);
-        dlog_print(DLOG_INFO, LOG_TAG, "DISPLAY IS VISIBLE");
+        LOGE("player_set_display_visible = %d", error_code);
+        LOGI("DISPLAY IS VISIBLE");
     }
     /* */
     error_code = player_prepare(vd->player);
@@ -94,10 +94,10 @@ init_base_player(void *data, Evas_Object *obj, void *event_info)
     /* Check player state */
     player_state_e state;
     error_code = player_get_state(vd->player, &state);
-    dlog_print(DLOG_ERROR, LOG_TAG, "player STATE ERROR CODE = %d", error_code);
+    LOGE("player STATE ERROR CODE = %d", error_code);
     if (error_code != PLAYER_STATE_READY)
     {
-        dlog_print(DLOG_INFO, LOG_TAG, "PLAYER_STATE = READY");
+        LOGI("PLAYER_STATE = READY");
     }
 
     /* TODO : Not sure if this is useful because we previsouly enable display visibility */
@@ -110,30 +110,30 @@ init_base_player(void *data, Evas_Object *obj, void *event_info)
     /* Check player state */
     player_state_e state2;
     error_code = player_get_state(vd->player, &state2);
-    dlog_print(DLOG_ERROR, LOG_TAG, "player STATE ERROR CODE = %d", error_code);
+    LOGE("player STATE ERROR CODE = %d", error_code);
     if (error_code != PLAYER_STATE_PLAYING)
     {
-        dlog_print(DLOG_INFO, LOG_TAG, "PLAYER_STATE = PLAYING");
+        LOGI("PLAYER_STATE = PLAYING");
     }
 
     /* Retrieving file data */
     /* Was used to see if the file was correctly decoded */
     int width, height;
     error_code = player_get_video_size(vd->player, &width, &height);
-    dlog_print(DLOG_ERROR, LOG_TAG, "player_get_video_size = %d", error_code);
-    dlog_print(DLOG_INFO, LOG_TAG, "height = %i", height);
-    dlog_print(DLOG_INFO, LOG_TAG, "Width = %i", width);
+    LOGE("player_get_video_size = %d", error_code);
+    LOGI("height = %i", height);
+    LOGI("Width = %i", width);
 
     int duration;
     error_code = player_get_duration(vd->player, &duration);
-    dlog_print(DLOG_ERROR, LOG_TAG, "player_get_duration = %d", error_code);
-    dlog_print(DLOG_INFO, LOG_TAG, "Duration = %i", duration);
+    LOGE("player_get_duration = %d", error_code);
+    LOGI("Duration = %i", duration);
 
     int fps, bit_rate;
     error_code = player_get_video_stream_info(vd->player, &fps, &bit_rate);
-    dlog_print(DLOG_ERROR, LOG_TAG, "player_ get_video_stream_info = %d", error_code);
-    dlog_print(DLOG_INFO, LOG_TAG, "fps = %i", fps);
-    dlog_print(DLOG_INFO, LOG_TAG, "Bit Rate = %i", bit_rate);
+    LOGE("player_ get_video_stream_info = %d", error_code);
+    LOGI("fps = %i", fps);
+    LOGI("Bit Rate = %i", bit_rate);
 
     /* Start the player instantly when the file is selected in the list */
     vd->play_state = true;
@@ -163,15 +163,15 @@ create_video_gui(Evas_Object *parent, char* file_path)
     engine_list = evas_render_method_list();
     if (!engine_list)
     {
-        dlog_print(DLOG_DEBUG, LOG_TAG, "ERROR : No available Evas Engines :\n");
+        LOGD("ERROR : No available Evas Engines :\n");
         exit(-1);
     }
     /* */
-    dlog_print(DLOG_DEBUG, LOG_TAG, "Available Evas Engines :\n");
+    LOGD("Available Evas Engines :\n");
     /* Acces the Eina_list* created by evas_render_method_list() */
     /* Return strig list */
     EINA_LIST_FOREACH(engine_list, l, engine_name)
-    dlog_print(DLOG_DEBUG, LOG_TAG, "%s", engine_name);
+    LOGD("%s", engine_name);
     evas_render_method_list_free(engine_list);
 
     /* TODO : This is a very simple an ugly UI */

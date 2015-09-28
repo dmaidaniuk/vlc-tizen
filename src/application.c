@@ -44,7 +44,7 @@ app_create(void *data)
 
     /* Fetching the media path and keep it in memory as soon as the app is create */
     app->media_path = fetching_media_path();
-    dlog_print(DLOG_ERROR, LOG_TAG, "Media Path %s", app->media_path);
+    LOGE("Media Path %s", app->media_path);
 
     /* */
     create_base_gui(app);
@@ -140,7 +140,7 @@ main(int argc, char *argv[])
 
     int ret = ui_app_main(argc, argv, &event_callback, app);
     if (ret != APP_ERROR_NONE) {
-        dlog_print(DLOG_ERROR, LOG_TAG, "app_main() is failed. err = %d", ret);
+        LOGE("app_main() is failed. err = %d", ret);
     }
 
     return ret;

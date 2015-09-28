@@ -58,7 +58,7 @@ gl_text_get_cb(void *data, Evas_Object *obj, const char *part)
     /* Then put this string as the genlist item label */
     if (itc->item_style && !strcmp(itc->item_style, "1line")) {
         if (part && !strcmp(part, "elm.text.main.left")) {
-            dlog_print(DLOG_INFO, LOG_TAG, "%p", pgd->menu_item);
+            LOGI("%p", pgd->menu_item);
             asprintf(&buf, "%s", pgd->menu_item[pgd->index].title);
 
             return buf;

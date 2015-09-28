@@ -34,7 +34,7 @@ static bool storage_cb(int storage_id, storage_type_e type, storage_state_e stat
     if (type == STORAGE_TYPE_INTERNAL)
     {
         internal_storage_id = storage_id;
-        dlog_print(DLOG_DEBUG, LOG_TAG, "Storage refreshed");
+        LOGD("Storage refreshed");
         return false;
     }
 
@@ -54,7 +54,7 @@ fetching_media_path()
 
     if (error != STORAGE_ERROR_NONE)
     {
-        dlog_print(DLOG_DEBUG, LOG_TAG, "Failed storage");
+        LOGD("Failed storage");
     }
 
     /* Concatenate the media path with .. to access the general media directory */

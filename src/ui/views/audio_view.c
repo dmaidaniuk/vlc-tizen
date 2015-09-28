@@ -56,7 +56,7 @@ audio_gl_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
     {
         /* Launch the media player */
         create_base_player(ald->intf->mini_player, ald->file_path);
-        dlog_print(DLOG_INFO, LOG_TAG, "VLC Player launch");
+        LOGI("VLC Player launch");
     }
 
     else if (S_ISDIR(sb.st_mode))
@@ -66,7 +66,7 @@ audio_gl_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
     }
     else
     {
-        dlog_print(DLOG_INFO, LOG_TAG, "This is not a file or a folder");
+        LOGI("This is not a file or a folder");
     }
 
 }
@@ -78,7 +78,7 @@ free_list_item_data(void *data, Evas_Object *obj, void *event_info)
     /* Free the file path when the current genlist is deleted */
     /* For example when the player is launched or a new genlist is created */
     free(ald->file_path);
-    dlog_print(DLOG_DEBUG, LOG_TAG, "Path free");
+    LOGD("Path free");
 
 }
 
@@ -166,7 +166,7 @@ create_audio_list(char* path, interface_sys *intf)
     itc->item_style = "2line.top.3";
     itc->func.text_get = gl_text_get_cb;
     itc->func.content_get = gl_content_get_cb;
-    dlog_print(DLOG_INFO, LOG_TAG, "Coucou");
+    LOGI("Coucou");
     genlist = elm_genlist_add(parent);
 
     /* Set the genlist scoller mode */
@@ -185,7 +185,7 @@ create_audio_list(char* path, interface_sys *intf)
 
     if (path == NULL)
     {
-        dlog_print(DLOG_INFO, LOG_TAG, "No path");
+        LOGI("No path");
         return NULL ;
     }
 
@@ -193,7 +193,7 @@ create_audio_list(char* path, interface_sys *intf)
     {
         char *error;
         error = strerror(errno);
-        dlog_print(DLOG_INFO, LOG_TAG, "Empty repository or Error due to %s", error);
+        LOGI("Empty repository or Error due to %s", error);
 
         return NULL ;
     }
@@ -245,7 +245,7 @@ static bool audio_storage_cb(int storage_id, storage_type_e type, storage_state_
     if (type == STORAGE_TYPE_INTERNAL)
     {
         internal_storage_id = storage_id;
-        dlog_print(DLOG_DEBUG, LOG_TAG, "Storage refreshed");
+        LOGD("Storage refreshed");
         return false;
     }
 

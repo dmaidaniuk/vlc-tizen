@@ -83,7 +83,6 @@ time_to_string(char *psz_time, double time)
     time /= 60;
     int hours = (int) time;
 
-    dlog_print(DLOG_ERROR, LOG_TAG, "time_to_string2: %2.2d:%2.2d:%2.2d", hours, min, sec);
     if (hours)
         sprintf(psz_time, "%2.2d:%2.2d:%2.2d", hours, min, sec);
     else
@@ -924,7 +923,7 @@ add_fullscreen_item_table(mini_player *mpd, Evas_Object *parent)
     evas_object_smart_callback_add(mpd->fs_save_btn, "clicked", fs_save_player_cb, mpd);
     evas_object_smart_callback_add(mpd->fs_playlist_btn, "clicked", fs_playlist_player_cb, mpd);
     evas_object_smart_callback_add(mpd->fs_more_btn, "clicked", fs_more_player_cb, mpd);
-    dlog_print(DLOG_ERROR, LOG_TAG, "add_fullscreen_item_table!");
+    LOGE("add_fullscreen_item_table!");
 
     return mpd->fs_table;
 }

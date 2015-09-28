@@ -252,14 +252,14 @@ gl_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
         Evas_Object *popup = elm_popup_add(sd->parent);
 
         /* Add the more list in the popup */
-        dlog_print(DLOG_INFO, LOG_TAG, "%p", directory_menu);
+        LOGI("%p", directory_menu);
         moulaf = create_settings_popup_genlist(popup, directory_menu, 2);
         elm_object_content_set(popup, moulaf);
         evas_object_show(moulaf);
         /* */
         evas_object_show(popup);
 
-        dlog_print(DLOG_INFO, LOG_TAG, "l'index est %i", sd->index);
+        LOGI("l'index est %i", sd->index);
         break;
     }
 
@@ -271,14 +271,14 @@ gl_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
         Evas_Object *popup = elm_popup_add(sd->parent);
 
         /* Add the more list in the popup */
-        dlog_print(DLOG_INFO, LOG_TAG, "%p", material_acceleration_menu);
+        LOGI("%p", material_acceleration_menu);
         moulaf = create_settings_popup_genlist(popup, material_acceleration_menu, 4);
         elm_object_content_set(popup, moulaf);
         evas_object_show(moulaf);
         /* */
         evas_object_show(popup);
 
-        dlog_print(DLOG_INFO, LOG_TAG, "l'index est %i", sd->index);
+        LOGI("l'index est %i", sd->index);
         break;
     }
 
@@ -290,14 +290,14 @@ gl_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
         Evas_Object *popup = elm_popup_add(sd->parent);
 
         /* Add the more list in the popup */
-        dlog_print(DLOG_INFO, LOG_TAG, "%p", subtitles_text_encoding_menu);
+        LOGI("%p", subtitles_text_encoding_menu);
         moulaf = create_settings_popup_genlist(popup, subtitles_text_encoding_menu, 41);
         elm_object_content_set(popup, moulaf);
         evas_object_show(moulaf);
         /* */
         evas_object_show(popup);
 
-        dlog_print(DLOG_INFO, LOG_TAG, "l'index est %i", sd->index);
+        LOGI("l'index est %i", sd->index);
 
         break;
     }
@@ -311,13 +311,13 @@ gl_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
         Evas_Object *popup = elm_popup_add(sd->parent);
 
         /* Add the more list in the popup */
-        dlog_print(DLOG_INFO, LOG_TAG, "%p", video_orientation_menu);
+        LOGI("%p", video_orientation_menu);
         moulaf = create_settings_popup_genlist(popup, video_orientation_menu, 6);
         elm_object_content_set(popup, moulaf);
         evas_object_show(moulaf);
         /* */
         evas_object_show(popup);
-        dlog_print(DLOG_INFO, LOG_TAG, "l'index est %i", sd->index);
+        LOGI("l'index est %i", sd->index);
 
         break;
     }
@@ -331,13 +331,13 @@ gl_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
         Evas_Object *popup = elm_popup_add(sd->parent);
 
         /* Add the more list in the popup */
-        dlog_print(DLOG_INFO, LOG_TAG, "%p", performance_menu);
+        LOGI("%p", performance_menu);
         moulaf = create_settings_popup_genlist(popup, performance_menu, 2);
         elm_object_content_set(popup, moulaf);
         evas_object_show(moulaf);
         /* */
         evas_object_show(popup);
-        dlog_print(DLOG_INFO, LOG_TAG, "l'index est %i", sd->index);
+        LOGI("l'index est %i", sd->index);
 
         break;
     }
@@ -351,13 +351,13 @@ gl_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
         Evas_Object *popup = elm_popup_add(sd->parent);
 
         /* Add the more list in the popup */
-        dlog_print(DLOG_INFO, LOG_TAG, "%p", deblocking_filter_settings_menu);
+        LOGI("%p", deblocking_filter_settings_menu);
         moulaf = create_settings_popup_genlist(popup, deblocking_filter_settings_menu, 5);
         elm_object_content_set(popup, moulaf);
         evas_object_show(moulaf);
         /* */
         evas_object_show(popup);
-        dlog_print(DLOG_INFO, LOG_TAG, "l'index est %i", sd->index);
+        LOGI("l'index est %i", sd->index);
 
         break;
     }
@@ -380,7 +380,7 @@ create_setting_list(Evas_Object *parent)
     Evas_Object *genlist;
     Elm_Object_Item *hit, *it;
     int n_items = (int) sizeof(settings_menu) / (int) sizeof (*settings_menu);
-    dlog_print(DLOG_INFO, LOG_TAG, "n_item est %i", n_items);
+    LOGI("n_item est %i", n_items);
     int index;
 
     /* Set then create the Genlist object */

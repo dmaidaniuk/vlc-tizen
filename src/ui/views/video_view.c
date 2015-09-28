@@ -59,8 +59,8 @@ video_gl_selected_cb(void *data, Evas_Object *obj, void *event_info)
         elm_object_content_set(vld->parent, video_player);
         evas_object_show(video_player);
         /* */
-        dlog_print(DLOG_INFO, LOG_TAG, "VLC Player launch");
-        dlog_print(DLOG_INFO, LOG_TAG, "Won't play the video at the time. Will be soon");
+        LOGI("VLC Player launch");
+        LOGI("Won't play the video at the time. Will be soon");
     }
 
     else if (S_ISDIR(sb.st_mode))
@@ -77,7 +77,7 @@ free_list_item_data(void *data, Evas_Object *obj, void *event_info)
     /* Free the file path when the current genlist is deleted */
     /* For example when the player is launched or a new genlist is created */
     free(vld->file_path);
-    dlog_print(DLOG_DEBUG, LOG_TAG, "Path free");
+    LOGD("Path free");
 
 }
 
@@ -201,7 +201,7 @@ generate_video_list(const char *path, Evas_Object *parent, Evas_Object *genlist,
 
     if (path == NULL)
     {
-        dlog_print(DLOG_INFO, LOG_TAG, "No video path");
+        LOGI("No video path");
         return;
     }
 
@@ -210,7 +210,7 @@ generate_video_list(const char *path, Evas_Object *parent, Evas_Object *genlist,
     if  (rep == NULL)
     {
         char *error = strerror(errno);
-        dlog_print(DLOG_INFO, LOG_TAG, "Empty repository or Error due to %s", error);
+        LOGI("Empty repository or Error due to %s", error);
 
         return;
     }

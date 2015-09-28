@@ -45,8 +45,8 @@ list_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
     if (S_ISREG(sb.st_mode)){
 
         /* Launch the media player */
-        dlog_print(DLOG_INFO, LOG_TAG, "VLC Player launch");
-        dlog_print(DLOG_INFO, LOG_TAG, "Won't play the video at the time. Will be soon");
+        LOGI("VLC Player launch");
+        LOGI("Won't play the video at the time. Will be soon");
 
     }
 
@@ -65,7 +65,7 @@ free_list_item_data(void *data, Evas_Object *obj, void *event_info)
     /* Free the file path when the current list is deleted */
     /* For example when the player is launched or a new list is created */
     free(dd->file_path);
-    dlog_print(DLOG_DEBUG, LOG_TAG, "Path free");
+    LOGD("Path free");
 
 }
 
@@ -84,7 +84,7 @@ create_directory_view(const char* path, Evas_Object *parent)
 
     if (buff == NULL)
     {
-        dlog_print(DLOG_INFO, LOG_TAG, "No path");
+        LOGI("No path");
         return NULL ;
     }
 
@@ -95,7 +95,7 @@ create_directory_view(const char* path, Evas_Object *parent)
     {
         char *error;
         error = strerror(errno);
-        dlog_print(DLOG_INFO, LOG_TAG, "Empty repository or Error due to %s", error);
+        LOGI("Empty repository or Error due to %s", error);
         free(buff);
 
         return NULL ;
