@@ -30,14 +30,13 @@
 #include "common.h"
 #include "application.h"
 
-struct mini_player_data;
 struct interface_priv_sys;
 
 typedef struct interface_sys {
     application_sys *app;
 
     struct interface_priv_sys *intf_p;
-    struct mini_player_instance *mini_player;
+    struct mini_player *mini_player;
 } interface_sys;
 
 Evas*

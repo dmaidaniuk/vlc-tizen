@@ -32,7 +32,7 @@
 #include "interface.h"
 #include "audio_player.h"
 
-typedef struct audio_player_priv {
+struct mini_player {
     interface_sys *intf;
 
     bool visible_state;
@@ -47,12 +47,10 @@ typedef struct audio_player_priv {
     Evas_Object *fs_play_pause_img;
     Evas_Object *fs_save_btn, *fs_playlist_btn, *fs_more_btn;
     Evas_Object *fs_repeat_btn, *fs_shuffle_btn;
-
-
-} audio_player_priv;
+};
 
 Evas_Object *
-create_audio_popup(mini_player_instance *mpd);
+create_audio_popup(mini_player *mpd);
 
 
 typedef struct audio_popup_data
@@ -60,7 +58,7 @@ typedef struct audio_popup_data
     int index;
     Evas_Object *box, *genlist;
     Elm_Object_Item *item;
-    audio_player_priv *mpd;
+    mini_player *mpd;
 
 } audio_popup_data_s;
 
@@ -185,14 +183,14 @@ popup_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 }
 
 Evas_Object *
-create_audio_popup(mini_player_instance *mpd)
+create_audio_popup(mini_player *mpd)
 {
 
     Evas_Object *genlist;
     Elm_Object_Item *it;
 
     /* Set popup max size */
-    Evas_Object *box = elm_box_add(mpd->p->popup);
+    Evas_Object *box = elm_box_add(mpd->popup);
     evas_object_size_hint_min_set(box, 300, 300);
     evas_object_size_hint_max_set(box, 300, 300);
 
@@ -223,7 +221,7 @@ create_audio_popup(mini_player_instance *mpd)
         audio_popup_data_s *apd = malloc(sizeof(*apd));
         /* Put the index and the gui_data in the cb_data struct for callbacks */
         apd->index = index;
-        apd->mpd = mpd->p;
+        apd->mpd = mpd;
 
         it = elm_genlist_item_append(genlist,
                 itc,                            /* genlist item class               */
@@ -249,95 +247,96 @@ create_audio_popup(mini_player_instance *mpd)
 
 
 static void
-mini_player_reset_states(mini_player_instance *mpd)
+mini_player_reset_states(mini_player *mpd)
 {
-    mpd->p->fs_state = false;
-    mpd->p->save_state = false;
-    mpd->p->shuffle_state = false;
-    mpd->p->playlist_state = false;
-    mpd->p->more_state = false;
-    mpd->p->repeat_state = 0;
+    mpd->fs_state = false;
+    mpd->save_state = false;
+    mpd->shuffle_state = false;
+    mpd->playlist_state = false;
+    mpd->more_state = false;
+    mpd->repeat_state = 0;
 }
 
 bool
-mini_player_visibility_state(mini_player_instance *mpd)
+mini_player_visibility_state(mini_player *mpd)
 {
     /* Return the current visibility state*/
-    return mpd->p->visible_state;
+    return mpd->visible_state;
 }
 
 bool
-mini_player_play_state(mini_player_instance *mpd)
+mini_player_play_state(mini_player *mpd)
 {
     /* Return the current play/pause state*/
-    return mpd->p->play_state;
+    return mpd->play_state;
 }
 
 bool
-save_state(audio_player_priv *mpd)
+save_state(mini_player *mpd)
 {
     /* Return the current save button state*/
     return mpd->save_state;
 }
 
 bool
-playlist_state(audio_player_priv *mpd)
+playlist_state(mini_player *mpd)
 {
     /* Return the current playlist button state*/
     return mpd->playlist_state;
 }
 
 bool
-shuffle_state(audio_player_priv *mpd)
+shuffle_state(mini_player *mpd)
 {
     /* Return the current shuffle state*/
     return mpd->shuffle_state;
 }
 
 bool
-more_state(audio_player_priv *mpd)
+more_state(mini_player *mpd)
 {
     /* Return the current more button state*/
     return mpd->more_state;
 }
 
 int
-repeat_state(audio_player_priv *mpd)
+repeat_state(mini_player *mpd)
 {
     /* Return the current repeat state*/
     return mpd->repeat_state;
 }
 
 bool
-mini_player_fs_state(mini_player_instance *mp)
+mini_player_fs_state(mini_player *mp)
 {
-    return mp->p->fs_state;
+    return mp->fs_state;
 }
 
 void
-mini_player_show(mini_player_instance *mpd)
+mini_player_show(mini_player *mpd)
 {
     /* Add the previously created mini player to the box */
-    elm_box_pack_end(get_miniplayer_content_box(mpd->p->intf), mpd->p->mini_player_box);
+    elm_box_pack_end(get_miniplayer_content_box(mpd->intf), mpd->mini_player_box);
 
     /* */
-    evas_object_show(mpd->p->mini_player_box);
+    evas_object_show(mpd->mini_player_box);
 
     /* Switch to current visibility state */
-    mpd->p->visible_state = true;
+    mpd->visible_state = true;
 }
 
 void
-mini_player_hide(mini_player_instance *mpd)
+mini_player_hide(mini_player *mpd)
 {
     /* Dismiss the previously created mini player of the box */
-    elm_box_unpack(get_miniplayer_content_box(mpd->p->intf), mpd->p->mini_player_box);
+    elm_box_unpack(get_miniplayer_content_box(mpd->intf), mpd->mini_player_box);
     /* */
 
-    evas_object_hide(mpd->p->mini_player_box);
+    if (mpd->mini_player_box)
+        evas_object_hide(mpd->mini_player_box);
 
     /* Switch to current visibility state */
-    mpd->p->visible_state = false;
+    mpd->visible_state = false;
 
 }
 
@@ -357,7 +356,7 @@ create_image(Evas_Object *parent, const char *image_path)
 }
 
 static void
-update_player_display(audio_player_priv* mpd)
+update_player_display(mini_player* mpd)
 {
     const char *meta;
 
@@ -387,38 +386,38 @@ update_player_display(audio_player_priv* mpd)
 static void
 play_pause_mini_player_cb(void *data, Evas_Object *obstopj EINA_UNUSED, void *event_info)
 {
-    mini_player_instance *mpd = data;
+    mini_player *mpd = data;
 
-    if (!mpd->p->emotion)
+    if (!mpd->emotion)
         return;
 
-    mpd->p->play_state = emotion_object_play_get(mpd->p->emotion);
-    emotion_object_play_set(mpd->p->emotion, !mpd->p->play_state);
-    mpd->p->play_state = !mpd->p->play_state;
+    mpd->play_state = emotion_object_play_get(mpd->emotion);
+    emotion_object_play_set(mpd->emotion, !mpd->play_state);
+    mpd->play_state = !mpd->play_state;
 
-    update_player_display(mpd->p);
+    update_player_display(mpd);
 }
 
 static void
 play_pause_fs_player_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
-    mini_player_instance *mpd = data;
+    mini_player *mpd = data;
 
-    if (!mpd->p->emotion)
+    if (!mpd->emotion)
         return;
 
-    mpd->p->play_state = emotion_object_play_get(mpd->p->emotion);
-    emotion_object_play_set(mpd->p->emotion, !mpd->p->play_state);
-    mpd->p->play_state = !mpd->p->play_state;
+    mpd->play_state = emotion_object_play_get(mpd->emotion);
+    emotion_object_play_set(mpd->emotion, !mpd->play_state);
+    mpd->play_state = !mpd->play_state;
 
-    evas_object_show(mpd->p->fs_play_pause_img);
-    update_player_display(mpd->p);
+    evas_object_show(mpd->fs_play_pause_img);
+    update_player_display(mpd);
 }
 
 static void
 stop_mini_player_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
-    mini_player_instance *mpd = data;
+    mini_player *mpd = data;
 
     mini_player_stop(mpd);
 
@@ -428,7 +427,7 @@ stop_mini_player_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 static void
 fs_save_player_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
-    audio_player_priv *mpd = data;
+    mini_player *mpd = data;
 
     if(save_state(mpd) == false)
     {
@@ -455,7 +454,7 @@ fs_save_player_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 static void
 fs_playlist_player_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
-    audio_player_priv *mpd = data;
+    mini_player *mpd = data;
 
     if(playlist_state(mpd) == false)
     {
@@ -483,54 +482,54 @@ fs_playlist_player_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info
 static void
 fs_more_player_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
-    mini_player_instance *mpd = data;
+    mini_player *mpd = data;
 
-    if(more_state(mpd->p) == false)
+    if(more_state(mpd) == false)
     {
         /* Create the more popup list */
         Evas_Object *popup_list;
 
         /* FIXME */
-        mpd->p->popup = elm_popup_add(get_content(mpd->p->intf));
+        mpd->popup = elm_popup_add(get_content(mpd->intf));
 
         /* Size the popup */
-        evas_object_size_hint_min_set(mpd->p->popup, 200, 200);
-        evas_object_size_hint_max_set(mpd->p->popup, 200, 200);
+        evas_object_size_hint_min_set(mpd->popup, 200, 200);
+        evas_object_size_hint_max_set(mpd->popup, 200, 200);
 
         /* Add the more list in the popup */
         popup_list = create_audio_popup(mpd); //FIXME
-        elm_object_content_set(mpd->p->popup, popup_list);
+        elm_object_content_set(mpd->popup, popup_list);
         evas_object_show(popup_list);
         /* */
-        evas_object_show(mpd->p->popup);
+        evas_object_show(mpd->popup);
 
         /* Change the more button img */
-        elm_image_file_set(mpd->p->fs_more_btn, ICON_DIR"ic_more_circle_pressed_o.png", NULL);
+        elm_image_file_set(mpd->fs_more_btn, ICON_DIR"ic_more_circle_pressed_o.png", NULL);
         /* */
-        evas_object_show(mpd->p->fs_more_btn);
+        evas_object_show(mpd->fs_more_btn);
 
         /* Update the more button state of the player */
-        mpd->p->more_state = true;
+        mpd->more_state = true;
     }
     else
     {
         /* */
-        elm_popup_timeout_set(mpd->p->popup, 0.0);
+        elm_popup_timeout_set(mpd->popup, 0.0);
 
         /* Change the more button img */
-        elm_image_file_set(mpd->p->fs_more_btn, ICON_DIR"ic_more_circle_normal_o.png", NULL);
+        elm_image_file_set(mpd->fs_more_btn, ICON_DIR"ic_more_circle_normal_o.png", NULL);
         /* */
-        evas_object_show(mpd->p->fs_more_btn);
+        evas_object_show(mpd->fs_more_btn);
 
         /* Update the more button state of the player */
-        mpd->p->more_state = false;
+        mpd->more_state = false;
     }
 }
 
 static void
 fs_repeat_player_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
-    audio_player_priv *mpd = data;
+    mini_player *mpd = data;
 
     if(repeat_state(mpd) == 0)
     {
@@ -567,7 +566,7 @@ fs_repeat_player_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 static void
 fs_shuffle_player_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
-    audio_player_priv *mpd = data;
+    mini_player *mpd = data;
 
     if(shuffle_state(mpd) == false)
     {
@@ -592,7 +591,7 @@ fs_shuffle_player_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 }
 
 static Evas_Object*
-add_item_table(audio_player_priv *mpd, Evas_Object *parent)
+add_item_table(mini_player *mpd, Evas_Object *parent)
 {
     Evas_Object *content_table;
     Evas_Object *title, *sub_title;
@@ -676,17 +675,17 @@ add_item_table(audio_player_priv *mpd, Evas_Object *parent)
 static void
 fullscreen_player_collapse_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
-    mini_player_instance *mpd = data;
+    mini_player *mpd = data;
     /* Pop the previous view in the content naviframe */
-    show_previous_view(mpd->p->intf);
+    show_previous_view(mpd->intf);
     /* Update the fullscreen state bool */
-    mpd->p->fs_state = false;
+    mpd->fs_state = false;
     /* Show the mini player */
     mini_player_show(mpd);
 }
 
 static Evas_Object*
-add_fullscreen_item_table(audio_player_priv *mpd, Evas_Object *parent)
+add_fullscreen_item_table(mini_player *mpd, Evas_Object *parent)
 {
     Evas_Object *fs_progress_bar, *fs_padding;
 
@@ -901,28 +900,28 @@ add_fullscreen_item_table(audio_player_priv *mpd, Evas_Object *parent)
 
 
 static Evas_Object*
-create_fullscreen_player_view(mini_player_instance *mpd, Evas_Object *parent)
+create_fullscreen_player_view(mini_player *mpd, Evas_Object *parent)
 {
     /* Add the box for the fullscreen player view */
     Evas_Object *fullscreen_box = elm_box_add(parent);
     /* Add the fullscreen table layout in the fullscreen box */
-    Evas_Object *fullscreen_item_table = add_fullscreen_item_table(mpd->p, mpd->p->mini_player_box);
+    Evas_Object *fullscreen_item_table = add_fullscreen_item_table(mpd, mpd->mini_player_box);
     /* */
     elm_box_pack_end(fullscreen_box, fullscreen_item_table);
     evas_object_show(fullscreen_item_table);
     /* The fullscreen box recalculate the layout of her children */
     elm_box_recalculate(fullscreen_box);
     /* Put the fullscreen box in the audio player structure */
-    mpd->p->fullscreen_box = fullscreen_box;
+    mpd->fullscreen_box = fullscreen_box;
 
-    update_player_display(mpd->p);
-    return mpd->p->fullscreen_box;
+    update_player_display(mpd);
+    return mpd->fullscreen_box;
 }
 
 static void
 mini_player_fullscreen_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
-    mini_player_instance *mpd = data;
+    mini_player *mpd = data;
     Evas_Object *fs_view;
 
     /* */
@@ -930,34 +929,34 @@ mini_player_fullscreen_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_
 
     /* Show the fullcreen box in the content naviframe */
     /* FIXME */
-    fs_view = create_fullscreen_player_view(mpd, get_content(mpd->p->intf));
-    elm_object_content_set(get_content(mpd->p->intf), fs_view);
+    fs_view = create_fullscreen_player_view(mpd, get_content(mpd->intf));
+    elm_object_content_set(get_content(mpd->intf), fs_view);
 
     /* */
     evas_object_show(fs_view);
     /* Update fullscreen state bool */
-    mpd->p->fs_state = true;
+    mpd->fs_state = true;
     /* */
-    mpd->p->fs_view = fs_view;
+    mpd->fs_view = fs_view;
 
 }
 
 void
-create_base_player(mini_player_instance *mpd, const char *file_path)
+create_base_player(mini_player *mpd, const char *file_path)
 {
     mini_player_reset_states(mpd);
 
-    if (!mpd->p->emotion)
+    if (!mpd->emotion)
     {
         setenv("EMOTION_LIBVLC_DEBUG", "1", 1);
-        mpd->p->emotion =  emotion_object_add(get_window(mpd->p->intf));
-        emotion_object_init(mpd->p->emotion, "libvlc");
+        mpd->emotion =  emotion_object_add(get_window(mpd->intf));
+        emotion_object_init(mpd->emotion, "libvlc");
     }
-    emotion_object_file_set(mpd->p->emotion, file_path);
-    emotion_object_play_set(mpd->p->emotion, 1);
+    emotion_object_file_set(mpd->emotion, file_path);
+    emotion_object_play_set(mpd->emotion, 1);
 
-    update_player_display(mpd->p);
-    mpd->p->play_state = true;
+    update_player_display(mpd);
+    mpd->play_state = true;
 
     /* Show the mini player only if it isn't already shown */
     if (mini_player_visibility_state(mpd) == false){
@@ -967,11 +966,11 @@ create_base_player(mini_player_instance *mpd, const char *file_path)
 
 }
 
-mini_player_instance*
+mini_player*
 mini_player_create(interface_sys *intf, Evas_Object *parent)
 {
     Evas_Object *item_table;
-    audio_player_priv *mpd = malloc(sizeof(*mpd));
+    mini_player *mpd = malloc(sizeof(*mpd));
 
     /* */
     mpd->intf = intf;
@@ -999,25 +998,22 @@ mini_player_create(interface_sys *intf, Evas_Object *parent)
     evas_object_size_hint_align_set(mpd->mini_player_box, EVAS_HINT_FILL, 1.0);
     evas_object_size_hint_min_set(mpd->mini_player_box, 0, 100);
 
-    mini_player_instance *m = malloc(sizeof(*m));
-    m->p = mpd;
-
-    return m;
+    return mpd;
 }
 
 void
-mini_player_stop(mini_player_instance *mpd)
+mini_player_stop(mini_player *mpd)
 {
     /* Stop the player */
-    if (mpd->p->emotion)
+    if (mpd->emotion)
     {
-        emotion_object_play_set(mpd->p->emotion, EINA_FALSE);
-        emotion_object_file_set(mpd->p->emotion, NULL);
-        evas_object_del(mpd->p->emotion);
-        mpd->p->emotion = NULL;
+        emotion_object_play_set(mpd->emotion, EINA_FALSE);
+        emotion_object_file_set(mpd->emotion, NULL);
+        evas_object_del(mpd->emotion);
+        mpd->emotion = NULL;
     }
 
-    mpd->p->fs_state = false;
+    mpd->fs_state = false;
 
     /* Hide the player */
     mini_player_hide(mpd);

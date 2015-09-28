@@ -29,38 +29,33 @@
 
 #include "ui/interface.h"
 
-struct audio_player_priv;
+typedef struct mini_player mini_player;
 
-typedef struct mini_player_instance
-{
-    struct audio_player_priv *p;
-} mini_player_instance;
-
-mini_player_instance*
+mini_player*
 mini_player_create(interface_sys *intf, Evas_Object *parent);
 
 void
-mini_player_stop(mini_player_instance *);
+mini_player_stop(mini_player *);
 
 bool
-mini_player_visibility_state(mini_player_instance *);
+mini_player_visibility_state(mini_player *);
 
 void
-mini_player_show(mini_player_instance *);
+mini_player_show(mini_player *);
 
 void
-mini_player_hide(mini_player_instance *);
+mini_player_hide(mini_player *);
 
 bool
-mini_player_visibility_state(mini_player_instance *);
+mini_player_visibility_state(mini_player *);
 
 bool
-mini_player_play_state(mini_player_instance *);
+mini_player_play_state(mini_player *);
 
 bool
-mini_player_fs_state(mini_player_instance *);
+mini_player_fs_state(mini_player *);
 
 void
-create_base_player(mini_player_instance *mpd, const char *file_path);
+create_base_player(mini_player *mpd, const char *file_path);
 
 #endif /* MINI_PLAYER_H_ */
