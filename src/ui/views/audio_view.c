@@ -25,6 +25,7 @@
  *****************************************************************************/
 
 #include "common.h"
+#include "media_storage.h"
 
 #include <Elementary.h>
 #include <storage.h>
@@ -239,33 +240,16 @@ create_audio_list(char* path, interface_sys *intf)
     return genlist;
 }
 
-static int internal_storage_id;
-static bool audio_storage_cb(int storage_id, storage_type_e type, storage_state_e state, const char *path, void *user_data)
-{
-    if (type == STORAGE_TYPE_INTERNAL)
-    {
-        internal_storage_id = storage_id;
-        LOGD("Storage refreshed");
-        return false;
-    }
-
-    return true;
-}
-
 static void
 tabbar_item_selected(interface_sys *intf, Elm_Object_Item *audio_it)
 {
     int error;
-    char *audio_path;
+    char *audio_path = fetch_media_path(MEDIA_DIRECTORY_MUSIC);
     const char *str = NULL;
     Evas_Object *current_audio_view;
 
     /* Get the item selected in the toolbar */
     str = elm_object_item_text_get(audio_it);
-
-    /* Connect to the device storage */
-    error = storage_foreach_device_supported(audio_storage_cb, NULL);
-    error = storage_get_directory(internal_storage_id, STORAGE_DIRECTORY_MUSIC, &audio_path);
 
     /* Create the view depending on the item selected in the toolbar */
     if (str && !strcmp(str, "Songs")) {
