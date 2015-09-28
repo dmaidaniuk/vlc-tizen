@@ -415,8 +415,8 @@ update_player_display(mini_player* mpd)
     }
 
     /* Change the play/pause button img */
-    elm_image_file_set(mpd->play_pause_img, mpd->play_state ? ICON_DIR "ic_play_circle_normal_o.png" : ICON_DIR "ic_pause_circle_normal_o.png", NULL);
-    elm_image_file_set(mpd->fs_play_pause_img, mpd->play_state ? ICON_DIR "ic_play_circle_normal_o.png" : ICON_DIR "ic_pause_circle_normal_o.png", NULL);
+    elm_image_file_set(mpd->play_pause_img, mpd->play_state ? ICON_DIR "ic_pause_circle_normal_o.png" : ICON_DIR "ic_play_circle_normal_o.png", NULL);
+    elm_image_file_set(mpd->fs_play_pause_img, mpd->play_state ? ICON_DIR "ic_pause_circle_normal_o.png" : ICON_DIR "ic_play_circle_normal_o.png", NULL);
 
     evas_object_show(mpd->play_pause_img);
 }
