@@ -39,7 +39,7 @@ cd ${MEDIALIBRARY_BUILD_DIR}
 if [ ! -e ./Makefile -o "$RELEASE" = 1 ]; then
 CPPFLAGS="$CPPFLAGS" \
 CFLAGS="$CFLAGS ${EXTRA_CFLAGS}" \
-CXXFLAGS="$CFLAGS ${EXTRA_CXXFLAGS}" \
+CXXFLAGS="$CFLAGS ${EXTRA_CXXFLAGS} -pthread" \
 LDFLAGS="$LDFLAGS -static-libstdc++" \
 CC="${CROSS_COMPILE}gcc -fPIC --sysroot=${SYSROOT}" \
 CXX="${CROSS_COMPILE}g++ -fPIC --sysroot=${SYSROOT} -D__cpp_static_assert=200410" \
