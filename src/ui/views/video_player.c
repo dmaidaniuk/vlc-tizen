@@ -36,7 +36,8 @@
 typedef struct videodata
 {
     player_h player;
-    Evas_Object *parent, *box;
+    Evas_Object *parent, *layout;
+    Evas_Object *play_pause_button;
     bool play_state;
     char *file_path;
 
@@ -150,72 +151,34 @@ release_base_player(void *data, Evas_Object *obj, void *event_info)
     error_code = player_stop(vd->player);
     error_code = player_unprepare(vd->player);
     error_code = player_destroy(vd->player);
+    evas_object_del(vd->parent);
 
 }
 
 Evas_Object*
 create_video_gui(Evas_Object *parent, char* file_path)
 {
-    Eina_List *engine_list, *l;
-    char *engine_name;
-
-    /* Retrieve render method list available in all Evas Library */
-    engine_list = evas_render_method_list();
-    if (!engine_list)
-    {
-        LOGD("ERROR : No available Evas Engines :\n");
-        exit(-1);
-    }
-    /* */
-    LOGD("Available Evas Engines :\n");
-    /* Acces the Eina_list* created by evas_render_method_list() */
-    /* Return strig list */
-    EINA_LIST_FOREACH(engine_list, l, engine_name)
-    LOGD("%s", engine_name);
-    evas_render_method_list_free(engine_list);
-
-    /* TODO : This is a very simple an ugly UI */
-    /* That was just create to debug & test video player func & display */
-    /* When this will work correctly, a proper player UI must be added */
-    Evas_Object *box, *button_init, *button_end, *lbl_init, *lbl_end;
     videodata_s *vd = malloc(sizeof(*vd));
     vd->parent = parent;
     vd->file_path = file_path;
 
-    /* */
-    box = elm_box_add(parent);
-    /* */
-    button_init = elm_button_add(box);
-    button_end = elm_button_add(box);
-    /* */
-    lbl_init = elm_label_add(button_init);
-    lbl_end = elm_label_add(button_end);
-    elm_object_text_set(lbl_init, "INIT PLAYER");
-    elm_object_text_set(lbl_end, "END PLAYER");
-    /* */
-    elm_object_content_set(button_init, lbl_init);
-    elm_object_content_set(button_end, lbl_end);
-    /* */
-    evas_object_size_hint_align_set(button_init, EVAS_HINT_FILL, EVAS_HINT_FILL);
-    evas_object_size_hint_align_set(button_end, EVAS_HINT_FILL, EVAS_HINT_FILL);
-    evas_object_size_hint_weight_set(button_init, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-    evas_object_size_hint_weight_set(button_end, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-    /* */
-    elm_box_pack_end(box, button_init);
-    elm_box_pack_end(box, button_end);
-    /* */
-    evas_object_show(lbl_init);
-    evas_object_show(lbl_end);
-    evas_object_show(button_end);
-    evas_object_show(button_init);
-    evas_object_show(box);
-    /* */
-    elm_naviframe_item_push(parent, "Video Player Test", NULL, NULL, box, NULL);
-    vd->box = box;
+    vd->layout = elm_layout_add(parent);
 
-    // Add callback to button
-    evas_object_smart_callback_add(button_init, "clicked", init_base_player, vd);
-    evas_object_smart_callback_add(button_end, "clicked", release_base_player, vd);
+    elm_layout_file_set(vd->layout, VIDEOPLAYEREDJ, "media_player_renderer");
 
-    return box;
+    evas_object_size_hint_weight_set(vd->layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+    evas_object_size_hint_align_set(vd->layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
+    evas_object_show(vd->layout);
+
+    //create play/pause image
+    vd->play_pause_button = elm_image_add(vd->layout);
+    elm_image_file_set(vd->play_pause_button, ICON_DIR"ic_play_circle_normal_o.png", NULL);
+    //attach to edje layout
+    elm_object_part_content_set(vd->layout, "swallow.play", vd->play_pause_button);
+    //show
+    evas_object_show(vd->play_pause_button);
+
+    elm_naviframe_item_push(parent, "Video Player Test", NULL, NULL, vd->layout, NULL);
+
+    return vd->layout;
 }

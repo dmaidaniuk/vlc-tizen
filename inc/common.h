@@ -35,6 +35,7 @@
 #include <stdlib.h>
 
 #include <tizen.h>
+#include <app_common.h>
 #include <dlog.h>
 
 #ifdef  LOG_TAG
@@ -46,8 +47,26 @@
 # define PACKAGE "org.videolan.vlc"
 #endif
 
-#define ICON_DIR "/opt/usr/apps/" PACKAGE "/res/images/"
+#define EDJPATH "edje"
+#define VIDEOPLAYEREDJ get_resource_path(EDJPATH"/video_player.edj")
+
+#define ICON_DIR "/opt/usr/apps/"PACKAGE"/res/images/"
 
 #include <Evas.h>
 
+#define MAX_LENGTH_PATH 1024
+static inline const char *get_resource_path(const char *file_path)
+{
+    static char absolute_path[MAX_LENGTH_PATH] = {'\0'};
+
+    static char *res_path_buff = NULL;
+    if(res_path_buff == NULL)
+    {
+        res_path_buff = app_get_resource_path();
+    }
+
+    snprintf(absolute_path, MAX_LENGTH_PATH, "%s%s", res_path_buff, file_path);
+
+    return absolute_path;
+}
 #endif /* __vlc_common_H__ */
