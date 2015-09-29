@@ -38,6 +38,7 @@ typedef enum
 
 void
 init_storage_discovery();
+
 const char*
 fetch_media_path(media_directory_e);
 

@@ -44,6 +44,7 @@ struct application {
     /* settings */
     /* media_library */
     media_library   *p_mediaLibrary;
+    interface *p_intf;
 };
 
 static bool
@@ -60,7 +61,7 @@ app_create(void *data)
         return false;
 
     /* */
-    intf_create_base_gui(app);
+    app->p_intf = intf_create_base_gui(app);
 
     return true;
 }
@@ -88,6 +89,7 @@ app_terminate(void *data)
 {
     application *app = data;
     DeleteMediaLibrary(app->p_mediaLibrary);
+    intf_destroy(app->p_intf);
     free(app);
     emotion_shutdown();
 }

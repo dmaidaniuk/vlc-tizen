@@ -65,8 +65,11 @@ intf_create_view(interface *, view_e);
 void
 intf_show_previous_view(interface *);
 
-void
+interface *
 intf_create_base_gui(application *);
+
+void
+intf_destroy(interface *);
 
 void
 intf_update_mini_player(interface *);

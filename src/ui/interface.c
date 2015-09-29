@@ -213,8 +213,6 @@ intf_create_view(interface *intf, int sidebar_idx)
     intf->popup_toggle_btn = create_button(intf->content, "naviframe/drawers", NULL);
     evas_object_smart_callback_add(intf->popup_toggle_btn, "clicked", right_panel_button_clicked_cb, intf);
     elm_object_part_content_set(intf->content, "title_right_btn", intf->popup_toggle_btn);
-
-
 }
 
 static Evas_Object*
@@ -306,7 +304,7 @@ intf_show_previous_view(interface *intf)
 }
 
 
-void
+interface *
 intf_create_base_gui(application *app)
 {
     interface *intf = calloc(1, sizeof(*intf));
@@ -363,6 +361,14 @@ intf_create_base_gui(application *app)
 
     /* */
     evas_object_show(intf->win);
+
+    return intf;
+}
+
+void
+intf_destroy(interface *intf)
+{
+    free(intf);
 }
 
 void
