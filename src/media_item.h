@@ -35,8 +35,7 @@ enum MEDIA_ITEM_TYPE {
     MEDIA_ITEM_TYPE_ARCHIVE
 };
 
-typedef struct media_item media_item;
-struct media_item {
+typedef struct media_item {
     char *psz_path;
     enum MEDIA_ITEM_TYPE i_type;
 
@@ -45,7 +44,7 @@ struct media_item {
 
     //FIXME union
     int i_w, i_h;          /* in pixels */
-};
+} media_item;
 
 media_item *
 media_item_create(const char *psz_path, enum MEDIA_ITEM_TYPE i_type);
