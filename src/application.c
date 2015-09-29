@@ -163,6 +163,12 @@ application_get_media_library(application *app)
     return app->p_mediaLibrary;
 }
 
+playback_service *
+application_get_playback_service(application *app)
+{
+    return app->p_ps;
+}
+
 int
 main(int argc, char *argv[])
 {
