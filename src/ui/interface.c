@@ -89,7 +89,7 @@ win_delete_request_cb(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-win_back_cb(void *data, Evas_Object *obj, void *event_info)
+win_back_key_cb(void *data, Evas_Object *obj, void *event_info)
 {
     interface *intf = data;
     /* Let window go to hide state. */
@@ -340,9 +340,9 @@ intf_create(application *app)
         elm_win_wm_rotation_available_rotations_set(intf->win, (const int *)(&rots), 4);
     }
 
-    /* Handle callbacks */
+    /* Handle back buttons and delete callbacks */
     evas_object_smart_callback_add(intf->win, "delete,request", win_delete_request_cb, NULL);
-    eext_object_event_callback_add(intf->win, EEXT_CALLBACK_BACK, win_back_cb, intf);
+    eext_object_event_callback_add(intf->win, EEXT_CALLBACK_BACK, win_back_key_cb, intf);
 
     /* Add and set a conformant in the main Window */
     conform = elm_conformant_add(intf->win);
