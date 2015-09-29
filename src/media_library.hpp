@@ -27,6 +27,8 @@
 #ifndef MEDIALIBRARY_H_
 #define MEDIALIBRARY_H_
 
+#include "media_item.h"
+
 #ifdef __cplusplus
 extern "C"
 {
@@ -34,8 +36,10 @@ extern "C"
 
 #include "application.h"
 
+typedef void (*media_added_cb)(media_item*);
+
 media_library* CreateMediaLibrary(application* p_app);
-bool StartMediaLibrary( media_library* p_media_library );
+bool StartMediaLibrary( media_library* p_media_library, media_added_cb cb );
 void DeleteMediaLibrary(media_library* p_media_library);
 void Discover( const char* psz_location );
 
