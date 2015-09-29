@@ -22,6 +22,7 @@ checkfail()
 #############
 
 RELEASE=0
+STRIP=0
 while [ $# -gt 0 ]; do
     case $1 in
         help|--help)
@@ -32,6 +33,9 @@ while [ $# -gt 0 ]; do
         a|-a)
             export TIZEN_ABI=$2
             shift
+            ;;
+        s|-s)
+            export STRIP=1
             ;;
         release|--release)
             export RELEASE=1
