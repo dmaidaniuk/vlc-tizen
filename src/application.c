@@ -37,6 +37,7 @@
 #include "ui/interface.h"
 
 #include "media_storage.h"
+#include "playback_service.h"
 #include "medialibrary.hpp"
 
 struct application {
@@ -45,6 +46,7 @@ struct application {
     /* media_library */
     media_library   *p_mediaLibrary;
     interface *p_intf;
+    playback_service *p_ps;
 };
 
 static bool
@@ -62,6 +64,8 @@ app_create(void *data)
 
     /* */
     app->p_intf = intf_create_base_gui(app);
+
+    app->p_ps = playback_service_create(app);
 
     return true;
 }
@@ -90,6 +94,7 @@ app_terminate(void *data)
     application *app = data;
     DeleteMediaLibrary(app->p_mediaLibrary);
     intf_destroy(app->p_intf);
+    playback_service_destroy(app->p_ps);
     free(app);
     emotion_shutdown();
 }
