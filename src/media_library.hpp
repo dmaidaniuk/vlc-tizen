@@ -35,6 +35,7 @@ extern "C"
 #include "application.h"
 
 media_library* CreateMediaLibrary(application* p_app);
+bool StartMediaLibrary( media_library* p_media_library );
 void DeleteMediaLibrary(media_library* p_media_library);
 void Discover( const char* psz_location );
 

@@ -36,8 +36,9 @@
 class media_library : public IMediaLibraryCb
 {
 public:
-	media_library( const std::string& appData );
+	media_library();
 
+	bool initialize();
 	void discover( const std::string& location );
 	// IMediaLibraryCb
 	virtual void onMetadataUpdated( FilePtr file ) override;
@@ -50,12 +51,24 @@ private:
 	std::unique_ptr<IMediaLibrary> m_ml;
 };
 
-media_library::media_library( const std::string& appData )
+media_library::media_library()
 	: m_ml( MediaLibraryFactory::create() )
 {
-	if ( m_ml == nullptr ||
-			m_ml->initialize( appData + "vlc.db", appData + "/snapshots", this ) == false )
+	if ( m_ml == nullptr )
 		throw std::runtime_error( "Failed to initialize MediaLibrary" );
+}
+
+bool
+media_library::initialize()
+{
+	auto appDataCStr = std::unique_ptr<char, void(*)(void*)>( app_get_data_path(), &free );
+	std::string appData( appDataCStr.get() );
+	if ( appDataCStr == nullptr )
+	{
+		LOGE( "Failed to fetch application data directory" );
+		return false;
+	}
+	return m_ml->initialize( appData + "vlc.db", appData + "/snapshots", this );
 }
 
 void
@@ -91,23 +104,21 @@ media_library::discover( const std::string& location )
 media_library *
 CreateMediaLibrary(application *p_app)
 {
-	media_library* ml = nullptr;
-	auto appData = std::unique_ptr<char, void(*)(void*)>( app_get_data_path(), &free );
-	if ( appData == nullptr )
-	{
-		LOGE( "Failed to fetch application data directory" );
-		return nullptr;
-	}
 	try
 	{
-		return new media_library( appData.get() );
+		return new media_library;
 	}
 	catch (std::exception& ex)
 	{
 		LOGE( "%s", ex.what() );
-		delete ml;
 		return nullptr;
 	}
+}
+
+bool
+StartMediaLibrary( media_library* p_media_library )
+{
+	return p_media_library->initialize();
 }
 
 void
