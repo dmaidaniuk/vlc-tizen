@@ -37,13 +37,13 @@ typedef struct media_storage media_storage;
 const char *
 application_get_media_path(application *app, media_directory_e type);
 
-media_storage *
+const media_storage *
 application_get_media_storage(application *app);
 
-media_library *
+const media_library *
 application_get_media_library(application *app);
 
-playback_service *
+const playback_service *
 application_get_playback_service(application *app);
 
 #endif

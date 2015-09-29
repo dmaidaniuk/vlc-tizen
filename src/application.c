@@ -160,19 +160,19 @@ application_get_media_path(application *app, media_directory_e type)
     return media_storage_get_path(app->p_ms, type);
 }
 
-media_storage *
+const media_storage *
 application_get_media_storage(application *app)
 {
     return app->p_ms;
 }
 
-media_library *
+const media_library *
 application_get_media_library(application *app)
 {
     return app->p_mediaLibrary;
 }
 
-playback_service *
+const playback_service *
 application_get_playback_service(application *app)
 {
     return app->p_ps;
