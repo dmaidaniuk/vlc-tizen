@@ -150,7 +150,7 @@ gl_content_get_cb(void *data, Evas_Object *obj, const char *part)
 }
 
 Evas_Object*
-create_audio_list(char* path, interface *intf)
+create_audio_list(const char* path, interface *intf)
 {
     char *buff;
     audio_list_data_s *ald = malloc(sizeof(*ald));
@@ -244,7 +244,7 @@ static void
 tabbar_item_selected(interface *intf, Elm_Object_Item *audio_it)
 {
     int error;
-    char *audio_path = fetch_media_path(MEDIA_DIRECTORY_MUSIC);
+    const char *audio_path = fetch_media_path(MEDIA_DIRECTORY_MUSIC);
     const char *str = NULL;
     Evas_Object *current_audio_view;
 

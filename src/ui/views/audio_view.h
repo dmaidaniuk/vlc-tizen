@@ -33,6 +33,6 @@ Evas_Object *
 create_audio_view(interface *intf, Evas_Object *parent);
 
 Evas_Object*
-create_audio_list(char* path, interface *intf);
+create_audio_list(const char* path, interface *intf);
 
 #endif /* AUDIO_VIEW_H_ */
