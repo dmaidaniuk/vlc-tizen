@@ -66,7 +66,7 @@ struct interface {
 };
 
 /* TODO : A lot of size hints are Hard Coded with pixel values (using a Samsung Z1 phone) */
-/* TODO : the use of Dpi or Aspect Ratio will be mandatory in the futur */
+/* TODO : the use of Dpi or Aspect Ratio will be mandatory in the future */
 
 /* TODO : Some UI widget design are not perfect. */
 /* TODO : Using Edje will probably be mandatory to set some of the widget and get a clean UI */
@@ -75,11 +75,8 @@ struct interface {
 /* TODO : Use Edje ColorClass to set the general widget colors of the app */
 /* TODO :(VLC : #ff8800 / RGBA : 255, 136, 0, 255) */
 
-/* TODO : Remember that the currently used player is the Tizen native one */
-/* TODO : VLC haven't be linked to the current UI app */
-
 /* TODO : Managing Hardware Key is mandatory to publish a Tizen AppStore App */
-/* TODO : The Menu & Back Key aren't currently set */
+/* TODO : The Menu isn't currently set */
 /* TODO : This should be solved using the #include <efl_extension.h> */
 /* TODO : Then use the void eext_object_event_callback_add func */
 /* TODO : See more on https://developer.tizen.org/development/guides/native-application/ui/efl-extension */
