@@ -42,7 +42,6 @@
 
 struct application {
     media_storage   *p_ms;
-    const char      *psz_media_path;
     /* settings */
     media_library   *p_mediaLibrary;
     interface *p_intf;
@@ -59,9 +58,6 @@ app_create(void *data)
     app->p_ms = media_storage_create(app);
     if (!app->p_ms)
         goto error;
-    if (!app->psz_media_path)
-        goto error;
-    LOGE("Media Path %s", app->psz_media_path);
 
     app->p_mediaLibrary = CreateMediaLibrary(app);
     if (!app->p_mediaLibrary)
@@ -179,7 +175,7 @@ application_get_playback_service(application *app)
 int
 main(int argc, char *argv[])
 {
-    application *app = malloc(sizeof(*app));
+    application *app = calloc(1, sizeof(*app));
 
     /* Emotion start */
     emotion_init();
