@@ -30,6 +30,7 @@
 typedef struct application application;
 typedef struct media_library media_library;
 typedef struct playback_service playback_service;
+typedef struct media_storage media_storage;
 
 #include "media_storage.h"
 

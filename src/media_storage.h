@@ -27,9 +27,6 @@
 #ifndef MEDIA_LIBRARY_H_
 #define MEDIA_LIBRARY_H_
 
-typedef struct application application;
-typedef struct media_storage media_storage;
-
 typedef enum
 {
     MEDIA_DIRECTORY,
@@ -38,6 +35,8 @@ typedef enum
     MEDIA_DIRECTORY_MUSIC,            /* Music directory */
     MEDIA_DIRECTORY_MAX
 } media_directory_e;
+
+#include "application.h"
 
 media_storage *
 media_storage_create(application *app);

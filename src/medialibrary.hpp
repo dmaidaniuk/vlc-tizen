@@ -34,8 +34,6 @@ extern "C"
 
 #include "application.h"
 
-typedef struct media_library media_library;
-
 media_library* CreateMediaLibrary(application* p_app);
 void DeleteMediaLibrary(media_library* p_media_library);
 

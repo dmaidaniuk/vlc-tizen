@@ -27,8 +27,6 @@
 
 #include "application.h"
 
-typedef struct playback_service playback_service;
-
 playback_service *
 playback_service_create(application *p_app);
 
