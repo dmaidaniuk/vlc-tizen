@@ -241,7 +241,7 @@ intf_create_view(interface *intf, int view_type)
     switch(view_type)
     {
     case VIEW_VIDEO:
-        view = create_video_view(intf, application_get_media_path(p_app, MEDIA_DIRECTORY_VIDEOS), nf_content);
+        view = create_video_view(intf, nf_content, application_get_media_path(p_app, MEDIA_DIRECTORY_VIDEOS));
         break;
     case VIEW_AUDIO:
         view = create_audio_view(intf, nf_content);

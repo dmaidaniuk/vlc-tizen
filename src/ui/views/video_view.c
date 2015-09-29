@@ -53,13 +53,13 @@ video_gl_selected_cb(void *data, Evas_Object *obj, void *event_info)
     struct stat sb;
     stat(vld->item->psz_path, &sb);
 
-    if (S_ISREG(sb.st_mode)){
+    if (S_ISREG(sb.st_mode))
+    {
         intf_create_video_player(vld->p_intf, vld->item->psz_path);
     }
-
     else if (S_ISDIR(sb.st_mode))
     {
-        create_video_view(vld->p_intf, vld->item->psz_path, vld->parent);
+        create_video_view(vld->p_intf, vld->parent, vld->item->psz_path);
     }
 }
 
@@ -252,7 +252,7 @@ generate_video_list(interface *intf, const char *path, Evas_Object *parent, Evas
 }
 
 Evas_Object*
-create_video_view(interface *intf, const char* path, Evas_Object *parent)
+create_video_view(interface *intf, Evas_Object *parent, const char* path )
 {
     video_list_item *vld = malloc(sizeof(*vld));
 
