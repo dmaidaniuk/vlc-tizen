@@ -88,6 +88,7 @@ struct interface {
 /* TODO : Then use the void eext_object_event_callback_add func */
 /* TODO : See more on https://developer.tizen.org/development/guides/native-application/ui/efl-extension */
 
+/* CALLBACKS */
 static void
 win_delete_request_cb(void *data, Evas_Object *obj, void *event_info)
 {
@@ -108,22 +109,6 @@ win_back_cb(void *data, Evas_Object *obj, void *event_info)
     }
 }
 
-
-
-static Evas_Object *
-create_button(Evas_Object *parent, char *style, char *text)
-{
-    Evas_Object *button;
-
-    button = elm_button_add(parent);
-    elm_object_style_set(button, style);
-
-    /* */
-    evas_object_show(button);
-
-    return button;
-}
-
 static void
 left_panel_button_clicked_cb(void *data, Evas_Object * obj, void *event_info)
 {
@@ -142,6 +127,70 @@ right_panel_button_clicked_cb(void *data, Evas_Object * obj, void *event_info)
 
 }
 
+void
+intf_show_previous_view(interface *intf)
+{
+    intf_create_view(intf, intf->sidebar_idx);
+}
+
+void
+intf_update_mini_player(interface *intf)
+{
+    if((mini_player_play_state(intf->p_mini_player) == true) && (mini_player_visibility_state(intf->p_mini_player) == false))
+    {
+        mini_player_show(intf->p_mini_player);
+    }
+
+    if((mini_player_play_state(intf->p_mini_player) == false) && (mini_player_fs_state(intf->p_mini_player) == true))
+    {
+        mini_player_stop(intf->p_mini_player);
+    }
+}
+
+/* GETTERS */
+application *
+intf_get_application(interface *p_intf)
+{
+    return p_intf->p_app;
+}
+
+mini_player *
+intf_get_mini_player(interface *p_intf)
+{
+    return p_intf->p_mini_player;
+}
+
+Evas*
+intf_get_window(interface *intf)
+{
+    return evas_object_evas_get(intf->win);
+}
+
+Evas_Object*
+intf_get_sidebar(interface *intf)
+{
+    return intf->sidebar;
+}
+
+Evas_Object *
+intf_get_miniplayer_content_box(interface *intf)
+{
+    return intf->mini_player_content_box;
+}
+
+Evas_Object *
+intf_get_main_naviframe(interface *intf)
+{
+    return intf->nf_content;
+}
+
+Evas_Object *
+intf_get_toolbar(interface *intf)
+{
+    return intf->nf_toolbar;
+}
+
+/* CREATION */
 static Evas_Object*
 create_base_layout(Evas_Object *parent)
 {
@@ -155,6 +204,19 @@ create_base_layout(Evas_Object *parent)
     return layout;
 }
 
+static Evas_Object *
+create_button(Evas_Object *parent, char *style, char *text)
+{
+    Evas_Object *button;
+
+    button = elm_button_add(parent);
+    elm_object_style_set(button, style);
+
+    /* */
+    evas_object_show(button);
+
+    return button;
+}
 
 static const char*
 get_type_tag(int panel){
@@ -172,7 +234,6 @@ get_type_tag(int panel){
             return "Video";
         }
 }
-
 void
 intf_create_view(interface *intf, int sidebar_idx)
 {
@@ -267,43 +328,6 @@ create_main_view(interface *intf)
     return layout;
 }
 
-Evas*
-intf_get_window(interface *intf)
-{
-    return evas_object_evas_get(intf->win);
-}
-
-Evas_Object*
-intf_get_sidebar(interface *intf)
-{
-    return intf->sidebar;
-}
-
-Evas_Object *
-intf_get_miniplayer_content_box(interface *intf)
-{
-    return intf->mini_player_content_box;
-}
-
-Evas_Object *
-intf_get_main_naviframe(interface *intf)
-{
-    return intf->nf_content;
-}
-
-Evas_Object *
-intf_get_toolbar(interface *intf)
-{
-    return intf->nf_toolbar;
-}
-
-void
-intf_show_previous_view(interface *intf)
-{
-    intf_create_view(intf, intf->sidebar_idx);
-}
-
-
 interface *
 intf_create(application *app)
 {
@@ -330,6 +354,7 @@ intf_create(application *app)
     intf->conform = elm_conformant_add(intf->win);
     elm_win_conformant_set(intf->win, EINA_TRUE);
     evas_object_size_hint_weight_set(intf->conform, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+
     /* */
     elm_win_indicator_mode_set(intf->win, ELM_WIN_INDICATOR_SHOW);
     elm_win_indicator_opacity_set(intf->win, ELM_WIN_INDICATOR_OPAQUE);
@@ -365,34 +390,9 @@ intf_create(application *app)
     return intf;
 }
 
+/* DESTRUCTION */
 void
 intf_destroy(interface *intf)
 {
     free(intf);
-}
-
-void
-intf_update_mini_player(interface *intf)
-{
-    if((mini_player_play_state(intf->p_mini_player) == true) && (mini_player_visibility_state(intf->p_mini_player) == false))
-    {
-        mini_player_show(intf->p_mini_player);
-    }
-
-    if((mini_player_play_state(intf->p_mini_player) == false) && (mini_player_fs_state(intf->p_mini_player) == true))
-    {
-        mini_player_stop(intf->p_mini_player);
-    }
-}
-
-application *
-intf_get_application(interface *p_intf)
-{
-    return p_intf->p_app;
-}
-
-mini_player *
-intf_get_mini_player(interface *p_intf)
-{
-    return p_intf->p_mini_player;
 }
