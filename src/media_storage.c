@@ -50,10 +50,11 @@ static bool storage_cb(int storage_id, storage_type_e type, storage_state_e stat
 media_storage *
 media_storage_create(application *p_app)
 {
-    /* Connect to the device storage */
     media_storage *p_ms = calloc(1, sizeof(media_storage));
     if (!p_ms)
         return NULL;
+
+    /* Connect to the device storage */
     if (storage_foreach_device_supported(storage_cb, p_ms))
     {
         free(p_ms);
@@ -78,6 +79,7 @@ media_storage_get_path(media_storage *p_ms, media_directory_e type)
     if (type < 0 || type >= MEDIA_DIRECTORY_MAX)
         type = MEDIA_DIRECTORY;
 
+    /* Return precomputed values, it should not change at runtime */
     if (p_ms->psz_paths[type])
         return p_ms->psz_paths[type];
 
@@ -94,10 +96,12 @@ media_storage_get_path(media_storage *p_ms, media_directory_e type)
         storage_type = STORAGE_DIRECTORY_CAMERA;
         break;
     default:
+        LOGW("Storage error, unknown type");
         return NULL;
     }
-    char *directory;
 
+    /* */
+    char *directory;
     error = storage_get_directory(p_ms->i_internal_storage_id, storage_type, &directory);
 
     if (error != STORAGE_ERROR_NONE)
@@ -106,6 +110,7 @@ media_storage_get_path(media_storage *p_ms, media_directory_e type)
         return NULL;
     }
 
+    /* Special case for Directory view */
     if (type == MEDIA_DIRECTORY) {
         char *device_storage_path;
         /* Concatenate the media path with .. to access the general media directory */
@@ -113,7 +118,9 @@ media_storage_get_path(media_storage *p_ms, media_directory_e type)
         free(directory);
         directory = device_storage_path;
     }
-    p_ms->psz_paths[type] = directory;
 
+    /* Store, Log out and return */
+    p_ms->psz_paths[type] = directory;
+    LOGD("Storage type %d: %s", type, directory);
     return directory;
 }
