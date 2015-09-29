@@ -38,6 +38,7 @@ class media_library : public IMediaLibraryCb
 public:
 	media_library( const std::string& appData );
 
+	void discover( const std::string& location );
 	// IMediaLibraryCb
 	virtual void onMetadataUpdated( FilePtr file ) override;
 
@@ -56,6 +57,12 @@ media_library::media_library( const std::string& appData )
 void media_library::onMetadataUpdated( FilePtr )
 {
 
+}
+
+void
+media_library::discover( const std::string& location )
+{
+	m_ml->discover( location );
 }
 
 media_library *
@@ -84,4 +91,10 @@ void
 DeleteMediaLibrary(media_library* p_media_library)
 {
 	delete p_media_library;
+}
+
+void
+Discover( media_library* p_ml, const char* psz_location )
+{
+	p_ml->discover( psz_location );
 }

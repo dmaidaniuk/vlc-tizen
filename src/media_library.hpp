@@ -36,6 +36,7 @@ extern "C"
 
 media_library* CreateMediaLibrary(application* p_app);
 void DeleteMediaLibrary(media_library* p_media_library);
+void Discover( const char* psz_location );
 
 #ifdef __cplusplus
 }
