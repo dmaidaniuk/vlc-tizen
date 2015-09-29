@@ -201,8 +201,8 @@ create_button(Evas_Object *parent, char *style, char *text)
 }
 
 static const char*
-get_view_title(int panel){
-    switch(panel)
+get_view_title(int view_type){
+    switch(view_type)
         {
         case VIEW_AUDIO:
             return "Audio";
@@ -218,27 +218,27 @@ get_view_title(int panel){
 }
 
 static bool
-needs_overflow_menu(int sidebar_type)
+needs_overflow_menu(int view_type)
 {
-    if((sidebar_type == VIEW_AUDIO)||(sidebar_type == VIEW_VIDEO))
+    if((view_type == VIEW_AUDIO)||(view_type == VIEW_VIDEO))
         return true;
     else
         return false;
 }
 
 void
-intf_create_view(interface *intf, int sidebar_type)
+intf_create_view(interface *intf, int view_type)
 {
     Evas_Object *nf_content = intf->nf_content;
     Evas_Object *view;
 
     application *p_app = intf_get_application(intf);
 
-    if(sidebar_type == VIEW_AUTO)
-        sidebar_type = VIEW_VIDEO; /* Replace by the last saved tab */
+    if(view_type == VIEW_AUTO)
+        view_type = VIEW_VIDEO; /* Replace by the last saved tab */
 
     /* Create the view depending on with panel item list is selected */
-    switch(sidebar_type)
+    switch(view_type)
     {
     case VIEW_VIDEO:
         view = create_video_view(application_get_media_path(p_app, MEDIA_DIRECTORY_VIDEOS), nf_content);
@@ -258,7 +258,7 @@ intf_create_view(interface *intf, int sidebar_type)
 
     }
     /* Push the view in the naviframe with the corresponding header */
-    elm_naviframe_item_push(nf_content, get_view_title(sidebar_type), NULL, NULL, view, "basic");
+    elm_naviframe_item_push(nf_content, get_view_title(view_type), NULL, NULL, view, "basic");
 
     /* Create then set the panel toggle btn and add his callbacks */
     intf->sidebar_toggle_btn = create_button(intf->nf_content, "naviframe/drawers", NULL);
@@ -266,14 +266,14 @@ intf_create_view(interface *intf, int sidebar_type)
     elm_object_part_content_set(intf->nf_content, "title_left_btn", intf->sidebar_toggle_btn);
 
     /* */
-    if(needs_overflow_menu(sidebar_type))
+    if(needs_overflow_menu(view_type))
     {
         intf->popup_toggle_btn = create_button(intf->nf_content, "naviframe/drawers", NULL);
         evas_object_smart_callback_add(intf->popup_toggle_btn, "clicked", right_panel_button_clicked_cb, intf);
         elm_object_part_content_set(intf->nf_content, "title_right_btn", intf->popup_toggle_btn);
     }
 
-    intf->current_sidebar_idx = sidebar_type;
+    intf->current_sidebar_idx = view_type;
 }
 
 static Evas_Object*
