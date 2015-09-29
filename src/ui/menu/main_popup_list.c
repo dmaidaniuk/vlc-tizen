@@ -226,5 +226,7 @@ create_popup(Evas_Object *parent, interface *intf)
     /* Callback for the back key */
     eext_object_event_callback_add(popup, EEXT_CALLBACK_LAST, eext_popup_back_cb, NULL);
 
+    evas_object_size_hint_weight_set(popup, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+
     return popup;
 }

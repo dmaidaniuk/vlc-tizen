@@ -114,10 +114,7 @@ static void
 right_panel_button_clicked_cb(void *data, Evas_Object * obj, void *event_info)
 {
     interface *intf = data;
-
     intf->popup = create_popup(intf->global_box,intf);
-    evas_object_size_hint_weight_set(intf->popup, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-
 }
 
 void
