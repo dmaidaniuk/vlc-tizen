@@ -217,6 +217,15 @@ get_view_title(int panel){
         }
 }
 
+static bool
+needs_overflow_menu(int sidebar_type)
+{
+    if((sidebar_type == VIEW_AUDIO)||(sidebar_type == VIEW_VIDEO))
+        return true;
+    else
+        return false;
+}
+
 void
 intf_create_view(interface *intf, int sidebar_type)
 {
@@ -225,11 +234,13 @@ intf_create_view(interface *intf, int sidebar_type)
 
     application *p_app = intf_get_application(intf);
 
+    if(sidebar_type == VIEW_AUTO)
+        sidebar_type = VIEW_VIDEO; /* Replace by the last saved tab */
+
     /* Create the view depending on with panel item list is selected */
     switch(sidebar_type)
     {
     case VIEW_VIDEO:
-    case VIEW_AUTO:
         view = create_video_view(application_get_media_path(p_app, MEDIA_DIRECTORY_VIDEOS), nf_content);
         break;
     case VIEW_AUDIO:
@@ -255,9 +266,12 @@ intf_create_view(interface *intf, int sidebar_type)
     elm_object_part_content_set(intf->nf_content, "title_left_btn", intf->sidebar_toggle_btn);
 
     /* */
-    intf->popup_toggle_btn = create_button(intf->nf_content, "naviframe/drawers", NULL);
-    evas_object_smart_callback_add(intf->popup_toggle_btn, "clicked", right_panel_button_clicked_cb, intf);
-    elm_object_part_content_set(intf->nf_content, "title_right_btn", intf->popup_toggle_btn);
+    if(needs_overflow_menu(sidebar_type))
+    {
+        intf->popup_toggle_btn = create_button(intf->nf_content, "naviframe/drawers", NULL);
+        evas_object_smart_callback_add(intf->popup_toggle_btn, "clicked", right_panel_button_clicked_cb, intf);
+        elm_object_part_content_set(intf->nf_content, "title_right_btn", intf->popup_toggle_btn);
+    }
 
     intf->current_sidebar_idx = sidebar_type;
 }
