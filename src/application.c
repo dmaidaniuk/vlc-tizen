@@ -49,6 +49,8 @@ struct application {
     playback_service *p_ps;
 };
 
+static void app_terminate(void *data);
+
 static bool
 app_create(void *data)
 {
@@ -56,18 +58,29 @@ app_create(void *data)
 
     /* Fetch the media path and keep it in memory as soon as the app is create */
     init_storage_discovery();
+
     app->psz_media_path = fetch_media_path(MEDIA_DIRECTORY);
+    if (!app->psz_media_path)
+        goto error;
     LOGE("Media Path %s", app->psz_media_path);
+
     app->p_mediaLibrary = CreateMediaLibrary(app);
     if (!app->p_mediaLibrary)
-        return false;
+        goto error;
 
     /* */
     app->p_intf = intf_create_base_gui(app);
+    if (!app->p_intf)
+        goto error;
 
     app->p_ps = playback_service_create(app);
+    if (!app->p_ps)
+        goto error;
 
     return true;
+error:
+    app_terminate(app);
+    return false;
 }
 
 static void
@@ -92,9 +105,12 @@ static void
 app_terminate(void *data)
 {
     application *app = data;
-    DeleteMediaLibrary(app->p_mediaLibrary);
-    intf_destroy(app->p_intf);
-    playback_service_destroy(app->p_ps);
+    if (app->p_mediaLibrary)
+        DeleteMediaLibrary(app->p_mediaLibrary);
+    if (app->p_intf)
+        intf_destroy(app->p_intf);
+    if (app->p_ps)
+        playback_service_destroy(app->p_ps);
     free(app);
     emotion_shutdown();
 }
