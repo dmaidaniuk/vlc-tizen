@@ -56,9 +56,6 @@ struct interface {
     int sidebar_idx;
     Evas_Object *sidebar_toggle_btn;
 
-    /* */
-    Evas_Object *current_view;
-
     /* Context popup-menu */
     Evas_Object *popup_toggle_btn;
     Evas_Object *popup;
