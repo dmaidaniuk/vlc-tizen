@@ -457,8 +457,6 @@ stop_mini_player_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
     mini_player *mpd = data;
 
     mini_player_stop(mpd);
-
-    free(mpd);
 }
 
 static void
