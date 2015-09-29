@@ -25,6 +25,11 @@
 #ifndef MEDIA_ITEM_H_
 #define MEDIA_ITEM_H_
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 enum MEDIA_ITEM_TYPE {
     MEDIA_ITEM_TYPE_UNKNOWN,
     MEDIA_ITEM_TYPE_VIDEO,
@@ -50,5 +55,9 @@ media_item_create(const char *psz_path, enum MEDIA_ITEM_TYPE i_type);
 
 void
 media_item_destroy(media_item *p_mi);
+
+#ifdef __cplusplus
+} // extern "C"
+#endif
 
 #endif /* MEDIA_ITEM_H_ */
