@@ -54,7 +54,11 @@ media_storage_create(application *p_app)
     media_storage *p_ms = calloc(1, sizeof(media_storage));
     if (!p_ms)
         return NULL;
-    storage_foreach_device_supported(storage_cb, p_ms);
+    if (storage_foreach_device_supported(storage_cb, p_ms))
+    {
+        free(p_ms);
+        return NULL;
+    }
     return p_ms;
 }
 
