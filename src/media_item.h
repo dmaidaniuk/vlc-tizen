@@ -22,7 +22,6 @@
  * compatibility with the Store
  *****************************************************************************/
 
-
 #ifndef MEDIA_ITEM_H_
 #define MEDIA_ITEM_H_
 
@@ -36,14 +35,14 @@ enum MEDIA_ITEM_TYPE {
 };
 
 typedef struct media_item {
-    char *psz_path;
-    enum MEDIA_ITEM_TYPE i_type;
+    char *psz_path;                 /* Normalized path on the device */
+    enum MEDIA_ITEM_TYPE i_type;    /* Video, Audio, Subs, etc... */
 
-    const char *psz_title; /* Human Readable Title */
-    int64_t i_duration;    /* in ms */
+    const char *psz_title;          /* Human Readable Title */
+    int64_t i_duration;             /* in ms */
 
-    //FIXME union
-    int i_w, i_h;          /* in pixels */
+    //FIXME replace with a union
+    int i_w, i_h;                   /* in pixels */
 } media_item;
 
 media_item *
