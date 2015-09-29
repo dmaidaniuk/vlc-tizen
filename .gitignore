@@ -13,3 +13,4 @@
 libvlcpp
 medialibrary
 *~
+res/edje/*.edj
