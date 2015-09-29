@@ -61,7 +61,7 @@ app_create(void *data)
         goto error;
 
     /* */
-    app->p_mediaLibrary = CreateMediaLibrary(app);
+    app->p_mediaLibrary = media_library_create(app);
     if (!app->p_mediaLibrary)
         goto error;
 
@@ -109,7 +109,7 @@ app_terminate(void *data)
     if (app->p_ms)
         media_storage_destroy(app->p_ms);
     if (app->p_mediaLibrary)
-        DeleteMediaLibrary(app->p_mediaLibrary);
+        media_library_delete(app->p_mediaLibrary);
     if (app->p_intf)
         intf_destroy(app->p_intf);
     if (app->p_ps)
