@@ -175,7 +175,6 @@ create_audio_list(const char* path, audio_view *av)
     itc->item_style = "2line.top.3";
     itc->func.text_get = gl_text_get_cb;
     itc->func.content_get = gl_content_get_cb;
-    LOGI("Coucou");
     genlist = elm_genlist_add(parent);
 
     /* Set the genlist scoller mode */
