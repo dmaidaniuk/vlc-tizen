@@ -77,7 +77,7 @@ create_video_gui(Evas_Object *parent, const char* file_path)
     evas_init();
     /* create and assign canvas*/
     Evas *evas = evas_new();
-    vd->canvas = evas_object_image_filled_add(vd->layout);
+    vd->canvas = evas_object_image_filled_add(evas);
     elm_object_part_content_set(vd->layout, "swallow.visualization", vd->canvas);
     //TODO vd->canvas = ??
 
