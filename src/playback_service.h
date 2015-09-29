@@ -29,8 +29,8 @@
 #include "application.h"
 
 enum PLAYLIST_CONTEXT {
-    PLAYLIST_CONTEXT_VIDEO,
     PLAYLIST_CONTEXT_AUDIO,
+    PLAYLIST_CONTEXT_VIDEO,
     PLAYLIST_CONTEXT_OTHERS,
 };
 
@@ -44,7 +44,7 @@ struct playback_service_callbacks
 };
 
 playback_service *
-playback_service_create(application *p_app);
+playback_service_create(application *p_app, interface *p_intf);
 
 void
 playback_service_destroy(playback_service *p_ps);
@@ -60,6 +60,9 @@ playback_service_register_callbacks(playback_service *p_ps, playback_service_cal
 
 void
 playback_service_unregister_callbacks(playback_service *p_ps, void *p_id);
+
+int
+playback_service_set_evas_video(playback_service *p_ps, Evas *p_evas);
 
 int
 playback_service_start(playback_service *p_ps);

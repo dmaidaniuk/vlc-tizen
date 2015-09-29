@@ -28,6 +28,7 @@
 #include <Emotion.h>
 
 #include "playback_service.h"
+#include "ui/interface.h"
 
 #define PLAYLIST_CONTEXT_COUNT (PLAYLIST_CONTEXT_OTHERS + 1)
 
@@ -35,12 +36,14 @@ struct playback_service
 {
     media_list *p_ml_list[PLAYLIST_CONTEXT_COUNT];
     media_list *p_ml;
-    Evas_Object *p_emotion;
+    Evas_Object *p_ea; /* emotion audio */
+    Evas_Object *p_ev; /* emotion video */
+    Evas_Object *p_emotion; /* p_ea or p_ev */
     Eina_List *p_cbs_list;
 };
 
 playback_service *
-playback_service_create(application *p_app)
+playback_service_create(application *p_app, interface *p_intf)
 {
     playback_service *p_ps = calloc(1, sizeof(playback_service));
     if (!p_ps)
@@ -50,14 +53,25 @@ playback_service_create(application *p_app)
     {
         p_ps->p_ml_list[i] = media_list_create(true);
         if (!p_ps->p_ml_list[i])
-        {
-            playback_service_destroy(p_ps);
-            return NULL;
-        }
+            goto error;
     }
 
-    p_ps->p_ml = p_ps->p_ml_list[PLAYLIST_CONTEXT_VIDEO];
+    p_ps->p_ml = p_ps->p_ml_list[PLAYLIST_CONTEXT_AUDIO];
+
+    emotion_init();
+    p_ps->p_ea = emotion_object_add(intf_get_window(p_intf));
+    if (!p_ps->p_ea)
+        goto error;
+
+    emotion_object_init(p_ps->p_ea, "libvlc");
+    emotion_object_video_mute_set(p_ps->p_ea, true);
+    p_ps->p_emotion = p_ps->p_ea;
+
     return p_ps;
+
+error:
+    playback_service_destroy(p_ps);
+    return NULL;
 }
 
 void
@@ -77,6 +91,13 @@ playback_service_destroy(playback_service *p_ps)
       free(p_id);
     eina_list_free(p_ps->p_cbs_list);
     p_ps->p_cbs_list = NULL;
+
+    if (p_ps->p_ea)
+        evas_object_del(p_ps->p_ea);
+    if (p_ps->p_ev)
+        evas_object_del(p_ps->p_ev);
+
+    emotion_shutdown();
 
     free(p_ps);
 }
@@ -125,6 +146,30 @@ playback_service_unregister_callbacks(playback_service *p_ps, void *p_id)
 {
     p_ps->p_cbs_list = eina_list_remove(p_ps->p_cbs_list, p_id);
 }
+
+int
+playback_service_set_evas_video(playback_service *p_ps, Evas *p_evas)
+{
+    if (p_ps->p_ev)
+    {
+        evas_object_del(p_ps->p_ev);
+        p_ps->p_ev = NULL;
+    }
+    if (p_evas)
+    {
+        p_ps->p_ev = emotion_object_add(p_evas);
+        if (!p_ps->p_ev)
+            return -1;
+
+        emotion_object_init(p_ps->p_ev, "libvlc");
+        p_ps->p_emotion = p_ps->p_ev;
+    }
+    else
+        p_ps->p_emotion = p_ps->p_ea;
+
+    return 0;
+}
+
 
 int
 playback_service_start(playback_service *p_ps)

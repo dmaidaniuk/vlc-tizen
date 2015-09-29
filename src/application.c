@@ -71,7 +71,7 @@ app_create(void *data)
         goto error;
 
     /* */
-    app->p_ps = playback_service_create(app);
+    app->p_ps = playback_service_create(app, app->p_intf);
     if (!app->p_ps)
         goto error;
 
@@ -110,10 +110,10 @@ app_terminate(void *data)
         media_storage_destroy(app->p_ms);
     if (app->p_mediaLibrary)
         media_library_delete(app->p_mediaLibrary);
-    if (app->p_intf)
-        intf_destroy(app->p_intf);
     if (app->p_ps)
         playback_service_destroy(app->p_ps);
+    if (app->p_intf)
+        intf_destroy(app->p_intf);
     free(app);
     emotion_shutdown();
 }
