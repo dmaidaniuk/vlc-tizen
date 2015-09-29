@@ -33,12 +33,8 @@
 typedef struct interface interface;
 typedef struct mini_player mini_player;
 
-
 Evas*
 intf_get_window(interface *intf);
-
-Evas_Object*
-intf_get_sidebar(interface *intf);
 
 Evas_Object *
 intf_get_miniplayer_content_box(interface *intf);
