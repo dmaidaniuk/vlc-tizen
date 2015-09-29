@@ -48,9 +48,9 @@
 #endif
 
 #define EDJPATH "edje"
-#define VIDEOPLAYEREDJ get_resource_path(EDJPATH"/video_player.edj")
+#define VIDEOPLAYEREDJ get_resource_path( EDJPATH "/video_player.edj")
 
-#define ICON_DIR "/opt/usr/apps/"PACKAGE"/res/images/"
+#define ICON_DIR "/opt/usr/apps/" PACKAGE "/res/images/"
 
 #include <Evas.h>
 
