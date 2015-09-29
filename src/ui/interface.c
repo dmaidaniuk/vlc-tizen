@@ -53,7 +53,7 @@ struct interface {
 
     /* */
     Evas_Object *sidebar;
-    int sidebar_idx;
+    int current_sidebar_idx;
     Evas_Object *sidebar_toggle_btn;
 
     /* Context popup-menu */
@@ -127,7 +127,7 @@ right_panel_button_clicked_cb(void *data, Evas_Object * obj, void *event_info)
 void
 intf_show_previous_view(interface *intf)
 {
-    intf_create_view(intf, intf->sidebar_idx);
+    intf_create_view(intf, intf->current_sidebar_idx);
 }
 
 void
@@ -233,35 +233,34 @@ get_view_title(int panel){
 }
 
 void
-intf_create_view(interface *intf, int sidebar_idx)
+intf_create_view(interface *intf, int sidebar_type)
 {
-    Evas_Object *content = intf->nf_content;
+    Evas_Object *nf_content = intf->nf_content;
     Evas_Object *view;
-    intf->sidebar_idx = sidebar_idx;
 
     /* Create the view depending on with panel item list is selected */
-    switch(sidebar_idx)
+    switch(sidebar_type)
     {
     case VIEW_VIDEO:
     case VIEW_AUTO:
-        view = create_video_view(fetch_media_path(MEDIA_DIRECTORY_VIDEOS), content);
+        view = create_video_view(fetch_media_path(MEDIA_DIRECTORY_VIDEOS), nf_content);
         break;
     case VIEW_AUDIO:
-        intf->nf_toolbar = view = create_audio_view(intf, content);
+        intf->nf_toolbar = view = create_audio_view(intf, nf_content);
         break;
     case VIEW_FILES:
-        view = create_directory_view(application_get_media_path(intf->p_app), content);
+        view = create_directory_view(application_get_media_path(intf->p_app), nf_content);
         break;
     case VIEW_SETTINGS:
-        view = create_setting_view(content);
+        view = create_setting_view(nf_content);
         break;
     case VIEW_ABOUT:
-        view = create_about_view(content);
+        view = create_about_view(nf_content);
         break;
 
     }
     /* Push the view in the naviframe with the corresponding header */
-    elm_naviframe_item_push(content, get_view_title(sidebar_idx), NULL, NULL, view, "basic");
+    elm_naviframe_item_push(nf_content, get_view_title(sidebar_type), NULL, NULL, view, "basic");
 
     /* Create then set the panel toggle btn and add his callbacks */
     intf->sidebar_toggle_btn = create_button(intf->nf_content, "naviframe/drawers", NULL);
@@ -272,6 +271,8 @@ intf_create_view(interface *intf, int sidebar_idx)
     intf->popup_toggle_btn = create_button(intf->nf_content, "naviframe/drawers", NULL);
     evas_object_smart_callback_add(intf->popup_toggle_btn, "clicked", right_panel_button_clicked_cb, intf);
     elm_object_part_content_set(intf->nf_content, "title_right_btn", intf->popup_toggle_btn);
+
+    intf->current_sidebar_idx = sidebar_type;
 }
 
 static Evas_Object*
@@ -317,6 +318,7 @@ create_main_view(interface *intf)
     /* Create the content box and put it in the layout */
     intf->mini_player_content_box = create_main_content(intf, layout);
     elm_object_part_content_set(layout, "elm.swallow.content", intf->mini_player_content_box);
+
     /* */
     evas_object_size_hint_weight_set(intf->nf_content, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
     evas_object_size_hint_align_set(intf->nf_content, EVAS_HINT_FILL, EVAS_HINT_FILL);
