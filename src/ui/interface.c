@@ -342,6 +342,7 @@ intf_create(application *app)
     /* Handle back buttons and delete callbacks */
     evas_object_smart_callback_add(intf->win, "delete,request", win_delete_request_cb, NULL);
     eext_object_event_callback_add(intf->win, EEXT_CALLBACK_BACK, win_back_key_cb, intf);
+    eext_object_event_callback_add(intf->win, EEXT_CALLBACK_MORE, right_panel_button_clicked_cb, intf);
 
     /* Add and set a conformant in the main Window */
     conform = elm_conformant_add(intf->win);
