@@ -60,7 +60,7 @@ app_create(void *data)
         return false;
 
     /* */
-    create_base_gui(app);
+    intf_create_base_gui(app);
 
     return true;
 }

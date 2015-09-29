@@ -35,7 +35,7 @@ typedef struct menu_cb_data
 {
     int index;
     Elm_Object_Item *item;
-    interface_sys *intf;
+    interface *intf;
 
 } menu_cb_data_s;
 
@@ -112,28 +112,28 @@ gl_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
     menu_cb_data_s *cd = data;
     /* Generate the view depending on which sidebar genlist item is selected */
 
-    update_mini_player(cd->intf);
+    intf_update_mini_player(cd->intf);
 
     switch(cd->index){
 
     case VIEW_VIDEO:
-        create_view(cd->intf, VIEW_VIDEO);
+        intf_create_view(cd->intf, VIEW_VIDEO);
         break;
 
     case VIEW_AUDIO:
-        create_view(cd->intf, VIEW_AUDIO);
+        intf_create_view(cd->intf, VIEW_AUDIO);
         break;
 
     case VIEW_FILES:
-        create_view(cd->intf, VIEW_FILES);
+        intf_create_view(cd->intf, VIEW_FILES);
         break;
 
     case VIEW_SETTINGS:
-        create_view(cd->intf, VIEW_SETTINGS);
+        intf_create_view(cd->intf, VIEW_SETTINGS);
         break;
 
     case VIEW_ABOUT:
-        create_view(cd->intf, VIEW_ABOUT);
+        intf_create_view(cd->intf, VIEW_ABOUT);
         break;
 
         free(cd);
@@ -141,7 +141,7 @@ gl_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 }
 
 static Evas_Object *
-create_panel_genlist(interface_sys *intf, Evas_Object *sidebar)
+create_panel_genlist(interface *intf, Evas_Object *sidebar)
 {
     Evas_Object *genlist;
     Elm_Object_Item *it;
@@ -193,7 +193,7 @@ list_clicked_cb(void *data, Evas_Object *obj, void *event_info)
 }
 
 Evas_Object*
-create_sidebar(interface_sys *intf, Evas_Object *layout)
+create_sidebar(interface *intf, Evas_Object *layout)
 {
     Evas_Object *sidebar_list;
     Evas_Object *sidebar;

@@ -205,7 +205,7 @@ create_popup_genlist(Evas_Object* popup)
 }
 
 Evas_Object *
-create_popup(Evas_Object *parent, interface_sys *intf)
+create_popup(Evas_Object *parent, interface *intf)
 {
     Evas_Object *popup_list;
     Evas_Object *popup = elm_popup_add(parent);

@@ -30,6 +30,6 @@
 #include "ui/interface.h"
 
 Evas_Object *
-create_popup(Evas_Object *parent, interface_sys *intf);
+create_popup(Evas_Object *parent, interface *intf);
 
 #endif /* MAIN_POPUP_LIST_H_ */

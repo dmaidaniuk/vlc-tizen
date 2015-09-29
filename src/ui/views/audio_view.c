@@ -42,7 +42,7 @@ typedef struct audio_list_data {
     const char *str;
     Evas_Object *parent;
     Elm_Object_Item *item;
-    interface_sys *intf;
+    interface *intf;
 
 } audio_list_data_s;
 
@@ -56,7 +56,7 @@ audio_gl_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
     if (S_ISREG(sb.st_mode))
     {
         /* Launch the media player */
-        create_base_player(ald->intf->mini_player, ald->file_path);
+        create_base_player(intf_get_mini_player(ald->intf), ald->file_path);
         LOGI("VLC Player launch");
     }
 
@@ -150,7 +150,7 @@ gl_content_get_cb(void *data, Evas_Object *obj, const char *part)
 }
 
 Evas_Object*
-create_audio_list(char* path, interface_sys *intf)
+create_audio_list(char* path, interface *intf)
 {
     char *buff;
     audio_list_data_s *ald = malloc(sizeof(*ald));
@@ -160,7 +160,7 @@ create_audio_list(char* path, interface_sys *intf)
     struct dirent* current_folder = NULL;
 
     /* Set then create the Genlist object */
-    Evas_Object *parent = get_toolbar(intf);
+    Evas_Object *parent = intf_get_toolbar(intf);
     Evas_Object *genlist;
     Elm_Object_Item *it;
     Elm_Genlist_Item_Class *itc = elm_genlist_item_class_new();
@@ -241,7 +241,7 @@ create_audio_list(char* path, interface_sys *intf)
 }
 
 static void
-tabbar_item_selected(interface_sys *intf, Elm_Object_Item *audio_it)
+tabbar_item_selected(interface *intf, Elm_Object_Item *audio_it)
 {
     int error;
     char *audio_path = fetch_media_path(MEDIA_DIRECTORY_MUSIC);
@@ -265,13 +265,13 @@ tabbar_item_selected(interface_sys *intf, Elm_Object_Item *audio_it)
         current_audio_view = create_audio_list(audio_path, intf);
     }
 
-    elm_object_content_set(get_toolbar(intf), current_audio_view );
+    elm_object_content_set(intf_get_toolbar(intf), current_audio_view );
 }
 
 static void
 tabbar_item_cb(void *data, Evas_Object *obj, void *event_info)
 {
-    interface_sys *intf = data;
+    interface *intf = data;
     Elm_Object_Item *audio_it = event_info;
 
     /* Call the function that creates the views */
@@ -279,7 +279,7 @@ tabbar_item_cb(void *data, Evas_Object *obj, void *event_info)
 }
 
 static Evas_Object*
-create_toolbar(interface_sys *intf, Evas_Object *nf_toolbar)
+create_toolbar(interface *intf, Evas_Object *nf_toolbar)
 {
     /* Create and set the toolbar */
     Evas_Object *tabbar = elm_toolbar_add(nf_toolbar);
@@ -305,7 +305,7 @@ create_toolbar(interface_sys *intf, Evas_Object *nf_toolbar)
 }
 
 Evas_Object *
-create_audio_view(interface_sys *intf, Evas_Object *parent)
+create_audio_view(interface *intf, Evas_Object *parent)
 {
     Elm_Object_Item *nf_it, *tabbar_it;
     Evas_Object *tabbar;

@@ -30,9 +30,9 @@
 #include "ui/audio_player.h"
 
 Evas_Object *
-create_audio_view(interface_sys *intf, Evas_Object *parent);
+create_audio_view(interface *intf, Evas_Object *parent);
 
 Evas_Object*
-create_audio_list(char* path, interface_sys *intf);
+create_audio_list(char* path, interface *intf);
 
 #endif /* AUDIO_VIEW_H_ */

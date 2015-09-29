@@ -32,7 +32,7 @@
 typedef struct mini_player mini_player;
 
 mini_player*
-mini_player_create(interface_sys *intf, Evas_Object *parent);
+mini_player_create(interface *intf, Evas_Object *parent);
 
 void
 mini_player_stop(mini_player *);

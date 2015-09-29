@@ -33,7 +33,7 @@
 #include "audio_player.h"
 
 struct mini_player {
-    interface_sys *intf;
+    interface *intf;
 
     bool visible_state;
     bool play_state, save_state, shuffle_state, playlist_state, more_state, fs_state;
@@ -353,7 +353,7 @@ void
 mini_player_show(mini_player *mpd)
 {
     /* Add the previously created mini player to the box */
-    elm_box_pack_end(get_miniplayer_content_box(mpd->intf), mpd->mini_player_box);
+    elm_box_pack_end(intf_get_miniplayer_content_box(mpd->intf), mpd->mini_player_box);
 
     /* */
     evas_object_show(mpd->mini_player_box);
@@ -366,7 +366,7 @@ void
 mini_player_hide(mini_player *mpd)
 {
     /* Dismiss the previously created mini player of the box */
-    elm_box_unpack(get_miniplayer_content_box(mpd->intf), mpd->mini_player_box);
+    elm_box_unpack(intf_get_miniplayer_content_box(mpd->intf), mpd->mini_player_box);
     /* */
 
     if (mpd->mini_player_box)
@@ -527,7 +527,7 @@ fs_more_player_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
         Evas_Object *popup_list;
 
         /* FIXME */
-        mpd->popup = elm_popup_add(get_content(mpd->intf));
+        mpd->popup = elm_popup_add(intf_get_content(mpd->intf));
 
         /* Size the popup */
         evas_object_size_hint_min_set(mpd->popup, 200, 200);
@@ -762,7 +762,7 @@ fullscreen_player_collapse_cb(void *data, Evas_Object *obj EINA_UNUSED, void *ev
 {
     mini_player *mpd = data;
     /* Pop the previous view in the content naviframe */
-    show_previous_view(mpd->intf);
+    intf_show_previous_view(mpd->intf);
     /* Update the fullscreen state bool */
     mpd->fs_state = false;
     /* Show the mini player */
@@ -1008,8 +1008,8 @@ mini_player_fullscreen_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_
 
     /* Show the fullcreen box in the content naviframe */
     /* FIXME */
-    fs_view = create_fullscreen_player_view(mpd, get_content(mpd->intf));
-    elm_object_content_set(get_content(mpd->intf), fs_view);
+    fs_view = create_fullscreen_player_view(mpd, intf_get_content(mpd->intf));
+    elm_object_content_set(intf_get_content(mpd->intf), fs_view);
 
     /* */
     evas_object_show(fs_view);
@@ -1066,7 +1066,7 @@ create_base_player(mini_player *mpd, const char *file_path)
     if (!mpd->emotion)
     {
         setenv("EMOTION_LIBVLC_DEBUG", "1", 1);
-        mpd->emotion =  emotion_object_add(get_window(mpd->intf));
+        mpd->emotion =  emotion_object_add(intf_get_window(mpd->intf));
         emotion_object_init(mpd->emotion, "libvlc");
         evas_object_smart_callback_add(mpd->emotion, "position_update", emotion_position_update_cb, mpd);
         evas_object_smart_callback_add(mpd->emotion, "length_change", emotion_length_change_cb, mpd);
@@ -1091,7 +1091,7 @@ create_base_player(mini_player *mpd, const char *file_path)
 }
 
 mini_player*
-mini_player_create(interface_sys *intf, Evas_Object *parent)
+mini_player_create(interface *intf, Evas_Object *parent)
 {
     Evas_Object *item_table;
     mini_player *mpd = calloc(1, sizeof(*mpd));

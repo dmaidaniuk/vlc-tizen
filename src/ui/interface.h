@@ -30,29 +30,24 @@
 #include "common.h"
 #include "application.h"
 
-struct interface_priv_sys;
+typedef struct interface interface;
+typedef struct mini_player mini_player;
 
-typedef struct interface_sys {
-    application *app;
-
-    struct interface_priv_sys *intf_p;
-    struct mini_player *mini_player;
-} interface_sys;
 
 Evas*
-get_window(interface_sys *intf);
+intf_get_window(interface *intf);
 
 Evas_Object*
-get_sidebar(interface_sys *intf);
+intf_get_sidebar(interface *intf);
 
 Evas_Object *
-get_miniplayer_content_box(interface_sys *intf);
+intf_get_miniplayer_content_box(interface *intf);
 
 Evas_Object *
-get_content(interface_sys *intf);
+intf_get_content(interface *intf);
 
 Evas_Object *
-get_toolbar(interface_sys *intf);
+intf_get_toolbar(interface *intf);
 
 typedef enum view_e {
     VIEW_AUTO = -1,
@@ -65,15 +60,21 @@ typedef enum view_e {
 } view_e;
 
 void
-create_view(interface_sys *, view_e);
+intf_create_view(interface *, view_e);
 
 void
-show_previous_view(interface_sys *);
+intf_show_previous_view(interface *);
 
 void
-create_base_gui(application *);
+intf_create_base_gui(application *);
 
 void
-update_mini_player(interface_sys *);
+intf_update_mini_player(interface *);
+
+application *
+intf_get_application(interface *);
+
+mini_player *
+intf_get_mini_player(interface *);
 
 #endif /* INTERFACE_H_ */
