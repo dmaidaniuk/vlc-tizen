@@ -28,7 +28,7 @@
 
 #include "settings_view.h"
 #include "ui/interface.h"
-#include "popup_genlist.h"
+#include "ui/menu/popup_genlist.h"
 
 typedef struct setting_data
 {
