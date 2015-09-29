@@ -54,6 +54,9 @@ typedef struct audio_list_item
 
 } audio_list_item;
 
+static Evas_Object*
+create_audio_list(const char* path, audio_view *av);
+
 static void
 audio_gl_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
