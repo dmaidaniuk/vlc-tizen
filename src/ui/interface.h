@@ -65,7 +65,7 @@ void
 intf_update_mini_player(interface *);
 
 Evas_Object *
-intf_get_miniplayer_content_box(interface *intf);
+intf_get_root_box(interface *intf);
 
 Evas*
 intf_get_window(interface *intf);

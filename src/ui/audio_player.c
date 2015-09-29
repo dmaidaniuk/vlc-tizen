@@ -353,7 +353,7 @@ void
 mini_player_show(mini_player *mpd)
 {
     /* Add the previously created mini player to the box */
-    elm_box_pack_end(intf_get_miniplayer_content_box(mpd->intf), mpd->mini_player_box);
+    elm_box_pack_end(intf_get_root_box(mpd->intf), mpd->mini_player_box);
 
     /* */
     evas_object_show(mpd->mini_player_box);
@@ -366,7 +366,7 @@ void
 mini_player_hide(mini_player *mpd)
 {
     /* Dismiss the previously created mini player of the box */
-    elm_box_unpack(intf_get_miniplayer_content_box(mpd->intf), mpd->mini_player_box);
+    elm_box_unpack(intf_get_root_box(mpd->intf), mpd->mini_player_box);
     /* */
 
     if (mpd->mini_player_box)

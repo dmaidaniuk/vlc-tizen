@@ -163,7 +163,7 @@ intf_get_sidebar(interface *intf)
 }
 
 Evas_Object *
-intf_get_miniplayer_content_box(interface *intf)
+intf_get_root_box(interface *intf)
 {
     return intf->global_box;
 }
