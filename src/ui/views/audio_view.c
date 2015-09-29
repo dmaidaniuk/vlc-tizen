@@ -35,6 +35,8 @@
 #include "ui/views/audio_view.h"
 #include "ui/audio_player.h"
 
+#include "media_item.h"
+
 typedef struct audio_view
 {
     interface *p_intf;
@@ -46,8 +48,7 @@ typedef struct audio_list_item
 {
     audio_view *p_av;
 
-    char *file_path;
-    const char *str;
+    media_item *mitem;
 
     const Elm_Genlist_Item_Class *itc;
 
@@ -58,19 +59,19 @@ audio_gl_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
     audio_list_item *ald = data;
     struct stat sb;
-    stat(ald->file_path, &sb);
+    stat(ald->mitem->psz_path, &sb);
 
     if (S_ISREG(sb.st_mode))
     {
         /* Launch the media player */
-        create_base_player(intf_get_mini_player(ald->p_av->p_intf), ald->file_path);
+        create_base_player(intf_get_mini_player(ald->p_av->p_intf), ald->mitem->psz_path);
         LOGI("VLC Player launch");
     }
 
     else if (S_ISDIR(sb.st_mode))
     {
         /* Continue to browse media folder */
-        create_audio_list(ald->file_path, ald->p_av);
+        create_audio_list(ald->mitem->psz_path, ald->p_av);
     }
     else
     {
@@ -85,7 +86,7 @@ free_list_item_data(void *data, Evas_Object *obj, void *event_info)
     audio_list_item *ald = data;
     /* Free the file path when the current genlist is deleted */
     /* For example when the player is launched or a new genlist is created */
-    free(ald->file_path);
+    free(ald->mitem->psz_path);
     LOGD("Path free");
 
 }
@@ -118,7 +119,7 @@ gl_text_get_cb(void *data, Evas_Object *obj, const char *part)
     /* Then put this string as the genlist item label */
     if (itc->item_style && !strcmp(itc->item_style, "2line.top.3")) {
         if (part && !strcmp(part, "elm.text.main.left.top")) {
-            asprintf(&buf, "<b>%s</b>", ald->str );
+            asprintf(&buf, "<b>%s</b>", ald->mitem->psz_title);
             return buf;
         }
         else if (!strcmp(part, "elm.text.sub.left.bottom")) {
@@ -212,12 +213,15 @@ create_audio_list(const char* path, audio_view *av)
         audio_list_item *ald = malloc(sizeof(*ald));
         ald->p_av = av;
 
+        char *psz_path;
         /* Concatenate the file path and the selected folder or file name */
-        asprintf(&ald->file_path, "%s/%s", path, current_folder->d_name);
+        asprintf(&psz_path, "%s/%s", path, current_folder->d_name);
+        ald->mitem = media_item_create(psz_path, MEDIA_ITEM_TYPE_AUDIO);
+
         /* Put the folder or file name as a usable string for genlist item label */
         str = current_folder->d_name;
         /* Put the folder or file name in the audio_list_data struct for callbacks */
-        ald->str = str;
+        ald->mitem->psz_title = str;
 
         /* Avoid genlist item append for "." and ".." d_name */
         if (str && (strcmp(str, ".")==0 || strcmp(str, "..")==0))
