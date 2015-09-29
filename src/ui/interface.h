@@ -33,17 +33,14 @@
 typedef struct interface interface;
 typedef struct mini_player mini_player;
 
-Evas*
-intf_get_window(interface *intf);
+interface *
+intf_create_base_gui(application *);
 
-Evas_Object *
-intf_get_miniplayer_content_box(interface *intf);
+void
+intf_destroy(interface *);
 
-Evas_Object *
-intf_get_main_naviframe(interface *intf);
-
-Evas_Object *
-intf_get_toolbar(interface *intf);
+application *
+intf_get_application(interface *);
 
 typedef enum view_e {
     VIEW_AUTO = -1,
@@ -61,19 +58,22 @@ intf_create_view(interface *, view_e);
 void
 intf_show_previous_view(interface *);
 
-interface *
-intf_create_base_gui(application *);
-
-void
-intf_destroy(interface *);
+mini_player *
+intf_get_mini_player(interface *);
 
 void
 intf_update_mini_player(interface *);
 
-application *
-intf_get_application(interface *);
+Evas_Object *
+intf_get_miniplayer_content_box(interface *intf);
 
-mini_player *
-intf_get_mini_player(interface *);
+Evas*
+intf_get_window(interface *intf);
+
+Evas_Object *
+intf_get_main_naviframe(interface *intf);
+
+Evas_Object *
+intf_get_toolbar(interface *intf);
 
 #endif /* INTERFACE_H_ */
