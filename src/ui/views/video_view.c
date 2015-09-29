@@ -35,7 +35,7 @@
 #include <Elementary.h>
 
 typedef struct video_list_item {
-    Evas_Object *parent;
+    Evas_Object *parent; //FIXME remove
 
     const Elm_Genlist_Item_Class *itc;
 
@@ -289,8 +289,3 @@ create_video_view(const char* path, Evas_Object *parent)
     elm_genlist_item_class_free(itc);
     return genlist;
 }
-
-
-
-
-
