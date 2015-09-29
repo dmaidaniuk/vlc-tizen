@@ -37,9 +37,12 @@ enum PLAYLIST_CONTEXT {
 typedef struct playback_service_callbacks playback_service_callbacks;
 struct playback_service_callbacks
 {
-    int (*pf_on_started)(playback_service *p_ps, void *p_user_data, media_item *p_mi);
-    int (*pf_on_stopped)(playback_service *p_ps, void *p_user_data, media_item *p_mi);
-    int (*pf_on_seek_done)(playback_service *p_ps, void *p_user_data);
+    void (*pf_on_started)(playback_service *p_ps, void *p_user_data, media_item *p_mi);
+    void (*pf_on_stopped)(playback_service *p_ps, void *p_user_data, media_item *p_mi);
+    void (*pf_on_new_len)(playback_service *p_ps, void *p_user_data, double i_len);
+    void (*pf_on_new_pos)(playback_service *p_ps, void *p_user_data, double i_pos);
+    void (*pf_on_seek_done)(playback_service *p_ps, void *p_user_data);
+    void (*pf_on_new_title)(playback_service *p_ps, void *p_user_data, const char *psz_title);
     void *p_user_data;
 };
 
@@ -83,7 +86,7 @@ double
 playback_service_get_len(playback_service *p_ps);
 
 int
-playback_service_seek(playback_service *p_ps, double f_pos);
+playback_service_seek(playback_service *p_ps, double i_pos);
 
 
 #endif /* PLAYBACK_SERVICE_H */

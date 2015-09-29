@@ -36,11 +36,130 @@ struct playback_service
 {
     media_list *p_ml_list[PLAYLIST_CONTEXT_COUNT];
     media_list *p_ml;
-    Evas_Object *p_ea; /* emotion audio */
-    Evas_Object *p_ev; /* emotion video */
-    Evas_Object *p_emotion; /* p_ea or p_ev */
+    Evas_Object *p_ea;  /* emotion audio */
+    Evas_Object *p_ev;  /* emotion video */
+    Evas_Object *p_e;   /* emotion audio or video */
     Eina_List *p_cbs_list;
+
+    bool b_started;
+    bool b_seeking;
 };
+
+#define PS_SEND_CALLBACK(pf_cb, ...) do { \
+    Eina_List *p_el; \
+    playback_service_callbacks *p_cbs; \
+    EINA_LIST_FOREACH(p_ps->p_cbs_list, p_el, p_cbs) \
+        if (p_cbs->pf_cb) \
+            p_cbs->pf_cb(p_ps, p_cbs->p_user_data, __VA_ARGS__); \
+} while(0)
+
+#define PS_SEND_VOID_CALLBACK(pf_cb) do { \
+    Eina_List *p_el; \
+    playback_service_callbacks *p_cbs; \
+    EINA_LIST_FOREACH(p_ps->p_cbs_list, p_el, p_cbs) \
+        if (p_cbs->pf_cb) \
+            p_cbs->pf_cb(p_ps, p_cbs->p_user_data); \
+} while(0)
+
+static void
+ps_emotion_length_change_cb(void *data, Evas_Object *obj, void *event)
+{
+    playback_service *p_ps = data;
+    double i_len = emotion_object_play_length_get(obj);
+
+    PS_SEND_CALLBACK(pf_on_new_len, i_len);
+}
+
+static void
+ps_emotion_position_update_cb(void *data, Evas_Object *obj, void *event)
+{
+    playback_service *p_ps = data;
+
+    if (p_ps->b_seeking)
+    {
+        p_ps->b_seeking = false;
+        PS_SEND_VOID_CALLBACK(pf_on_seek_done);
+    }
+    else
+    {
+        double i_pos = emotion_object_position_get(obj);
+        PS_SEND_CALLBACK(pf_on_new_pos, i_pos);
+    }
+}
+
+static void
+ps_emotion_title_change_cb(void *data, Evas_Object *obj, void *event)
+{
+    playback_service *p_ps = data;
+    const char *psz_title = emotion_object_title_get(obj);
+
+    PS_SEND_CALLBACK(pf_on_new_title, psz_title);
+}
+
+static void
+ps_emotion_play_started_cb(void *data, Evas_Object *obj, void *event)
+{
+    playback_service *p_ps = data;
+
+    PS_SEND_CALLBACK(pf_on_started, media_list_get_item(p_ps->p_ml));
+}
+
+static void
+ps_emotion_play_finished_cb(void *data, Evas_Object *obj, void *event)
+{
+    playback_service *p_ps = data;
+
+    PS_SEND_CALLBACK(pf_on_stopped, media_list_get_item(p_ps->p_ml));
+
+    /* play next file */
+    media_list_set_next(p_ps->p_ml);
+}
+
+static void
+ml_on_media_selected_cb(media_list *p_ml, void *p_user_data, unsigned int i_pos,
+                        media_item *p_mi)
+{
+    playback_service *p_ps = p_user_data;
+    if (p_ml != p_ps->p_ml)
+        return;
+
+    if (p_ps->b_started)
+    {
+        /* play new media */
+        playback_service_stop(p_ps);
+        playback_service_stop(p_ps);
+    }
+}
+
+static Evas_Object *
+ps_emotion_create(playback_service *p_ps, Evas *p_evas, bool b_mute_video)
+{
+    Evas_Object *p_e = emotion_object_add(p_evas);
+    if (!p_e)
+        return NULL;
+
+    emotion_object_init(p_e, "libvlc");
+    if (b_mute_video)
+        emotion_object_video_mute_set(p_e, b_mute_video);
+
+
+    evas_object_smart_callback_add(p_e, "position_update",
+                                   ps_emotion_position_update_cb, p_ps);
+    evas_object_smart_callback_add(p_e, "length_change",
+                                   ps_emotion_length_change_cb, p_ps);
+    evas_object_smart_callback_add(p_e, "title_change",
+                                   ps_emotion_title_change_cb, p_ps);
+    evas_object_smart_callback_add(p_e, "playback_started",
+                                   ps_emotion_play_started_cb, p_ps);
+    evas_object_smart_callback_add(p_e, "playback_finished",
+                                   ps_emotion_play_finished_cb, p_ps);
+    //evas_object_smart_callback_add(p_e, "decode_stop",ps_emotion_stop_cb, p_ps);
+    //evas_object_smart_callback_add(p_e, "progress_change", ps_emotion_progress_change_cb, p_ps);
+    //evas_object_smart_callback_add(p_e, "audio_level_change", ps_emotion_audio_change, p_ps);
+    //evas_object_smart_callback_add(p_e, "channels_change", ps_emotion_channels_change, p_ps);
+
+    return p_e;
+}
 
 playback_service *
 playback_service_create(application *p_app, interface *p_intf)
@@ -51,21 +170,25 @@ playback_service_create(application *p_app, interface *p_intf)
 
     for (unsigned int i = 0; i < PLAYLIST_CONTEXT_COUNT; ++i)
     {
+        media_list_callbacks cbs = {
+                .pf_on_media_added = NULL,
+                .pf_on_media_removed = NULL,
+                .pf_on_media_selected = ml_on_media_selected_cb,
+                .p_user_data = p_ps,
+        };
         p_ps->p_ml_list[i] = media_list_create(true);
         if (!p_ps->p_ml_list[i])
+            goto error;
+        if (media_list_register_callbacks(p_ps->p_ml_list[i], &cbs) == NULL)
             goto error;
     }
 
     p_ps->p_ml = p_ps->p_ml_list[PLAYLIST_CONTEXT_AUDIO];
 
     emotion_init();
-    p_ps->p_ea = emotion_object_add(intf_get_window(p_intf));
+    p_ps->p_ea = ps_emotion_create(p_ps, intf_get_window(p_intf), true);
     if (!p_ps->p_ea)
         goto error;
-
-    emotion_object_init(p_ps->p_ea, "libvlc");
-    emotion_object_video_mute_set(p_ps->p_ea, true);
-    p_ps->p_emotion = p_ps->p_ea;
 
     return p_ps;
 
@@ -157,15 +280,13 @@ playback_service_set_evas_video(playback_service *p_ps, Evas *p_evas)
     }
     if (p_evas)
     {
-        p_ps->p_ev = emotion_object_add(p_evas);
+        p_ps->p_ev = ps_emotion_create(p_ps, p_evas, false);
         if (!p_ps->p_ev)
             return -1;
-
-        emotion_object_init(p_ps->p_ev, "libvlc");
-        p_ps->p_emotion = p_ps->p_ev;
+        p_ps->p_e = p_ps->p_ev;
     }
     else
-        p_ps->p_emotion = p_ps->p_ea;
+        p_ps->p_e = p_ps->p_ea;
 
     return 0;
 }
@@ -174,41 +295,81 @@ playback_service_set_evas_video(playback_service *p_ps, Evas *p_evas)
 int
 playback_service_start(playback_service *p_ps)
 {
+    media_item *p_mi;
+
+    if (p_ps->b_started)
+        return -1;
+
+    p_mi = media_list_get_item(p_ps->p_ml);
+    if (!p_mi || !p_mi->psz_path)
+        return -1;
+
+    if (!emotion_object_file_set(p_ps->p_e, p_mi->psz_path))
+        return -1;
+
+    p_ps->b_started = true;
+    playback_service_play(p_ps);
+
     return -1;
 }
 
 int
 playback_service_stop(playback_service *p_ps)
 {
-    return -1;
+    if (!p_ps->b_started)
+        return -1;
+
+    playback_service_pause(p_ps);
+    emotion_object_file_set(p_ps->p_e, NULL);
+    p_ps->b_started = false;
+    return 0;
 }
 
 int
 playback_service_play(playback_service *p_ps)
 {
-    return -1;
+    if (!p_ps->b_started)
+        return -1;
+
+    emotion_object_play_set(p_ps->p_e, true);
+    return 0;
 }
 
 int
 playback_service_pause(playback_service *p_ps)
 {
-    return -1;
+    if (!p_ps->b_started)
+        return -1;
+
+    emotion_object_play_set(p_ps->p_e, false);
+    return 0;
 }
 
 double
 playback_service_get_pos(playback_service *p_ps)
 {
-    return -1;
+    if (!p_ps->b_started)
+        return 0.0;
+
+    return emotion_object_position_get(p_ps->p_e);
 }
 
 double
 playback_service_get_len(playback_service *p_ps)
 {
-    return -1;
+    if (!p_ps->b_started)
+        return 0.0;
+
+    return emotion_object_play_length_get(p_ps->p_e);
 }
 
 int
-playback_service_seek(playback_service *p_ps, double f_pos)
+playback_service_seek(playback_service *p_ps, double i_pos)
 {
-    return -1;
+    if (!p_ps->b_started)
+        return -1;
+
+    emotion_object_position_set(p_ps->p_e, i_pos);
+    p_ps->b_seeking = true;
+    return 0;
 }
