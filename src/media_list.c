@@ -39,6 +39,45 @@ struct media_list
     bool b_free_media;
 };
 
+#define ML_SEND_CALLBACK(pf_cb, ...) do { \
+    Eina_List *p_el; \
+    media_list_callbacks *p_cbs; \
+    EINA_LIST_FOREACH(p_ml->p_cbs_list, p_el, p_cbs) \
+        if (p_cbs->pf_cb) \
+            p_cbs->pf_cb(p_ml, p_cbs->p_user_data, __VA_ARGS__); \
+} while(0)
+
+static void
+media_list_on_new_pos(media_list *p_ml)
+{
+    ML_SEND_CALLBACK(pf_on_media_selected, p_ml->i_pos, p_ml->p_mi);
+}
+
+static void
+media_list_on_media_added(media_list *p_ml, media_item *p_mi)
+{
+    p_ml->i_count++;
+    ML_SEND_CALLBACK(pf_on_media_added, p_mi);
+}
+
+static void
+media_list_on_media_removed(media_list *p_ml, media_item *p_mi)
+{
+    p_ml->i_count--;
+    if (p_ml->i_pos >= p_ml->i_count)
+    {
+        p_ml->i_pos = p_ml->i_count -1;
+        p_ml->p_mi = eina_list_nth(p_ml->p_item_list, p_ml->i_pos);
+        assert(p_ml->p_mi);
+        media_list_on_new_pos(p_ml);
+    }
+
+    ML_SEND_CALLBACK(pf_on_media_removed, p_mi);
+
+    if (p_ml->b_free_media)
+        media_item_destroy(p_mi);
+}
+
 media_list *
 media_list_create(bool b_free_media)
 {
@@ -63,39 +102,6 @@ media_list_destroy(media_list *p_ml)
     media_list_clear(p_ml);
     free(p_ml);
 }
-
-static void
-media_list_on_media_added(media_list *p_ml, media_item *p_mi)
-{
-    Eina_List *p_el;
-    media_list_callbacks *cbs;
-
-    p_ml->i_count++;
-    EINA_LIST_FOREACH(p_ml->p_cbs_list, p_el, cbs)
-        cbs->pf_on_media_added(p_ml, cbs->p_user_data, p_mi);
-}
-
-static void
-media_list_on_media_removed(media_list *p_ml, media_item *p_mi)
-{
-    Eina_List *p_el;
-    media_list_callbacks *cbs;
-
-    p_ml->i_count--;
-    if (p_ml->i_pos >= p_ml->i_count)
-    {
-        p_ml->i_pos = p_ml->i_count -1;
-        p_ml->p_mi = eina_list_nth(p_ml->p_item_list, p_ml->i_pos);
-        assert(p_ml->p_mi);
-    }
-
-    EINA_LIST_FOREACH(p_ml->p_cbs_list, p_el, cbs)
-        cbs->pf_on_media_removed(p_ml, cbs->p_user_data, p_mi);
-
-    if (p_ml->b_free_media)
-        media_item_destroy(p_mi);
-}
-
 
 void *
 media_list_register_callbacks(media_list *p_ml, media_list_callbacks *p_cbs)
@@ -215,8 +221,22 @@ media_list_set_pos(media_list *p_ml, unsigned int i_index)
     else
         p_ml->i_pos = i_index;
     p_ml->p_mi = eina_list_nth(p_ml->p_item_list, p_ml->i_pos);
+    media_list_on_new_pos(p_ml);
     assert(p_ml->p_mi);
 }
+
+void
+media_list_set_next(media_list *p_ml)
+{
+    media_list_set_pos(p_ml, p_ml->i_pos + 1);
+}
+
+void
+media_list_set_prev(media_list *p_ml)
+{
+    media_list_set_pos(p_ml, p_ml->i_pos - 1);
+}
+
 
 media_item *
 media_list_get_item(media_list *p_ml)

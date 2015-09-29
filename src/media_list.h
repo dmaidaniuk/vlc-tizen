@@ -32,8 +32,9 @@
 typedef struct media_list_callbacks media_list_callbacks;
 struct media_list_callbacks
 {
-    int (*pf_on_media_added)(media_list *p_ml, void *p_user_data, media_item *p_mi);
-    int (*pf_on_media_removed)(media_list *p_ml, void *p_user_data, media_item *p_mi);
+    void (*pf_on_media_added)(media_list *p_ml, void *p_user_data, media_item *p_mi);
+    void (*pf_on_media_removed)(media_list *p_ml, void *p_user_data, media_item *p_mi);
+    void (*pf_on_media_selected)(media_list *p_ml, void *p_user_data, unsigned int i_pos, media_item *p_mi);
     void *p_user_data;
 };
 
@@ -69,6 +70,12 @@ media_list_get_pos(media_list *p_ml);
 
 void
 media_list_set_pos(media_list *p_ml, unsigned int i_index);
+
+void
+media_list_set_next(media_list *p_ml);
+
+void
+media_list_set_prev(media_list *p_ml);
 
 media_item *
 media_list_get_item(media_list *p_ml);
