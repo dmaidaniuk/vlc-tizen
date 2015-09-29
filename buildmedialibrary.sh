@@ -36,6 +36,11 @@ mkdir -p ${MEDIALIBRARY_BUILD_DIR}
 
 cd ${MEDIALIBRARY_BUILD_DIR}
 
+CMAKE_OPTS="-DBUILD_TESTS=OFF"
+if [ "$RELEASE" = 1 ]; then
+    CMAKE_OPTS=""
+fi
+
 if [ ! -e ./Makefile -o "$RELEASE" = 1 ]; then
 CPPFLAGS="$CPPFLAGS" \
 CFLAGS="$CFLAGS ${EXTRA_CFLAGS}" \
@@ -48,7 +53,7 @@ STRIP="${CROSS_COMPILE}strip" \
 RANLIB="${CROSS_COMPILE}ranlib" \
 AR="${CROSS_COMPILE}ar" \
 cmake \
-    -DBUILD_TESTS=OFF \
+    ${CMAKE_OPTS} \
     -DLIBVLCPP_DIR="${PROJECTPATH}/libvlcpp" \
     -DLIBVLC_INCLUDE_DIR="${PROJECTPATH}/vlc/include;${PROJECTPATH}/vlc/build-tizen-${TARGET_TUPLE}/include" \
     -DLIBVLC_LIBRARY="${PROJECTPATH}/lib/libvlc.so" \
