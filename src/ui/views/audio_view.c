@@ -42,21 +42,21 @@ typedef struct audio_view
 
 } audio_view;
 
-typedef struct audio_list_data
+typedef struct audio_list_item
 {
     audio_view *p_av;
 
     char *file_path;
     const char *str;
-    Evas_Object *parent;
-    Elm_Object_Item *item;
 
-} audio_list_data_s;
+    const Elm_Genlist_Item_Class *itc;
+
+} audio_list_item;
 
 static void
 audio_gl_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
-    audio_list_data_s *ald = data;
+    audio_list_item *ald = data;
     struct stat sb;
     stat(ald->file_path, &sb);
 
@@ -82,7 +82,7 @@ audio_gl_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 static void
 free_list_item_data(void *data, Evas_Object *obj, void *event_info)
 {
-    audio_list_data_s *ald = data;
+    audio_list_item *ald = data;
     /* Free the file path when the current genlist is deleted */
     /* For example when the player is launched or a new genlist is created */
     free(ald->file_path);
@@ -110,8 +110,8 @@ create_icon(Evas_Object *parent)
 static char *
 gl_text_get_cb(void *data, Evas_Object *obj, const char *part)
 {
-    audio_list_data_s *ald = data;
-    const Elm_Genlist_Item_Class *itc = elm_genlist_item_item_class_get(ald->item);
+    audio_list_item *ald = data;
+    const Elm_Genlist_Item_Class *itc = ald->itc;
     char *buf;
 
     /* Check the item class style and put the current folder or file name as a string */
@@ -138,8 +138,8 @@ gl_text_get_cb(void *data, Evas_Object *obj, const char *part)
 static Evas_Object*
 gl_content_get_cb(void *data, Evas_Object *obj, const char *part)
 {
-    audio_list_data_s *ald = data;
-    const Elm_Genlist_Item_Class *itc = elm_genlist_item_item_class_get(ald->item);
+    audio_list_item *ald = data;
+    const Elm_Genlist_Item_Class *itc = ald->itc;
     Evas_Object *content = NULL;
 
     /* Check the item class style and add the object needed in the item class*/
@@ -160,7 +160,7 @@ Evas_Object*
 create_audio_list(const char* path, audio_view *av)
 {
     char *buff;
-    audio_list_data_s *ald = malloc(sizeof(*ald));
+    audio_list_item *ald = malloc(sizeof(*ald));
     ald->p_av = av;
     const char *str = NULL;
     DIR* rep = NULL;
@@ -209,11 +209,8 @@ create_audio_list(const char* path, audio_view *av)
     /* Stop when the readdir have red the all repository */
     while ((current_folder = readdir(rep)) != NULL)
     {
-        audio_list_data_s *ald = malloc(sizeof(*ald));
+        audio_list_item *ald = malloc(sizeof(*ald));
         ald->p_av = av;
-
-        /* Put the genlist parent in the audio_list_data struct for callbacks */
-        ald->parent = parent;
 
         /* Concatenate the file path and the selected folder or file name */
         asprintf(&ald->file_path, "%s/%s", path, current_folder->d_name);
@@ -238,9 +235,9 @@ create_audio_list(const char* path, audio_view *av)
                 ald);                            /* genlist smart callback user data */
 
         /* Put genlist item in the audio_list_data struct for callbacks */
-        ald->item = it;
+        ald->itc = itc;
         /* */
-        elm_object_item_del_cb_set(ald->item, free_list_item_data);
+        elm_object_item_del_cb_set(it, free_list_item_data);
     }
     /* */
     elm_genlist_item_class_free(itc);
