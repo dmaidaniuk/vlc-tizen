@@ -41,7 +41,7 @@ typedef void (*media_added_cb)(media_item*);
 media_library* media_library_create(application* p_app);
 bool media_library_start( media_library* p_media_library, media_added_cb cb );
 void media_library_delete(media_library* p_media_library);
-void media_library_discover( const char* psz_location );
+void media_library_discover( media_library* p_ml, const char* psz_location );
 
 #ifdef __cplusplus
 }
