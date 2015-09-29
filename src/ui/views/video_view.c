@@ -30,17 +30,16 @@
 #include "video_view.h"
 #include "video_player.h"
 
+#include "media_item.h"
+
 #include <Elementary.h>
 
 typedef struct video_list_item {
     Evas_Object *parent;
-    Elm_Object_Item *item;
 
-    /* item properties */
-    char *file_path;
-    const char *str;
-    int w, h;
-    int64_t length; /* in ms */
+    const Elm_Genlist_Item_Class *itc;
+
+    media_item *item;
 
 } video_list_item;
 
@@ -50,12 +49,12 @@ video_gl_selected_cb(void *data, Evas_Object *obj, void *event_info)
     video_list_item *vld = data;
 
     struct stat sb;
-    stat(vld->file_path, &sb);
+    stat(vld->item->psz_path, &sb);
 
     if (S_ISREG(sb.st_mode)){
 
         /* Launch the media player */
-        Evas_Object *video_player = create_video_gui(vld->parent, vld->file_path);
+        Evas_Object *video_player = create_video_gui(vld->parent, vld->item->psz_path);
         elm_object_content_set(vld->parent, video_player);
         evas_object_show(video_player);
         /* */
@@ -65,7 +64,7 @@ video_gl_selected_cb(void *data, Evas_Object *obj, void *event_info)
 
     else if (S_ISDIR(sb.st_mode))
     {
-        create_video_view(vld->file_path, vld->parent);
+        create_video_view(vld->item->psz_path, vld->parent);
     }
 
 }
@@ -76,9 +75,8 @@ free_list_item_data(void *data, Evas_Object *obj, void *event_info)
     video_list_item *vld = data;
     /* Free the file path when the current genlist is deleted */
     /* For example when the player is launched or a new genlist is created */
-    free(vld->file_path);
+    media_item_destroy(vld->item);
     LOGD("Path free");
-
 }
 
 static Evas_Object*
@@ -116,27 +114,27 @@ static char *
 gl_text_get_cb(void *data, Evas_Object *obj, const char *part)
 {
     video_list_item *vld = data;
-    const Elm_Genlist_Item_Class *itc = elm_genlist_item_item_class_get(vld->item);
+    const Elm_Genlist_Item_Class *itc = vld->itc;
 
     /* Check the item class style and put the current folder or file name as a string */
     /* Then put this string as the genlist item label */
     if (itc->item_style && !strcmp(itc->item_style, "2line.top.3")) {
         if (part && !strcmp(part, "elm.text.main.left.top")) {
             char buf[PATH_MAX];
-            snprintf(buf, 1023, "<b>%s</b>", vld->str );
+            snprintf(buf, 1023, "<b>%s</b>", vld->item->psz_title);
             return strdup(buf);
         }
         else if (!strcmp(part, "elm.text.sub.left.bottom")) {
-            if(vld->length < 0)
+            if(vld->item->i_duration < 0)
                 return NULL;
             else
-                return duration_string(vld->length);
+                return duration_string(vld->item->i_duration);
         }
         else if (!strcmp(part, "elm.text.sub.right.bottom")) {
-            if (vld->w <= 0 || vld->h <= 0)
+            if (vld->item->i_w <= 0 || vld->item->i_h <= 0)
                 return NULL;
             char *str_resolution;
-            asprintf( &str_resolution, "%dx%d", vld->w, vld->h);
+            asprintf( &str_resolution, "%dx%d", vld->item->i_w, vld->item->i_h);
             return str_resolution;
         }
     }
@@ -147,7 +145,7 @@ static Evas_Object*
 gl_content_get_cb(void *data, Evas_Object *obj, const char *part)
 {
     video_list_item *vld = data;
-    const Elm_Genlist_Item_Class *itc = elm_genlist_item_item_class_get(vld->item);
+    const Elm_Genlist_Item_Class *itc = vld->itc;
     Evas_Object *content = NULL;
 
     /* Check the item class style and add the object needed in the item class*/
@@ -227,17 +225,19 @@ generate_video_list(const char *path, Evas_Object *parent, Evas_Object *genlist,
         }
 
         video_list_item *vld = calloc(1, sizeof(*vld));
-        vld->length = -1;
 
         /* Put the genlist parent in the video_list_data struct for callbacks */
         vld->parent = parent;
 
+        char *psz_path;
         /* Concatenate the file path and the selected folder or file name */
-        asprintf(&vld->file_path, "%s/%s", path, current_folder->d_name);
-        /* Put the folder or file name as a usable string for genlist item label */
+        asprintf(&psz_path, "%s/%s", path, current_folder->d_name);
+
+        vld->item = media_item_create(psz_path, MEDIA_ITEM_TYPE_VIDEO);
+        vld->item->i_duration = -1;
 
         /* Put the folder or file name in the video_list_data struct for callbacks */
-        vld->str = str_title;
+        vld->item->psz_title = str_title;
 
         /* Set and append new item in the genlist */
         it = elm_genlist_item_append(genlist,
@@ -249,9 +249,10 @@ generate_video_list(const char *path, Evas_Object *parent, Evas_Object *genlist,
                 vld);                           /* genlist smart callback user data */
 
         /* Put genlist item in the video_list_data struct for callbacks */
-        vld->item = it;
+        vld->itc = itc;
+
         /* */
-        elm_object_item_del_cb_set(vld->item, free_list_item_data);
+        elm_object_item_del_cb_set(it, free_list_item_data);
     }
 }
 
