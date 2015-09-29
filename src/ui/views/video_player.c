@@ -97,7 +97,7 @@ create_video_gui(Evas_Object *parent, char* file_path)
     evas_object_smart_callback_add(vd->progress_slider, "slider,drag,stop", _on_slider_changed_cb, vd);
     evas_object_smart_callback_add(vd->progress_slider, "changed", _on_slider_changed_cb, vd);
 
-    elm_naviframe_item_push(parent, "Video Player Test", NULL, NULL, vd->layout, NULL);
+    elm_naviframe_item_push(parent, "", NULL, NULL, vd->layout, NULL);
 
     return vd->layout;
 }

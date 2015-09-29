@@ -28,65 +28,165 @@ collections
     {
         name: "media_player_renderer";
         parts{
-
-         part{
+            part{
                 name: "swallow.visualization";
-                type: SWALLOW;
+                type: RECT;
                 description{
+                    color: 0 0 0 255;
                     state: "default" 0.0;
-                    rel1{ //top-left corner
+                    rel1{
                         relative: 0.0 0.0;
                     }
-                    rel2{ //bottom-right corner
+                    rel2{
                         relative: 1.0 1.0;
                     }
                 }
-         }
-         part{
+            }
+            part{
                 name: "hub_background";
                 type: RECT;
                 description{
                     state: "default" 0.0;
-                    color: 0 0 0 100; // transparent black
+                    color: 128 128 128 100; // transparent grey
                     rel1{ //top-left corner
-                        relative: 0.1 0.6;
+                        relative: 0.05 0.65;
                     }
                     rel2{ //bottom-right corner
-                        relative: 0.9 1.0;
+                        relative: 0.95 0.95;
+                    }
+                    max: -1 120;
+                }
+            }
+            part{
+                name: "swallow.progress";
+                type: SWALLOW;
+
+                description {
+                    color: 0 0 255 100;
+                    state: "pause" 0.0;
+                    rel1 {
+                       relative: 0.0 0.0;
+                       to: "hub_background";
+                    }
+                       rel2 {
+                       relative: 1.0 0.3;
+                       to: "hub_background";
                     }
                 }
-         }
-         part {
-            name: "swallow.progress";
-            type: SWALLOW;
-            description {
-               state: "pause" 0.0;
-               rel1 {
-                  relative: 0.0 0.1;
-                  to: "hub_background";
-               }
-               rel2 {
-                  relative: 1.0 0.2;
-                  to: "hub_background";
-               }
             }
-         }
-         part {
-            name: "swallow.play";
-            type: SWALLOW;
-            description {
-               state: "pause" 0.0;
-               rel1 {
-                  relative: 0.4 1.0;
-                  to: "swallow.progress";
-               }
-               rel2 {
-                  relative: 0.6 3.0;
-                  to: "swallow.progress";
-               }
+            part{
+                name: "hub_button";
+                type: RECT;
+                description{
+                    state: "default" 0.0;
+                    visible: 0;
+                    rel1{
+                        relative: 0.0 0.3;
+                        offset: 0 5;
+                        to: "hub_background";
+                    }
+                    rel2{
+                        relative: 1.0 0.95;
+                        to: "hub_background";
+                    }
+                }
             }
-         }
-
-      } //parts
-   }
+            part {
+                name: "swallow.button1";
+                type: RECT;
+                description {
+                    visible: 0;
+                    color: 168 168 0 100;
+                    state: "pause" 0.0;
+                    rel1 {
+                        relative: 0.0 0.0;
+                        to: "hub_button";
+                    }
+                    rel2 {
+                        relative: 0.2 1.0;
+                        to: "hub_button";
+                        to_x: "hub_button";
+                        to_y: "hub_button";
+                    }
+                }
+            }
+            part {
+                name: "swallow.button2";
+                type: RECT;
+                description {
+                    visible: 0;
+                    color: 0 0 168 100;
+                    state: "pause" 0.0;
+                    rel1 {
+                        relative: 0.2 0.0;
+                        to: "hub_button";
+                    }
+                    rel2 {
+                        relative: 0.4 1.0;
+                        to: "hub_button";
+                        to_x: "hub_button";
+                        to_y: "hub_button";
+                    }
+                }
+            }
+            part {
+                name: "swallow.play";
+                type: SWALLOW;
+                description {
+                    color: 0 255 0 100; // transparent green
+                    state: "pause" 0.0;
+                    aspect: 1.0 1.0;
+                    aspect_preference: VERTICAL;
+                    rel1 {
+                        relative: 0.4 0.0;
+                        to: "hub_button";
+                    }
+                    rel2 {
+                        relative: 0.6 1.0;
+                        to: "hub_button";
+                        to_x: "hub_button";
+                        to_y: "hub_button";
+                    }
+                }
+            }
+            part {
+                name: "swallow.button4";
+                type: RECT;
+                description {
+                    visible: 0;
+                    color: 168 0 168 100; // transparent green
+                    state: "pause" 0.0;
+                    rel1 {
+                        relative: 0.6 0.0;
+                        to: "hub_button";
+                    }
+                    rel2 {
+                        relative: 0.8 1.0;
+                        to: "hub_button";
+                        to_x: "hub_button";
+                        to_y: "hub_button";
+                    }
+                }
+            }
+            part {
+                name: "swallow.button5";
+                type: RECT;
+                description {
+                    visible: 0;
+                    color: 0 168 200 100;
+                    state: "pause" 0.0;
+                    rel1 {
+                        relative: 0.8 0.0;
+                        to: "hub_button";
+                    }
+                    rel2 {
+                        relative: 1.0 1.0;
+                        to: "hub_button";
+                        to_x: "hub_button";
+                        to_y: "hub_button";
+                    }
+                }
+            }
+        } //parts
+    }
 }
