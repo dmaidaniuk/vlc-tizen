@@ -34,7 +34,7 @@ typedef struct interface interface;
 typedef struct mini_player mini_player;
 
 interface *
-intf_create_base_gui(application *);
+intf_create(application *);
 
 void
 intf_destroy(interface *);

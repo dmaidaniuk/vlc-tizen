@@ -69,7 +69,7 @@ app_create(void *data)
         goto error;
 
     /* */
-    app->p_intf = intf_create_base_gui(app);
+    app->p_intf = intf_create(app);
     if (!app->p_intf)
         goto error;
 

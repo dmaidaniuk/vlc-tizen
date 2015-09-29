@@ -305,7 +305,7 @@ intf_show_previous_view(interface *intf)
 
 
 interface *
-intf_create_base_gui(application *app)
+intf_create(application *app)
 {
     interface *intf = calloc(1, sizeof(*intf));
     intf->p_app = app;
