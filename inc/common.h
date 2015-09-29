@@ -44,7 +44,7 @@
 # define PACKAGE "org.videolan.vlc"
 #endif
 
-#define ICON_DIR "/opt/usr/apps/"PACKAGE"/res/images/"
+#define ICON_DIR "/opt/usr/apps/" PACKAGE "/res/images/"
 
 #include <Evas.h>
 
