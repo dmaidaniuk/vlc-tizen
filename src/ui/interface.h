@@ -73,7 +73,4 @@ intf_get_window(interface *intf);
 Evas_Object *
 intf_get_main_naviframe(interface *intf);
 
-Evas_Object *
-intf_get_toolbar(interface *intf);
-
 #endif /* INTERFACE_H_ */

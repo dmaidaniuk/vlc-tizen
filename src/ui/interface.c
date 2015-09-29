@@ -59,8 +59,6 @@ struct interface {
     Evas_Object *popup_toggle_btn;
     Evas_Object *popup;
 
-    Evas_Object *nf_toolbar;
-
     mini_player *p_mini_player;
     application *p_app;
 };
@@ -174,12 +172,6 @@ intf_get_main_naviframe(interface *intf)
     return intf->nf_content;
 }
 
-Evas_Object *
-intf_get_toolbar(interface *intf)
-{
-    return intf->nf_toolbar;
-}
-
 /* CREATION */
 static Evas_Object*
 create_base_layout(Evas_Object *parent)
@@ -241,7 +233,7 @@ intf_create_view(interface *intf, int sidebar_type)
         view = create_video_view(application_get_media_path(p_app, MEDIA_DIRECTORY_VIDEOS), nf_content);
         break;
     case VIEW_AUDIO:
-        intf->nf_toolbar = view = create_audio_view(intf, nf_content);
+        view = create_audio_view(intf, nf_content);
         break;
     case VIEW_FILES:
         view = create_directory_view(application_get_media_path(intf->p_app, MEDIA_DIRECTORY), nf_content);
