@@ -30,6 +30,18 @@
 #include "popup_genlist.h"
 #include "efl_extension.h"
 
+typedef struct popup_genlist_data
+{
+    int index;
+    int nb_item;
+    popup_menu_item_s *menu_item;
+    Evas_Object *box, *genlist;
+    Evas_Object *img;
+    Elm_Object_Item *item;
+    Evas_Object *parent;
+
+} popup_genlist_data_s;
+
 static Evas_Object*
 create_icon(popup_genlist_data_s *pgd, int count)
 {

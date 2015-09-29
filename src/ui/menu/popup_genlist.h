@@ -36,18 +36,6 @@ typedef struct popup_menu_item
     const char* icon;
 } popup_menu_item_s;
 
-typedef struct popup_genlist_data
-{
-    int index;
-    int nb_item;
-    popup_menu_item_s *menu_item;
-    Evas_Object *box, *genlist;
-    Evas_Object *img;
-    Elm_Object_Item *item;
-    Evas_Object *parent;
-
-} popup_genlist_data_s;
-
 Evas_Object *
 create_settings_popup_genlist(Evas_Object *parent, popup_menu_item_s *directory_menu, int nb_item);
 
