@@ -41,11 +41,11 @@
 #include "media_library.hpp"
 
 struct application {
-    media_storage   *p_ms;
+    interface        *p_intf;         /* Main interface structure */
+    media_storage    *p_ms;           /* Access to the device storage */
     /* settings */
-    media_library   *p_mediaLibrary;
-    interface *p_intf;
-    playback_service *p_ps;
+    media_library    *p_mediaLibrary; /* Media Library */
+    playback_service *p_ps;           /* Playback, using Emotion and libVLC */
 };
 
 static void app_terminate(void *data);
@@ -55,10 +55,12 @@ app_create(void *data)
 {
     application *app = data;
 
+    /* */
     app->p_ms = media_storage_create(app);
     if (!app->p_ms)
         goto error;
 
+    /* */
     app->p_mediaLibrary = CreateMediaLibrary(app);
     if (!app->p_mediaLibrary)
         goto error;
@@ -68,6 +70,7 @@ app_create(void *data)
     if (!app->p_intf)
         goto error;
 
+    /* */
     app->p_ps = playback_service_create(app);
     if (!app->p_ps)
         goto error;
@@ -82,18 +85,21 @@ static void
 app_control(app_control_h app_control, void *data)
 {
     /* Handle the launch request. */
+    //    application *app = data;
 }
 
 static void
 app_pause(void *data)
 {
     /* Take necessary actions when application becomes invisible. */
+    //    application *app = data;
 }
 
 static void
 app_resume(void *data)
 {
     /* Take necessary actions when application becomes visible. */
+    //    application *app = data;
 }
 
 static void
