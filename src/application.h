@@ -28,6 +28,7 @@
 # define APPLICATION_H_
 
 typedef struct application application;
+typedef struct interface interface;
 typedef struct media_library media_library;
 typedef struct playback_service playback_service;
 typedef struct media_storage media_storage;
