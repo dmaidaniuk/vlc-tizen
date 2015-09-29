@@ -12,6 +12,8 @@ if [ ! -d "${PROJECTPATH}/medialibrary" ]; then
     echo -e "\e[1m\e[32mmedialibrary source not found, cloning\e[0m"
     git clone http://github.com/chouquette/medialibrary.git "${PROJECTPATH}/medialibrary"
     checkfail "medialibrary source: git clone failed"
+else
+    ( cd ${PROJECTPATH}/medialibrary && git pull --rebase ) || echo "Failed to update medialibrary"
 fi
 
 if [ ! -d "${PROJECTPATH}/libvlcpp" ]; then
@@ -41,7 +43,7 @@ if [ "$RELEASE" = 1 ]; then
     CMAKE_OPTS=""
 fi
 
-if [ ! -e ./Makefile -o "$RELEASE" = 1 ]; then
+if [ ! -e ./Makefile -o "$RELEASE" = 1 -o ../CMakeLists.txt -nt ./Makefile ]; then
 CPPFLAGS="$CPPFLAGS" \
 CFLAGS="$CFLAGS ${EXTRA_CFLAGS}" \
 CXXFLAGS="$CFLAGS ${EXTRA_CXXFLAGS} -pthread" \
