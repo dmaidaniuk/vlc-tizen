@@ -41,9 +41,9 @@
 #include "medialibrary.hpp"
 
 struct application {
+    media_storage   *p_ms;
     const char      *psz_media_path;
     /* settings */
-    /* media_library */
     media_library   *p_mediaLibrary;
     interface *p_intf;
     playback_service *p_ps;
@@ -56,10 +56,9 @@ app_create(void *data)
 {
     application *app = data;
 
-    /* Fetch the media path and keep it in memory as soon as the app is create */
-    init_storage_discovery();
-
-    app->psz_media_path = fetch_media_path(MEDIA_DIRECTORY);
+    app->p_ms = media_storage_create(app);
+    if (!app->p_ms)
+        goto error;
     if (!app->psz_media_path)
         goto error;
     LOGE("Media Path %s", app->psz_media_path);
@@ -105,6 +104,8 @@ static void
 app_terminate(void *data)
 {
     application *app = data;
+    if (app->p_ms)
+        media_storage_destroy(app->p_ms);
     if (app->p_mediaLibrary)
         DeleteMediaLibrary(app->p_mediaLibrary);
     if (app->p_intf)
@@ -152,9 +153,9 @@ ui_app_low_memory(app_event_info_h event_info, void *user_data)
 }
 
 const char *
-application_get_media_path(application *app)
+application_get_media_path(application *app, media_directory_e type)
 {
-    return app->psz_media_path;
+    return media_storage_get_path(app->p_ms, type);
 }
 
 media_library *

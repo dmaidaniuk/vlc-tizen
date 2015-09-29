@@ -31,8 +31,10 @@ typedef struct application application;
 typedef struct media_library media_library;
 typedef struct playback_service playback_service;
 
+#include "media_storage.h"
+
 const char *
-application_get_media_path(application *app);
+application_get_media_path(application *app, media_directory_e type);
 
 media_library *
 application_get_media_library(application *app);

@@ -27,6 +27,9 @@
 #ifndef MEDIA_LIBRARY_H_
 #define MEDIA_LIBRARY_H_
 
+typedef struct application application;
+typedef struct media_storage media_storage;
+
 typedef enum
 {
     MEDIA_DIRECTORY,
@@ -36,10 +39,13 @@ typedef enum
     MEDIA_DIRECTORY_MAX
 } media_directory_e;
 
+media_storage *
+media_storage_create(application *app);
+
 void
-init_storage_discovery();
+media_storage_destroy(media_storage *p_ms);
 
 const char*
-fetch_media_path(media_directory_e);
+media_storage_get_path(media_storage *p_ms, media_directory_e type);
 
 #endif /* MEDIA_LIBRARY_H_ */

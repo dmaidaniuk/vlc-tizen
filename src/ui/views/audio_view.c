@@ -36,8 +36,8 @@
 #include "ui/audio_player.h"
 
 
-typedef struct audio_list_data {
-
+typedef struct audio_list_data
+{
     char *file_path;
     const char *str;
     Evas_Object *parent;
@@ -244,7 +244,8 @@ static void
 tabbar_item_selected(interface *intf, Elm_Object_Item *audio_it)
 {
     int error;
-    const char *audio_path = fetch_media_path(MEDIA_DIRECTORY_MUSIC);
+    application *p_app = intf_get_application(intf);
+    const char *audio_path = application_get_media_path(p_app, MEDIA_DIRECTORY_MUSIC);
     const char *str = NULL;
     Evas_Object *current_audio_view;
 

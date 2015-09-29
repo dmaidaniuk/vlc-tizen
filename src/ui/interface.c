@@ -234,18 +234,20 @@ intf_create_view(interface *intf, int sidebar_type)
     Evas_Object *nf_content = intf->nf_content;
     Evas_Object *view;
 
+    application *p_app = intf_get_application(intf);
+
     /* Create the view depending on with panel item list is selected */
     switch(sidebar_type)
     {
     case VIEW_VIDEO:
     case VIEW_AUTO:
-        view = create_video_view(fetch_media_path(MEDIA_DIRECTORY_VIDEOS), nf_content);
+        view = create_video_view(application_get_media_path(p_app, MEDIA_DIRECTORY_VIDEOS), nf_content);
         break;
     case VIEW_AUDIO:
         intf->nf_toolbar = view = create_audio_view(intf, nf_content);
         break;
     case VIEW_FILES:
-        view = create_directory_view(application_get_media_path(intf->p_app), nf_content);
+        view = create_directory_view(application_get_media_path(intf->p_app, MEDIA_DIRECTORY), nf_content);
         break;
     case VIEW_SETTINGS:
         view = create_setting_view(nf_content);

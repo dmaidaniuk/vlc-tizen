@@ -29,13 +29,17 @@
 
 #include <storage.h>
 
-static int internal_storage_id;
+struct media_storage {
+    int i_internal_storage_id;
+    char *psz_paths[MEDIA_DIRECTORY_MAX];
+};
 
 static bool storage_cb(int storage_id, storage_type_e type, storage_state_e state, const char *path, void *user_data)
 {
+    media_storage *p_ms = user_data;
     if (type == STORAGE_TYPE_INTERNAL)
     {
-        internal_storage_id = storage_id;
+        p_ms->i_internal_storage_id = storage_id;
         LOGD("Storage refreshed");
         return false;
     }
@@ -43,20 +47,36 @@ static bool storage_cb(int storage_id, storage_type_e type, storage_state_e stat
     return true;
 }
 
-void
-init_storage_discovery()
+media_storage *
+media_storage_create(application *p_app)
 {
     /* Connect to the device storage */
-    storage_foreach_device_supported(storage_cb, NULL);
+    media_storage *p_ms = calloc(1, sizeof(media_storage));
+    if (!p_ms)
+        return NULL;
+    storage_foreach_device_supported(storage_cb, p_ms);
+    return p_ms;
+}
+
+void
+media_storage_destroy(media_storage *p_ms)
+{
+    for (unsigned int i = 0; i < MEDIA_DIRECTORY_MAX; ++i)
+        free(p_ms->psz_paths[i]);
+    free(p_ms);
 }
 
 const char*
-fetch_media_path(media_directory_e type)
+media_storage_get_path(media_storage *p_ms, media_directory_e type)
 {
     int error, storage_type;
 
     if (type < 0 || type >= MEDIA_DIRECTORY_MAX)
         type = MEDIA_DIRECTORY;
+
+    if (p_ms->psz_paths[type])
+        return p_ms->psz_paths[type];
+
     switch(type)
     {
     case MEDIA_DIRECTORY:
@@ -74,19 +94,22 @@ fetch_media_path(media_directory_e type)
     }
     char *directory;
 
-    error = storage_get_directory(internal_storage_id, storage_type, &directory);
+    error = storage_get_directory(p_ms->i_internal_storage_id, storage_type, &directory);
 
     if (error != STORAGE_ERROR_NONE)
     {
         LOGD("Failed storage");
+        return NULL;
     }
 
     if (type == MEDIA_DIRECTORY) {
         char *device_storage_path;
         /* Concatenate the media path with .. to access the general media directory */
         asprintf(&device_storage_path,"%s/%s", directory, "..");
-        return device_storage_path;
+        free(directory);
+        directory = device_storage_path;
     }
+    p_ms->psz_paths[type] = directory;
 
     return directory;
 }
