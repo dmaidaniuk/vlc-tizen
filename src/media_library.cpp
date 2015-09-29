@@ -31,10 +31,29 @@
 #include "application.h"
 #include "common.h"
 #include "IFile.h"
+#include "ILogger.h"
 #include "IMovie.h"
 #include "IShowEpisode.h"
 #include "IVideoTrack.h"
 #include "media_library.hpp"
+
+class TizenLogger : public ILogger
+{
+    virtual void Error( const std::string& msg ) override
+	{
+    	dlog_print( DLOG_ERROR, "medialibrary", msg.c_str() );
+	}
+
+    virtual void Warning( const std::string& msg ) override
+	{
+    	dlog_print( DLOG_WARN, "medialibrary", msg.c_str() );
+	}
+
+    virtual void Info( const std::string& msg ) override
+	{
+    	dlog_print( DLOG_INFO, "medialibrary", msg.c_str() );
+	}
+};
 
 struct media_library : public IMediaLibraryCb
 {
@@ -53,6 +72,7 @@ private:
 
 public:
 	std::unique_ptr<IMediaLibrary> ml;
+	std::unique_ptr<TizenLogger> logger;
 	media_added_cb mediaAddedCb;
 };
 
@@ -184,6 +204,8 @@ media_library_start( media_library* p_media_library, media_added_cb cb )
 		return false;
 	}
 	p_media_library->mediaAddedCb = cb;
+	p_media_library->logger.reset( new TizenLogger );
+	p_media_library->ml->setLogger( p_media_library->logger.get() );
 	return p_media_library->ml->initialize( appData + "vlc.db", appData + "/snapshots", p_media_library );
 }
 
