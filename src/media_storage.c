@@ -43,7 +43,7 @@ static bool storage_cb(int storage_id, storage_type_e type, storage_state_e stat
     return true;
 }
 
-const void
+void
 init_storage_discovery()
 {
     /* Connect to the device storage */

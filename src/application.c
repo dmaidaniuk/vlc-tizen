@@ -33,19 +33,31 @@
 #include <Emotion.h>
 #include <Elementary.h>                 /* Elm_language_set */
 
+#include "application.h"
 #include "ui/interface.h"
 
 #include "media_storage.h"
+#include "medialibrary.hpp"
+
+struct application {
+    const char      *psz_media_path;
+    /* settings */
+    /* media_library */
+    media_library   *p_mediaLibrary;
+};
 
 static bool
 app_create(void *data)
 {
-    application_sys *app = data;
+    application *app = data;
 
     /* Fetch the media path and keep it in memory as soon as the app is create */
     init_storage_discovery();
-    app->media_path = fetch_media_path(MEDIA_DIRECTORY);
-    LOGE("Media Path %s", app->media_path);
+    app->psz_media_path = fetch_media_path(MEDIA_DIRECTORY);
+    LOGE("Media Path %s", app->psz_media_path);
+    app->p_mediaLibrary = CreateMediaLibrary(app);
+    if (!app->p_mediaLibrary)
+        return false;
 
     /* */
     create_base_gui(app);
@@ -74,7 +86,8 @@ app_resume(void *data)
 static void
 app_terminate(void *data)
 {
-    application_sys *app = data;
+    application *app = data;
+    DeleteMediaLibrary(app->p_mediaLibrary);
     free(app);
     emotion_shutdown();
 }
@@ -115,10 +128,22 @@ ui_app_low_memory(app_event_info_h event_info, void *user_data)
     /*APP_EVENT_LOW_MEMORY*/
 }
 
+const char *
+application_get_media_path(application *app)
+{
+    return app->psz_media_path;
+}
+
+media_library *
+application_get_media_library(application *app)
+{
+    return app->p_mediaLibrary;
+}
+
 int
 main(int argc, char *argv[])
 {
-    application_sys *app = malloc(sizeof(*app));
+    application *app = malloc(sizeof(*app));
 
     /* Emotion start */
     emotion_init();

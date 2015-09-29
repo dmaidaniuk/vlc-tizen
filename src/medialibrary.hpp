@@ -32,12 +32,12 @@ extern "C"
 {
 #endif
 
-typedef struct application_sys application_sys;
+#include "application.h"
 
 typedef struct media_library media_library;
 
-media_library* CreateMediaLibrary(application_sys* p_app);
-void DeleteMediaLibrary(application_sys* p_app);
+media_library* CreateMediaLibrary(application* p_app);
+void DeleteMediaLibrary(media_library* p_media_library);
 
 #ifdef __cplusplus
 }

@@ -34,19 +34,19 @@ struct media_library
 	IMediaLibrary* p_ml;
 };
 
-
-bool SetupMediaLibrary(application_sys* p_app)
+media_library *
+CreateMediaLibrary(application *p_app)
 {
 	auto ml = MediaLibraryFactory::create();
 	if ( ml == nullptr )
-		return false;
-	p_app->p_mediaLibrary = new media_library;
-	p_app->p_mediaLibrary->p_ml = ml;
-	return true;
+		return nullptr;
+	media_library *p_media_library = new media_library;
+	p_media_library->p_ml = ml;
+	return p_media_library;
 }
 
-void DeleteMediaLibrary(application_sys* p_app)
+void
+DeleteMediaLibrary(media_library* p_media_library)
 {
-	delete p_app->p_mediaLibrary->p_ml;
-	p_app->p_mediaLibrary = nullptr;
+	delete p_media_library;
 }

@@ -27,13 +27,13 @@
 #ifndef APPLICATION_H_
 # define APPLICATION_H_
 
-#include "medialibrary.hpp"
+typedef struct application application;
+typedef struct media_library media_library;
 
-typedef struct application_sys {
-    const char *media_path;
-    /* settings */
-    /* media_library */
-    media_library* p_mediaLibrary;
-} application_sys;
+const char *
+application_get_media_path(application *app);
+
+media_library *
+application_get_media_library(application *app);
 
 #endif

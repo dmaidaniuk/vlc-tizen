@@ -33,7 +33,7 @@
 struct interface_priv_sys;
 
 typedef struct interface_sys {
-    application_sys *app;
+    application *app;
 
     struct interface_priv_sys *intf_p;
     struct mini_player *mini_player;
@@ -71,7 +71,7 @@ void
 show_previous_view(interface_sys *);
 
 void
-create_base_gui(application_sys *);
+create_base_gui(application *);
 
 void
 update_mini_player(interface_sys *);

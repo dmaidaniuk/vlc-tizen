@@ -188,7 +188,7 @@ create_view(interface_sys *intf, int sidebar_idx)
         intf->intf_p->nf_toolbar = view = create_audio_view(intf, content);
         break;
     case VIEW_FILES:
-        view = create_directory_view(intf->app->media_path, content);
+        view = create_directory_view(application_get_media_path(intf->app), content);
         break;
     case VIEW_SETTINGS:
         view = create_setting_view(content);
@@ -304,7 +304,7 @@ show_previous_view(interface_sys *intf)
 
 
 void
-create_base_gui(application_sys *app)
+create_base_gui(application *app)
 {
     interface_sys *intf = calloc(1, sizeof(*intf));
     intf->app = app;
