@@ -37,11 +37,28 @@ typedef struct videodata
 {
     player_h player;
     Evas_Object *parent, *layout;
-    Evas_Object *play_pause_button;
+    Evas_Object *play_pause_button, *progress_slider;
     bool play_state;
     char *file_path;
 
 } videodata_s;
+
+static void
+_on_slider_changed_cb(void *data, Evas_Object *obj, void *event_info)
+{
+    videodata_s *vd = data;
+    if(vd)
+    {
+        double val = elm_slider_value_get(obj);
+        //TODO plug to VLC
+    }
+}
+
+static void
+clicked_cb(void *data, Evas_Object *obj, void *event_info)
+{
+   //TODO
+}
 
 static void
 init_base_player(void *data, Evas_Object *obj, void *event_info)
@@ -175,8 +192,16 @@ create_video_gui(Evas_Object *parent, char* file_path)
     elm_image_file_set(vd->play_pause_button, ICON_DIR"ic_play_circle_normal_o.png", NULL);
     //attach to edje layout
     elm_object_part_content_set(vd->layout, "swallow.play", vd->play_pause_button);
-    //show
-    evas_object_show(vd->play_pause_button);
+    //click callback
+    evas_object_smart_callback_add(vd->play_pause_button, "clicked", clicked_cb, vd);
+
+    //progress slider
+    vd->progress_slider = elm_slider_add(vd->layout);
+    elm_slider_horizontal_set(vd->progress_slider, EINA_TRUE);
+    elm_object_part_content_set(vd->layout, "swallow.progress", vd->progress_slider);
+    //slider callbacks
+    evas_object_smart_callback_add(vd->progress_slider, "slider,drag,stop", _on_slider_changed_cb, vd);
+    evas_object_smart_callback_add(vd->progress_slider, "changed", _on_slider_changed_cb, vd);
 
     elm_naviframe_item_push(parent, "Video Player Test", NULL, NULL, vd->layout, NULL);
 

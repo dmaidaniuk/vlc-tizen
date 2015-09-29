@@ -49,12 +49,27 @@ collections
                     state: "default" 0.0;
                     color: 0 0 0 100; // transparent black
                     rel1{ //top-left corner
-                        relative: 0.2 0.5;
+                        relative: 0.1 0.6;
                     }
                     rel2{ //bottom-right corner
-                        relative: 0.8 1.0;
+                        relative: 0.9 1.0;
                     }
                 }
+         }
+         part {
+            name: "swallow.progress";
+            type: SWALLOW;
+            description {
+               state: "pause" 0.0;
+               rel1 {
+                  relative: 0.0 0.1;
+                  to: "hub_background";
+               }
+               rel2 {
+                  relative: 1.0 0.2;
+                  to: "hub_background";
+               }
+            }
          }
          part {
             name: "swallow.play";
@@ -62,12 +77,12 @@ collections
             description {
                state: "pause" 0.0;
                rel1 {
-                  relative: 0.4 0.4;
-                  to: "hub_background";
+                  relative: 0.4 1.0;
+                  to: "swallow.progress";
                }
                rel2 {
-                  relative: 0.6 0.6;
-                  to: "hub_background";
+                  relative: 0.6 3.0;
+                  to: "swallow.progress";
                }
             }
          }
