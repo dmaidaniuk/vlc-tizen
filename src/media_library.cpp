@@ -42,6 +42,10 @@ public:
 	// IMediaLibraryCb
 	virtual void onMetadataUpdated( FilePtr file ) override;
 
+    virtual void onDiscoveryStarted( const std::string& entryPoint ) override;
+    virtual void onFileAdded( FilePtr file ) override;
+    virtual void onDiscoveryCompleted( const std::string& entryPoint ) override;
+
 private:
 	std::unique_ptr<IMediaLibrary> m_ml;
 };
@@ -54,9 +58,28 @@ media_library::media_library( const std::string& appData )
 		throw std::runtime_error( "Failed to initialize MediaLibrary" );
 }
 
-void media_library::onMetadataUpdated( FilePtr )
+void
+media_library::onMetadataUpdated( FilePtr )
 {
 
+}
+
+void
+media_library::onDiscoveryStarted( const std::string& entryPoint )
+{
+	LOGI( "Starting [%s] discovery", entryPoint.c_str() );
+}
+
+void
+media_library::onFileAdded( FilePtr )
+{
+	//FIXME
+}
+
+void
+media_library::onDiscoveryCompleted( const std::string& entryPoint )
+{
+	LOGI("Completed [%s] discovery", entryPoint.c_str() );
 }
 
 void
