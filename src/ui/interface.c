@@ -361,15 +361,6 @@ intf_create(application *app)
     /* Create the default view in the content naviframe */
     intf_create_view(intf, VIEW_AUTO);
 
-    /* Add both left and right content naviframe buttons */
-    intf->sidebar_toggle_btn = create_button(intf->nf_content, "naviframe/drawers", NULL);
-    evas_object_smart_callback_add(intf->sidebar_toggle_btn, "clicked", left_panel_button_clicked_cb, intf);
-    elm_object_part_content_set(intf->nf_content, "title_left_btn", intf->sidebar_toggle_btn);
-
-    intf->popup_toggle_btn = create_button(intf->nf_content, "naviframe/drawers", NULL);
-    evas_object_smart_callback_add(intf->popup_toggle_btn, "clicked", right_panel_button_clicked_cb, intf);
-    elm_object_part_content_set(intf->nf_content, "title_right_btn", intf->popup_toggle_btn);
-
     /* */
     evas_object_show(intf->win);
 
