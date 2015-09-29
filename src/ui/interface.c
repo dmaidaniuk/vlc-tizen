@@ -196,7 +196,6 @@ create_button(Evas_Object *parent, char *style, char *text)
 
     /* */
     evas_object_show(button);
-
     return button;
 }
 
@@ -277,7 +276,7 @@ intf_create_view(interface *intf, int view_type)
 }
 
 static Evas_Object*
-create_main_content(interface *intf, Evas_Object *parent)
+create_main_content_box(interface *intf, Evas_Object *parent)
 {
     /* Create a content box to display the content and the mini player */
     intf->global_box = elm_box_add(parent);
@@ -294,18 +293,21 @@ create_main_content(interface *intf, Evas_Object *parent)
     /* Add the content naviframe in the content_box */
     elm_box_pack_end(intf->global_box, intf->nf_content);
 
+    /* Correct expansion of the NaviFrame */
+    evas_object_size_hint_weight_set(intf->nf_content, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+    evas_object_size_hint_align_set(intf->nf_content, EVAS_HINT_FILL, EVAS_HINT_FILL);
+
     /* */
     evas_object_show(intf->nf_content);
 
-    /* Ask the box to recalculate her current children dislay */
+    /* Ask the global box to recalculate her current children display */
     elm_box_recalculate(intf->global_box);
-
 
     return intf->global_box;
 }
 
 static Evas_Object*
-create_main_view(interface *intf, Evas_Object *conform)
+create_main_layout(interface *intf, Evas_Object *conform)
 {
     /* Add a layout to the conformant */
     Evas_Object *layout = create_base_layout(conform);
@@ -315,12 +317,9 @@ create_main_view(interface *intf, Evas_Object *conform)
     elm_object_part_content_set(layout, "elm.swallow.left", intf->sidebar);
 
     /* Create the content box and put it in the layout */
-    intf->global_box = create_main_content(intf, layout);
+    intf->global_box = create_main_content_box(intf, layout);
     elm_object_part_content_set(layout, "elm.swallow.content", intf->global_box);
 
-    /* */
-    evas_object_size_hint_weight_set(intf->nf_content, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-    evas_object_size_hint_align_set(intf->nf_content, EVAS_HINT_FILL, EVAS_HINT_FILL);
     /* */
     evas_object_show(intf->global_box);
 
@@ -369,7 +368,7 @@ intf_create(application *app)
     evas_object_show(bg);
 
     /* Create the main view in the conformant */
-    base_layout = create_main_view(intf, conform);
+    base_layout = create_main_layout(intf, conform);
     elm_object_content_set(conform, base_layout);
 
     /* Create the default view in the content naviframe */
