@@ -29,10 +29,12 @@
 
 #include "ui/audio_player.h"
 
+typedef struct audio_view audio_view;
+
 Evas_Object *
 create_audio_view(interface *intf, Evas_Object *parent);
 
 Evas_Object*
-create_audio_list(const char* path, interface *intf);
+create_audio_list(const char* path, audio_view *);
 
 #endif /* AUDIO_VIEW_H_ */
