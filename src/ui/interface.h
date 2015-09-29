@@ -56,6 +56,9 @@ void
 intf_create_view(interface *, view_e);
 
 void
+intf_create_video_player(interface *, const char *psz_path);
+
+void
 intf_show_previous_view(interface *);
 
 mini_player *

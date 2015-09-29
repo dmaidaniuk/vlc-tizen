@@ -43,6 +43,7 @@
 #include "views/directory_view.h"
 #include "views/settings_view.h"
 #include "views/about_view.h"
+#include "views/video_player.h"
 
 struct interface {
     Evas_Object *win;        /* Top Window */
@@ -240,7 +241,7 @@ intf_create_view(interface *intf, int view_type)
     switch(view_type)
     {
     case VIEW_VIDEO:
-        view = create_video_view(application_get_media_path(p_app, MEDIA_DIRECTORY_VIDEOS), nf_content);
+        view = create_video_view(intf, application_get_media_path(p_app, MEDIA_DIRECTORY_VIDEOS), nf_content);
         break;
     case VIEW_AUDIO:
         view = create_audio_view(intf, nf_content);
@@ -273,6 +274,18 @@ intf_create_view(interface *intf, int view_type)
     }
 
     intf->current_sidebar_idx = view_type;
+}
+
+void
+intf_create_video_player(interface *intf, const char *psz_path)
+{
+    /* Launch the media player */
+    Evas_Object *video_player = create_video_gui(intf->nf_content, psz_path);
+    elm_object_content_set(intf->nf_content, video_player);
+    evas_object_show(video_player);
+
+    /* */
+    LOGI("VLC Player launch");
 }
 
 static Evas_Object*

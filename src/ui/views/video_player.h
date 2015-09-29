@@ -30,6 +30,6 @@
 #define VIDEOP_H_
 
 Evas_Object*
-create_video_gui(Evas_Object *parent, char* file_path);
+create_video_gui(Evas_Object *parent, const char* file_path);
 
 #endif /* VIDEOP_H_ */

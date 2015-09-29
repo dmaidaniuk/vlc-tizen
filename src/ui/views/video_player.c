@@ -59,7 +59,7 @@ clicked_cb(void *data, Evas_Object *obj, void *event_info)
 }
 
 Evas_Object*
-create_video_gui(Evas_Object *parent, char* file_path)
+create_video_gui(Evas_Object *parent, const char* file_path)
 {
     videodata_s *vd = malloc(sizeof(*vd));
     vd->parent = parent;
@@ -93,6 +93,7 @@ create_video_gui(Evas_Object *parent, char* file_path)
     vd->progress_slider = elm_slider_add(vd->layout);
     elm_slider_horizontal_set(vd->progress_slider, EINA_TRUE);
     elm_object_part_content_set(vd->layout, "swallow.progress", vd->progress_slider);
+
     //slider callbacks
     evas_object_smart_callback_add(vd->progress_slider, "slider,drag,stop", _on_slider_changed_cb, vd);
     evas_object_smart_callback_add(vd->progress_slider, "changed", _on_slider_changed_cb, vd);

@@ -35,6 +35,8 @@
 #include <Elementary.h>
 
 typedef struct video_list_item {
+    interface *p_intf;
+
     Evas_Object *parent; //FIXME remove
 
     const Elm_Genlist_Item_Class *itc;
@@ -52,21 +54,13 @@ video_gl_selected_cb(void *data, Evas_Object *obj, void *event_info)
     stat(vld->item->psz_path, &sb);
 
     if (S_ISREG(sb.st_mode)){
-
-        /* Launch the media player */
-        Evas_Object *video_player = create_video_gui(vld->parent, vld->item->psz_path);
-        elm_object_content_set(vld->parent, video_player);
-        evas_object_show(video_player);
-        /* */
-        LOGI("VLC Player launch");
-        LOGI("Won't play the video at the time. Will be soon");
+        intf_create_video_player(vld->p_intf, vld->item->psz_path);
     }
 
     else if (S_ISDIR(sb.st_mode))
     {
-        create_video_view(vld->item->psz_path, vld->parent);
+        create_video_view(vld->p_intf, vld->item->psz_path, vld->parent);
     }
-
 }
 
 static void
@@ -191,7 +185,7 @@ gl_contracted_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
 }
 
 void
-generate_video_list(const char *path, Evas_Object *parent, Evas_Object *genlist, Elm_Genlist_Item_Class *itc)
+generate_video_list(interface *intf, const char *path, Evas_Object *parent, Evas_Object *genlist, Elm_Genlist_Item_Class *itc)
 {
     struct dirent* current_folder = NULL;
     char *str_title;
@@ -228,6 +222,7 @@ generate_video_list(const char *path, Evas_Object *parent, Evas_Object *genlist,
 
         /* Put the genlist parent in the video_list_data struct for callbacks */
         vld->parent = parent;
+        vld->p_intf = intf;
 
         char *psz_path;
         /* Concatenate the file path and the selected folder or file name */
@@ -257,7 +252,7 @@ generate_video_list(const char *path, Evas_Object *parent, Evas_Object *genlist,
 }
 
 Evas_Object*
-create_video_view(const char* path, Evas_Object *parent)
+create_video_view(interface *intf, const char* path, Evas_Object *parent)
 {
     video_list_item *vld = malloc(sizeof(*vld));
 
@@ -283,7 +278,7 @@ create_video_view(const char* path, Evas_Object *parent)
     evas_object_smart_callback_add(genlist, "longpressed", gl_longpressed_cb, NULL);
     evas_object_smart_callback_add(genlist, "contracted", gl_contracted_cb, NULL);
 
-    generate_video_list(path, parent, genlist, itc);
+    generate_video_list(intf, path, parent, genlist, itc);
 
     /* */
     elm_genlist_item_class_free(itc);
