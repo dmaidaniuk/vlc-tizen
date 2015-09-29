@@ -44,7 +44,7 @@ Evas_Object *
 intf_get_miniplayer_content_box(interface *intf);
 
 Evas_Object *
-intf_get_content(interface *intf);
+intf_get_main_naviframe(interface *intf);
 
 Evas_Object *
 intf_get_toolbar(interface *intf);

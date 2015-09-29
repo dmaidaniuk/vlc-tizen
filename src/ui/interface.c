@@ -48,7 +48,7 @@ struct interface {
     Evas_Object *win;
     Evas_Object *conform;
 
-    Evas_Object *content;
+    Evas_Object *nf_content;
     Evas_Object *content_box;
 
     /* */
@@ -176,7 +176,7 @@ get_type_tag(int panel){
 void
 intf_create_view(interface *intf, int sidebar_idx)
 {
-    Evas_Object *content = intf->content;
+    Evas_Object *content = intf->nf_content;
     Evas_Object *view;
     intf->sidebar_idx = sidebar_idx;
 
@@ -205,14 +205,14 @@ intf_create_view(interface *intf, int sidebar_idx)
     elm_naviframe_item_push(content, get_type_tag(sidebar_idx), NULL, NULL, view, "basic");
 
     /* Create then set the panel toggle btn and add his callbacks */
-    intf->sidebar_toggle_btn = create_button(intf->content, "naviframe/drawers", NULL);
+    intf->sidebar_toggle_btn = create_button(intf->nf_content, "naviframe/drawers", NULL);
     evas_object_smart_callback_add(intf->sidebar_toggle_btn, "clicked", left_panel_button_clicked_cb, intf);
-    elm_object_part_content_set(intf->content, "title_left_btn", intf->sidebar_toggle_btn);
+    elm_object_part_content_set(intf->nf_content, "title_left_btn", intf->sidebar_toggle_btn);
 
     /* */
-    intf->popup_toggle_btn = create_button(intf->content, "naviframe/drawers", NULL);
+    intf->popup_toggle_btn = create_button(intf->nf_content, "naviframe/drawers", NULL);
     evas_object_smart_callback_add(intf->popup_toggle_btn, "clicked", right_panel_button_clicked_cb, intf);
-    elm_object_part_content_set(intf->content, "title_right_btn", intf->popup_toggle_btn);
+    elm_object_part_content_set(intf->nf_content, "title_right_btn", intf->popup_toggle_btn);
 }
 
 static Evas_Object*
@@ -224,17 +224,17 @@ create_main_content(interface *intf, Evas_Object *parent)
 
     /* Create both of the content_box subObjects */
     intf->p_mini_player = mini_player_create(intf, intf->content_box);
-    intf->content = elm_naviframe_add(intf->content_box);
+    intf->nf_content = elm_naviframe_add(intf->content_box);
 
     /* Put the naviframe at the top of the content_box */
-    evas_object_size_hint_align_set(intf->content, EVAS_HINT_FILL, 0.0);
-    evas_object_size_hint_weight_set(intf->content, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+    evas_object_size_hint_align_set(intf->nf_content, EVAS_HINT_FILL, 0.0);
+    evas_object_size_hint_weight_set(intf->nf_content, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 
     /* Add the content naviframe in the content_box */
-    elm_box_pack_end(intf->content_box, intf->content);
+    elm_box_pack_end(intf->content_box, intf->nf_content);
 
     /* */
-    evas_object_show(intf->content);
+    evas_object_show(intf->nf_content);
 
     /* Ask the box to recalculate her current children dislay */
     elm_box_recalculate(intf->content_box);
@@ -259,8 +259,8 @@ create_main_view(interface *intf)
     intf->content_box = create_main_content(intf, layout);
     elm_object_part_content_set(layout, "elm.swallow.content", intf->content_box);
     /* */
-    evas_object_size_hint_weight_set(intf->content, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-    evas_object_size_hint_align_set(intf->content, EVAS_HINT_FILL, EVAS_HINT_FILL);
+    evas_object_size_hint_weight_set(intf->nf_content, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+    evas_object_size_hint_align_set(intf->nf_content, EVAS_HINT_FILL, EVAS_HINT_FILL);
     /* */
     evas_object_show(intf->content_box);
 
@@ -286,9 +286,9 @@ intf_get_miniplayer_content_box(interface *intf)
 }
 
 Evas_Object *
-intf_get_content(interface *intf)
+intf_get_main_naviframe(interface *intf)
 {
-    return intf->content;
+    return intf->nf_content;
 }
 
 Evas_Object *
@@ -351,13 +351,13 @@ intf_create_base_gui(application *app)
     intf_create_view(intf, VIEW_AUTO);
 
     /* Add both left and right content naviframe buttons */
-    intf->sidebar_toggle_btn = create_button(intf->content, "naviframe/drawers", NULL);
+    intf->sidebar_toggle_btn = create_button(intf->nf_content, "naviframe/drawers", NULL);
     evas_object_smart_callback_add(intf->sidebar_toggle_btn, "clicked", left_panel_button_clicked_cb, intf);
-    elm_object_part_content_set(intf->content, "title_left_btn", intf->sidebar_toggle_btn);
+    elm_object_part_content_set(intf->nf_content, "title_left_btn", intf->sidebar_toggle_btn);
 
-    intf->popup_toggle_btn = create_button(intf->content, "naviframe/drawers", NULL);
+    intf->popup_toggle_btn = create_button(intf->nf_content, "naviframe/drawers", NULL);
     evas_object_smart_callback_add(intf->popup_toggle_btn, "clicked", right_panel_button_clicked_cb, intf);
-    elm_object_part_content_set(intf->content, "title_right_btn", intf->popup_toggle_btn);
+    elm_object_part_content_set(intf->nf_content, "title_right_btn", intf->popup_toggle_btn);
 
     /* */
     evas_object_show(intf->win);
