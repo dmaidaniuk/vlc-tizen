@@ -33,13 +33,11 @@
 
 #include "common.h"
 
-class media_library : public IMediaLibraryCb
+struct media_library : public IMediaLibraryCb
 {
 public:
 	media_library();
 
-	bool initialize();
-	void discover( const std::string& location );
 	// IMediaLibraryCb
 	virtual void onMetadataUpdated( FilePtr file ) override;
 
@@ -47,28 +45,14 @@ public:
     virtual void onFileAdded( FilePtr file ) override;
     virtual void onDiscoveryCompleted( const std::string& entryPoint ) override;
 
-private:
-	std::unique_ptr<IMediaLibrary> m_ml;
+	std::unique_ptr<IMediaLibrary> ml;
 };
 
 media_library::media_library()
-	: m_ml( MediaLibraryFactory::create() )
+	: ml( MediaLibraryFactory::create() )
 {
-	if ( m_ml == nullptr )
+	if ( ml == nullptr )
 		throw std::runtime_error( "Failed to initialize MediaLibrary" );
-}
-
-bool
-media_library::initialize()
-{
-	auto appDataCStr = std::unique_ptr<char, void(*)(void*)>( app_get_data_path(), &free );
-	std::string appData( appDataCStr.get() );
-	if ( appDataCStr == nullptr )
-	{
-		LOGE( "Failed to fetch application data directory" );
-		return false;
-	}
-	return m_ml->initialize( appData + "vlc.db", appData + "/snapshots", this );
 }
 
 void
@@ -95,12 +79,6 @@ media_library::onDiscoveryCompleted( const std::string& entryPoint )
 	LOGI("Completed [%s] discovery", entryPoint.c_str() );
 }
 
-void
-media_library::discover( const std::string& location )
-{
-	m_ml->discover( location );
-}
-
 media_library *
 CreateMediaLibrary(application *p_app)
 {
@@ -118,7 +96,14 @@ CreateMediaLibrary(application *p_app)
 bool
 StartMediaLibrary( media_library* p_media_library )
 {
-	return p_media_library->initialize();
+	auto appDataCStr = std::unique_ptr<char, void(*)(void*)>( app_get_data_path(), &free );
+	std::string appData( appDataCStr.get() );
+	if ( appDataCStr == nullptr )
+	{
+		LOGE( "Failed to fetch application data directory" );
+		return false;
+	}
+	return p_media_library->ml->initialize( appData + "vlc.db", appData + "/snapshots", p_media_library );
 }
 
 void
@@ -130,5 +115,5 @@ DeleteMediaLibrary(media_library* p_media_library)
 void
 Discover( media_library* p_ml, const char* psz_location )
 {
-	p_ml->discover( psz_location );
+	p_ml->ml->discover( psz_location );
 }
