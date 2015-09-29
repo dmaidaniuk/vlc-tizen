@@ -69,6 +69,8 @@ fetch_media_path(media_directory_e type)
     case MEDIA_DIRECTORY_CAMERA:
         storage_type = STORAGE_DIRECTORY_CAMERA;
         break;
+    default:
+        return NULL;
     }
     char *directory;
 
