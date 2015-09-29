@@ -219,7 +219,7 @@ create_button(Evas_Object *parent, char *style, char *text)
 }
 
 static const char*
-get_type_tag(int panel){
+get_view_title(int panel){
     switch(panel)
         {
         case VIEW_AUDIO:
@@ -234,6 +234,7 @@ get_type_tag(int panel){
             return "Video";
         }
 }
+
 void
 intf_create_view(interface *intf, int sidebar_idx)
 {
@@ -263,7 +264,7 @@ intf_create_view(interface *intf, int sidebar_idx)
 
     }
     /* Push the view in the naviframe with the corresponding header */
-    elm_naviframe_item_push(content, get_type_tag(sidebar_idx), NULL, NULL, view, "basic");
+    elm_naviframe_item_push(content, get_view_title(sidebar_idx), NULL, NULL, view, "basic");
 
     /* Create then set the panel toggle btn and add his callbacks */
     intf->sidebar_toggle_btn = create_button(intf->nf_content, "naviframe/drawers", NULL);
