@@ -46,7 +46,6 @@
 
 struct interface {
     Evas_Object *win;        /* Top Window */
-    Evas_Object *conform;
 
     Evas_Object *global_box; /* Root box */
     Evas_Object *nf_content; /* Main naviframe */
@@ -304,10 +303,10 @@ create_main_content(interface *intf, Evas_Object *parent)
 }
 
 static Evas_Object*
-create_main_view(interface *intf)
+create_main_view(interface *intf, Evas_Object *conform)
 {
     /* Add a layout to the conformant */
-    Evas_Object *layout = create_base_layout(intf->conform);
+    Evas_Object *layout = create_base_layout(conform);
 
     /* Create the panel and put it in the layout */
     intf->sidebar = create_sidebar(intf, layout);
@@ -332,7 +331,7 @@ intf_create(application *app)
     interface *intf = calloc(1, sizeof(*intf));
     intf->p_app = app;
 
-    Evas_Object *bg, *base_layout;
+    Evas_Object *bg, *base_layout, *conform;
 
     /* Add and set the main Window */
     intf->win = elm_win_util_standard_add(PACKAGE, PACKAGE);
@@ -349,26 +348,26 @@ intf_create(application *app)
     eext_object_event_callback_add(intf->win, EEXT_CALLBACK_BACK, win_back_cb, intf);
 
     /* Add and set a conformant in the main Window */
-    intf->conform = elm_conformant_add(intf->win);
+    conform = elm_conformant_add(intf->win);
     elm_win_conformant_set(intf->win, EINA_TRUE);
-    evas_object_size_hint_weight_set(intf->conform, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+    evas_object_size_hint_weight_set(conform, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 
     /* */
     elm_win_indicator_mode_set(intf->win, ELM_WIN_INDICATOR_SHOW);
     elm_win_indicator_opacity_set(intf->win, ELM_WIN_INDICATOR_OPAQUE);
-    elm_win_resize_object_add(intf->win, intf->conform);
-    evas_object_show(intf->conform);
+    elm_win_resize_object_add(intf->win, conform);
+    evas_object_show(conform);
 
     /* Add and set a bg in the conformant */
-    bg = elm_bg_add(intf->conform);
+    bg = elm_bg_add(conform);
     elm_object_style_set(bg, "indicator/headerbg");
     /* Add the bg in the conformant */
-    elm_object_part_content_set(intf->conform, "elm.swallow.indicator_bg", bg);
+    elm_object_part_content_set(conform, "elm.swallow.indicator_bg", bg);
     evas_object_show(bg);
 
     /* Create the main view in the conformant */
-    base_layout = create_main_view(intf);
-    elm_object_content_set(intf->conform, base_layout);
+    base_layout = create_main_view(intf, conform);
+    elm_object_content_set(conform, base_layout);
 
     /* Create the default view in the content naviframe */
     intf_create_view(intf, VIEW_AUTO);
