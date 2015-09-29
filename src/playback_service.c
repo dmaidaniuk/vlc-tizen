@@ -23,9 +23,20 @@
  *****************************************************************************/
 
 #include "common.h"
+
+#include <Elementary.h>
+#include <Emotion.h>
+
 #include "playback_service.h"
 
-struct playback_service {
+#define PLAYLIST_CONTEXT_COUNT (PLAYLIST_CONTEXT_OTHERS + 1)
+
+struct playback_service
+{
+    media_list *p_ml_list[PLAYLIST_CONTEXT_COUNT];
+    media_list *p_ml;
+    Evas_Object *p_emotion;
+    Eina_List *p_cbs_list;
 };
 
 playback_service *
@@ -34,11 +45,125 @@ playback_service_create(application *p_app)
     playback_service *p_ps = calloc(1, sizeof(playback_service));
     if (!p_ps)
         return NULL;
+
+    for (unsigned int i = 0; i < PLAYLIST_CONTEXT_COUNT; ++i)
+    {
+        p_ps->p_ml_list[i] = media_list_create(true);
+        if (!p_ps->p_ml_list[i])
+        {
+            playback_service_destroy(p_ps);
+            return NULL;
+        }
+    }
+
+    p_ps->p_ml = p_ps->p_ml_list[PLAYLIST_CONTEXT_VIDEO];
     return p_ps;
 }
 
 void
 playback_service_destroy(playback_service *p_ps)
 {
+    Eina_List *p_el;
+    void *p_id;
+
+    for (unsigned int i = 0; i < PLAYLIST_CONTEXT_COUNT; ++i)
+    {
+        if (p_ps->p_ml_list[i])
+            media_list_destroy(p_ps->p_ml_list[i]);
+    }
+
+    /* Clear callback list */
+    EINA_LIST_FOREACH(p_ps->p_cbs_list, p_el, p_id)
+      free(p_id);
+    eina_list_free(p_ps->p_cbs_list);
+    p_ps->p_cbs_list = NULL;
+
     free(p_ps);
+}
+
+int
+playback_service_set_context(playback_service *p_ps, enum PLAYLIST_CONTEXT i_ctx)
+{
+    if (i_ctx < PLAYLIST_CONTEXT_VIDEO || i_ctx > PLAYLIST_CONTEXT_OTHERS)
+        return -1;
+    if (p_ps->p_ml_list[i_ctx] == p_ps->p_ml)
+        return -1;
+
+    playback_service_stop(p_ps);
+    p_ps->p_ml = p_ps->p_ml_list[i_ctx];
+    return 0;
+}
+
+media_list *
+playback_service_get_ml(playback_service *p_ps)
+{
+    return p_ps->p_ml;
+}
+
+void *
+playback_service_register_callbacks(playback_service *p_ps, playback_service_callbacks *p_cbs)
+{
+    Eina_List *p_el;
+    playback_service_callbacks *p_cbs_dup = malloc(sizeof(playback_service_callbacks));
+
+    if (!p_cbs_dup)
+        return NULL;
+    memcpy(p_cbs_dup, p_cbs, sizeof(playback_service_callbacks));
+
+    p_el = eina_list_append(p_ps->p_cbs_list, p_cbs_dup);
+    if (p_el == p_ps->p_cbs_list)
+    {
+        free(p_cbs_dup);
+        return NULL;
+    }
+    p_ps->p_cbs_list = p_el;
+    return p_cbs_dup;
+}
+
+void
+playback_service_unregister_callbacks(playback_service *p_ps, void *p_id)
+{
+    p_ps->p_cbs_list = eina_list_remove(p_ps->p_cbs_list, p_id);
+}
+
+int
+playback_service_start(playback_service *p_ps)
+{
+    return -1;
+}
+
+int
+playback_service_stop(playback_service *p_ps)
+{
+    return -1;
+}
+
+int
+playback_service_play(playback_service *p_ps)
+{
+    return -1;
+}
+
+int
+playback_service_pause(playback_service *p_ps)
+{
+    return -1;
+}
+
+double
+playback_service_get_pos(playback_service *p_ps)
+{
+    return -1;
+}
+
+double
+playback_service_get_len(playback_service *p_ps)
+{
+    return -1;
+}
+
+int
+playback_service_seek(playback_service *p_ps, double f_pos)
+{
+    return -1;
 }

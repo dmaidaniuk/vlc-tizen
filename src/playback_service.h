@@ -25,12 +25,62 @@
 #ifndef PLAYBACK_SERVICE_H
 #define PLAYBACK_SERVICE_H
 
+#include "media_list.h"
 #include "application.h"
+
+enum PLAYLIST_CONTEXT {
+    PLAYLIST_CONTEXT_VIDEO,
+    PLAYLIST_CONTEXT_AUDIO,
+    PLAYLIST_CONTEXT_OTHERS,
+};
+
+typedef struct playback_service_callbacks playback_service_callbacks;
+struct playback_service_callbacks
+{
+    int (*pf_on_started)(playback_service *p_ps, void *p_user_data, media_item *p_mi);
+    int (*pf_on_stopped)(playback_service *p_ps, void *p_user_data, media_item *p_mi);
+    int (*pf_on_seek_done)(playback_service *p_ps, void *p_user_data);
+    void *p_user_data;
+};
 
 playback_service *
 playback_service_create(application *p_app);
 
 void
 playback_service_destroy(playback_service *p_ps);
+
+int
+playback_service_set_context(playback_service *p_ps, enum PLAYLIST_CONTEXT i_ctx);
+
+media_list *
+playback_service_get_ml(playback_service *p_ps);
+
+void *
+playback_service_register_callbacks(playback_service *p_ps, playback_service_callbacks *p_cbs);
+
+void
+playback_service_unregister_callbacks(playback_service *p_ps, void *p_id);
+
+int
+playback_service_start(playback_service *p_ps);
+
+int
+playback_service_stop(playback_service *p_ps);
+
+int
+playback_service_play(playback_service *p_ps);
+
+int
+playback_service_pause(playback_service *p_ps);
+
+double
+playback_service_get_pos(playback_service *p_ps);
+
+double
+playback_service_get_len(playback_service *p_ps);
+
+int
+playback_service_seek(playback_service *p_ps, double f_pos);
+
 
 #endif /* PLAYBACK_SERVICE_H */
