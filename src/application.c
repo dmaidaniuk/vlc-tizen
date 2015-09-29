@@ -38,7 +38,7 @@
 
 #include "media_storage.h"
 #include "playback_service.h"
-#include "medialibrary.hpp"
+#include "media_library.hpp"
 
 struct application {
     media_storage   *p_ms;
