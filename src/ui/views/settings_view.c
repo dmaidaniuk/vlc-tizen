@@ -169,21 +169,18 @@ gl_text_get_cb(void *data, Evas_Object *obj, const char *part)
 {
     setting_data_s *sd = data;
     const Elm_Genlist_Item_Class *itc = elm_genlist_item_item_class_get(sd->item);
-    char *buf;
 
     /* Check the item class style and put the current folder or file name as a string */
     /* Then put this string as the genlist headers item label */
     if (itc->item_style && !strcmp(itc->item_style, "groupindex")) {
         if (part && !strcmp(part, "elm.text.main")) {
-            asprintf(&buf, "%s", settings_menu[sd->index].title);
-            return buf;
+            return strdup(settings_menu[sd->index].title);
         }
     }
     /* Or put this string as the genlist setting item label */
     else if (itc->item_style && !strcmp(itc->item_style, "1line")) {
         if (part && !strcmp(part, "elm.text.main.left")) {
-            asprintf(&buf, "%s", settings_menu[sd->index].title);
-            return buf;
+            return strdup(settings_menu[sd->index].title);
         }
     }
     return NULL;
