@@ -36,14 +36,13 @@
 
 typedef struct popup_genlist_data
 {
-    int index;
-    int nb_item;
-    popup_menu_item_s *menu_item;
-    Evas_Object *box, *genlist;
-    Evas_Object *img;
-    Elm_Object_Item *item;
     Evas_Object *parent;
 
+    popup_menu_item_s *menu_item;
+    int index;
+    int nb_item;
+
+    Elm_Object_Item *item;
 } popup_genlist_data_s;
 
 static char *
@@ -51,16 +50,12 @@ gl_text_get_cb(void *data, Evas_Object *obj, const char *part)
 {
     popup_genlist_data_s *pgd = data;
     const Elm_Genlist_Item_Class *itc = elm_genlist_item_item_class_get(pgd->item);
-    char *buf;
 
     /* Check the item class style and put the current folder or file name as a string */
     /* Then put this string as the genlist item label */
     if (itc->item_style && !strcmp(itc->item_style, "1line")) {
         if (part && !strcmp(part, "elm.text.main.left")) {
-            LOGI("%p", pgd->menu_item);
-            asprintf(&buf, "%s", pgd->menu_item[pgd->index].title);
-
-            return buf;
+            return strdup(pgd->menu_item[pgd->index].title);
         }
     }
     return NULL;
@@ -160,9 +155,7 @@ create_settings_popup_genlist(Evas_Object *parent, popup_menu_item_s *directory_
         /* Put the index and the gui_data in the cb_data struct for callbacks */
         pgd->index = index;
         pgd->parent = parent;
-        pgd->box = box;
         pgd->menu_item = directory_menu;
-        pgd->genlist = genlist;
         pgd->nb_item = nb_item;
 
         it = elm_genlist_item_append(genlist,
