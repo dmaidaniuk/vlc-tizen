@@ -34,7 +34,7 @@ extern "C"
 {
 #endif
 
-#include "../application.h"
+#include "application.h"
 
 typedef void (*media_added_cb)(media_item*);
 

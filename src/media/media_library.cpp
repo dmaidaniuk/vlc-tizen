@@ -34,7 +34,7 @@
 #include "IVideoTrack.h"
 
 #include "media_library.hpp"
-#include "../system_storage.h"
+#include "system_storage.h"
 
 class TizenLogger : public ILogger
 {
