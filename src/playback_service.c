@@ -127,7 +127,8 @@ ml_on_media_selected_cb(media_list *p_ml, void *p_user_data, unsigned int i_pos,
     {
         /* play new media */
         playback_service_stop(p_ps);
-        playback_service_stop(p_ps);
+        if (i_pos >= 0)
+            playback_service_start(p_ps);
     }
 }
 
