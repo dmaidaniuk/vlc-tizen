@@ -97,7 +97,9 @@ win_back_key_cb(void *data, Evas_Object *obj, void *event_info)
     } else if (evas_object_visible_get(intf->popup)) {
         evas_object_del(intf->popup); //since elm_popup_dismiss doesn't work
     } else {
-        elm_win_lower(intf->win);
+        elm_naviframe_item_pop(intf->nf_content);
+        if (NULL == elm_naviframe_items_get(intf->nf_content))
+            ui_app_exit();
     }
 }
 

@@ -453,10 +453,5 @@ create_setting_list(Evas_Object *parent)
 Evas_Object*
 create_setting_view(Evas_Object *parent)
 {
-    Evas_Object *setting_list = create_setting_list(parent);
-
-    /* Set the parent naviframe header label on content */
-    elm_naviframe_item_push(parent, "Settings", NULL, NULL, setting_list, NULL);
-
-    return setting_list;
+    return create_setting_list(parent);
 }

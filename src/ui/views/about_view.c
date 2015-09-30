@@ -136,8 +136,8 @@ create_about_view(Evas_Object *parent)
 
     /* Toolbar Naviframe Settings */
     elm_object_part_content_set(parent, "elm.swallow.content", nf_toolbar);
-    nf_it = elm_naviframe_item_push(nf_toolbar, NULL, NULL, NULL, NULL, "tabbar/icon/notitle");
-    elm_naviframe_item_push(parent, "<b>About</b>", NULL, NULL, nf_toolbar, "basic");
+//    nf_it = elm_naviframe_item_push(nf_toolbar, NULL, NULL, NULL, NULL, "tabbar/icon/notitle");
+//    elm_naviframe_item_push(parent, "<b>About</b>", NULL, NULL, nf_toolbar, "basic");
     evas_object_show(nf_toolbar);
 
     /* Create the toolbar in the view */
