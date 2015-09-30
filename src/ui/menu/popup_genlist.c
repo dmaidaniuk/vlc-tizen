@@ -25,10 +25,14 @@
  *****************************************************************************/
 
 #include "common.h"
+#include <efl_extension.h>
+
 #include "ui/interface.h"
 
+#include "ui/utils.h"
+
 #include "popup_genlist.h"
-#include "efl_extension.h"
+
 
 typedef struct popup_genlist_data
 {
@@ -45,18 +49,7 @@ typedef struct popup_genlist_data
 static Evas_Object*
 create_icon(popup_genlist_data_s *pgd, int count)
 {
-    char buf[PATH_MAX];
-    Evas_Object *img = elm_image_add(pgd->parent);
-
-    /* Create then set panel genlist used icones */
-    snprintf(buf, sizeof(buf), "%s/%s", ICON_DIR, pgd->menu_item[count].icon);
-    elm_image_file_set(img, buf, NULL);
-
-    /* The object will align and expand in the space the container will give him */
-    evas_object_size_hint_align_set(img, EVAS_HINT_FILL, EVAS_HINT_FILL);
-    evas_object_size_hint_weight_set(img, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-    pgd->img = img;
-    return pgd->img;
+    return create_image(pgd->parent, pgd->menu_item[count].icon);
 }
 
 static char *
