@@ -91,18 +91,27 @@ static void
 win_back_key_cb(void *data, Evas_Object *obj, void *event_info)
 {
     interface *intf = data;
-    /* Let window go to hide state. */
+    /* Hide the sidebar first */
     if (!elm_object_disabled_get(intf->sidebar) && !elm_panel_hidden_get(intf->sidebar)) {
         elm_panel_hidden_set(intf->sidebar, EINA_TRUE);
-    } else if (evas_object_visible_get(intf->popup)) {
+    }
+    /* Hide the popup menu then */
+    else if (evas_object_visible_get(intf->popup)) {
         evas_object_del(intf->popup); //since elm_popup_dismiss doesn't work
-    } else if (mini_player_fs_state(intf->p_mini_player) == true){
+    }
+    /* Hide the audio_player then */
+    else if (mini_player_fs_state(intf->p_mini_player) == true){
             collapse_fullscreen_player(intf->p_mini_player);
-    } else if (mini_player_visibility_state(intf->p_mini_player) == true){
+    }
+    /* And then the mini player */
+    else if (mini_player_visibility_state(intf->p_mini_player) == true){
             LOGD("mini player visible");
             mini_player_stop(intf->p_mini_player);
-    } else {
+    }
+    /* Finally pop out the stack */
+    else {
         elm_naviframe_item_pop(intf->nf_content);
+        /* If nothing left, exit */
         if (NULL == elm_naviframe_items_get(intf->nf_content))
             ui_app_exit();
     }
