@@ -101,11 +101,21 @@ create_directory_view(const char* path, Evas_Object *parent)
         return NULL ;
     }
 
+    Evas_Object *box = elm_box_add(parent);
+    evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+    evas_object_size_hint_align_set(box, EVAS_HINT_FILL, EVAS_HINT_FILL);
+    evas_object_show(box);
+
+    Evas_Object *directory =  elm_label_add(parent);
+    elm_object_text_set(directory, buff);
+    elm_box_pack_end(box, directory);
+    evas_object_show(directory);
+
     /* Add a first list append with ".." to go back in directory */
     file_list = elm_list_add(parent);
     dd->parent = parent;
     asprintf(&dd->file_path, "%s/..", buff);
-    Elm_Object_Item *item = elm_list_item_append(file_list, dd->file_path, NULL, NULL, list_selected_cb, dd);
+    Elm_Object_Item *item = elm_list_item_append(file_list, "..", NULL, NULL, list_selected_cb, dd);
     elm_object_item_del_cb_set(item, free_list_item_data);
 
     while ((current_folder = readdir(rep)) != NULL)
@@ -131,10 +141,17 @@ create_directory_view(const char* path, Evas_Object *parent)
         elm_object_item_del_cb_set(item, free_list_item_data);
     }
 
-    /* */
+    elm_list_go(file_list);
+
+    elm_box_pack_end(box, file_list);
+    evas_object_size_hint_weight_set(file_list, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+    /* The next line is required or the list won't show up */
+    evas_object_size_hint_align_set(file_list, EVAS_HINT_FILL, EVAS_HINT_FILL);
+
     evas_object_show(file_list);
-    elm_object_content_set(parent, file_list);
+
+    elm_object_content_set(parent, box);
     free(buff);
 
-    return file_list;
+    return box;
 }
