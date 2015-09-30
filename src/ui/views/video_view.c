@@ -30,6 +30,8 @@
 #include "video_view.h"
 #include "video_player.h"
 
+#include "ui/utils.h"
+
 #include "media_item.h"
 
 #include <Elementary.h>
@@ -76,18 +78,7 @@ free_list_item_data(void *data, Evas_Object *obj, void *event_info)
 static Evas_Object*
 create_icon(Evas_Object *parent)
 {
-    char buf[PATH_MAX];
-    Evas_Object *img = elm_image_add(parent);
-
-    /* Set the icon file for genlist item class */
-    snprintf(buf, sizeof(buf), ICON_DIR "background_cone.png");
-    elm_image_file_set(img, buf, NULL);
-
-    /* The object will align and expand in the space the container will give him */
-    evas_object_size_hint_align_set(img, EVAS_HINT_FILL, EVAS_HINT_FILL);
-    evas_object_size_hint_weight_set(img, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-
-    return img;
+    return create_image(parent, "background_cone.png");
 }
 
 char *
