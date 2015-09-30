@@ -24,18 +24,17 @@
  * compatibility with the Store
  *****************************************************************************/
 
-#include "IMediaLibrary.h"
-
-#include <app_common.h>
-
 #include "common.h"
 
+#include "IMediaLibrary.h"
 #include "IFile.h"
 #include "ILogger.h"
 #include "IMovie.h"
 #include "IShowEpisode.h"
 #include "IVideoTrack.h"
+
 #include "media_library.hpp"
+#include "../system_storage.h"
 
 class TizenLogger : public ILogger
 {
@@ -196,7 +195,7 @@ media_library_create(application *p_app)
 bool
 media_library_start( media_library* p_media_library, media_added_cb cb )
 {
-    auto appDataCStr = std::unique_ptr<char, void(*)(void*)>( app_get_data_path(), &free );
+    auto appDataCStr = std::unique_ptr<char, void(*)(void*)>( system_storage_appdata_get(), &free );
     std::string appData( appDataCStr.get() );
     if ( appDataCStr == nullptr )
     {

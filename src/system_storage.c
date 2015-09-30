@@ -28,6 +28,7 @@
 #include "system_storage.h"
 
 #include <storage.h>
+#include <app_common.h>
 
 struct media_storage {
     int i_internal_storage_id;
@@ -123,4 +124,10 @@ media_storage_get_path(media_storage *p_ms, media_directory_e type)
     p_ms->psz_paths[type] = directory;
     LOGD("Storage type %d: %s", type, directory);
     return directory;
+}
+
+char*
+system_storage_appdata_get()
+{
+    return app_get_data_path();
 }

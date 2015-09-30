@@ -47,4 +47,7 @@ media_storage_destroy(media_storage *p_ms);
 const char*
 media_storage_get_path(media_storage *p_ms, media_directory_e type);
 
+char*
+system_storage_appdata_get();
+
 #endif /* MEDIA_LIBRARY_H_ */
