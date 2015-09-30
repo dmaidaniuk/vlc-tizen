@@ -111,18 +111,7 @@ player_update_sliders(mini_player *mpd)
 static Evas_Object*
 create_icon(Evas_Object *parent, int count)
 {
-    char buf[PATH_MAX];
-    Evas_Object *img = elm_image_add(parent);
-
-    /* Create then set panel genlist used icones */
-    snprintf(buf, sizeof(buf), "%s/ic_%s_normal.png", ICON_DIR, audio_popup_icon_names[count]);
-    elm_image_file_set(img, buf, NULL);
-
-    /* The object will align and expand in the space the container will give him */
-    evas_object_size_hint_align_set(img, EVAS_HINT_FILL, EVAS_HINT_FILL);
-    evas_object_size_hint_weight_set(img, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-
-    return img;
+    return create_image(parent, audio_popup_icon_names[count]);
 }
 
 static char *
