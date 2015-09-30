@@ -75,19 +75,19 @@ static void
 tabbar_item_selected(Evas_Object *nf_toolbar, Elm_Object_Item *about_it)
 {
     const char *str = NULL;
-    Evas_Object *current_audio_view;
+    Evas_Object *current_tab;
     /* Get the item selected in the toolbar */
     str = elm_object_item_text_get(about_it);
 
     /* Create the view depending on the item selected in the toolbar */
     if (str && !strcmp(str, "License")) {
-        current_audio_view = create_licence_section(nf_toolbar);
+        current_tab = create_licence_section(nf_toolbar);
     }
     else     {
-        current_audio_view = create_about_section(nf_toolbar);
+        current_tab = create_about_section(nf_toolbar);
     }
 
-    elm_object_content_set(nf_toolbar, current_audio_view ); //Add the created view in the toolbar naviframe
+    elm_object_content_set(nf_toolbar, current_tab ); //Add the created view in the toolbar naviframe
 }
 
 static void
