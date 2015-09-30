@@ -29,6 +29,7 @@
 #include "settings_view.h"
 #include "ui/interface.h"
 #include "ui/menu/popup_genlist.h"
+#include "ui/utils.h"
 
 typedef struct setting_data
 {
@@ -50,13 +51,13 @@ typedef struct settings_item
 settings_item_s settings_menu[] =
 {
         {"General", ""},
-        {"Directories", "menu_folder" },
-        {"Material  acceleration", "menu_preferences"},
-        {"Subtitles text encoding","browser_subtitle_normal"},
-        {"Video orientation", "menu_video"},
+        {"Directories", "ic_menu_folder.png" },
+        {"Material  acceleration", "ic_menu_preferences.png"},
+        {"Subtitles text encoding","ic_browser_subtitle_normal.png"},
+        {"Video orientation", "ic_menu_video.png"},
         {"Extra settings", ""},
-        {"Performances", "menu_preferences"},
-        {"Deblocking filter settings", "menu_preferences"}
+        {"Performances", "ic_menu_preferences.png"},
+        {"Deblocking filter settings", "ic_menu_preferences.png"}
 };
 
 /* Create the setting submenu items */
@@ -160,17 +161,7 @@ gl_del_cb(void *data, Evas_Object *obj EINA_UNUSED)
 static Evas_Object*
 create_icon(Evas_Object *parent, int count)
 {
-    char buf[255];
-    Evas_Object *img = elm_image_add(parent);
-
-    /* Create then set setting list used icones */
-    snprintf(buf, sizeof(buf), "%s/ic_%s.png", ICON_DIR, settings_menu[count].icon);
-    elm_image_file_set(img, buf, NULL);
-    /* The object will align and expand in the space the container will give him */
-    evas_object_size_hint_align_set(img, EVAS_HINT_FILL, EVAS_HINT_FILL);
-    evas_object_size_hint_weight_set(img, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-
-    return img;
+    return create_image(parent, settings_menu[count].icon);
 }
 
 static char *
