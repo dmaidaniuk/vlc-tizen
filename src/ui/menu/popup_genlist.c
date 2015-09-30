@@ -110,7 +110,7 @@ popup_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
     }
 
     /* */
-    elm_popup_timeout_set(pgd->parent, 0.5);
+    evas_object_del(pgd->parent);
 }
 
 Evas_Object *
