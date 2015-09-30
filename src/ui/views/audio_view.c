@@ -96,7 +96,6 @@ genlist_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 static void
 free_list_item_data(void *data, Evas_Object *obj, void *event_info)
 {
-    LOGD("CLEANING");
     audio_list_item *ali = data;
     free(ali->p_media_item->psz_path);
     free(ali);
@@ -176,7 +175,7 @@ genlist_audio_item_create(audio_view *av, Evas_Object *parent_genlist, char *psz
             ali);                           /* genlist smart callback user data */
 
     /* */
-    //elm_object_item_del_cb_set(it, free_list_item_data);
+    elm_object_item_del_cb_set(it, free_list_item_data);
     return ali;
 }
 
@@ -266,9 +265,14 @@ create_audio_list_type(audio_view *av, audio_view_type type )
     }
     else
     {
-        LOGD("Recycling View %i %i", type, elm_genlist_items_count(genlist));
+        LOGD("Recycling View %i", type);
     }
 
+    /* Avoid the view destruction */
+    Evas_Object *old = elm_object_content_unset(av->nf_toolbar);
+    if(old) evas_object_hide(old);
+
+    /* Set the new view */
     elm_object_content_set(av->nf_toolbar, av->audio_lists[type] );
     return genlist;
 }
