@@ -64,7 +64,10 @@
 #endif
 
 #define EDJPATH "edje"
+#define ICONPATH "icon"
+#define IMAGESPATH "images"
 #define VIDEOPLAYEREDJ get_resource_path( EDJPATH "/video_player.edj")
+#define AUDIOPLAYERMINIEDJ get_resource_path( EDJPATH "/audio_player_mini.edj")
 
 #define ICON_DIR "/opt/usr/apps/" PACKAGE "/res/images/"
 

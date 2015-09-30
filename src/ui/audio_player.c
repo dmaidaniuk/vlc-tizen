@@ -647,86 +647,41 @@ set_sliders_callbacks(mini_player *mpd, Evas_Object *slider)
 }
 
 static Evas_Object*
-add_item_table(mini_player *mpd, Evas_Object *parent)
+swallow_mini_player(mini_player *mpd, Evas_Object *parent)
 {
-    Evas_Object *content_table;
-    Evas_Object *title, *sub_title;
-    Evas_Object *slider;
+    Evas_Object *layout = elm_layout_add(parent);
+    elm_layout_file_set(layout, AUDIOPLAYERMINIEDJ, "audio_player");
 
-    /* */
-    content_table = elm_table_add(parent);
-    /* Put the content table in the audio player structure */
-    mpd->table = content_table;
-    /* Align then set the table padding */
-    evas_object_size_hint_align_set(content_table, EVAS_HINT_FILL, EVAS_HINT_FILL);
-    elm_table_padding_set(content_table, ELM_SCALE_SIZE(5), ELM_SCALE_SIZE(5));
-    /* */
-    evas_object_show(content_table);
-
-
-    /* Add then set the progress bar at the top of the table */
-    slider = elm_slider_add(content_table);
-    elm_slider_horizontal_set(slider, EINA_TRUE);
-    evas_object_size_hint_max_set(slider, 449, 1);
-    evas_object_size_hint_align_set(slider, EVAS_HINT_FILL, 0.5);
-    evas_object_size_hint_weight_set(slider, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-    evas_object_show(slider);
-    elm_table_pack(content_table, slider, 0, 0, 4, 1);
-    mpd->slider = slider;
+    /* set the progress bar at the top of the table */
+    mpd->slider = elm_slider_add(layout);
+    elm_slider_horizontal_set(mpd->slider, EINA_TRUE);
+    elm_object_part_content_set(layout, "swallow.progress", mpd->slider);
     set_sliders_callbacks(mpd, mpd->slider);
     player_update_sliders(mpd);
 
 
-    /* Add then set the cover image */
-    mpd->cover = create_image(parent, "background_cone.png");
-    /* Scale and align the cover image */
-    evas_object_size_hint_min_set(mpd->cover, 100, 100);
-    evas_object_size_hint_max_set(mpd->cover, 100, 100);
-    evas_object_size_hint_align_set(mpd->cover, 0.0, EVAS_HINT_FILL);
-    /* */
-    evas_object_show(mpd->cover);
-    elm_table_pack(content_table, mpd->cover, 0, 1, 1, 2);
+    /* set the cover image */
+    mpd->cover = create_image(layout, "background_cone.png");
+    elm_object_part_content_set(layout, "swallow.cover", mpd->cover);
 
 
-    /* Add then set the title label */
-    title = elm_label_add(parent);
-    elm_object_text_set(title, "<b>Title</b>");
-    /* Scale and align the title label */
-    evas_object_size_hint_min_set(title, 250, 0);
-    evas_object_size_hint_max_set(title, 250, 50);
-    evas_object_size_hint_align_set(title, 0.0, EVAS_HINT_FILL);
-    /* */
-    evas_object_show(title);
-    elm_table_pack(content_table, title, 1, 1, 2, 1);
-    /* Put the title label in the audio player structure */
-    mpd->title = title;
+    /* set the title label */
+    mpd->title = elm_label_add(layout);
+    elm_object_text_set(mpd->title, "<b>Title</b>");
+    elm_object_part_content_set(layout, "swallow.title", mpd->title);
 
 
-    /* Add then set the sub title label */
-    sub_title = elm_label_add(parent);
-    elm_object_text_set(sub_title, "Subtitle");
-    /* Scale and align the sub title label */
-    evas_object_size_hint_min_set(sub_title, 250, 0);
-    evas_object_size_hint_max_set(sub_title, 250, 50);
-    evas_object_size_hint_align_set(sub_title, 0.0, EVAS_HINT_FILL);
-    /* */
-    evas_object_show(sub_title);
-    elm_table_pack(content_table, sub_title, 1, 2, 2, 1);
-    /* Put the sub title label in the audio player structure */
-    mpd->sub_title = sub_title;
+    /* set the sub title label */
+    mpd->sub_title = elm_label_add(layout);
+    elm_object_text_set(mpd->sub_title, "Subtitle");
+    elm_object_part_content_set(layout, "swallow.subtitle", mpd->sub_title);
 
 
-    /* Add then set the play/pause button */
-    mpd->play_pause_img = create_image(parent, "ic_pause_circle_normal_o.png");
-    /* Scale and align the play/pause button */
-    evas_object_size_hint_min_set(mpd->play_pause_img, 100, 100);
-    evas_object_size_hint_max_set(mpd->play_pause_img, 100, 100);
-    evas_object_size_hint_align_set(mpd->play_pause_img, 1.0, EVAS_HINT_FILL);
-    /* */
-    evas_object_show(mpd->play_pause_img);
-    elm_table_pack(content_table, mpd->play_pause_img, 3, 1, 1, 2);
+    /* set the play/pause button */
+    mpd->play_pause_img = create_image(layout, "ic_pause_circle_normal_o.png");
+    elm_object_part_content_set(layout, "swallow.play", mpd->play_pause_img);
 
-    return content_table;
+    return layout;
 }
 
 static void
@@ -1065,23 +1020,13 @@ create_base_player(mini_player *mpd, const char *file_path)
 mini_player*
 mini_player_create(interface *intf, Evas_Object *parent)
 {
-    Evas_Object *item_table;
     mini_player *mpd = calloc(1, sizeof(*mpd));
 
-    /* */
     mpd->intf = intf;
     mpd->play_state = false;
     mpd->visible_state = false;
 
-    /* Create the mini_player UI */
-    mpd->mini_player_box = elm_box_add(parent);
-    elm_box_horizontal_set(mpd->mini_player_box, EINA_TRUE);
-
-    /* Add the table layout of the mini_player */
-    item_table = add_item_table(mpd, mpd->mini_player_box);
-    evas_object_show(item_table);
-    elm_box_pack_end(mpd->mini_player_box, item_table);
-    elm_box_recalculate(mpd->mini_player_box);
+    mpd->mini_player_box = swallow_mini_player(mpd, parent);
 
     /* Add button callbacks */
     evas_object_smart_callback_add(mpd->play_pause_img, "clicked", play_pause_mini_player_cb, mpd);
@@ -1090,10 +1035,10 @@ mini_player_create(interface *intf, Evas_Object *parent)
     evas_object_smart_callback_add(mpd->sub_title, "clicked", mini_player_fullscreen_cb, mpd);
 
     /* Put the mini player at the bottom of the content_box */
-    /* Then set the vertical offset of the player */
     evas_object_size_hint_align_set(mpd->mini_player_box, EVAS_HINT_FILL, 1.0);
-    evas_object_size_hint_min_set(mpd->mini_player_box, 0, 100);
+    evas_object_show(mpd->mini_player_box);
 
+    update_player_display(mpd);
     return mpd;
 }
 

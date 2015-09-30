@@ -1,0 +1,153 @@
+/*****************************************************************************
+ * Copyright © 2015 VideoLAN, VideoLabs SAS
+ *****************************************************************************
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin Street, Fifth Floor, Boston MA 02110-1301, USA.
+ *****************************************************************************/
+/*
+ * By committing to this project, you allow VideoLAN and VideoLabs to relicense
+ * the code to a different OSI approved license, in case it is required for
+ * compatibility with the Store
+ *****************************************************************************/
+collections
+{
+    base_scale: 1.8;
+    group
+    {
+        name: "audio_player";
+      parts {
+            part{
+                name: "hub_background";
+                type: RECT;
+                description{
+                    state: "default" 0.0;
+                    color: 128 128 128 100; // transparent grey
+                    min: 0 120;
+                    max: -1 120;
+                }
+            }
+            part{
+                name: "swallow.progress";
+                type: SWALLOW;
+                description {
+                    state: "pause" 0.0;
+                    rel1 {
+                       relative: 0.0 0.0;
+                       to: "hub_background";
+                    }
+                       rel2 {
+                       relative: 1.0 0.2;
+                       to: "hub_background";
+                    }
+                }
+            }
+            part{
+                name: "hub_button";
+                type: RECT;
+                description{
+                    state: "default" 0.0;
+                    visible: 0;
+                    rel1{
+                        relative: 0.0 0.2;
+                        offset: 0 5;
+                        to: "hub_background";
+                    }
+                    rel2{
+                        relative: 1.0 0.95;
+                        to: "hub_background";
+                    }
+                }
+            }
+            part {
+                name: "swallow.title";
+                type: SWALLOW;
+                description {
+                    state: "pause" 0.0;
+                    color: 0 0 255 255; // transparent grey
+                    rel1 {
+                        relative: 0.2 0.0;
+                        to: "hub_button";
+                        to_x: "hub_button";
+                        to_y: "hub_button";
+                    }
+                    rel2 {
+                        relative: 0.8 0.5;
+                        to: "hub_button";
+                        to_x: "hub_button";
+                        to_y: "hub_button";
+                    }
+                }
+            }
+            part {
+                name: "swallow.subtitle";
+                type: SWALLOW;
+                description {
+                    state: "pause" 0.0;
+                    color: 0 255 0 255; // transparent grey
+                    rel1 {
+                        relative: 0.2 0.5;
+                        to: "hub_button";
+                    }
+                    rel2 {
+                        relative: 0.8 1.0;
+                        to: "hub_button";
+                        to_x: "hub_button";
+                        to_y: "hub_button";
+                    }
+                }
+            }
+            part {
+                name: "swallow.cover";
+                type: SWALLOW;
+                description {
+                    state: "pause" 0.0;
+                    aspect: 1.0 1.0;
+                    aspect_preference: VERTICAL;
+                    color: 255 0 0 255; // transparent grey
+                    rel1 {
+                        relative: 0.0 0.0;
+                        to: "hub_button";
+                    }
+                    rel2 {
+                        relative: 0.2 1.0;
+                        to: "hub_button";
+                        to_x: "hub_button";
+                        to_y: "hub_button";
+                    }
+                }
+            }
+            part {
+                name: "swallow.play";
+                type: SWALLOW;
+                description {
+                    state: "pause" 0.0;
+                    aspect: 1.0 1.0;
+                    aspect_preference: VERTICAL;
+                    color: 255 0 0 255; // transparent grey
+                    rel1 {
+                        relative: 0.8 0.0;
+                        to: "hub_button";
+                    }
+                    rel2 {
+                        relative: 1.0 1.0;
+                        to: "hub_button";
+                        to_x: "hub_button";
+                        to_y: "hub_button";
+                    }
+                }
+            }
+        } //parts
+    }
+}
