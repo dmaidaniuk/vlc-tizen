@@ -55,7 +55,14 @@ _on_slider_changed_cb(void *data, Evas_Object *obj, void *event_info)
 static void
 clicked_cb(void *data, Evas_Object *obj, void *event_info)
 {
-   //TODO
+   //TODO link with vlc state
+    videodata_s *vd = data;
+        if(vd)
+        {
+            elm_image_file_set(vd->play_pause_button, vd->play_state ? ICON_DIR "ic_pause_circle_normal_o.png" : ICON_DIR "ic_play_circle_normal_o.png", NULL);
+            vd->play_state = !vd->play_state;
+        }
+
 }
 
 Evas_Object*
