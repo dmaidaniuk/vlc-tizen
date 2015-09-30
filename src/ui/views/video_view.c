@@ -32,7 +32,7 @@
 
 #include "ui/utils.h"
 
-#include "media_item.h"
+#include "media/media_item.h"
 
 #include <Elementary.h>
 

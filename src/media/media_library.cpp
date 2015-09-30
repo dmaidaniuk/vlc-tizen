@@ -28,8 +28,8 @@
 
 #include <app_common.h>
 
-#include "application.h"
 #include "common.h"
+
 #include "IFile.h"
 #include "ILogger.h"
 #include "IMovie.h"

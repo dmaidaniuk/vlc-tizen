@@ -25,8 +25,8 @@
 #ifndef PLAYBACK_SERVICE_H
 #define PLAYBACK_SERVICE_H
 
-#include "media_list.h"
 #include "application.h"
+#include "media/media_list.h"
 
 enum PLAYLIST_CONTEXT {
     PLAYLIST_CONTEXT_AUDIO,

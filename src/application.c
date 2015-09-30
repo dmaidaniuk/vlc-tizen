@@ -38,7 +38,7 @@
 
 #include "system_storage.h"
 #include "playback_service.h"
-#include "media_library.hpp"
+#include "media/media_library.hpp"
 
 struct application {
     interface        *p_intf;         /* Main interface structure */
