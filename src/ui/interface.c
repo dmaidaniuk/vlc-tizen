@@ -367,6 +367,11 @@ intf_create(application *app)
     intf->win = elm_win_util_standard_add(PACKAGE, PACKAGE);
     elm_win_autodel_set(intf->win, EINA_TRUE);
 
+    /* Change colors */
+    edje_color_class_set("B011", 255, 136, 0, 255, 255, 136, 0, 255, 255, 136, 0, 255 );  // Base class
+    edje_color_class_set("B0511", 255, 136, 0, 255, 255, 136, 0, 255, 255, 136, 0, 255 ); // Naviframe base
+    edje_color_class_set("B0517", 255, 136, 0, 255, 255, 136, 0, 255, 255, 136, 0, 255 ); // Naviframe second
+
     /* Handle rotations */
     if (elm_win_wm_rotation_supported_get(intf->win)) {
         int rots[4] = { 0, 90, 180, 270 };
