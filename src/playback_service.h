@@ -64,7 +64,7 @@ playback_service_register_callbacks(playback_service *p_ps, playback_service_cal
 void
 playback_service_unregister_callbacks(playback_service *p_ps, void *p_id);
 
-int
+Evas_Object *
 playback_service_set_evas_video(playback_service *p_ps, Evas *p_evas);
 
 int

@@ -278,7 +278,7 @@ playback_service_unregister_callbacks(playback_service *p_ps, void *p_id)
     p_ps->p_cbs_list = eina_list_remove(p_ps->p_cbs_list, p_id);
 }
 
-int
+Evas_Object *
 playback_service_set_evas_video(playback_service *p_ps, Evas *p_evas)
 {
     if (p_ps->p_ev)
@@ -290,13 +290,16 @@ playback_service_set_evas_video(playback_service *p_ps, Evas *p_evas)
     {
         p_ps->p_ev = ps_emotion_create(p_ps, p_evas, false);
         if (!p_ps->p_ev)
-            return -1;
+            return NULL;
         p_ps->p_e = p_ps->p_ev;
+
+        return p_ps->p_ev;
     }
     else
+    {
         p_ps->p_e = p_ps->p_ea;
-
-    return 0;
+        return NULL;
+    }
 }
 
 
