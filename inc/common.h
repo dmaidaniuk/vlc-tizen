@@ -43,6 +43,22 @@
 #endif
 #define LOG_TAG "vlc"
 
+#undef LOGD
+#undef LOGI
+#undef LOGW
+#undef LOGE
+#undef LOGF
+#ifdef _DEBUG
+#define LOGD(...)  dlog_print(DLOG_DEBUG, LOG_TAG, __VA_ARGS__)
+#else
+#define LOGD(...)
+#endif
+#define LOGI(...)  dlog_print(DLOG_INFO, LOG_TAG, __VA_ARGS__)
+#define LOGW(...)  dlog_print(DLOG_WARN, LOG_TAG, __VA_ARGS__)
+#define LOGE(...)  dlog_print(DLOG_ERROR, LOG_TAG, __VA_ARGS__)
+#define LOGF(...)  dlog_print(DLOG_FATAL, LOG_TAG, __VA_ARGS__)
+
+
 #if !defined(PACKAGE)
 # define PACKAGE "org.videolan.vlc"
 #endif
