@@ -56,6 +56,9 @@ bool
 mini_player_fs_state(mini_player *);
 
 void
+collapse_fullscreen_player(mini_player *);
+
+void
 create_base_player(mini_player *mpd, const char *file_path);
 
 #endif /* MINI_PLAYER_H_ */

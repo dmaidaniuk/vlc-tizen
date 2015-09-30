@@ -688,6 +688,11 @@ static void
 fullscreen_player_collapse_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
     mini_player *mpd = data;
+    collapse_fullscreen_player(mpd);
+}
+
+void
+collapse_fullscreen_player(mini_player *mpd){
     /* Pop the previous view in the content naviframe */
     intf_show_previous_view(mpd->intf);
     /* Update the fullscreen state bool */
