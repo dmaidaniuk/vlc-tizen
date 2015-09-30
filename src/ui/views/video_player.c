@@ -37,9 +37,6 @@ typedef struct video_player
     playback_service *p_ps;
     media_list *p_ml;
 
-    /* Rendering canvas */
-    Evas_Object *canvas;
-
     /* Widgets */
     Evas_Object *play_pause_button, *progress_slider;
 } video_player;
@@ -117,7 +114,7 @@ create_video_gui(playback_service *p_ps, Evas_Object *parent, const char* file_p
     evas_object_size_hint_align_set(layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
     evas_object_show(layout);
 
-    /* create and assign canvas*/
+    /* */
     Evas *evas = evas_object_evas_get(layout);
     Evas_Object *evas_video = playback_service_set_evas_video(vd->p_ps, evas);
     evas_object_show(evas_video);
