@@ -48,36 +48,30 @@ typedef struct general_popup_data
 
 } general_popup_data_s;
 
-/* Set the panel list labels */
-const char *popup_list[] = {
-        "Refresh", "Equalizer"
-};
-
-/* Set the panel list icons */
-const char *popup_icon_names[] = {
-        "ic_repeat_normal.png", "ic_equalizer_normal.png"
-};
-
-static Evas_Object*
-create_icon(Evas_Object *parent, int count)
+typedef struct action_item
 {
-    return create_image(parent, popup_icon_names[count]);
-}
+    const char* title;
+    const char* icon;
+
+} action_item_s;
+
+action_item_s action_items[] =
+{
+        { "Refresh", "ic_repeat_normal.png" },
+        { "Equalizer", "ic_equalizer_normal.png" },
+};
 
 static char *
 gl_text_get_cb(void *data, Evas_Object *obj, const char *part)
 {
     general_popup_data_s *gpd = data;
     const Elm_Genlist_Item_Class *itc = elm_genlist_item_item_class_get(gpd->item);
-    char *buf;
 
     /* Check the item class style and put the current folder or file name as a string */
     /* Then put this string as the genlist item label */
     if (itc->item_style && !strcmp(itc->item_style, "1line")) {
         if (part && !strcmp(part, "elm.text.main.left")) {
-            asprintf(&buf, "%s", popup_list[gpd->index]);
-
-            return buf;
+            return strdup(action_items[gpd->index].title);
         }
     }
     return NULL;
@@ -96,14 +90,13 @@ gl_content_get_cb(void *data, Evas_Object *obj, const char *part)
         if (part && !strcmp(part, "elm.icon.1")) {
             content = elm_layout_add(obj);
             elm_layout_theme_set(content, "layout", "list/B/type.3", "default");
-            Evas_Object *icon = create_icon(content, gpd->index);
+            Evas_Object *icon = create_image(content, action_items[gpd->index].icon);
             elm_layout_content_set(content, "elm.swallow.content", icon);
         }
     }
 
     return content;
 }
-
 
 static void
 popup_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
