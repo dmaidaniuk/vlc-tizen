@@ -266,6 +266,7 @@
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="vlc"/>
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="emotion"/>
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="medialibrary"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="atomic"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.1580865246" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>

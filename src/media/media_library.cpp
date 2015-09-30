@@ -26,6 +26,7 @@
 
 #include "IMediaLibrary.h"
 
+#include <atomic>
 #include <Ecore.h>
 
 #include "common.h"
@@ -65,24 +66,31 @@ public:
     media_library();
 
     // IMediaLibraryCb
-    virtual void onMetadataUpdated( FilePtr file ) override;
+    virtual void onFileUpdated( FilePtr file ) override;
 
     virtual void onDiscoveryStarted( const std::string& entryPoint ) override;
-    virtual void onFileAdded( FilePtr file ) override;
     virtual void onDiscoveryCompleted( const std::string& entryPoint ) override;
-
-private:
-    void onFileUpdated( FilePtr file );
 
 public:
     std::unique_ptr<IMediaLibrary> ml;
     std::unique_ptr<TizenLogger> logger;
-    media_added_cb mediaAddedCb;
+    media_library_file_list_changed_cb fileListChangedCb;
+    void* cbUserData;
+
+private:
+    // Holds the number of discoveries ongoing
+    // This gets incremented by the caller thread (most likely the main loop)
+    // and gets decremented by the discovery thread, hence the need for atomic
+    std::atomic_int m_nbDiscovery;
+    // Holds the number of changes since last call to fileListChangedCb.
+    // This can be accessed from both the discovery & metadata threads
+    std::atomic_int m_nbElemChanged;
 };
 
 media_library::media_library()
     : ml( MediaLibraryFactory::create() )
-    , mediaAddedCb( nullptr )
+    , fileListChangedCb( nullptr )
+    , cbUserData( nullptr )
 {
     if ( ml == nullptr )
         throw std::runtime_error( "Failed to initialize MediaLibrary" );
@@ -91,33 +99,40 @@ media_library::media_library()
 void
 media_library::onFileUpdated( FilePtr file )
 {
-    auto mi = fileToMediaItem( file );
-    if ( file != nullptr )
-        mediaAddedCb( mi );
-}
+    //FIXME: This seems fishy if no discovery is in progress and some media gets updated.
+    //This is very unlikely to happen for a while though.
 
-void
-media_library::onMetadataUpdated( FilePtr file )
-{
-    onFileUpdated( file );
-}
-
-void
-media_library::onFileAdded( FilePtr file )
-{
-    onFileUpdated( file );
+    if ( ++m_nbElemChanged >= 50 )
+        fileListChangedCb( cbUserData );
+    m_nbElemChanged = 0;
 }
 
 void
 media_library::onDiscoveryStarted( const std::string& entryPoint )
 {
     LOGI( "Starting [%s] discovery", entryPoint.c_str() );
+    m_nbDiscovery.fetch_add( 1, std::memory_order_relaxed );
 }
 
 void
 media_library::onDiscoveryCompleted( const std::string& entryPoint )
 {
     LOGI("Completed [%s] discovery", entryPoint.c_str() );
+    if ( --m_nbDiscovery == 0 )
+    {
+        // If this is the last discovery, and some files got updated, send a final update
+
+        //FIXME: This is most likely not thread safe, there is a race window if some files are
+        //still being parsed after we send this callback.
+        //The number of changed elements could be overwritten. Using a mutex could fix this
+        //but will hurt performances much more.
+        if ( m_nbElemChanged != 0 )
+        {
+            m_nbElemChanged = 0;
+            fileListChangedCb( cbUserData );
+        }
+        LOGI( "Completed all active discovery operations" );
+    }
 }
 
 media_library *
@@ -135,7 +150,7 @@ media_library_create(application *p_app)
 }
 
 bool
-media_library_start( media_library* p_media_library, media_added_cb cb )
+media_library_start( media_library* p_media_library, media_library_file_list_changed_cb cb, void* p_user_data )
 {
     auto appDataCStr = std::unique_ptr<char, void(*)(void*)>( system_storage_appdata_get(), &free );
     std::string appData( appDataCStr.get() );
@@ -144,7 +159,8 @@ media_library_start( media_library* p_media_library, media_added_cb cb )
         LOGE( "Failed to fetch application data directory" );
         return false;
     }
-    p_media_library->mediaAddedCb = cb;
+    p_media_library->fileListChangedCb = cb;
+    p_media_library->cbUserData = p_user_data;
     p_media_library->logger.reset( new TizenLogger );
     p_media_library->ml->setLogger( p_media_library->logger.get() );
     return p_media_library->ml->initialize( appData + "vlc.db", appData + "/snapshots", p_media_library );

@@ -51,7 +51,7 @@ struct application {
 static void app_terminate(void *data);
 
 static void
-on_media_added( media_item* p_media )
+on_media_list_changed( void* p_data )
 {
 }
 
@@ -72,7 +72,7 @@ app_create(void *data)
     app->p_mediaLibrary = media_library_create(app);
     if (!app->p_mediaLibrary)
         goto error;
-    if ( !media_library_start( app->p_mediaLibrary, &on_media_added ) )
+    if ( !media_library_start( app->p_mediaLibrary, &on_media_list_changed, app ) )
         goto error;
     media_library_discover( app->p_mediaLibrary, application_get_media_path( app, MEDIA_DIRECTORY_VIDEOS ) );
     media_library_discover( app->p_mediaLibrary, application_get_media_path( app, MEDIA_DIRECTORY_MUSIC ) );
