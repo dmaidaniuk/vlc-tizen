@@ -39,45 +39,41 @@ typedef struct videodata
     Evas_Object *parent, *layout;
     Evas_Object *play_pause_button, *progress_slider;
     Evas_Object *canvas;
-    bool play_state;
 } videodata_s;
 
 static void
 _on_slider_changed_cb(void *data, Evas_Object *obj, void *event_info)
 {
     videodata_s *vd = data;
-    if(vd)
-    {
-        double val = elm_slider_value_get(obj);
-        //TODO plug to VLC
-    }
+
+    playback_service_seek_pos(vd->p_ps, elm_slider_value_get(obj));
 }
 
 static void
 clicked_play_pause(void *data, Evas_Object *obj, void *event_info)
 {
-   //TODO link with vlc state
     videodata_s *vd = data;
-        if(vd)
-        {
-            elm_image_file_set(vd->play_pause_button, vd->play_state ? ICON_DIR "ic_pause_circle_normal_o.png" : ICON_DIR "ic_play_circle_normal_o.png", NULL);
-            vd->play_state = !vd->play_state;
-        }
 
+    elm_image_file_set(vd->play_pause_button,
+                       playback_service_toggle_play_pause(vd->p_ps) ?
+                               ICON_DIR "ic_pause_circle_normal_o.png" :
+                               ICON_DIR "ic_play_circle_normal_o.png", NULL);
 }
 
 static void
 clicked_backward(void *data, Evas_Object *obj, void *event_info)
 {
-   //TODO backward action
-	LOGD("backward button");
+    videodata_s *vd = data;
+
+    playback_service_seek_backward(vd->p_ps);
 }
 
 static void
 clicked_forward(void *data, Evas_Object *obj, void *event_info)
 {
-   //TODO forward action
-	LOGD("forward button");
+    videodata_s *vd = data;
+
+    playback_service_seek_forward(vd->p_ps);
 }
 
 static void
@@ -129,7 +125,7 @@ create_video_gui(playback_service *p_ps, Evas_Object *parent, const char* file_p
 
     //create play/pause button
     vd->play_pause_button = elm_image_add(vd->layout);
-    elm_image_file_set(vd->play_pause_button, ICON_DIR"ic_play_circle_normal_o.png", NULL);
+    elm_image_file_set(vd->play_pause_button, ICON_DIR"ic_pause_circle_normal_o.png", NULL);
     //attach to edje layout
     elm_object_part_content_set(vd->layout, "swallow.play_button", vd->play_pause_button);
     //click callback
