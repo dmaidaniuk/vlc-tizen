@@ -73,7 +73,7 @@ Evas_Object*
 create_directory_view(const char* path, Evas_Object *parent)
 {
     char *buff;
-    directory_data_s *dd = malloc(sizeof(*dd));
+    directory_data_s *dd;
     const char *str = NULL;
     Evas_Object *file_list;
     DIR* rep = NULL;
@@ -113,6 +113,7 @@ create_directory_view(const char* path, Evas_Object *parent)
 
     /* Add a first list append with ".." to go back in directory */
     file_list = elm_list_add(parent);
+    dd = malloc(sizeof(*dd));
     dd->parent = parent;
     asprintf(&dd->file_path, "%s/..", buff);
     Elm_Object_Item *item = elm_list_item_append(file_list, "..", NULL, NULL, list_selected_cb, dd);
@@ -120,7 +121,7 @@ create_directory_view(const char* path, Evas_Object *parent)
 
     while ((current_folder = readdir(rep)) != NULL)
     {
-        directory_data_s *dd = malloc(sizeof(*dd));
+        dd = malloc(sizeof(*dd));
         /* Put the list parent in the directory_data struct for callbacks */
         dd->parent = parent;
 
