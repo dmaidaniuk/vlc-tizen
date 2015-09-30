@@ -117,14 +117,13 @@ gl_text_get_cb(void *data, Evas_Object *obj, const char *part)
             return buf;
         }
         else if (!strcmp(part, "elm.text.sub.left.bottom")) {
-            asprintf(&buf,"%s", "Artist");
-            return strdup(buf);
+            return strdup("Artist");
         }
         else if (!strcmp(part, "elm.text.sub.right.bottom")) {
             int m = 4;
             int s = 56;
-            asprintf(&buf," %d m %d s", m, s);
-            return strdup(buf);
+            asprintf(&buf,"%d m %d s", m, s);
+            return buf;
         }
     }
     return NULL;
