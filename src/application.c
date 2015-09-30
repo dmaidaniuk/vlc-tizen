@@ -60,6 +60,9 @@ app_create(void *data)
 {
     application *app = data;
 
+    emotion_init();
+    ecore_evas_init();
+
     /* */
     app->p_ms = media_storage_create(app);
     if (!app->p_ms)
@@ -124,7 +127,9 @@ app_terminate(void *data)
     if (app->p_intf)
         intf_destroy(app->p_intf);
     free(app);
+
     emotion_shutdown();
+    ecore_evas_shutdown();
 }
 
 static void
@@ -191,9 +196,6 @@ int
 main(int argc, char *argv[])
 {
     application *app = calloc(1, sizeof(*app));
-
-    /* Emotion start */
-    emotion_init();
 
     ui_app_lifecycle_callback_s event_callback = {0,};
     app_event_handler_h handlers[5] = {NULL, };
