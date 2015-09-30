@@ -399,7 +399,9 @@ intf_create(application *app)
 
     /* Add and set a bg in the conformant */
     bg = elm_bg_add(conform);
-    elm_object_style_set(bg, "indicator/headerbg");
+    elm_bg_color_set(bg, 255, 136, 0);
+    //elm_object_style_set(bg, "indicator/headerbg");
+
     /* Add the bg in the conformant */
     elm_object_part_content_set(conform, "elm.swallow.indicator_bg", bg);
     evas_object_show(bg);
