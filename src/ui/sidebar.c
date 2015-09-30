@@ -25,11 +25,14 @@
  *****************************************************************************/
 
 #include "common.h"
-#include "sidebar.h"
-#include "interface.h"
-#include "audio_player.h"
 
 #include <Elementary.h>
+
+#include "sidebar.h"
+
+#include "interface.h"
+#include "audio_player.h"
+#include "ui/utils.h"
 
 typedef struct menu_cb_data
 {
@@ -44,28 +47,17 @@ typedef struct {
     const char* icon_name;
 } menu_entry;
 static const menu_entry menu_entries[] = {
-        { "Video",      "video" },
-        { "Audio",      "audio" },
-        { "Directory",  "folder" },
-        { "Settings",   "preferences" },
-        { "About",      "cone" }
+        { "Video",      "ic_menu_video.png" },
+        { "Audio",      "ic_menu_audio.png" },
+        { "Directory",  "ic_menu_folder.png" },
+        { "Settings",   "ic_menu_preferences.png" },
+        { "About",      "ic_menu_cone.png" }
 };
 
 static Evas_Object*
 create_icon(Evas_Object *parent, int idx)
 {
-    char buf[PATH_MAX];
-    Evas_Object *img = elm_image_add(parent);
-
-    /* Create then set sidebar genlist used icones */
-    snprintf(buf, sizeof(buf), "%s/ic_menu_%s.png", ICON_DIR, menu_entries[idx].icon_name);
-    elm_image_file_set(img, buf, NULL);
-
-    /* The object will align and expand in the space the container will give him */
-    evas_object_size_hint_align_set(img, EVAS_HINT_FILL, EVAS_HINT_FILL);
-    evas_object_size_hint_weight_set(img, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-
-    return img;
+    return create_image(parent, menu_entries[idx].icon_name);
 }
 
 static char *
