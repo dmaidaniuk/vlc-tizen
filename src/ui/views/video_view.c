@@ -82,6 +82,7 @@ create_icon(Evas_Object *parent)
     /* Set the icon file for genlist item class */
     snprintf(buf, sizeof(buf), ICON_DIR "background_cone.png");
     elm_image_file_set(img, buf, NULL);
+
     /* The object will align and expand in the space the container will give him */
     evas_object_size_hint_align_set(img, EVAS_HINT_FILL, EVAS_HINT_FILL);
     evas_object_size_hint_weight_set(img, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
