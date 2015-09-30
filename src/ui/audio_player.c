@@ -1036,7 +1036,6 @@ mini_player_create(interface *intf, Evas_Object *parent)
 
     /* Put the mini player at the bottom of the content_box */
     evas_object_size_hint_align_set(mpd->mini_player_box, EVAS_HINT_FILL, 1.0);
-    evas_object_show(mpd->mini_player_box);
 
     update_player_display(mpd);
     return mpd;
