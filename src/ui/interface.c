@@ -287,7 +287,8 @@ void
 intf_create_video_player(interface *intf, const char *psz_path)
 {
     /* Launch the media player */
-    Evas_Object *video_player = create_video_gui(intf->nf_content, psz_path);
+    playback_service *p_ps = application_get_playback_service(intf->p_app);
+    Evas_Object *video_player = create_video_gui(p_ps, intf->nf_content, psz_path);
     elm_object_content_set(intf->nf_content, video_player);
     evas_object_show(video_player);
 

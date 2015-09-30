@@ -30,15 +30,16 @@
 
 #include "ui/interface.h"
 #include "video_player.h"
+#include "playback_service.h"
 
 typedef struct videodata
 {
+    playback_service *p_ps;
+    media_list *p_ml;
     Evas_Object *parent, *layout;
     Evas_Object *play_pause_button, *progress_slider;
     Evas_Object *canvas;
     bool play_state;
-    char *file_path;
-
 } videodata_s;
 
 static void
@@ -94,11 +95,23 @@ clicked_more(void *data, Evas_Object *obj, void *event_info)
 }
 
 Evas_Object*
-create_video_gui(Evas_Object *parent, const char* file_path)
+create_video_gui(playback_service *p_ps, Evas_Object *parent, const char* file_path)
 {
+    media_item *p_mi;
     videodata_s *vd = malloc(sizeof(*vd));
+    if (!vd)
+        return NULL;
+
+    p_mi = media_item_create(file_path, MEDIA_ITEM_TYPE_VIDEO);
+    if (!p_mi)
+    {
+        free(vd);
+        return NULL;
+    }
+
+    vd->p_ps = p_ps;
+
     vd->parent = parent;
-    vd->file_path = file_path;
 
     vd->layout = elm_layout_add(parent);
 
@@ -108,13 +121,11 @@ create_video_gui(Evas_Object *parent, const char* file_path)
     evas_object_size_hint_align_set(vd->layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
     evas_object_show(vd->layout);
 
-    /* Initialize Evas Library & Function */
-    evas_init();
     /* create and assign canvas*/
-    Evas *evas = evas_new();
-    vd->canvas = evas_object_image_filled_add(evas);
-    elm_object_part_content_set(vd->layout, "swallow.visualization", vd->canvas);
-    //TODO vd->canvas = ??
+    Evas *evas = evas_object_evas_get(vd->layout);
+    Evas_Object *evas_video = playback_service_set_evas_video(vd->p_ps, evas);
+    evas_object_show(evas_video);
+    elm_object_part_content_set(vd->layout, "swallow.visualization", evas_video);
 
     //create play/pause button
     vd->play_pause_button = elm_image_add(vd->layout);
@@ -159,6 +170,14 @@ create_video_gui(Evas_Object *parent, const char* file_path)
 
     Elm_Object_Item *it = elm_naviframe_item_push(parent, NULL, NULL, NULL, vd->layout, NULL);
     elm_naviframe_item_title_enabled_set(it, EINA_FALSE, EINA_FALSE);
+
+    LOGE("playback_service_start: %s", p_mi->psz_path);
+    playback_service_set_context(vd->p_ps, PLAYLIST_CONTEXT_VIDEO);
+    vd->p_ml = playback_service_get_ml(vd->p_ps);
+
+    media_list_clear(vd->p_ml);
+    media_list_append(vd->p_ml, p_mi);
+    playback_service_start(vd->p_ps);
 
     return vd->layout;
 }
