@@ -30,9 +30,8 @@ collections
         parts{
             part{
                 name: "swallow.visualization";
-                type: RECT;
+                type: SWALLOW;
                 description{
-                    color: 0 0 0 255;
                     state: "default" 0.0;
                     rel1{
                         relative: 0.0 0.0;
@@ -62,7 +61,6 @@ collections
                 type: SWALLOW;
 
                 description {
-                    color: 0 0 255 100;
                     state: "pause" 0.0;
                     rel1 {
                        relative: 0.0 0.0;
@@ -96,7 +94,6 @@ collections
                 type: RECT;
                 description {
                     visible: 0;
-                    color: 168 168 0 100;
                     state: "pause" 0.0;
                     rel1 {
                         relative: 0.0 0.0;
@@ -115,7 +112,6 @@ collections
                 type: RECT;
                 description {
                     visible: 0;
-                    color: 0 0 168 100;
                     state: "pause" 0.0;
                     rel1 {
                         relative: 0.2 0.0;
@@ -133,7 +129,6 @@ collections
                 name: "swallow.play";
                 type: SWALLOW;
                 description {
-                    color: 0 255 0 100; // transparent green
                     state: "pause" 0.0;
                     aspect: 1.0 1.0;
                     aspect_preference: VERTICAL;
@@ -154,7 +149,6 @@ collections
                 type: RECT;
                 description {
                     visible: 0;
-                    color: 168 0 168 100; // transparent green
                     state: "pause" 0.0;
                     rel1 {
                         relative: 0.6 0.0;
@@ -173,7 +167,6 @@ collections
                 type: RECT;
                 description {
                     visible: 0;
-                    color: 0 168 200 100;
                     state: "pause" 0.0;
                     rel1 {
                         relative: 0.8 0.0;
