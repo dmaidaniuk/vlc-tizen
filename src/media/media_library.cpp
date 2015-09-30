@@ -24,9 +24,12 @@
  * compatibility with the Store
  *****************************************************************************/
 
+#include "IMediaLibrary.h"
+
+#include <Ecore.h>
+
 #include "common.h"
 
-#include "IMediaLibrary.h"
 #include "IFile.h"
 #include "ILogger.h"
 #include "IMovie.h"
@@ -35,6 +38,8 @@
 
 #include "media_library.hpp"
 #include "system_storage.h"
+
+static media_item* fileToMediaItem( FilePtr file );
 
 class TizenLogger : public ILogger
 {
@@ -86,72 +91,9 @@ media_library::media_library()
 void
 media_library::onFileUpdated( FilePtr file )
 {
-    if ( file->isReady() == false )
-        return;
-    auto type = MEDIA_ITEM_TYPE_UNKNOWN;
-    switch ( file->type() )
-    {
-    case IFile::Type::VideoType:
-        type = MEDIA_ITEM_TYPE_VIDEO;
-        break;
-    case IFile::Type::AudioType:
-        type = MEDIA_ITEM_TYPE_AUDIO;
-        break;
-    default:
-        LOGW( "Unknown file type: %d", file->type() );
-        return;
-    }
-    auto mi = media_item_create( file->mrl().c_str(), type );
-    if ( mi == nullptr )
-    {
-        //FIXME: What should we do? This won't be run again until the next time
-        //we restore the media library. Also, do we care? This is likely E_NOMEM, so we
-        //might have bigger problems than a missing file...
-        LOGE( "Failed to create media_item for file %s", file->mrl().c_str() );
-        return;
-    }
-    mi->i_duration = file->duration();
-    if ( file->type() == IFile::Type::VideoType )
-    {
-        auto vtracks = file->videoTracks();
-        if ( vtracks.size() != 0 )
-        {
-            if ( vtracks.size() > 1 )
-                LOGW( "Ignoring file [%s] extra video tracks for file description", file->mrl().c_str() );
-            auto vtrack = vtracks[0];
-            mi->i_w = vtrack->width();
-            mi->i_h = vtrack->height();
-        }
-        else
-        {
-            // Assume a media library problem and just let it go.
-            LOGW( "Adding video file [%s] with no video tracks detected.", file->mrl().c_str() );
-        }
-        // If this is a video, let's check if we can fetch it's movie/tvshow equivalent:
-        auto movie = file->movie();
-        if ( movie != nullptr )
-        {
-            mi->psz_title = strdup( movie->title().c_str() );
-        }
-        else
-        {
-            auto episode = file->showEpisode();
-            if ( episode != nullptr )
-            {
-                mi->psz_title = strdup( episode->name().c_str() );
-            }
-            else
-            {
-                LOGW( "FIXME: Not a movie, not an episode, but we have no 'clip' type in MediaLibrary" );
-            }
-        }
-    }
-    else if ( file->type() == IFile::Type::AudioType )
-    {
-        // So far, nothing to do here.
-    }
-
-    mediaAddedCb( mi );
+    auto mi = fileToMediaItem( file );
+    if ( file != nullptr )
+        mediaAddedCb( mi );
 }
 
 void
@@ -218,4 +160,124 @@ void
 media_library_discover( media_library* p_ml, const char* psz_location )
 {
     p_ml->ml->discover( psz_location );
+}
+
+static media_item*
+fileToMediaItem( FilePtr file )
+{
+    if ( file->isReady() == false )
+        return nullptr;
+    auto type = MEDIA_ITEM_TYPE_UNKNOWN;
+    switch ( file->type() )
+    {
+    case IFile::Type::VideoType:
+        type = MEDIA_ITEM_TYPE_VIDEO;
+        break;
+    case IFile::Type::AudioType:
+        type = MEDIA_ITEM_TYPE_AUDIO;
+        break;
+    default:
+        LOGW( "Unknown file type: %d", file->type() );
+        return nullptr;
+    }
+    auto mi = media_item_create( file->mrl().c_str(), type );
+    if ( mi == nullptr )
+    {
+        //FIXME: What should we do? This won't be run again until the next time
+        //we restore the media library. Also, do we care? This is likely E_NOMEM, so we
+        //might have bigger problems than a missing file...
+        LOGE( "Failed to create media_item for file %s", file->mrl().c_str() );
+        return nullptr;
+    }
+    mi->i_duration = file->duration();
+    if ( file->type() == IFile::Type::VideoType )
+    {
+        auto vtracks = file->videoTracks();
+        if ( vtracks.size() != 0 )
+        {
+            if ( vtracks.size() > 1 )
+                LOGW( "Ignoring file [%s] extra video tracks for file description", file->mrl().c_str() );
+            auto vtrack = vtracks[0];
+            mi->i_w = vtrack->width();
+            mi->i_h = vtrack->height();
+        }
+        else
+        {
+            // Assume a media library problem and just let it go.
+            LOGW( "Adding video file [%s] with no video tracks detected.", file->mrl().c_str() );
+        }
+        // If this is a video, let's check if we can fetch it's movie/tvshow equivalent:
+        auto movie = file->movie();
+        if ( movie != nullptr )
+        {
+            mi->psz_title = strdup( movie->title().c_str() );
+        }
+        else
+        {
+            auto episode = file->showEpisode();
+            if ( episode != nullptr )
+            {
+                mi->psz_title = strdup( episode->name().c_str() );
+            }
+            else
+            {
+                LOGW( "FIXME: Not a movie, not an episode, but we have no 'clip' type in MediaLibrary" );
+            }
+        }
+    }
+    else if ( file->type() == IFile::Type::AudioType )
+    {
+        // So far, nothing to do here.
+    }
+    return mi;
+}
+
+template <typename T>
+struct ml_callback_context
+{
+    ml_callback_context( media_library* ml, T c, void* p_user_data )
+        : p_ml( ml ), cb( c ), p_data( p_user_data ) {}
+    media_library* p_ml;
+    T cb;
+    void* p_data;
+};
+
+void
+media_library_get_audio_files( media_library* p_ml, media_library_list_audio_cb cb, void* p_user_data )
+{
+    auto ctx = new ml_callback_context<media_library_list_audio_cb>( p_ml, cb, p_user_data );
+
+    ecore_thread_run( [](void* data, Ecore_Thread* ) {
+        auto ctx = reinterpret_cast<ml_callback_context<media_library_list_audio_cb>*>( data );
+        auto files = ctx->p_ml->ml->audioFiles();
+        Eina_List *list = nullptr;
+        for ( auto& f : files )
+        {
+            auto elem = fileToMediaItem( f );
+            if ( elem == nullptr )
+                continue;
+            list = eina_list_append( list, elem );
+        }
+       ctx->cb( list, ctx->p_data );
+    }, nullptr, nullptr, ctx );
+}
+
+void
+media_library_get_video_files( media_library* p_ml, media_library_list_video_cb cb, void* p_user_data )
+{
+    auto ctx = new ml_callback_context<media_library_list_video_cb>( p_ml, cb, p_user_data );
+
+    ecore_thread_run( [](void* data, Ecore_Thread* ) {
+        auto ctx = reinterpret_cast<ml_callback_context<media_library_list_video_cb>*>( data );
+        auto files = ctx->p_ml->ml->videoFiles();
+        Eina_List *list = nullptr;
+        for ( auto& f : files )
+        {
+            auto elem = fileToMediaItem( f );
+            if ( elem == nullptr )
+                continue;
+            list = eina_list_append( list, elem );
+        }
+       ctx->cb( list, ctx->p_data );
+    }, nullptr, nullptr, ctx );
 }
