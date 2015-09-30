@@ -113,6 +113,13 @@ popup_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
     evas_object_del(pgd->parent);
 }
 
+static void
+popup_block_cb(void *data, Evas_Object *obj, void *event_info)
+{
+	Evas_Object *parent = data;
+	evas_object_del(parent);
+}
+
 Evas_Object *
 create_settings_popup_genlist(Evas_Object *parent, popup_menu_item_s *directory_menu, int nb_item)
 {
@@ -174,6 +181,7 @@ create_settings_popup_genlist(Evas_Object *parent, popup_menu_item_s *directory_
     elm_box_pack_end(box, genlist);
     evas_object_size_hint_weight_set(genlist, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
     evas_object_size_hint_align_set(genlist, EVAS_HINT_FILL, EVAS_HINT_FILL);
+    evas_object_smart_callback_add(parent, "block,clicked", popup_block_cb, parent);
     evas_object_show(genlist);
 
     elm_genlist_item_class_free(itc);
