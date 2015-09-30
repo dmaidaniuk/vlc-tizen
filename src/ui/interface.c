@@ -26,7 +26,7 @@
 
 #include "common.h"
 
-#include "media_storage.h"
+#include "system_storage.h"
 
 #include <app.h>
 #include <efl_extension.h>

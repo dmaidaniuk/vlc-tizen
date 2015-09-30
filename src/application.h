@@ -35,7 +35,7 @@ typedef struct media_storage media_storage;
 typedef struct media_item media_item;
 typedef struct media_list media_list;
 
-#include "media_storage.h"
+#include "system_storage.h"
 
 const char *
 application_get_media_path(application *app, media_directory_e type);

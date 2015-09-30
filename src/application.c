@@ -36,7 +36,7 @@
 #include "application.h"
 #include "ui/interface.h"
 
-#include "media_storage.h"
+#include "system_storage.h"
 #include "playback_service.h"
 #include "media_library.hpp"
 
