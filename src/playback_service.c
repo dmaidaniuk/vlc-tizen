@@ -368,6 +368,18 @@ playback_service_pause(playback_service *p_ps)
 }
 
 bool
+playback_service_toggle_play_pause(playback_service *p_ps)
+{
+    bool b_new_state;
+    if (!p_ps->b_started)
+        return false;
+
+    b_new_state = !emotion_object_play_get(p_ps->p_e);
+    emotion_object_play_set(p_ps->p_e, b_new_state);
+    return b_new_state;
+}
+
+bool
 playback_service_is_playing(playback_service *p_ps)
 {
     if (!p_ps->b_started)
@@ -395,12 +407,50 @@ playback_service_get_len(playback_service *p_ps)
 }
 
 int
-playback_service_seek(playback_service *p_ps, double i_pos)
+playback_service_seek_time(playback_service *p_ps, double i_time)
 {
     if (!p_ps->b_started)
         return -1;
 
-    emotion_object_position_set(p_ps->p_e, i_pos);
+    emotion_object_position_set(p_ps->p_e, i_time);
+    p_ps->b_seeking = true;
+    return 0;
+}
+
+int
+playback_service_seek_pos(playback_service *p_ps, double i_percent)
+{
+    if (!p_ps->b_started)
+        return -1;
+
+    double i_time = emotion_object_play_length_get(p_ps->p_e) * i_percent;
+    emotion_object_position_set(p_ps->p_e, i_time);
+    p_ps->b_seeking = true;
+    return 0;
+}
+
+int
+playback_service_seek_forward(playback_service *p_ps)
+{
+    if (!p_ps->b_started)
+        return -1;
+
+    /* TODO increase step by step */
+    double i_time = emotion_object_position_get(p_ps->p_e);
+    emotion_object_position_set(p_ps->p_e, i_time + 5);
+    p_ps->b_seeking = true;
+    return 0;
+}
+
+int
+playback_service_seek_backward(playback_service *p_ps)
+{
+    if (!p_ps->b_started)
+        return -1;
+
+    /* TODO increase step by step */
+    double i_time = emotion_object_position_get(p_ps->p_e);
+    emotion_object_position_set(p_ps->p_e, i_time - 5);
     p_ps->b_seeking = true;
     return 0;
 }

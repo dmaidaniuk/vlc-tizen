@@ -83,6 +83,12 @@ int
 playback_service_pause(playback_service *p_ps);
 
 bool
+playback_service_toggle_play_pause(playback_service *p_ps);
+
+int
+playback_service_pause(playback_service *p_ps);
+
+bool
 playback_service_is_playing(playback_service *p_ps);
 
 double
@@ -92,7 +98,16 @@ double
 playback_service_get_len(playback_service *p_ps);
 
 int
-playback_service_seek(playback_service *p_ps, double i_pos);
+playback_service_seek_time(playback_service *p_ps, double i_time);
+
+int
+playback_service_seek_pos(playback_service *p_ps, double i_percent);
+
+int
+playback_service_seek_forward(playback_service *p_ps);
+
+int
+playback_service_seek_backward(playback_service *p_ps);
 
 
 #endif /* PLAYBACK_SERVICE_H */
