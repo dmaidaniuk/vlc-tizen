@@ -103,7 +103,7 @@ media_library::onFileUpdated( FilePtr file )
     //This is very unlikely to happen for a while though.
 
     if ( ++m_nbElemChanged >= 50 )
-        fileListChangedCb( cbUserData );
+        ecore_main_loop_thread_safe_call_async( fileListChangedCb, cbUserData );
     m_nbElemChanged = 0;
 }
 
@@ -129,7 +129,7 @@ media_library::onDiscoveryCompleted( const std::string& entryPoint )
         if ( m_nbElemChanged != 0 )
         {
             m_nbElemChanged = 0;
-            fileListChangedCb( cbUserData );
+            ecore_main_loop_thread_safe_call_async( fileListChangedCb, cbUserData );
         }
         LOGI( "Completed all active discovery operations" );
     }
@@ -248,23 +248,31 @@ fileToMediaItem( FilePtr file )
     return mi;
 }
 
-template <typename T>
 struct ml_callback_context
 {
-    ml_callback_context( media_library* ml, T c, void* p_user_data )
-        : p_ml( ml ), cb( c ), p_data( p_user_data ) {}
+    ml_callback_context( media_library* ml, media_library_list_cb c, void* p_user_data )
+        : p_ml( ml ), cb( c ), list(nullptr), p_data( p_user_data ) {}
     media_library* p_ml;
-    T cb;
+    media_library_list_cb cb;
+    Eina_List* list;
     void* p_data;
 };
 
 void
-media_library_get_audio_files( media_library* p_ml, media_library_list_audio_cb cb, void* p_user_data )
+intermediate_list_callback( void* p_data )
 {
-    auto ctx = new ml_callback_context<media_library_list_audio_cb>( p_ml, cb, p_user_data );
+    auto ctx = reinterpret_cast<ml_callback_context*>( p_data );
+    ctx->cb( ctx->list, ctx->p_data );
+    delete ctx;
+}
+
+void
+media_library_get_audio_files( media_library* p_ml, media_library_list_cb cb, void* p_user_data )
+{
+    auto ctx = new ml_callback_context( p_ml, cb, p_user_data );
 
     ecore_thread_run( [](void* data, Ecore_Thread* ) {
-        auto ctx = reinterpret_cast<ml_callback_context<media_library_list_audio_cb>*>( data );
+        auto ctx = reinterpret_cast<ml_callback_context*>( data );
         auto files = ctx->p_ml->ml->audioFiles();
         Eina_List *list = nullptr;
         for ( auto& f : files )
@@ -274,17 +282,18 @@ media_library_get_audio_files( media_library* p_ml, media_library_list_audio_cb 
                 continue;
             list = eina_list_append( list, elem );
         }
-       ctx->cb( list, ctx->p_data );
+        ctx->list = list;
+        ecore_main_loop_thread_safe_call_async( intermediate_list_callback, ctx );
     }, nullptr, nullptr, ctx );
 }
 
 void
-media_library_get_video_files( media_library* p_ml, media_library_list_video_cb cb, void* p_user_data )
+media_library_get_video_files( media_library* p_ml, media_library_list_cb cb, void* p_user_data )
 {
-    auto ctx = new ml_callback_context<media_library_list_video_cb>( p_ml, cb, p_user_data );
+    auto ctx = new ml_callback_context( p_ml, cb, p_user_data );
 
     ecore_thread_run( [](void* data, Ecore_Thread* ) {
-        auto ctx = reinterpret_cast<ml_callback_context<media_library_list_video_cb>*>( data );
+        auto ctx = reinterpret_cast<ml_callback_context*>( data );
         auto files = ctx->p_ml->ml->videoFiles();
         Eina_List *list = nullptr;
         for ( auto& f : files )
@@ -294,6 +303,7 @@ media_library_get_video_files( media_library* p_ml, media_library_list_video_cb 
                 continue;
             list = eina_list_append( list, elem );
         }
-       ctx->cb( list, ctx->p_data );
+        ctx->list = list;
+        ecore_main_loop_thread_safe_call_async( intermediate_list_callback, ctx );
     }, nullptr, nullptr, ctx );
 }
