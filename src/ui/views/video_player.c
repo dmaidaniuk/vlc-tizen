@@ -32,19 +32,22 @@
 #include "video_player.h"
 #include "playback_service.h"
 
-typedef struct videodata
+typedef struct video_player
 {
     playback_service *p_ps;
     media_list *p_ml;
-    Evas_Object *layout;
-    Evas_Object *play_pause_button, *progress_slider;
+
+    /* Rendering canvas */
     Evas_Object *canvas;
-} videodata_s;
+
+    /* Widgets */
+    Evas_Object *play_pause_button, *progress_slider;
+} video_player;
 
 static void
 _on_slider_changed_cb(void *data, Evas_Object *obj, void *event_info)
 {
-    videodata_s *vd = data;
+    video_player *vd = data;
 
     playback_service_seek_pos(vd->p_ps, elm_slider_value_get(obj));
 }
@@ -52,7 +55,7 @@ _on_slider_changed_cb(void *data, Evas_Object *obj, void *event_info)
 static void
 clicked_play_pause(void *data, Evas_Object *obj, void *event_info)
 {
-    videodata_s *vd = data;
+    video_player *vd = data;
 
     elm_image_file_set(vd->play_pause_button,
                        playback_service_toggle_play_pause(vd->p_ps) ?
@@ -63,7 +66,7 @@ clicked_play_pause(void *data, Evas_Object *obj, void *event_info)
 static void
 clicked_backward(void *data, Evas_Object *obj, void *event_info)
 {
-    videodata_s *vd = data;
+    video_player *vd = data;
 
     playback_service_seek_backward(vd->p_ps);
 }
@@ -71,7 +74,7 @@ clicked_backward(void *data, Evas_Object *obj, void *event_info)
 static void
 clicked_forward(void *data, Evas_Object *obj, void *event_info)
 {
-    videodata_s *vd = data;
+    video_player *vd = data;
 
     playback_service_seek_forward(vd->p_ps);
 }
@@ -94,7 +97,7 @@ Evas_Object*
 create_video_gui(playback_service *p_ps, Evas_Object *parent, const char* file_path)
 {
     media_item *p_mi;
-    videodata_s *vd = malloc(sizeof(*vd));
+    video_player *vd = malloc(sizeof(*vd));
     if (!vd)
         return NULL;
 
@@ -106,57 +109,56 @@ create_video_gui(playback_service *p_ps, Evas_Object *parent, const char* file_p
     }
 
     vd->p_ps = p_ps;
+    Evas_Object *layout = elm_layout_add(parent);
 
-    vd->layout = elm_layout_add(parent);
+    elm_layout_file_set(layout, VIDEOPLAYEREDJ, "media_player_renderer");
 
-    elm_layout_file_set(vd->layout, VIDEOPLAYEREDJ, "media_player_renderer");
-
-    evas_object_size_hint_weight_set(vd->layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-    evas_object_size_hint_align_set(vd->layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
-    evas_object_show(vd->layout);
+    evas_object_size_hint_weight_set(layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+    evas_object_size_hint_align_set(layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
+    evas_object_show(layout);
 
     /* create and assign canvas*/
-    Evas *evas = evas_object_evas_get(vd->layout);
+    Evas *evas = evas_object_evas_get(layout);
     Evas_Object *evas_video = playback_service_set_evas_video(vd->p_ps, evas);
     evas_object_show(evas_video);
-    elm_object_part_content_set(vd->layout, "swallow.visualization", evas_video);
+    elm_object_part_content_set(layout, "swallow.visualization", evas_video);
 
     //create play/pause button
-    vd->play_pause_button = elm_image_add(vd->layout);
+    vd->play_pause_button = elm_image_add(layout);
     elm_image_file_set(vd->play_pause_button, ICON_DIR"ic_pause_circle_normal_o.png", NULL);
     //attach to edje layout
-    elm_object_part_content_set(vd->layout, "swallow.play_button", vd->play_pause_button);
+    elm_object_part_content_set(layout, "swallow.play_button", vd->play_pause_button);
     //click callback
     evas_object_smart_callback_add(vd->play_pause_button, "clicked", clicked_play_pause, vd);
 
     //create backward button
-    Evas_Object *backward_button = elm_image_add(vd->layout);
+    Evas_Object *backward_button = elm_image_add(layout);
     elm_image_file_set(backward_button, ICON_DIR"ic_backward_circle_normal_o.png", NULL);
-    elm_object_part_content_set(vd->layout, "swallow.backward_button", backward_button);
+    elm_object_part_content_set(layout, "swallow.backward_button", backward_button);
     evas_object_smart_callback_add(backward_button, "clicked", clicked_backward, vd);
 
     //create forward button
-    Evas_Object *forward_button = elm_image_add(vd->layout);
+    Evas_Object *forward_button = elm_image_add(layout);
     elm_image_file_set(forward_button, ICON_DIR"ic_forward_circle_normal_o.png", NULL);
-    elm_object_part_content_set(vd->layout, "swallow.forward_button", forward_button);
+    elm_object_part_content_set(layout, "swallow.forward_button", forward_button);
     evas_object_smart_callback_add(forward_button, "clicked", clicked_forward, vd);
 
     //create lock button
-    Evas_Object *lock_button = elm_image_add(vd->layout);
+    Evas_Object *lock_button = elm_image_add(layout);
     elm_image_file_set(lock_button, ICON_DIR"ic_lock_circle_normal_o.png", NULL);
-    elm_object_part_content_set(vd->layout, "swallow.lock_button", lock_button);
+    elm_object_part_content_set(layout, "swallow.lock_button", lock_button);
     evas_object_smart_callback_add(lock_button, "clicked", clicked_lock, vd);
 
     //create more button
-    Evas_Object *more_button = elm_image_add(vd->layout);
+    Evas_Object *more_button = elm_image_add(layout);
     elm_image_file_set(more_button, ICON_DIR"ic_more_circle_normal_o.png", NULL);
-    elm_object_part_content_set(vd->layout, "swallow.more_button", more_button);
+    elm_object_part_content_set(layout, "swallow.more_button", more_button);
     evas_object_smart_callback_add(more_button, "clicked", clicked_more, vd);
 
     //progress slider
-    vd->progress_slider = elm_slider_add(vd->layout);
+    vd->progress_slider = elm_slider_add(layout);
     elm_slider_horizontal_set(vd->progress_slider, EINA_TRUE);
-    elm_object_part_content_set(vd->layout, "swallow.progress", vd->progress_slider);
+    elm_object_part_content_set(layout, "swallow.progress", vd->progress_slider);
 
     //slider callbacks
     evas_object_smart_callback_add(vd->progress_slider, "slider,drag,stop", _on_slider_changed_cb, vd);
@@ -170,5 +172,5 @@ create_video_gui(playback_service *p_ps, Evas_Object *parent, const char* file_p
     media_list_append(vd->p_ml, p_mi);
     playback_service_start(vd->p_ps);
 
-    return vd->layout;
+    return layout;
 }
