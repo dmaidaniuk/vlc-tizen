@@ -361,6 +361,15 @@ playback_service_pause(playback_service *p_ps)
     return 0;
 }
 
+bool
+playback_service_is_playing(playback_service *p_ps)
+{
+    if (!p_ps->b_started)
+        return false;
+
+    return emotion_object_play_get(p_ps->p_e);
+}
+
 double
 playback_service_get_pos(playback_service *p_ps)
 {

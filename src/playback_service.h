@@ -79,6 +79,9 @@ playback_service_play(playback_service *p_ps);
 int
 playback_service_pause(playback_service *p_ps);
 
+bool
+playback_service_is_playing(playback_service *p_ps);
+
 double
 playback_service_get_pos(playback_service *p_ps);
 
