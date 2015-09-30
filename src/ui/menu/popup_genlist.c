@@ -46,12 +46,6 @@ typedef struct popup_genlist_data
 
 } popup_genlist_data_s;
 
-static Evas_Object*
-create_icon(popup_genlist_data_s *pgd, int count)
-{
-    return create_image(pgd->parent, pgd->menu_item[count].icon);
-}
-
 static char *
 gl_text_get_cb(void *data, Evas_Object *obj, const char *part)
 {
@@ -85,7 +79,7 @@ gl_content_get_cb(void *data, Evas_Object *obj, const char *part)
         if (part && !strcmp(part, "elm.icon.right")) {
             content = elm_layout_add(obj);
             elm_layout_theme_set(content, "layout", "list/A/right.icon", "default");
-            Evas_Object *icon = create_icon(pgd, pgd->index);
+            Evas_Object *icon = create_image(pgd->parent, pgd->menu_item[pgd->index].icon);
             elm_layout_content_set(content, "elm.swallow.content", icon);
         }
     }
