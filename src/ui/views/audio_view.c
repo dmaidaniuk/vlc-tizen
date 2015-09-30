@@ -58,7 +58,7 @@ typedef struct audio_view
 
 typedef struct audio_list_item
 {
-    audio_view *p_av;
+    const audio_view *p_av;
 
     const Elm_Genlist_Item_Class *itc;
 
@@ -66,7 +66,7 @@ typedef struct audio_list_item
 } audio_list_item;
 
 static Evas_Object*
-create_audio_list(audio_view *av);
+create_audio_list(const audio_view *av);
 
 static void
 genlist_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
@@ -97,7 +97,7 @@ static void
 free_list_item_data(void *data, Evas_Object *obj, void *event_info)
 {
     audio_list_item *ali = data;
-    free(ali->p_media_item->psz_path);
+    media_item_destroy(ali->p_media_item);
     free(ali);
 }
 
@@ -156,7 +156,7 @@ genlist_content_get_cb(void *data, Evas_Object *obj, const char *part)
 }
 
 static audio_list_item *
-genlist_audio_item_create(audio_view *av, Evas_Object *parent_genlist, char *psz_path, char *psz_title, Elm_Genlist_Item_Class *itc)
+genlist_audio_item_create(const audio_view *av, Evas_Object *parent_genlist, char *psz_path, char *psz_title, Elm_Genlist_Item_Class *itc)
 {
     audio_list_item *ali = malloc(sizeof(*ali));
     ali->p_av = av;
@@ -180,7 +180,7 @@ genlist_audio_item_create(audio_view *av, Evas_Object *parent_genlist, char *psz
 }
 
 static Evas_Object*
-genlist_create(audio_view *av, Elm_Genlist_Item_Class **itc )
+genlist_create(const audio_view *av, Elm_Genlist_Item_Class **itc )
 {
      Evas_Object *genlist = elm_genlist_add(av->nf_toolbar);
      /* Set the genlist scoller mode */
@@ -200,7 +200,7 @@ genlist_create(audio_view *av, Elm_Genlist_Item_Class **itc )
 }
 
 static Evas_Object*
-create_audio_list(audio_view *av)
+create_audio_list(const audio_view *av)
 {
     Elm_Genlist_Item_Class *itc;
     Evas_Object *genlist = genlist_create(av, &itc);
