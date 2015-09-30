@@ -36,7 +36,7 @@ typedef struct videodata
 {
     playback_service *p_ps;
     media_list *p_ml;
-    Evas_Object *parent, *layout;
+    Evas_Object *layout;
     Evas_Object *play_pause_button, *progress_slider;
     Evas_Object *canvas;
 } videodata_s;
@@ -107,8 +107,6 @@ create_video_gui(playback_service *p_ps, Evas_Object *parent, const char* file_p
 
     vd->p_ps = p_ps;
 
-    vd->parent = parent;
-
     vd->layout = elm_layout_add(parent);
 
     elm_layout_file_set(vd->layout, VIDEOPLAYEREDJ, "media_player_renderer");
@@ -163,9 +161,6 @@ create_video_gui(playback_service *p_ps, Evas_Object *parent, const char* file_p
     //slider callbacks
     evas_object_smart_callback_add(vd->progress_slider, "slider,drag,stop", _on_slider_changed_cb, vd);
     evas_object_smart_callback_add(vd->progress_slider, "changed", _on_slider_changed_cb, vd);
-
-    Elm_Object_Item *it = elm_naviframe_item_push(parent, NULL, NULL, NULL, vd->layout, NULL);
-    elm_naviframe_item_title_enabled_set(it, EINA_FALSE, EINA_FALSE);
 
     LOGE("playback_service_start: %s", p_mi->psz_path);
     playback_service_set_context(vd->p_ps, PLAYLIST_CONTEXT_VIDEO);

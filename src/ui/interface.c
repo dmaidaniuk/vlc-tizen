@@ -287,11 +287,14 @@ intf_create_video_player(interface *intf, const char *psz_path)
     /* Launch the media player */
     playback_service *p_ps = application_get_playback_service(intf->p_app);
     Evas_Object *video_player = create_video_gui(p_ps, intf->nf_content, psz_path);
-    elm_object_content_set(intf->nf_content, video_player);
+
+    Elm_Object_Item *it = elm_naviframe_item_push(intf->nf_content, NULL, NULL, NULL, video_player, NULL);
+    elm_naviframe_item_title_enabled_set(it, EINA_FALSE, EINA_FALSE);
+
     evas_object_show(video_player);
 
     /* */
-    LOGI("VLC Player launch");
+    LOGI("Video Player started");
 }
 
 static Evas_Object*
@@ -341,7 +344,6 @@ create_main_layout(interface *intf, Evas_Object *conform)
 
     /* */
     evas_object_show(intf->global_box);
-
     return layout;
 }
 
