@@ -197,9 +197,7 @@ create_base_layout(Evas_Object *parent)
 static Evas_Object *
 create_button(Evas_Object *parent, char *style, char *text)
 {
-    Evas_Object *button;
-
-    button = elm_button_add(parent);
+    Evas_Object *button = elm_button_add(parent);
     elm_object_style_set(button, style);
 
     /* */

@@ -358,8 +358,5 @@ create_audio_view(interface *intf, Evas_Object *parent)
     /*  */
     evas_object_show(audio_box);
 
-    /* Push on the parent view */
-    elm_naviframe_item_push(parent, "<b>Audio</b>", NULL, NULL, audio_box , "basic");
-
     return audio_box;
 }
