@@ -26,7 +26,7 @@
 
 #include "IMediaLibrary.h"
 
-#include <atomic>
+#include <mutex>
 #include <Ecore.h>
 
 #include "common.h"
@@ -81,16 +81,19 @@ private:
     // Holds the number of discoveries ongoing
     // This gets incremented by the caller thread (most likely the main loop)
     // and gets decremented by the discovery thread, hence the need for atomic
-    std::atomic_int m_nbDiscovery;
+    int m_nbDiscovery;
     // Holds the number of changes since last call to fileListChangedCb.
     // This can be accessed from both the discovery & metadata threads
-    std::atomic_int m_nbElemChanged;
+    int m_nbElemChanged;
+    std::mutex m_mutex;
 };
 
 media_library::media_library()
     : ml( MediaLibraryFactory::create() )
     , fileListChangedCb( nullptr )
     , cbUserData( nullptr )
+    , m_nbDiscovery( 0 )
+    , m_nbElemChanged( 0 )
 {
     if ( ml == nullptr )
         throw std::runtime_error( "Failed to initialize MediaLibrary" );
@@ -102,30 +105,31 @@ media_library::onFileUpdated( FilePtr file )
     //FIXME: This seems fishy if no discovery is in progress and some media gets updated.
     //This is very unlikely to happen for a while though.
 
+    std::unique_lock<std::mutex> lock( m_mutex );
     if ( ++m_nbElemChanged >= 50 )
+    {
         ecore_main_loop_thread_safe_call_async( fileListChangedCb, cbUserData );
-    m_nbElemChanged = 0;
+        m_nbElemChanged = 0;
+    }
 }
 
 void
 media_library::onDiscoveryStarted( const std::string& entryPoint )
 {
     LOGI( "Starting [%s] discovery", entryPoint.c_str() );
-    m_nbDiscovery.fetch_add( 1, std::memory_order_relaxed );
+    std::unique_lock<std::mutex> lock( m_mutex );
+    m_nbDiscovery++;
 }
 
 void
 media_library::onDiscoveryCompleted( const std::string& entryPoint )
 {
     LOGI("Completed [%s] discovery", entryPoint.c_str() );
+    std::unique_lock<std::mutex> lock( m_mutex );
     if ( --m_nbDiscovery == 0 )
     {
         // If this is the last discovery, and some files got updated, send a final update
 
-        //FIXME: This is most likely not thread safe, there is a race window if some files are
-        //still being parsed after we send this callback.
-        //The number of changed elements could be overwritten. Using a mutex could fix this
-        //but will hurt performances much more.
         if ( m_nbElemChanged != 0 )
         {
             m_nbElemChanged = 0;
