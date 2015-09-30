@@ -35,7 +35,7 @@ struct media_list
     Eina_List *p_cbs_list;
     Eina_Array *p_item_array;
     media_item *p_mi;
-    unsigned int i_pos;
+    int i_pos;
     bool b_free_media;
 };
 
@@ -61,7 +61,7 @@ media_list_on_new_pos(media_list *p_ml)
 static void
 media_list_on_media_added(media_list *p_ml, unsigned int i_index, media_item *p_mi)
 {
-    if (p_ml->i_pos <= i_index)
+    if (p_ml->i_pos >= 0 && p_ml->i_pos <= i_index)
         p_ml->i_pos++;
     ML_SEND_CALLBACK(pf_on_media_added, i_index, p_mi);
 }
@@ -182,6 +182,9 @@ media_list_insert(media_list *p_ml, int i_index, media_item *p_mi)
 
     media_list_on_media_added(p_ml, i_index, p_mi);
 
+    if (p_ml->i_pos == -1)
+        media_list_set_pos(p_ml, 0);
+
     return 0;
 }
 
@@ -267,9 +270,7 @@ media_list_set_pos(media_list *p_ml, unsigned int i_index)
 
     ML_CLIP_POS(i_index);
     p_ml->i_pos = i_index;
-
-    p_ml->p_mi = eina_array_data_get(p_ml->p_item_array, p_ml->i_pos);
-    assert(p_ml->p_mi);
+    p_ml->p_mi = p_ml->i_pos >= 0 ? eina_array_data_get(p_ml->p_item_array, p_ml->i_pos) : NULL;
     media_list_on_new_pos(p_ml);
 }
 
