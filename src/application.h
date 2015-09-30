@@ -46,7 +46,7 @@ application_get_media_storage(application *app);
 const media_library *
 application_get_media_library(application *app);
 
-const playback_service *
+playback_service *
 application_get_playback_service(application *app);
 
 #endif

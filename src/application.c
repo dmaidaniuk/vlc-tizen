@@ -186,7 +186,7 @@ application_get_media_library(application *app)
     return app->p_mediaLibrary;
 }
 
-const playback_service *
+playback_service *
 application_get_playback_service(application *app)
 {
     return app->p_ps;
