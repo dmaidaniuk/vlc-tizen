@@ -79,6 +79,20 @@ clicked_forward(void *data, Evas_Object *obj, void *event_info)
 	LOGD("forward button");
 }
 
+static void
+clicked_lock(void *data, Evas_Object *obj, void *event_info)
+{
+   //TODO lock action
+	LOGD("lock button");
+}
+
+static void
+clicked_more(void *data, Evas_Object *obj, void *event_info)
+{
+   //TODO more action
+	LOGD("more button");
+}
+
 Evas_Object*
 create_video_gui(Evas_Object *parent, const char* file_path)
 {
@@ -121,6 +135,18 @@ create_video_gui(Evas_Object *parent, const char* file_path)
     elm_image_file_set(forward_button, ICON_DIR"ic_forward_circle_normal_o.png", NULL);
     elm_object_part_content_set(vd->layout, "swallow.forward_button", forward_button);
     evas_object_smart_callback_add(forward_button, "clicked", clicked_forward, vd);
+
+    //create lock button
+    Evas_Object *lock_button = elm_image_add(vd->layout);
+    elm_image_file_set(lock_button, ICON_DIR"ic_lock_circle_normal_o.png", NULL);
+    elm_object_part_content_set(vd->layout, "swallow.lock_button", lock_button);
+    evas_object_smart_callback_add(lock_button, "clicked", clicked_lock, vd);
+
+    //create more button
+    Evas_Object *more_button = elm_image_add(vd->layout);
+    elm_image_file_set(more_button, ICON_DIR"ic_more_circle_normal_o.png", NULL);
+    elm_object_part_content_set(vd->layout, "swallow.more_button", more_button);
+    evas_object_smart_callback_add(more_button, "clicked", clicked_more, vd);
 
     //progress slider
     vd->progress_slider = elm_slider_add(vd->layout);

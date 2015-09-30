@@ -90,11 +90,10 @@ collections
                 }
             }
             part {
-                name: "swallow.button1";
-                type: RECT;
+                name: "swallow.lock_button";
+                type: SWALLOW;
                 description {
                     visible: 0;
-                    state: "pause" 0.0;
                     rel1 {
                         relative: 0.0 0.0;
                         to: "hub_button";
@@ -159,11 +158,10 @@ collections
                 }
             }
             part {
-                name: "swallow.button5";
-                type: RECT;
+                name: "swallow.more_button";
+                type: SWALLOW;
                 description {
                     visible: 0;
-                    state: "pause" 0.0;
                     rel1 {
                         relative: 0.8 0.0;
                         to: "hub_button";
