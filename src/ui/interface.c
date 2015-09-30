@@ -273,6 +273,7 @@ intf_create_view(interface *intf, int view_type)
     }
     /* Push the view in the naviframe with the corresponding header */
     elm_naviframe_item_push(nf_content, get_view_title(view_type), NULL, NULL, view, "basic");
+    intf->current_sidebar_idx = view_type;
 
     /* Create then set the panel toggle btn and add his callbacks */
     intf->sidebar_toggle_btn = create_button(intf->nf_content, "naviframe/drawers", NULL);
@@ -286,8 +287,6 @@ intf_create_view(interface *intf, int view_type)
         evas_object_smart_callback_add(intf->popup_toggle_btn, "clicked", right_panel_button_clicked_cb, intf);
         elm_object_part_content_set(intf->nf_content, "title_right_btn", intf->popup_toggle_btn);
     }
-
-    intf->current_sidebar_idx = view_type;
 }
 
 void
