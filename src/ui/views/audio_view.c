@@ -37,11 +37,23 @@
 
 #include <Elementary.h>
 
+typedef enum audio_view_type
+{
+    AUDIO_VIEW_ARTIST,
+    AUDIO_VIEW_ALBUM,
+    AUDIO_VIEW_SONG,
+    AUDIO_VIEW_GENRE,
+    //AUDIO_VIEW_PLAYLIST,
+    AUDIO_VIEW_MAX,
+} audio_view_type;
+
 typedef struct audio_view
 {
     interface *p_intf;
 
     Evas_Object *nf_toolbar;
+
+    Evas_Object *audio_lists[AUDIO_VIEW_MAX];
 } audio_view;
 
 typedef struct audio_list_item
@@ -54,7 +66,7 @@ typedef struct audio_list_item
 } audio_list_item;
 
 static Evas_Object*
-create_audio_list(const char* path, audio_view *av);
+create_audio_list(audio_view *av);
 
 static void
 genlist_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
@@ -73,18 +85,18 @@ genlist_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
     else if (S_ISDIR(sb.st_mode))
     {
         /* Continue to browse media folder */
-        create_audio_list(ali->p_media_item->psz_path, ali->p_av);
+        create_audio_list(ali->p_av);
     }
     else
     {
         LOGI("This is not a file or a folder");
     }
-
 }
 
 static void
 free_list_item_data(void *data, Evas_Object *obj, void *event_info)
 {
+    LOGD("CLEANING");
     audio_list_item *ali = data;
     free(ali->p_media_item->psz_path);
     free(ali);
@@ -164,7 +176,7 @@ genlist_audio_item_create(audio_view *av, Evas_Object *parent_genlist, char *psz
             ali);                           /* genlist smart callback user data */
 
     /* */
-    elm_object_item_del_cb_set(it, free_list_item_data);
+    //elm_object_item_del_cb_set(it, free_list_item_data);
     return ali;
 }
 
@@ -189,10 +201,13 @@ genlist_create(audio_view *av, Elm_Genlist_Item_Class **itc )
 }
 
 static Evas_Object*
-create_audio_list(const char* path, audio_view *av)
+create_audio_list(audio_view *av)
 {
     Elm_Genlist_Item_Class *itc;
     Evas_Object *genlist = genlist_create(av, &itc);
+
+    application *p_app = intf_get_application(av->p_intf);
+    const char *path = application_get_media_path(p_app, MEDIA_DIRECTORY_MUSIC);
 
     /* Make a realpath to use a clean path in the function */
     char *buff = realpath(path, NULL);
@@ -201,6 +216,7 @@ create_audio_list(const char* path, audio_view *av)
     /* Open the path repository then put it as a dirent variable */
     DIR* rep = opendir(path);
 
+    LOGI("Audio View %s ", path);
     if (path == NULL)
     {
         LOGI("No path");
@@ -239,42 +255,45 @@ create_audio_list(const char* path, audio_view *av)
     return genlist;
 }
 
-static void
-tabbar_item_selected(audio_view *av, Elm_Object_Item *audio_it)
+static Evas_Object*
+create_audio_list_type(audio_view *av, audio_view_type type )
 {
-    application *p_app = intf_get_application(av->p_intf);
-    const char *audio_path = application_get_media_path(p_app, MEDIA_DIRECTORY_MUSIC);
-    const char *str = NULL;
-    Evas_Object *current_audio_view;
-
-    /* Get the item selected in the toolbar */
-    str = elm_object_item_text_get(audio_it);
-
-    /* Create the view depending on the item selected in the toolbar */
-    if (str && !strcmp(str, "Songs")) {
-        current_audio_view = create_audio_list(audio_path, av);
+    Evas_Object *genlist = av->audio_lists[type];
+    if(genlist == NULL)
+    {
+        LOGD("New View %i", type);
+        av->audio_lists[type] = genlist = create_audio_list(av);
     }
-    else if (str && !strcmp(str, "Artists")) {
-        current_audio_view = create_audio_list(audio_path, av);
-    }
-    else if (str && !strcmp(str, "Albums")) {
-        current_audio_view = create_audio_list(audio_path, av);
-    }
-    else {
-        current_audio_view = create_audio_list(audio_path, av);
+    else
+    {
+        LOGD("Recycling View %i %i", type, elm_genlist_items_count(genlist));
     }
 
-    elm_object_content_set(av->nf_toolbar, current_audio_view );
+    elm_object_content_set(av->nf_toolbar, av->audio_lists[type] );
+    return genlist;
 }
 
 static void
 tabbar_item_cb(void *data, Evas_Object *obj, void *event_info)
 {
     audio_view *av = data;
-    Elm_Object_Item *audio_it = event_info;
 
-    /* Call the function that creates the views */
-    tabbar_item_selected(av, audio_it);
+    /* Get the item selected in the toolbar */
+    const char *str = elm_object_item_text_get((Elm_Object_Item *)event_info);
+
+    /* Create the view depending on the item selected in the toolbar */
+    if (str && !strcmp(str, "Songs")) {
+        create_audio_list_type(av, AUDIO_VIEW_SONG);
+    }
+    else if (str && !strcmp(str, "Artists")) {
+        create_audio_list_type(av, AUDIO_VIEW_ARTIST);
+    }
+    else if (str && !strcmp(str, "Albums")) {
+        create_audio_list_type(av, AUDIO_VIEW_ALBUM);
+    }
+    else {
+        create_audio_list_type(av, AUDIO_VIEW_GENRE);
+    }
 }
 
 static Evas_Object*
@@ -295,10 +314,10 @@ create_toolbar(audio_view *av)
     evas_object_size_hint_max_set(tabbar, 450, 400);
 
     /* Append new entry in the toolbar with the Icon & Label wanted */
-    elm_toolbar_item_append(tabbar, NULL, "Songs", tabbar_item_cb, av);
-    elm_toolbar_item_append(tabbar, NULL, "Artists", tabbar_item_cb, av);
-    elm_toolbar_item_append(tabbar, NULL, "Albums", tabbar_item_cb, av);
-    elm_toolbar_item_append(tabbar, NULL, "Playlist", tabbar_item_cb, av);
+    elm_toolbar_item_append(tabbar, NULL, "Artists",  tabbar_item_cb, av);
+    elm_toolbar_item_append(tabbar, NULL, "Albums",   tabbar_item_cb, av);
+    elm_toolbar_item_append(tabbar, NULL, "Songs",    tabbar_item_cb, av);
+    elm_toolbar_item_append(tabbar, NULL, "Genre", tabbar_item_cb, av);
 
     return tabbar;
 }
@@ -306,11 +325,14 @@ create_toolbar(audio_view *av)
 Evas_Object *
 create_audio_view(interface *intf, Evas_Object *parent)
 {
-    Elm_Object_Item *nf_it, *tabbar_it;
+    Elm_Object_Item *tabbar_it;
     Evas_Object *tabbar;
 
+    /* setup the audio_view */
     audio_view *av = calloc(1, sizeof(*av));
     av->p_intf = intf;
+    for(int i = 0; i < AUDIO_VIEW_MAX; i++)
+        av->audio_lists[i] = NULL;
 
     /* Toolbar Naviframe */
     av->nf_toolbar = elm_naviframe_add(parent);
@@ -320,18 +342,18 @@ create_audio_view(interface *intf, Evas_Object *parent)
     /* Toolbar Naviframe Settings */
     elm_object_part_content_set(parent, "elm.swallow.content", av->nf_toolbar);
     evas_object_show(av->nf_toolbar);
-    nf_it = elm_naviframe_item_push(av->nf_toolbar, NULL, NULL, NULL, NULL, "tabbar/icon/notitle");
-
-    /* Push on the parent view */
-    elm_naviframe_item_push(parent, "<b>Audio</b>", NULL, NULL, av->nf_toolbar, "basic");
 
     /* Create the toolbar in the view */
     tabbar = create_toolbar(av);
+    Elm_Object_Item *nf_it = elm_naviframe_item_push(av->nf_toolbar, NULL, NULL, NULL, NULL, "tabbar/icon/notitle");
     elm_object_item_part_content_set(nf_it, "tabbar", tabbar);
 
     /* Set the first item in the toolbar */
     tabbar_it = elm_toolbar_first_item_get(tabbar);
     elm_toolbar_item_selected_set(tabbar_it, EINA_TRUE);
+
+    /* Push on the parent view */
+    elm_naviframe_item_push(parent, "<b>Audio</b>", NULL, NULL, av->nf_toolbar, "basic");
 
     return av->nf_toolbar;
 }
