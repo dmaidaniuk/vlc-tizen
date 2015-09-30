@@ -108,11 +108,9 @@ collections
                 }
             }
             part {
-                name: "swallow.button2";
-                type: RECT;
+                name: "swallow.backward_button";
+                type: SWALLOW;
                 description {
-                    visible: 0;
-                    state: "pause" 0.0;
                     rel1 {
                         relative: 0.2 0.0;
                         to: "hub_button";
@@ -126,7 +124,7 @@ collections
                 }
             }
             part {
-                name: "swallow.play";
+                name: "swallow.play_button";
                 type: SWALLOW;
                 description {
                     state: "pause" 0.0;
@@ -145,11 +143,9 @@ collections
                 }
             }
             part {
-                name: "swallow.button4";
-                type: RECT;
+                name: "swallow.forward_button";
+                type: SWALLOW;
                 description {
-                    visible: 0;
-                    state: "pause" 0.0;
                     rel1 {
                         relative: 0.6 0.0;
                         to: "hub_button";

@@ -53,7 +53,7 @@ _on_slider_changed_cb(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-clicked_cb(void *data, Evas_Object *obj, void *event_info)
+clicked_play_pause(void *data, Evas_Object *obj, void *event_info)
 {
    //TODO link with vlc state
     videodata_s *vd = data;
@@ -63,6 +63,20 @@ clicked_cb(void *data, Evas_Object *obj, void *event_info)
             vd->play_state = !vd->play_state;
         }
 
+}
+
+static void
+clicked_backward(void *data, Evas_Object *obj, void *event_info)
+{
+   //TODO backward action
+	LOGD("backward button");
+}
+
+static void
+clicked_forward(void *data, Evas_Object *obj, void *event_info)
+{
+   //TODO forward action
+	LOGD("forward button");
 }
 
 Evas_Object*
@@ -88,13 +102,25 @@ create_video_gui(Evas_Object *parent, const char* file_path)
     elm_object_part_content_set(vd->layout, "swallow.visualization", vd->canvas);
     //TODO vd->canvas = ??
 
-    //create play/pause image
+    //create play/pause button
     vd->play_pause_button = elm_image_add(vd->layout);
     elm_image_file_set(vd->play_pause_button, ICON_DIR"ic_play_circle_normal_o.png", NULL);
     //attach to edje layout
-    elm_object_part_content_set(vd->layout, "swallow.play", vd->play_pause_button);
+    elm_object_part_content_set(vd->layout, "swallow.play_button", vd->play_pause_button);
     //click callback
-    evas_object_smart_callback_add(vd->play_pause_button, "clicked", clicked_cb, vd);
+    evas_object_smart_callback_add(vd->play_pause_button, "clicked", clicked_play_pause, vd);
+
+    //create backward button
+    Evas_Object *backward_button = elm_image_add(vd->layout);
+    elm_image_file_set(backward_button, ICON_DIR"ic_backward_circle_normal_o.png", NULL);
+    elm_object_part_content_set(vd->layout, "swallow.backward_button", backward_button);
+    evas_object_smart_callback_add(backward_button, "clicked", clicked_backward, vd);
+
+    //create forward button
+    Evas_Object *forward_button = elm_image_add(vd->layout);
+    elm_image_file_set(forward_button, ICON_DIR"ic_forward_circle_normal_o.png", NULL);
+    elm_object_part_content_set(vd->layout, "swallow.forward_button", forward_button);
+    evas_object_smart_callback_add(forward_button, "clicked", clicked_forward, vd);
 
     //progress slider
     vd->progress_slider = elm_slider_add(vd->layout);
