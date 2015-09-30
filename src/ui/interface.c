@@ -301,6 +301,9 @@ intf_create_video_player(interface *intf, const char *psz_path)
 
     evas_object_show(video_player);
 
+    /* We want fullscreen */
+    elm_win_indicator_mode_set(intf->win, ELM_WIN_INDICATOR_HIDE);
+
     /* */
     LOGI("Video Player started");
 }
@@ -410,7 +413,6 @@ intf_create(application *app)
 
     /* */
     evas_object_show(intf->win);
-
     return intf;
 }
 

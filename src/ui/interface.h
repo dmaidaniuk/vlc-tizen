@@ -55,11 +55,12 @@ typedef enum view_e {
 void
 intf_create_view(interface *, view_e);
 
-void
-intf_create_video_player(interface *, const char *psz_path);
-
+// FIXME
 void
 intf_show_previous_view(interface *);
+
+void
+intf_create_video_player(interface *, const char *psz_path);
 
 mini_player *
 intf_get_mini_player(interface *);
