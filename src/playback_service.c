@@ -341,6 +341,12 @@ playback_service_stop(playback_service *p_ps)
     return 0;
 }
 
+bool
+playback_service_is_started(playback_service *p_ps)
+{
+    return !!p_ps->b_started;
+}
+
 int
 playback_service_play(playback_service *p_ps)
 {
