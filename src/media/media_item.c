@@ -37,6 +37,7 @@ media_item_create(const char *psz_path, enum MEDIA_ITEM_TYPE i_type)
         goto error;
 
     p_mi->i_type = i_type;
+    p_mi->i_duration = -1;
     return p_mi;
 
 error:
