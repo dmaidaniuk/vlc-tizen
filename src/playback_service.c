@@ -137,12 +137,19 @@ ps_emotion_create(playback_service *p_ps, Evas *p_evas, bool b_mute_video)
 {
     Evas_Object *p_e = emotion_object_add(p_evas);
     if (!p_e)
+    {
+        LOGE("emotion_object_add(evas) failed");
         return NULL;
+    }
 
-    emotion_object_init(p_e, "libvlc");
+    if (!emotion_object_init(p_e, "libvlc"))
+    {
+        LOGE("emotion_object_init failed");
+        return NULL;
+    }
+
     if (b_mute_video)
         emotion_object_video_mute_set(p_e, b_mute_video);
-
 
     evas_object_smart_callback_add(p_e, "position_update",
                                    ps_emotion_position_update_cb, p_ps);
@@ -303,15 +310,20 @@ playback_service_start(playback_service *p_ps)
 
     p_mi = media_list_get_item(p_ps->p_ml);
     if (!p_mi || !p_mi->psz_path)
+    {
+        LOGE("playback_service_start without item");
         return -1;
+    }
+    LOGD("playback_service_start: %s", p_mi->psz_path);
 
     if (!emotion_object_file_set(p_ps->p_e, p_mi->psz_path))
+    {
+        LOGE("emotion_object_file_set failed");
         return -1;
+    }
 
     p_ps->b_started = true;
-    playback_service_play(p_ps);
-
-    return -1;
+    return playback_service_play(p_ps);
 }
 
 int
