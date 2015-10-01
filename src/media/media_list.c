@@ -128,7 +128,7 @@ media_list_destroy(media_list *p_ml)
     free(p_ml);
 }
 
-void *
+media_list_cbs_id *
 media_list_register_callbacks(media_list *p_ml, media_list_callbacks *p_cbs)
 {
     Eina_List *p_el;
@@ -145,11 +145,11 @@ media_list_register_callbacks(media_list *p_ml, media_list_callbacks *p_cbs)
         return NULL;
     }
     p_ml->p_cbs_list = p_el;
-    return p_cbs_dup;
+    return (media_list_cbs_id *) p_cbs_dup;
 }
 
 void
-media_list_unregister_callbacks(media_list *p_ml, void *p_id)
+media_list_unregister_callbacks(media_list *p_ml, media_list_cbs_id *p_id)
 {
     p_ml->p_cbs_list = eina_list_remove(p_ml->p_cbs_list, p_id);
     free(p_id);

@@ -29,6 +29,7 @@
 
 #include "media_item.h"
 
+typedef struct media_list_cbs_id media_list_cbs_id;
 typedef struct media_list_callbacks media_list_callbacks;
 struct media_list_callbacks
 {
@@ -44,11 +45,11 @@ media_list_create(bool b_free_media);
 void
 media_list_destroy(media_list *p_ml);
 
-void *
+media_list_cbs_id *
 media_list_register_callbacks(media_list *p_ml, media_list_callbacks *p_cbs);
 
 void
-media_list_unregister_callbacks(media_list *p_ml, void *p_id);
+media_list_unregister_callbacks(media_list *p_ml, media_list_cbs_id *p_id);
 
 int
 media_list_insert(media_list *p_ml, int i_index, media_item *p_mi);
