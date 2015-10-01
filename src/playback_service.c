@@ -34,6 +34,17 @@
 
 #define PLAYLIST_CONTEXT_COUNT (PLAYLIST_CONTEXT_OTHERS + 1)
 
+static const int META_EMOTIOM_TO_MEDIA_ITEM[] = {
+    MEDIA_ITEM_META_TITLE,
+    MEDIA_ITEM_META_ARTIST,
+    MEDIA_ITEM_META_ALBUM,
+    MEDIA_ITEM_META_YEAR,
+    MEDIA_ITEM_META_GENRE,
+    MEDIA_ITEM_META_COMMENT,
+    MEDIA_ITEM_META_DISC_ID,
+    MEDIA_ITEM_META_COUNT,
+};
+
 struct playback_service
 {
     media_list *p_ml_list[PLAYLIST_CONTEXT_COUNT];
@@ -90,18 +101,14 @@ ps_emotion_position_update_cb(void *data, Evas_Object *obj, void *event)
 }
 
 static void
-ps_emotion_title_change_cb(void *data, Evas_Object *obj, void *event)
-{
-    playback_service *p_ps = data;
-    const char *psz_title = emotion_object_title_get(obj);
-
-    PS_SEND_CALLBACK(pf_on_new_title, psz_title);
-}
-
-static void
 ps_emotion_play_started_cb(void *data, Evas_Object *obj, void *event)
 {
     playback_service *p_ps = data;
+    media_item *p_mi = media_list_get_item(p_ps->p_ml);
+
+    for (unsigned int i = 0; EMOTION_META_INFO_TRACK_COUNT; ++i)
+        media_item_set_meta(p_mi, META_EMOTIOM_TO_MEDIA_ITEM[i],
+                            emotion_object_meta_info_get(obj, i));
 
     PS_SEND_CALLBACK(pf_on_started, media_list_get_item(p_ps->p_ml));
 }
@@ -176,8 +183,6 @@ ps_emotion_create(playback_service *p_ps, Evas *p_evas, bool b_mute_video)
                                    ps_emotion_position_update_cb, p_ps);
     evas_object_smart_callback_add(p_e, "length_change",
                                    ps_emotion_length_change_cb, p_ps);
-    evas_object_smart_callback_add(p_e, "title_change",
-                                   ps_emotion_title_change_cb, p_ps);
     evas_object_smart_callback_add(p_e, "playback_started",
                                    ps_emotion_play_started_cb, p_ps);
     evas_object_smart_callback_add(p_e, "playback_finished",

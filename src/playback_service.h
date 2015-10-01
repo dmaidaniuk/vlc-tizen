@@ -45,7 +45,6 @@ struct playback_service_callbacks
     void (*pf_on_new_len)(playback_service *p_ps, void *p_user_data, double i_len);
     void (*pf_on_new_pos)(playback_service *p_ps, void *p_user_data, double i_pos);
     void (*pf_on_seek_done)(playback_service *p_ps, void *p_user_data);
-    void (*pf_on_new_title)(playback_service *p_ps, void *p_user_data, const char *psz_title);
     void *p_user_data;
 };
 
