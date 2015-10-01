@@ -33,6 +33,7 @@
 
 typedef struct popup_menu_item
 {
+    const int id;
     const char* title;
     const char* icon;
 } popup_menu_item_s;

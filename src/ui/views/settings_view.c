@@ -66,92 +66,91 @@ settings_item settings_menu[] =
 };
 
 /* Create the setting submenu items */
-/* TODO : Add callbacks for each one and set the logic behind them */
 
 popup_menu_item_s directory_menu[] =
 {
-        {"Internal memory", "toggle_off.png"},
-        {"Add repository", "call_button_add_call_press.png"}
+        {42, "Internal memory", "toggle_off.png"},
+        {42, "Add repository", "call_button_add_call_press.png"}
 };
 
 popup_menu_item_s hardware_acceleration_menu[] =
 {
-        {"Automatic", "toggle_on.png"},
-        {"Disabled", "toggle_off.png"},
-        {"Decoding acceleration", "toggle_off.png"},
-        {"Full acceleration", "toggle_off.png"}
+        {42, "Automatic", "toggle_on.png"},
+        {42, "Disabled", "toggle_off.png"},
+        {42, "Decoding acceleration", "toggle_off.png"},
+        {42, "Full acceleration", "toggle_off.png"}
 };
 
 popup_menu_item_s video_orientation_menu[] =
 {
-        {"Automatic (sensor)", "toggle_on.png"},
-        {"Locked at start", "toggle_off.png"},
-        {"Landscape", "toggle_off.png"},
-        {"Portrait", "toggle_off.png"},
-        {"Reverse landscape", "toggle_off.png"},
-        {"Reverse portrait", "toggle_off.png"}
+        {42, "Automatic (sensor)", "toggle_on.png"},
+        {42, "Locked at start", "toggle_off.png"},
+        {42, "Landscape", "toggle_off.png"},
+        {42, "Portrait", "toggle_off.png"},
+        {42, "Reverse landscape", "toggle_off.png"},
+        {42, "Reverse portrait", "toggle_off.png"}
 };
 
 popup_menu_item_s subtitles_text_encoding_menu[] =
 {
-        {"Default (Windows-1252)", "toggle_on.png"},
-        {"Universal (UTF-8)", "toggle_off.png"},
-        {"Universal (UTF-16)", "toggle_off.png"},
-        {"Universal (big endian UTF-16)", "toggle_off.png"},
-        {"Universal (little endian UTF-16)", "toggle_off.png"},
-        {"Universal, Chinese (GB18030)", "toggle_off.png"},
-        {"Western European (Latin-9)", "toggle_off.png"},
-        {"Western European (Windows-1252)", "toggle_off.png"},
-        {"Western European (IBM 00850)", "toggle_off.png"},
-        {"Eastern European (Latin-2)", "toggle_off.png"},
-        {"Eastern European (Windows-1250)", "toggle_off.png"},
-        {"Esperanto (Latin-3)", "toggle_off.png"},
-        {"Nordic (Latin-6)", "toggle_off.png"},
-        {"Cyrillic (Windows-1251)", "toggle_off.png"},
-        {"Russian (KOI8-R)", "toggle_off.png"},
-        {"Ukrainian (KOI8-U)", "toggle_off.png"},
-        {"Arabic (ISO 8859-6)", "toggle_off.png"},
-        {"Arabic (Windows-1256)", "toggle_off.png"},
-        {"Greek (ISO 8859-7)", "toggle_off.png"},
-        {"Greek (Windows-1253)", "toggle_off.png"},
-        {"Hebrew (ISO 8859-8)", "toggle_off.png"},
-        {"Hebrew (Windows-1255)", "toggle_off.png"},
-        {"Turkish (ISO 8859-9)", "toggle_off.png"},
-        {"Turkish (Windows-1254)", "toggle_off.png"},
-        {"Thai (TIS 620-2533/ISO 8859-11)", "toggle_off.png"},
-        {"Thai (Windows-874)", "toggle_off.png"},
-        {"Baltic (Latin-7)", "toggle_off.png"},
-        {"Baltic (Windows-1257)", "toggle_off.png"},
-        {"Celtic (Latin-8)", "toggle_off.png"},
-        {"South-Estearn (Latin-10)", "toggle_off.png"},
-        {"Simplified Chinese (ISO-2022-CN-EXT)", "toggle_off.png"},
-        {"Simplified Chinese Unix (EUC-CN)", "toggle_off.png"},
-        {"Japanese (7-bits JIS/ISO-2022-JP-2)", "toggle_off.png"},
-        {"Japanese (Shift JIS)", "toggle_off.png"},
-        {"Korean (EUC-KR/CP949)", "toggle_off.png"},
-        {"Korean (ISO-2022-KR)", "toggle_off.png"},
-        {"Traditional Chinese (Big5)", "toggle_off.png"},
-        {"Traditional Chinese Unix (EUC-TW)", "toggle_off.png"},
-        {"Hong-Kong Supplementary (HKSCS)", "toggle_off.png"},
-        {"Vietnamese (VISCII)", "toggle_off.png"},
-        {"Vietnamese (Windows-1258)", "toggle_off.png"}
+        {42, "Default (Windows-1252)", "toggle_on.png"},
+        {42, "Universal (UTF-8)", "toggle_off.png"},
+        {42, "Universal (UTF-16)", "toggle_off.png"},
+        {42, "Universal (big endian UTF-16)", "toggle_off.png"},
+        {42, "Universal (little endian UTF-16)", "toggle_off.png"},
+        {42, "Universal, Chinese (GB18030)", "toggle_off.png"},
+        {42, "Western European (Latin-9)", "toggle_off.png"},
+        {42, "Western European (Windows-1252)", "toggle_off.png"},
+        {42, "Western European (IBM 00850)", "toggle_off.png"},
+        {42, "Eastern European (Latin-2)", "toggle_off.png"},
+        {42, "Eastern European (Windows-1250)", "toggle_off.png"},
+        {42, "Esperanto (Latin-3)", "toggle_off.png"},
+        {42, "Nordic (Latin-6)", "toggle_off.png"},
+        {42, "Cyrillic (Windows-1251)", "toggle_off.png"},
+        {42, "Russian (KOI8-R)", "toggle_off.png"},
+        {42, "Ukrainian (KOI8-U)", "toggle_off.png"},
+        {42, "Arabic (ISO 8859-6)", "toggle_off.png"},
+        {42, "Arabic (Windows-1256)", "toggle_off.png"},
+        {42, "Greek (ISO 8859-7)", "toggle_off.png"},
+        {42, "Greek (Windows-1253)", "toggle_off.png"},
+        {42, "Hebrew (ISO 8859-8)", "toggle_off.png"},
+        {42, "Hebrew (Windows-1255)", "toggle_off.png"},
+        {42, "Turkish (ISO 8859-9)", "toggle_off.png"},
+        {42, "Turkish (Windows-1254)", "toggle_off.png"},
+        {42, "Thai (TIS 620-2533/ISO 8859-11)", "toggle_off.png"},
+        {42, "Thai (Windows-874)", "toggle_off.png"},
+        {42, "Baltic (Latin-7)", "toggle_off.png"},
+        {42, "Baltic (Windows-1257)", "toggle_off.png"},
+        {42, "Celtic (Latin-8)", "toggle_off.png"},
+        {42, "South-Estearn (Latin-10)", "toggle_off.png"},
+        {42, "Simplified Chinese (ISO-2022-CN-EXT)", "toggle_off.png"},
+        {42, "Simplified Chinese Unix (EUC-CN)", "toggle_off.png"},
+        {42, "Japanese (7-bits JIS/ISO-2022-JP-2)", "toggle_off.png"},
+        {42, "Japanese (Shift JIS)", "toggle_off.png"},
+        {42, "Korean (EUC-KR/CP949)", "toggle_off.png"},
+        {42, "Korean (ISO-2022-KR)", "toggle_off.png"},
+        {42, "Traditional Chinese (Big5)", "toggle_off.png"},
+        {42, "Traditional Chinese Unix (EUC-TW)", "toggle_off.png"},
+        {42, "Hong-Kong Supplementary (HKSCS)", "toggle_off.png"},
+        {42, "Vietnamese (VISCII)", "toggle_off.png"},
+        {42, "Vietnamese (Windows-1258)", "toggle_off.png"}
 
 };
 
 popup_menu_item_s performance_menu[] =
 {
-        {"Enable frame skip", "toggle_off.png"},
-        {"Time-stretching audio", "toggle_off.png"}
+        {42, "Enable frame skip", "toggle_off.png"},
+        {42, "Time-stretching audio", "toggle_off.png"}
 
 };
 
 popup_menu_item_s deblocking_filter_settings_menu[] =
 {
-        {"Automatic", "toggle_on.png"},
-        {"Full deblocking (slowest)", "toggle_off.png"},
-        {"Medium deblocking", "toggle_off.png"},
-        {"Low deblocking", "toggle_off.png"},
-        {"No deblocking (fastest)", "toggle_off.png"}
+        {42, "Automatic", "toggle_on.png"},
+        {42, "Full deblocking (slowest)", "toggle_off.png"},
+        {42, "Medium deblocking", "toggle_off.png"},
+        {42, "Low deblocking", "toggle_off.png"},
+        {42, "No deblocking (fastest)", "toggle_off.png"}
 
 };
 

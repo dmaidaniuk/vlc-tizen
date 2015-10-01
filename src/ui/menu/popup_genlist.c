@@ -92,7 +92,7 @@ popup_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 
     // Redirect the callback to the given Menu_item_callback
     if (pgd->cb)
-        pgd->cb(42, pgd->index, pgd->menu_item, pgd->parent, pgd->data);
+        pgd->cb(pgd->menu_item->id, pgd->index, pgd->menu_item, pgd->parent, pgd->data);
 }
 
 static void
