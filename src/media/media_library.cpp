@@ -133,6 +133,7 @@ media_library::onDiscoveryCompleted( const std::string& entryPoint )
         if ( m_nbElemChanged != 0 )
         {
             m_nbElemChanged = 0;
+            LOGI("Changes detected, sending update to listeners");
             ecore_main_loop_thread_safe_call_async( fileListChangedCb, cbUserData );
         }
         LOGI( "Completed all active discovery operations" );
@@ -299,6 +300,7 @@ media_library_get_video_files( media_library* p_ml, media_library_list_cb cb, vo
     ecore_thread_run( [](void* data, Ecore_Thread* ) {
         auto ctx = reinterpret_cast<ml_callback_context*>( data );
         auto files = ctx->p_ml->ml->videoFiles();
+        LOGE( "Got %d files", files.size() );
         Eina_List *list = nullptr;
         for ( auto& f : files )
         {

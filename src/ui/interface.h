@@ -30,6 +30,8 @@
 #include "common.h"
 #include "application.h"
 
+#include "media/media_library.hpp"
+
 typedef struct interface interface;
 typedef struct mini_player mini_player;
 
@@ -73,5 +75,12 @@ intf_get_root_box(interface *intf);
 
 Evas_Object *
 intf_get_main_naviframe(interface *intf);
+
+void
+intf_register_file_changed(interface *intf, view_e type,
+        media_library_file_list_changed_cb cb, void* p_user_data);
+
+void
+intf_ml_file_changed( void* p_user_data );
 
 #endif /* INTERFACE_H_ */

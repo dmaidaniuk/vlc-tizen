@@ -50,11 +50,6 @@ struct application {
 
 static void app_terminate(void *data);
 
-static void
-on_media_list_changed( void* p_data )
-{
-}
-
 static bool
 app_create(void *data)
 {
@@ -68,14 +63,10 @@ app_create(void *data)
     if (!app->p_ms)
         goto error;
 
-    /* */
+    /* Initialize media library first, but do not start it yet */
     app->p_mediaLibrary = media_library_create(app);
     if (!app->p_mediaLibrary)
         goto error;
-    if ( !media_library_start( app->p_mediaLibrary, &on_media_list_changed, app ) )
-        goto error;
-    media_library_discover( app->p_mediaLibrary, application_get_media_path( app, MEDIA_DIRECTORY_VIDEOS ) );
-    media_library_discover( app->p_mediaLibrary, application_get_media_path( app, MEDIA_DIRECTORY_MUSIC ) );
 
     /* */
     app->p_ps = playback_service_create(app);
@@ -86,6 +77,13 @@ app_create(void *data)
     app->p_intf = intf_create(app);
     if (!app->p_intf)
         goto error;
+
+    /* Now that the UI is ready to receive potential updates, start the ML */
+    if ( !media_library_start( app->p_mediaLibrary, &intf_ml_file_changed, app->p_intf ) )
+            goto error;
+    media_library_discover( app->p_mediaLibrary, application_get_media_path( app, MEDIA_DIRECTORY_VIDEOS ) );
+    media_library_discover( app->p_mediaLibrary, application_get_media_path( app, MEDIA_DIRECTORY_MUSIC ) );
+
 
     return true;
 error:

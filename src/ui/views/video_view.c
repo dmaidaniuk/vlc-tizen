@@ -225,8 +225,9 @@ generate_video_list(Eina_List* p_list, void* p_data)
 }
 
 static void
-video_view_refresh( video_view* vv )
+video_view_refresh(void* p_user_data)
 {
+    video_view* vv = (video_view*)p_user_data;
     application* p_app = intf_get_application( vv->p_intf );
     const media_library* p_ml = application_get_media_library( p_app );
     media_library_get_video_files( p_ml, &generate_video_list, vv );
@@ -260,7 +261,7 @@ create_video_view(interface *intf, Evas_Object *parent)
     evas_object_smart_callback_add(genlist, "contracted", genlist_contracted_cb, NULL);
 
     /* Populate it */
-    video_view_refresh( vv );
+    intf_register_file_changed( intf, VIEW_VIDEO, video_view_refresh, vv );
 
     /* */
     elm_genlist_item_class_free(itc);

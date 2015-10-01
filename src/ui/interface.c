@@ -62,6 +62,12 @@ struct interface {
 
     mini_player *p_mini_player;
     application *p_app;
+
+    struct
+    {
+        media_library_file_list_changed_cb cb;
+        void* user_data;
+    } pp_file_changed_cb[VIEW_MAX];
 };
 
 /* TODO : A lot of size hints are Hard Coded with pixel values (using a Samsung Z1 phone) */
@@ -149,6 +155,26 @@ intf_update_mini_player(interface *intf)
     if((mini_player_play_state(intf->p_mini_player) == false) && (mini_player_fs_state(intf->p_mini_player) == true))
     {
         mini_player_stop(intf->p_mini_player);
+    }
+}
+
+void
+intf_register_file_changed(interface *intf, view_e type,
+        media_library_file_list_changed_cb cb, void* p_user_data)
+{
+    intf->pp_file_changed_cb[type].cb = cb;
+    intf->pp_file_changed_cb[type].user_data = p_user_data;
+}
+
+void
+intf_ml_file_changed( void* p_user_data )
+{
+    LOGI("Updating file listing due to MediaLibrary changes");
+    interface* intf = (interface*)p_user_data;
+    for ( int i = 0; i < VIEW_MAX; ++i )
+    {
+        if ( intf->pp_file_changed_cb[i].cb != NULL )
+            intf->pp_file_changed_cb[i].cb( intf->pp_file_changed_cb[i].user_data );
     }
 }
 
