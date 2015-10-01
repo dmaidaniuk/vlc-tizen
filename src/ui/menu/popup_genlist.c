@@ -120,6 +120,13 @@ popup_block_cb(void *data, Evas_Object *obj, void *event_info)
 	evas_object_del(parent);
 }
 
+static void
+free_genlist_item_data(void *data, Evas_Object *obj, void *event_info)
+{
+    popup_genlist_data_s *pgd = data;
+    free(pgd);
+}
+
 Evas_Object *
 create_settings_popup_genlist(Evas_Object *parent, popup_menu_item_s *directory_menu, int len)
 {
@@ -174,6 +181,7 @@ create_settings_popup_genlist(Evas_Object *parent, popup_menu_item_s *directory_
                 pgd);                            /* genlist smart callback user data */
 
         eext_object_event_callback_add(pgd->parent, EEXT_CALLBACK_BACK, popup_selected_cb, pgd);
+        elm_object_item_del_cb_set(it, free_genlist_item_data);
         pgd->item = it;
     }
 
