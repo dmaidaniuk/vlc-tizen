@@ -55,7 +55,6 @@ struct interface {
 
     /* */
     Evas_Object *sidebar;    /* Sidebar panel */
-    int current_sidebar_idx;
     Evas_Object *sidebar_toggle_btn;
 
     /* Context popup-menu */
@@ -315,7 +314,6 @@ intf_create_view(interface *intf, int view_type)
     /* Push the view in the naviframe with the corresponding header */
     elm_naviframe_item_push(nf_content, get_view_title(view_type), NULL, NULL, view, "basic");
     evas_object_show(view);
-    intf->current_sidebar_idx = view_type;
 }
 
 void
