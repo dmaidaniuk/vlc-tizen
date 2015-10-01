@@ -69,6 +69,18 @@ free_list_item_data(void *data, Evas_Object *obj, void *event_info)
     free(dd);
 }
 
+static int compare_sort_items(const void *data1, const void *data2)
+{
+	const char *label1, *label2;
+	const Elm_Object_Item *li_it1 = data1;
+	const Elm_Object_Item *li_it2 = data2;
+
+	label1 = elm_object_item_text_get(li_it1);
+	label2 = elm_object_item_text_get(li_it2);
+
+	return strcasecmp(label1, label2);
+}
+
 Evas_Object*
 create_directory_view(const char* path, Evas_Object *parent)
 {
@@ -137,7 +149,7 @@ create_directory_view(const char* path, Evas_Object *parent)
         }
 
         /* Set and append new item in the list */
-        Elm_Object_Item *item = elm_list_item_append(file_list, str, NULL, NULL, list_selected_cb, dd);
+        Elm_Object_Item *item = elm_list_item_sorted_insert(file_list, str, NULL, NULL, list_selected_cb, dd, compare_sort_items);
         /* */
         elm_object_item_del_cb_set(item, free_list_item_data);
     }
