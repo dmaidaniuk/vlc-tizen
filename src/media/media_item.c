@@ -48,6 +48,19 @@ error:
 void
 media_item_destroy(media_item *p_mi)
 {
+    for (unsigned int i = 0; i < MEDIA_ITEM_META_COUNT; ++i)
+        free(p_mi->psz_metas[i]);
     free(p_mi->psz_path);
     free(p_mi);
+}
+
+int
+media_item_set_meta(media_item *p_mi, enum MEDIA_ITEM_META i_meta,
+                    const char *psz_meta)
+{
+    if (i_meta < 0 || i_meta >= MEDIA_ITEM_META_COUNT)
+        return -1;
+    free(p_mi->psz_metas[i_meta]);
+    p_mi->psz_metas[i_meta] = strdup(psz_meta);
+    return p_mi->psz_metas[i_meta] ? 0 : -1;
 }

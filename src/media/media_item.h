@@ -39,11 +39,22 @@ enum MEDIA_ITEM_TYPE {
     MEDIA_ITEM_TYPE_ARCHIVE,
 };
 
+enum MEDIA_ITEM_META {
+    MEDIA_ITEM_META_TITLE,
+    MEDIA_ITEM_META_ARTIST,
+    MEDIA_ITEM_META_ALBUM,
+    MEDIA_ITEM_META_YEAR,
+    MEDIA_ITEM_META_GENRE,
+    MEDIA_ITEM_META_COMMENT,
+    MEDIA_ITEM_META_DISC_ID,
+    MEDIA_ITEM_META_COUNT,
+};
+
 typedef struct media_item {
     char *psz_path;                 /* Normalized path on the device */
     enum MEDIA_ITEM_TYPE i_type;    /* Video, Audio, Subs, etc... */
 
-    const char *psz_title;          /* Human Readable Title */
+    char *psz_metas[MEDIA_ITEM_META_COUNT];
     int64_t i_duration;             /* in ms */
 
     //FIXME replace with a union
@@ -55,6 +66,17 @@ media_item_create(const char *psz_path, enum MEDIA_ITEM_TYPE i_type);
 
 void
 media_item_destroy(media_item *p_mi);
+
+int
+media_item_set_meta(media_item *p_mi, enum MEDIA_ITEM_META i_meta, const char *psz_meta);
+
+#define media_item_title(p_mi) (p_mi)->psz_metas[MEDIA_ITEM_META_TITLE]
+#define media_item_artist(p_mi) (p_mi)->psz_metas[MEDIA_ITEM_META_ARTIST]
+#define media_item_album(p_mi) (p_mi)->psz_metas[MEDIA_ITEM_META_ALBUM]
+#define media_item_year(p_mi) (p_mi)->psz_metas[MEDIA_ITEM_META_YEAR]
+#define media_item_genre(p_mi) (p_mi)->psz_metas[MEDIA_ITEM_META_GENRE]
+#define media_item_comment(p_mi) (p_mi)->psz_metas[MEDIA_ITEM_META_COMMENT]
+#define media_item_disc_id(p_mi) (p_mi)->psz_metas[MEDIA_ITEM_META_DISC_ID]
 
 #ifdef __cplusplus
 } // extern "C"

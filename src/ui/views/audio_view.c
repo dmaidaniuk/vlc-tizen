@@ -118,7 +118,7 @@ genlist_text_get_cb(void *data, Evas_Object *obj, const char *part)
     /* Then put this string as the genlist item label */
     if (itc->item_style && !strcmp(itc->item_style, "2line.top.3")) {
         if (part && !strcmp(part, "elm.text.main.left.top")) {
-            asprintf(&buf, "<b>%s</b>", ali->p_media_item->psz_title);
+            asprintf(&buf, "<b>%s</b>", media_item_title(ali->p_media_item));
             return buf;
         }
         else if (!strcmp(part, "elm.text.sub.left.bottom")) {
@@ -156,14 +156,14 @@ genlist_content_get_cb(void *data, Evas_Object *obj, const char *part)
 }
 
 static audio_list_item *
-genlist_audio_item_create(const audio_view *av, Evas_Object *parent_genlist, char *psz_path, char *psz_title, Elm_Genlist_Item_Class *itc)
+genlist_audio_item_create(const audio_view *av, Evas_Object *parent_genlist, const char *psz_path, const char *psz_title, Elm_Genlist_Item_Class *itc)
 {
     audio_list_item *ali = malloc(sizeof(*ali));
     ali->p_av = av;
     ali->itc = itc;
 
     ali->p_media_item = media_item_create(psz_path, MEDIA_ITEM_TYPE_AUDIO);
-    ali->p_media_item->psz_title = psz_title;
+    media_item_set_meta(ali->p_media_item, MEDIA_ITEM_META_TITLE, psz_title);
 
     /* Set and append new item in the genlist */
     Elm_Object_Item *it = elm_genlist_item_append(parent_genlist,
@@ -248,6 +248,7 @@ create_audio_list(const audio_view *av)
         }
 
         genlist_audio_item_create(av, genlist, psz_path, str, itc);
+        free(psz_path);
     }
     /* */
     elm_genlist_item_class_free(itc);

@@ -230,14 +230,14 @@ fileToMediaItem( FilePtr file )
         auto movie = file->movie();
         if ( movie != nullptr )
         {
-            mi->psz_title = strdup( movie->title().c_str() );
+            media_item_set_meta(mi, MEDIA_ITEM_META_TITLE, movie->title().c_str());
         }
         else
         {
             auto episode = file->showEpisode();
             if ( episode != nullptr )
             {
-                mi->psz_title = strdup( episode->name().c_str() );
+                media_item_set_meta(mi, MEDIA_ITEM_META_TITLE, movie->title().c_str());
             }
             else
             {

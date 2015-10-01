@@ -112,7 +112,7 @@ genlist_text_get_cb(void *data, Evas_Object *obj, const char *part)
     if (itc->item_style && !strcmp(itc->item_style, "2line.top.3")) {
         if (part && !strcmp(part, "elm.text.main.left.top")) {
             char buf[PATH_MAX];
-            snprintf(buf, 1023, "<b>%s</b>", vli->p_media_item->psz_title);
+            snprintf(buf, 1023, "<b>%s</b>", media_item_title(vli->p_media_item));
             return strdup(buf);
         }
         else if (!strcmp(part, "elm.text.sub.left.bottom")) {
@@ -181,8 +181,8 @@ genlist_contracted_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
     elm_genlist_item_subitems_clear(it);
 }
 
-video_list_item *
-genlist_item_create(video_view *videoview, char *psz_path, char *psz_title, Elm_Genlist_Item_Class *itc)
+static video_list_item *
+genlist_item_create(video_view *videoview, const char *psz_path, const char *psz_title, Elm_Genlist_Item_Class *itc)
 {
     /* */
     video_list_item *vli = calloc(1, sizeof(*vli));
@@ -191,7 +191,7 @@ genlist_item_create(video_view *videoview, char *psz_path, char *psz_title, Elm_
 
     /* Item instantiation */
     vli->p_media_item = media_item_create(psz_path, MEDIA_ITEM_TYPE_VIDEO);
-    vli->p_media_item->psz_title = psz_title;
+    media_item_set_meta(vli->p_media_item, MEDIA_ITEM_META_TITLE, psz_title);
 
     /* Set and append new item in the genlist */
     Elm_Object_Item *it = elm_genlist_item_append(videoview->p_genlist,
@@ -245,6 +245,7 @@ generate_video_list(video_view *videoview, const char *root_path, Elm_Genlist_It
         asprintf(&psz_path, "%s/%s", root_path, str_title);
 
         genlist_item_create(videoview, psz_path, str_title, itc);
+        free(psz_path);
     }
 }
 
