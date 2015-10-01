@@ -27,20 +27,21 @@
 #include "common.h"
 
 #include <Elementary.h>
-#include <Emotion.h>
 
+#include "playback_service.h"
 #include "interface.h"
 #include "audio_player.h"
 #include "ui/utils.h"
 
 struct mini_player {
     interface *intf;
+    playback_service *p_ps;
+    playback_service_cbs_id *p_ps_cbs_id;
 
     bool visible_state;
-    bool play_state, save_state, shuffle_state, playlist_state, more_state, fs_state;
+    bool save_state, shuffle_state, playlist_state, more_state, fs_state;
     int repeat_state;
     double len, pos;
-    Evas_Object *emotion;
     Evas_Object *parent, *table, *fs_table, *popup;
     Evas_Object *mini_player_box, *box, *fullscreen_box;
     Evas_Object *slider, *fs_slider;
@@ -294,7 +295,7 @@ bool
 mini_player_play_state(mini_player *mpd)
 {
     /* Return the current play/pause state*/
-    return mpd->play_state;
+    return playback_service_is_playing(mpd->p_ps);
 }
 
 bool
@@ -367,29 +368,39 @@ mini_player_hide(mini_player *mpd)
 }
 
 static void
+update_player_play_pause(mini_player* mpd)
+{
+    bool b_playing = playback_service_is_playing(mpd->p_ps);
+    elm_image_file_set(mpd->play_pause_img, b_playing ? ICON_DIR "ic_pause_circle_normal_o.png" : ICON_DIR "ic_play_circle_normal_o.png", NULL);
+    elm_image_file_set(mpd->fs_play_pause_img, b_playing ? ICON_DIR "ic_pause_circle_normal_o.png" : ICON_DIR "ic_play_circle_normal_o.png", NULL);
+}
+
+static void
 update_player_display(mini_player* mpd)
 {
-    const char *meta;
+    media_item *p_mi = playback_service_list_get_item(mpd->p_ps);
 
-    if (!mpd->emotion)
-        return;
-    meta = emotion_object_meta_info_get(mpd->emotion, EMOTION_META_INFO_TRACK_TITLE);
-    if (meta)
+    if (p_mi)
     {
-        elm_object_text_set(mpd->title, meta);
-        elm_object_text_set(mpd->fs_title, meta);
-    }
+        const char *psz_meta;
 
-    meta = emotion_object_meta_info_get(mpd->emotion, EMOTION_META_INFO_TRACK_ARTIST);
-    if (meta)
-    {
-        elm_object_text_set(mpd->sub_title, meta);
-        elm_object_text_set(mpd->fs_sub_title, meta);
+
+        psz_meta = media_item_title(p_mi);
+        if (psz_meta)
+        {
+            elm_object_text_set(mpd->title, psz_meta);
+            elm_object_text_set(mpd->fs_title, psz_meta);
+        }
+        psz_meta = media_item_artist(p_mi);
+        if (psz_meta)
+        {
+            elm_object_text_set(mpd->sub_title, psz_meta);
+            elm_object_text_set(mpd->fs_sub_title, psz_meta);
+        }
     }
 
     /* Change the play/pause button img */
-    elm_image_file_set(mpd->play_pause_img, mpd->play_state ? ICON_DIR "ic_pause_circle_normal_o.png" : ICON_DIR "ic_play_circle_normal_o.png", NULL);
-    elm_image_file_set(mpd->fs_play_pause_img, mpd->play_state ? ICON_DIR "ic_pause_circle_normal_o.png" : ICON_DIR "ic_play_circle_normal_o.png", NULL);
+    update_player_play_pause(mpd);
 
     evas_object_show(mpd->play_pause_img);
 }
@@ -399,12 +410,7 @@ play_pause_mini_player_cb(void *data, Evas_Object *obstopj EINA_UNUSED, void *ev
 {
     mini_player *mpd = data;
 
-    if (!mpd->emotion)
-        return;
-
-    mpd->play_state = emotion_object_play_get(mpd->emotion);
-    emotion_object_play_set(mpd->emotion, !mpd->play_state);
-    mpd->play_state = !mpd->play_state;
+    playback_service_toggle_play_pause(mpd->p_ps);
 
     update_player_display(mpd);
 }
@@ -414,12 +420,7 @@ play_pause_fs_player_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_in
 {
     mini_player *mpd = data;
 
-    if (!mpd->emotion)
-        return;
-
-    mpd->play_state = emotion_object_play_get(mpd->emotion);
-    emotion_object_play_set(mpd->emotion, !mpd->play_state);
-    mpd->play_state = !mpd->play_state;
+    playback_service_toggle_play_pause(mpd->p_ps);
 
     evas_object_show(mpd->fs_play_pause_img);
     update_player_display(mpd);
@@ -607,9 +608,8 @@ slider_delay_changed_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUS
 
     if (mpd->len <= 0)
         return;
-    LOGE("slider_delay_changed_cb: %f - %f - %f", mpd->len, elm_slider_value_get(obj), (elm_slider_value_get(obj) * mpd->len));
 
-    emotion_object_position_set(mpd->emotion, elm_slider_value_get(obj) * mpd->len);
+    playback_service_seek_pos(mpd->p_ps, elm_slider_value_get(obj));
 }
 
 #if 0
@@ -824,13 +824,8 @@ add_fullscreen_item_table(mini_player *mpd, Evas_Object *parent)
     player_update_sliders(mpd);
 
     /* */
-    if (mpd->play_state == FALSE)
-    {
-        mpd->fs_play_pause_img = create_image(parent, "ic_play_circle_normal_o.png");
-    }
-    else {
-        mpd->fs_play_pause_img = create_image(parent, "ic_pause_circle_normal_o.png");
-    }
+    update_player_play_pause(mpd);
+
     evas_object_size_hint_min_set(mpd->fs_play_pause_img, 200, 100);
     evas_object_size_hint_max_set(mpd->fs_play_pause_img, 200, 100);
     evas_object_size_hint_align_set(mpd->fs_play_pause_img, 0.5, 1.0);
@@ -952,42 +947,36 @@ mini_player_fullscreen_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_
 }
 
 static void
-emotion_position_update_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+ps_on_new_time_cb(playback_service *p_ps, void *p_user_data, double i_time)
 {
-    mini_player *mpd = data;
+    mini_player *mpd = p_user_data;
 
-    mpd->pos = emotion_object_position_get(mpd->emotion);
+    mpd->pos = i_time;
     if (mpd->fs_time)
         evas_change_time(mpd->fs_time, mpd->pos);
     player_update_sliders(mpd);
 }
 
 static void
-emotion_length_change_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+ps_on_new_len_cb(playback_service *p_ps, void *p_user_data, double i_len)
 {
-    mini_player *mpd = data;
-    mpd->len = emotion_object_play_length_get(mpd->emotion);
+    mini_player *mpd = p_user_data;
+    mpd->len = i_len;
     if (mpd->fs_total_time)
         evas_change_time(mpd->fs_total_time, mpd->len);
     player_update_sliders(mpd);
 }
 
 static void
-emotion_title_change_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+ps_on_started_cb(playback_service *p_ps, void *p_user_data, media_item *p_mi)
 {
-    update_player_display(data);
+    update_player_display(p_user_data);
 }
 
 static void
-emotion_playback_started_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+ps_on_stopped_cb(playback_service *p_ps, void *p_user_data, media_item *p_mi)
 {
-    update_player_display(data);
-}
-
-static void
-emotion_playback_finished_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
-{
-    mini_player_stop(data);
+    mini_player_stop(p_user_data);
 }
 
 void
@@ -995,24 +984,28 @@ create_base_player(mini_player *mpd, const char *file_path)
 {
     mini_player_reset_states(mpd);
 
-    if (!mpd->emotion)
+    if (!mpd->p_ps_cbs_id)
     {
-        setenv("EMOTION_LIBVLC_DEBUG", "1", 1);
-        mpd->emotion =  emotion_object_add(intf_get_window(mpd->intf));
-        emotion_object_init(mpd->emotion, "libvlc");
-        evas_object_smart_callback_add(mpd->emotion, "position_update", emotion_position_update_cb, mpd);
-        evas_object_smart_callback_add(mpd->emotion, "length_change", emotion_length_change_cb, mpd);
-        evas_object_smart_callback_add(mpd->emotion, "title_change", emotion_title_change_cb, mpd);
-        evas_object_smart_callback_add(mpd->emotion, "playback_started", emotion_playback_started_cb, mpd);
-        evas_object_smart_callback_add(mpd->emotion, "playback_finished", emotion_playback_finished_cb, mpd);
-        //evas_object_smart_callback_add(mpd->emotion, "audio_level_change", emotion_audio_level_change_cb, mpd);
-        //evas_object_smart_callback_add(mpd->emotion, "channels_change", emotion_channels_change_cb, mpd);
+        playback_service_callbacks cbs = {
+            .pf_on_media_added = NULL,
+            .pf_on_media_removed = NULL,
+            .pf_on_media_selected = NULL,
+            .pf_on_started = ps_on_started_cb,
+            .pf_on_stopped = ps_on_stopped_cb,
+            .pf_on_new_len = ps_on_new_len_cb,
+            .pf_on_new_time = ps_on_new_time_cb,
+            .pf_on_seek_done = NULL,
+            .p_user_data = mpd,
+        };
+        mpd->p_ps_cbs_id = playback_service_register_callbacks(mpd->p_ps, &cbs);
     }
-    emotion_object_file_set(mpd->emotion, file_path);
-    emotion_object_play_set(mpd->emotion, EINA_TRUE);
+    playback_service_set_context(mpd->p_ps, PLAYLIST_CONTEXT_AUDIO);
+    playback_service_list_clear(mpd->p_ps);
+    media_item *p_mi = media_item_create(file_path, MEDIA_ITEM_TYPE_AUDIO);
+    playback_service_list_append(mpd->p_ps, p_mi);
+    playback_service_start(mpd->p_ps);
 
     update_player_display(mpd);
-    mpd->play_state = true;
 
     /* Show the mini player only if it isn't already shown */
     if (mini_player_visibility_state(mpd) == false){
@@ -1023,12 +1016,12 @@ create_base_player(mini_player *mpd, const char *file_path)
 }
 
 mini_player*
-mini_player_create(interface *intf, Evas_Object *parent)
+mini_player_create(interface *intf, playback_service *p_ps, Evas_Object *parent)
 {
     mini_player *mpd = calloc(1, sizeof(*mpd));
 
     mpd->intf = intf;
-    mpd->play_state = false;
+    mpd->p_ps = p_ps;
     mpd->visible_state = false;
 
     mpd->mini_player_box = swallow_mini_player(mpd, parent);
@@ -1050,13 +1043,8 @@ void
 mini_player_stop(mini_player *mpd)
 {
     /* Stop the player */
-    if (mpd->emotion)
-    {
-        emotion_object_play_set(mpd->emotion, EINA_FALSE);
-        emotion_object_file_set(mpd->emotion, NULL);
-        evas_object_del(mpd->emotion);
-        mpd->emotion = NULL;
-    }
+    playback_service_unregister_callbacks(mpd->p_ps, mpd->p_ps_cbs_id);
+    playback_service_stop(mpd->p_ps);
 
     mpd->fs_state = false;
 

@@ -316,7 +316,7 @@ create_main_content_box(interface *intf, Evas_Object *parent)
     elm_box_horizontal_set(intf->global_box, EINA_FALSE);
 
     /* Create both of the content_box subObjects */
-    intf->p_mini_player = mini_player_create(intf, intf->global_box);
+    intf->p_mini_player = mini_player_create(intf,application_get_playback_service(intf->p_app), intf->global_box);
     intf->nf_content = elm_naviframe_add(intf->global_box);
 
     /* Put the naviframe at the top of the content_box */
