@@ -38,6 +38,13 @@ extern "C"
 
 typedef void (*media_library_file_list_changed_cb)( void* p_user_data );
 typedef void (*media_library_list_cb)( Eina_List*, void *p_user_data );
+/**
+ * If the callback handles the item update, it is expected to return true to
+ * avoid calling potential other recipients that wouldn't have the file we're
+ * looking to update.
+ * There is no warranty about which thread will call this callback.
+ */
+typedef bool (*media_library_item_updated_cb)( void *p_user_data, const media_item* p_item );
 
 media_library*
 media_library_create(application* p_app);
@@ -63,7 +70,11 @@ media_library_register_on_change(media_library* ml, media_library_file_list_chan
 void
 media_library_unregister_on_change(media_library* ml, media_library_file_list_changed_cb cb, void* p_data);
 
+void
+media_library_register_item_updated(media_library* ml, media_library_item_updated_cb cb, void* p_data );
 
+void
+media_library_unregister_item_updated(media_library* ml, media_library_item_updated_cb cb, void* p_data );
 
 #ifdef __cplusplus
 }

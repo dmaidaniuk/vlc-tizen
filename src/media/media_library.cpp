@@ -73,6 +73,9 @@ public:
     void registerOnChange(media_library_file_list_changed_cb cb, void* cbUserData);
     void unregisterOnChange(media_library_file_list_changed_cb cb, void* cbUserData);
 
+    void registerOnItemUpdated(media_library_item_updated_cb cb, void* userData);
+    void unregisterOnItemUpdated(media_library_item_updated_cb cb, void* userData);
+
 public:
     std::unique_ptr<IMediaLibrary> ml;
     std::unique_ptr<TizenLogger> logger;
@@ -90,6 +93,7 @@ private:
     int m_nbElemChanged;
     std::mutex m_mutex;
     std::vector<std::pair<media_library_file_list_changed_cb, void*>> m_onChangeCb;
+    std::vector<std::pair<media_library_item_updated_cb, void*>> m_onItemUpdatedCb;
 };
 
 media_library::media_library()
@@ -118,7 +122,13 @@ media_library::onFileAdded( FilePtr file )
 void
 media_library::onFileUpdated( FilePtr file )
 {
-    LOGW("Ignoring [%s] update", file->mrl().c_str());
+    auto item = fileToMediaItem( file );
+    auto item_ptr = std::unique_ptr<media_item, void(*)(media_item*)> ( item, &media_item_destroy );
+    for ( auto& p : m_onItemUpdatedCb )
+    {
+        if ( p.first( p.second, item ) == true )
+            break;
+    }
 }
 
 void
@@ -167,6 +177,7 @@ media_library::unregisterOnChange(media_library_file_list_changed_cb cb, void* c
         }
     }
 }
+
 void
 media_library::onChange()
 {
@@ -176,6 +187,25 @@ media_library::onChange()
     }
 }
 
+void
+media_library::registerOnItemUpdated(media_library_item_updated_cb cb, void* userData)
+{
+    m_onItemUpdatedCb.emplace_back( cb, userData );
+}
+
+void
+media_library::unregisterOnItemUpdated(media_library_item_updated_cb cb, void* userData)
+{
+    auto ite = end(m_onItemUpdatedCb);
+    for (auto it = begin(m_onItemUpdatedCb); it != ite; ++it)
+    {
+        if ((*it).first == cb && (*it).second == cb)
+        {
+            m_onItemUpdatedCb.erase(it);
+            return;
+        }
+    }
+}
 
 media_library *
 media_library_create(application *p_app)
@@ -343,4 +373,16 @@ void
 media_library_unregister_on_change(media_library* ml, media_library_file_list_changed_cb cb, void* p_data)
 {
     ml->unregisterOnChange(cb, p_data);
+}
+
+void
+media_library_register_item_updated(media_library* ml, media_library_item_updated_cb cb, void* p_data )
+{
+    ml->registerOnItemUpdated(cb, p_data);
+}
+
+void
+media_library_unregister_item_updated(media_library* ml, media_library_item_updated_cb cb, void* p_data )
+{
+    ml->unregisterOnItemUpdated(cb, p_data);
 }
