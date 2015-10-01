@@ -156,10 +156,10 @@ ml_on_media_selected_cb(media_list *p_ml, void *p_user_data, unsigned int i_pos,
 
     if (p_ps->b_started)
     {
-        /* play new media */
-        playback_service_stop(p_ps);
         if (i_pos >= 0)
             playback_service_start(p_ps, 0);
+        else
+            playback_service_stop(p_ps);
     }
     PS_SEND_CALLBACK(pf_on_media_selected, i_pos, p_mi);
 }
@@ -335,9 +335,6 @@ int
 playback_service_start(playback_service *p_ps, double i_time)
 {
     media_item *p_mi;
-
-    if (p_ps->b_started)
-        return -1;
 
     p_mi = media_list_get_item(p_ps->p_ml);
     if (!p_mi || !p_mi->psz_path)
