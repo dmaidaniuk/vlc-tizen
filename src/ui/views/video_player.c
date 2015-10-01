@@ -183,6 +183,14 @@ evas_video_resize_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
     video_resize(data);
 }
 
+static void
+layout_touch_up_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+{
+    video_player *vd = data;
+
+    LOGF("layout_touch_up_cb");
+}
+
 Evas_Object*
 create_video_gui(playback_service *p_ps, Evas_Object *parent, const char* file_path)
 {
@@ -217,6 +225,8 @@ create_video_gui(playback_service *p_ps, Evas_Object *parent, const char* file_p
 
     evas_object_size_hint_weight_set(layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
     evas_object_size_hint_align_set(layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
+    evas_object_event_callback_add(layout, EVAS_CALLBACK_MOUSE_UP, layout_touch_up_cb, vd);
+    evas_object_event_callback_add(layout, EVAS_CALLBACK_MULTI_UP, layout_touch_up_cb, vd);
     evas_object_show(layout);
 
     /* */
