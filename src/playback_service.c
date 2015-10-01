@@ -106,7 +106,7 @@ ps_emotion_play_started_cb(void *data, Evas_Object *obj, void *event)
     playback_service *p_ps = data;
     media_item *p_mi = media_list_get_item(p_ps->p_ml);
 
-    for (unsigned int i = 0; EMOTION_META_INFO_TRACK_COUNT; ++i)
+    for (unsigned int i = 0; i < EMOTION_META_INFO_TRACK_COUNT; ++i)
         media_item_set_meta(p_mi, META_EMOTIOM_TO_MEDIA_ITEM[i],
                             emotion_object_meta_info_get(obj, i));
 
