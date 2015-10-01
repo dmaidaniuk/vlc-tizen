@@ -29,6 +29,9 @@
 
 #include "ui/interface.h"
 
+#define SETTINGS_TYPE_CATEGORY 0
+#define SETTINGS_TYPE_ITEM 1
+
 Evas_Object*
 create_setting_view(interface *, Evas_Object *parent);
 

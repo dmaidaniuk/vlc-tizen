@@ -44,21 +44,21 @@ typedef struct settings_item
 {
     const char* title;
     const char* icon;
-    int type; // 0: title - 1: item
+    int type;
 
 } settings_item_s;
 
 
 settings_item_s settings_menu[] =
 {
-        {"General",                     "",                                 0},
-        {"Directories",                 "ic_menu_folder.png",               1},
-        {"Material  acceleration",      "ic_menu_preferences.png",          1},
-        {"Subtitles text encoding",     "ic_browser_subtitle_normal.png",   1},
-        {"Video orientation",           "ic_menu_video.png",                1},
-        {"Extra settings",              "",                                 0},
-        {"Performances",                "ic_menu_preferences.png",          1},
-        {"Deblocking filter settings",  "ic_menu_preferences.png",          1}
+        {"General",                     "",                                 SETTINGS_TYPE_CATEGORY},
+        {"Directories",                 "ic_menu_folder.png",               SETTINGS_TYPE_ITEM},
+        {"Material  acceleration",      "ic_menu_preferences.png",          SETTINGS_TYPE_ITEM},
+        {"Subtitles text encoding",     "ic_browser_subtitle_normal.png",   SETTINGS_TYPE_ITEM},
+        {"Video orientation",           "ic_menu_video.png",                SETTINGS_TYPE_ITEM},
+        {"Extra settings",              "",                                 SETTINGS_TYPE_CATEGORY},
+        {"Performances",                "ic_menu_preferences.png",          SETTINGS_TYPE_ITEM},
+        {"Deblocking filter settings",  "ic_menu_preferences.png",          SETTINGS_TYPE_ITEM}
 };
 
 /* Create the setting submenu items */
@@ -411,7 +411,7 @@ create_setting_list(Evas_Object *parent)
         sd->index = index;
 
         /* Set and append headers items */
-        if (settings_menu[index].type == 0)
+        if (settings_menu[index].type == SETTINGS_TYPE_CATEGORY)
         {
             hit = elm_genlist_item_append(genlist,
                     hitc,                           /* genlist item class               */
@@ -424,7 +424,7 @@ create_setting_list(Evas_Object *parent)
             /* Put genlist item in the setting_data struct for callbacks */
             sd->item = hit;
         }
-        else if (settings_menu[index].type == 1)
+        else if (settings_menu[index].type == SETTINGS_TYPE_ITEM)
         {
             /* Set and append settings items */
             sd->index = index;
