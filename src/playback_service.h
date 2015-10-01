@@ -92,6 +92,9 @@ bool
 playback_service_is_playing(playback_service *p_ps);
 
 double
+playback_service_get_time(playback_service *p_ps);
+
+double
 playback_service_get_pos(playback_service *p_ps);
 
 double

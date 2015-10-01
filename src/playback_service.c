@@ -421,12 +421,23 @@ playback_service_is_playing(playback_service *p_ps)
 }
 
 double
-playback_service_get_pos(playback_service *p_ps)
+playback_service_get_time(playback_service *p_ps)
 {
     if (!p_ps->b_started)
         return 0.0;
 
     return emotion_object_position_get(p_ps->p_e);
+}
+
+double
+playback_service_get_pos(playback_service *p_ps)
+{
+    if (!p_ps->b_started)
+        return 0.0;
+
+    double i_time = emotion_object_position_get(p_ps->p_e);
+    double i_len = emotion_object_play_length_get(p_ps->p_e);
+    return (i_time > 0.0 && i_len > 0.0) ? i_time / i_len : 0.0;
 }
 
 double
