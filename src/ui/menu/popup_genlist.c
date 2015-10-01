@@ -37,12 +37,11 @@
 typedef struct popup_genlist_data
 {
     Evas_Object *parent;
+    Elm_Object_Item *item;
 
     popup_menu_item_s *menu_item;
     int index;
     int len;
-
-    Elm_Object_Item *item;
 
     Menu_item_callback cb;
     void *data;
@@ -91,6 +90,7 @@ popup_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
     popup_genlist_data_s *pgd = data;
 
+    // Redirect the callback to the given Menu_item_callback
     if (pgd->cb)
         pgd->cb(42, pgd->index, pgd->menu_item, pgd->parent, pgd->data);
 }
@@ -110,7 +110,7 @@ free_genlist_item_data(void *data, Evas_Object *obj, void *event_info)
 }
 
 Evas_Object *
-create_settings_popup_genlist(Evas_Object *parent, popup_menu_item_s *directory_menu, int len, Menu_item_callback cb, void *data)
+create_settings_popup_genlist(Evas_Object *parent, popup_menu_item_s *menu_item, int len, Menu_item_callback cb, void *data)
 {
     Evas_Object *genlist;
     Elm_Object_Item *it;
@@ -151,18 +151,18 @@ create_settings_popup_genlist(Evas_Object *parent, popup_menu_item_s *directory_
         /* Put the index and the gui_data in the cb_data struct for callbacks */
         pgd->index = index;
         pgd->parent = parent;
-        pgd->menu_item = directory_menu;
+        pgd->menu_item = menu_item;
         pgd->len = len;
         pgd->cb = cb;
         pgd->data = data;
 
         it = elm_genlist_item_append(genlist,
-                itc,                            /* genlist item class               */
-                pgd,                            /* genlist item class user data     */
-                NULL,                            /* genlist parent item              */
-                ELM_GENLIST_ITEM_NONE,            /* genlist item type                */
-                popup_selected_cb,                /* genlist select smart callback    */
-                pgd);                            /* genlist smart callback user data */
+                itc,                    /* genlist item class               */
+                pgd,                    /* genlist item class user data     */
+                NULL,                   /* genlist parent item              */
+                ELM_GENLIST_ITEM_NONE,  /* genlist item type                */
+                popup_selected_cb,      /* genlist select smart callback    */
+                pgd);                   /* genlist smart callback user data */
 
         eext_object_event_callback_add(pgd->parent, EEXT_CALLBACK_BACK, popup_selected_cb, pgd);
         elm_object_item_del_cb_set(it, free_genlist_item_data);
