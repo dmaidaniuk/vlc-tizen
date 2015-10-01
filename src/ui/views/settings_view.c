@@ -31,6 +31,8 @@
 #include "ui/menu/popup_genlist.h"
 #include "ui/utils.h"
 
+#include <app_preference.h>
+
 typedef struct setting_data
 {
     int index;
@@ -415,11 +417,11 @@ create_setting_list(Evas_Object *parent)
         {
             hit = elm_genlist_item_append(genlist,
                     hitc,                           /* genlist item class               */
-                    sd,                               /* genlist item class user data     */
+                    sd,                             /* genlist item class user data     */
                     NULL,                           /* genlist parent item              */
-                    ELM_GENLIST_ITEM_TREE,           /* genlist item type                */
+                    ELM_GENLIST_ITEM_TREE,          /* genlist item type                */
                     NULL,                           /* genlist select smart callback    */
-                    sd);                           /* genlist smart callback user data */
+                    sd);                            /* genlist smart callback user data */
 
             /* Put genlist item in the setting_data struct for callbacks */
             sd->item = hit;
@@ -430,10 +432,10 @@ create_setting_list(Evas_Object *parent)
             sd->index = index;
             it = elm_genlist_item_append(genlist,
                     itc,                           /* genlist item class               */
-                    sd,                               /* genlist item class user data     */
+                    sd,                            /* genlist item class user data     */
                     hit,                           /* genlist parent item              */
-                    ELM_GENLIST_ITEM_NONE,           /* genlist item type                */
-                    gl_selected_cb,                   /* genlist select smart callback    */
+                    ELM_GENLIST_ITEM_NONE,         /* genlist item type                */
+                    gl_selected_cb,                /* genlist select smart callback    */
                     sd);                           /* genlist smart callback user data */
 
             /* Put genlist item in the setting_data struct for callbacks */
