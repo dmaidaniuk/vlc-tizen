@@ -35,6 +35,7 @@
 
 typedef struct setting_data
 {
+    int id;
     int index;
     Elm_Object_Item *item;
     Evas_Object *parent;
@@ -44,6 +45,7 @@ typedef struct setting_data
 
 typedef struct settings_item
 {
+    int id;
     const char* title;
     const char* icon;
     int type;
@@ -53,14 +55,14 @@ typedef struct settings_item
 
 settings_item_s settings_menu[] =
 {
-        {"General",                     "",                                 SETTINGS_TYPE_CATEGORY},
-        {"Directories",                 "ic_menu_folder.png",               SETTINGS_TYPE_ITEM},
-        {"Material  acceleration",      "ic_menu_preferences.png",          SETTINGS_TYPE_ITEM},
-        {"Subtitles text encoding",     "ic_browser_subtitle_normal.png",   SETTINGS_TYPE_ITEM},
-        {"Video orientation",           "ic_menu_video.png",                SETTINGS_TYPE_ITEM},
-        {"Extra settings",              "",                                 SETTINGS_TYPE_CATEGORY},
-        {"Performances",                "ic_menu_preferences.png",          SETTINGS_TYPE_ITEM},
-        {"Deblocking filter settings",  "ic_menu_preferences.png",          SETTINGS_TYPE_ITEM}
+        {0,                             "General",                      "",                                 SETTINGS_TYPE_CATEGORY},
+        {SETTINGS_ID_DIRECTORIES,       "Directories",                  "ic_menu_folder.png",               SETTINGS_TYPE_ITEM},
+        {SETTINGS_ID_HWACCELERATION,    "Hardware acceleration",        "ic_menu_preferences.png",          SETTINGS_TYPE_ITEM},
+        {SETTINGS_ID_SUBSENC,           "Subtitles text encoding",      "ic_browser_subtitle_normal.png",   SETTINGS_TYPE_ITEM},
+        {SETTINGS_ID_VORIENTATION,      "Video orientation",            "ic_menu_video.png",                SETTINGS_TYPE_ITEM},
+        {0,                             "Extra settings",               "",                                 SETTINGS_TYPE_CATEGORY},
+        {SETTINGS_ID_PERFORMANCES,      "Performances",                 "ic_menu_preferences.png",          SETTINGS_TYPE_ITEM},
+        {SETTINGS_ID_DEBLOCKING,        "Deblocking filter settings",   "ic_menu_preferences.png",          SETTINGS_TYPE_ITEM}
 };
 
 /* Create the setting submenu items */
@@ -233,9 +235,9 @@ gl_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
     setting_data_s *sd = data;
 
-    switch(sd->index)
+    switch(sd->id)
     {
-    case 1:
+    case SETTINGS_ID_DIRECTORIES:
     {
         /* Create the directory popup list */
         Evas_Object *moulaf;
@@ -253,8 +255,7 @@ gl_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
         LOGI("l'index est %i", sd->index);
         break;
     }
-
-    case 2:
+    case SETTINGS_ID_HWACCELERATION:
     {
         /* Create the hardware acceleration popup list */
         Evas_Object *moulaf;
@@ -272,8 +273,7 @@ gl_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
         LOGI("l'index est %i", sd->index);
         break;
     }
-
-    case 3:
+    case SETTINGS_ID_SUBSENC:
     {
         /* Create the subtitles text encoding popup list */
         Evas_Object *moulaf;
@@ -292,9 +292,7 @@ gl_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 
         break;
     }
-
-    case 4:
-
+    case SETTINGS_ID_VORIENTATION:
     {
         /* Create the video orientation popup list */
         Evas_Object *moulaf;
@@ -312,9 +310,7 @@ gl_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 
         break;
     }
-
-    case 6:
-
+    case SETTINGS_ID_PERFORMANCES:
     {
         /* Create the performance popup list */
         Evas_Object *moulaf;
@@ -332,9 +328,7 @@ gl_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 
         break;
     }
-
-    case 7:
-
+    case SETTINGS_ID_DEBLOCKING:
     {
         /* Create the deblocking filter popup list */
         Evas_Object *moulaf;
@@ -352,7 +346,6 @@ gl_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 
         break;
     }
-
     }
 }
 
@@ -411,6 +404,7 @@ create_setting_list(Evas_Object *parent)
 
         /* Put the index in the setting_data struct for callbacks */
         sd->index = index;
+        sd->id = settings_menu[index].id;
 
         /* Set and append headers items */
         if (settings_menu[index].type == SETTINGS_TYPE_CATEGORY)
