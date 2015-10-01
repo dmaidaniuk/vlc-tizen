@@ -41,7 +41,6 @@ struct mini_player {
     bool visible_state;
     bool save_state, shuffle_state, playlist_state, more_state, fs_state;
     int repeat_state;
-    double len, pos;
     Evas_Object *parent, *table, *fs_table, *popup;
     Evas_Object *mini_player_box, *box, *fullscreen_box;
     Evas_Object *slider, *fs_slider;
@@ -100,13 +99,12 @@ evas_change_time(Evas_Object *obj, double time)
 
 
 static void
-player_update_sliders(mini_player *mpd)
+player_update_sliders(mini_player *mpd, double i_pos)
 {
-    double progress = (mpd->pos > 0.0 && mpd->len > 0.0) ? mpd->pos / mpd->len : 0.0;
     if (mpd->slider)
-        elm_slider_value_set (mpd->slider, progress);
+        elm_slider_value_set (mpd->slider, i_pos);
     if (mpd->fs_slider)
-        elm_slider_value_set (mpd->fs_slider, progress);
+        elm_slider_value_set (mpd->fs_slider, i_pos);
 }
 
 static Evas_Object*
@@ -275,7 +273,6 @@ create_audio_popup(mini_player *mpd)
 static void
 mini_player_reset_states(mini_player *mpd)
 {
-    mpd->len = mpd->pos = 0.0;
     mpd->fs_state = false;
     mpd->save_state = false;
     mpd->shuffle_state = false;
@@ -606,9 +603,6 @@ slider_delay_changed_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUS
 {
     mini_player *mpd = data;
 
-    if (mpd->len <= 0)
-        return;
-
     playback_service_seek_pos(mpd->p_ps, elm_slider_value_get(obj));
 }
 
@@ -657,7 +651,7 @@ swallow_mini_player(mini_player *mpd, Evas_Object *parent)
     elm_slider_horizontal_set(mpd->slider, EINA_TRUE);
     elm_object_part_content_set(layout, "swallow.progress", mpd->slider);
     set_sliders_callbacks(mpd, mpd->slider);
-    player_update_sliders(mpd);
+    player_update_sliders(mpd, playback_service_get_pos(mpd->p_ps));
 
 
     /* set the cover image */
@@ -821,7 +815,11 @@ add_fullscreen_item_table(mini_player *mpd, Evas_Object *parent)
     elm_table_pack(mpd->fs_table, fs_slider, 0, 5, 6, 1);
     mpd->fs_slider = fs_slider;
     set_sliders_callbacks(mpd, mpd->fs_slider);
-    player_update_sliders(mpd);
+    double i_pos = playback_service_get_pos(mpd->p_ps);
+    double i_time = playback_service_get_time(mpd->p_ps);
+    double i_len = playback_service_get_len(mpd->p_ps);
+
+    player_update_sliders(mpd, i_pos);
 
     /* */
     update_player_play_pause(mpd);
@@ -836,7 +834,7 @@ add_fullscreen_item_table(mini_player *mpd, Evas_Object *parent)
 
     /* */
     mpd->fs_time = elm_label_add(parent);
-    evas_change_time(mpd->fs_time, mpd->pos);
+    evas_change_time(mpd->fs_time, i_time);
     evas_object_size_hint_min_set(mpd->fs_time, 100, 25);
     evas_object_size_hint_max_set(mpd->fs_time, 100, 25);
     evas_object_size_hint_align_set(mpd->fs_time, 1.0, 0.5);
@@ -847,7 +845,7 @@ add_fullscreen_item_table(mini_player *mpd, Evas_Object *parent)
 
     /* */
     mpd->fs_total_time = elm_label_add(parent);
-    evas_change_time(mpd->fs_total_time, mpd->len);
+    evas_change_time(mpd->fs_total_time, i_len);
     evas_object_size_hint_min_set(mpd->fs_total_time, 100, 25);
     evas_object_size_hint_max_set(mpd->fs_total_time, 100, 25);
     evas_object_size_hint_align_set(mpd->fs_total_time, 0.0, 0.5);
@@ -951,20 +949,17 @@ ps_on_new_time_cb(playback_service *p_ps, void *p_user_data, double i_time, doub
 {
     mini_player *mpd = p_user_data;
 
-    mpd->pos = i_time;
     if (mpd->fs_time)
-        evas_change_time(mpd->fs_time, mpd->pos);
-    player_update_sliders(mpd);
+        evas_change_time(mpd->fs_time, i_time);
+    player_update_sliders(mpd, i_pos);
 }
 
 static void
 ps_on_new_len_cb(playback_service *p_ps, void *p_user_data, double i_len)
 {
     mini_player *mpd = p_user_data;
-    mpd->len = i_len;
     if (mpd->fs_total_time)
-        evas_change_time(mpd->fs_total_time, mpd->len);
-    player_update_sliders(mpd);
+        evas_change_time(mpd->fs_total_time, i_len);
 }
 
 static void
