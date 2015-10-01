@@ -35,7 +35,6 @@
 typedef struct video_player
 {
     playback_service *p_ps;
-    media_list *p_ml;
 
     /* Widgets */
     Evas_Object *play_pause_button, *progress_slider;
@@ -163,10 +162,9 @@ create_video_gui(playback_service *p_ps, Evas_Object *parent, const char* file_p
 
     LOGE("playback_service_start: %s", p_mi->psz_path);
     playback_service_set_context(vd->p_ps, PLAYLIST_CONTEXT_VIDEO);
-    vd->p_ml = playback_service_get_ml(vd->p_ps);
 
-    media_list_clear(vd->p_ml);
-    media_list_append(vd->p_ml, p_mi);
+    playback_service_list_clear(vd->p_ps);
+    playback_service_list_append(vd->p_ps, p_mi);
     playback_service_start(vd->p_ps);
 
     return layout;

@@ -26,7 +26,7 @@
 #define PLAYBACK_SERVICE_H
 
 #include "application.h"
-#include "media/media_list.h"
+#include "media/media_item.h"
 
 enum PLAYLIST_CONTEXT {
     PLAYLIST_CONTEXT_AUDIO,
@@ -37,6 +37,9 @@ enum PLAYLIST_CONTEXT {
 typedef struct playback_service_callbacks playback_service_callbacks;
 struct playback_service_callbacks
 {
+    void (*pf_on_media_added)(playback_service *p_ps, void *p_user_data, unsigned int i_pos, media_item *p_mi);
+    void (*pf_on_media_removed)(playback_service *p_ps, void *p_user_data, unsigned int i_pos, media_item *p_mi);
+    void (*pf_on_media_selected)(playback_service *p_ps, void *p_user_data, unsigned int i_pos, media_item *p_mi);
     void (*pf_on_started)(playback_service *p_ps, void *p_user_data, media_item *p_mi);
     void (*pf_on_stopped)(playback_service *p_ps, void *p_user_data, media_item *p_mi);
     void (*pf_on_new_len)(playback_service *p_ps, void *p_user_data, double i_len);
@@ -54,9 +57,6 @@ playback_service_destroy(playback_service *p_ps);
 
 int
 playback_service_set_context(playback_service *p_ps, enum PLAYLIST_CONTEXT i_ctx);
-
-media_list *
-playback_service_get_ml(playback_service *p_ps);
 
 void *
 playback_service_register_callbacks(playback_service *p_ps, playback_service_callbacks *p_cbs);
@@ -109,5 +109,43 @@ playback_service_seek_forward(playback_service *p_ps);
 int
 playback_service_seek_backward(playback_service *p_ps);
 
+int
+playback_service_list_insert(playback_service *p_ps, int i_index, media_item *p_mi);
+
+static inline int
+playback_service_list_append(playback_service *p_ps, media_item *p_mi)
+{
+    return playback_service_list_insert(p_ps, -1, p_mi);
+}
+
+int
+playback_service_list_remove(playback_service *p_ps, media_item *p_mi);
+
+int
+playback_service_list_remove_index(playback_service *p_ps, unsigned int i_index);
+
+void
+playback_service_list_clear(playback_service *p_ps);
+
+unsigned int
+playback_service_list_get_count(playback_service *p_ps);
+
+unsigned int
+playback_service_list_get_pos(playback_service *p_ps);
+
+void
+playback_service_list_set_pos(playback_service *p_ps, unsigned int i_index);
+
+void
+playback_service_list_set_next(playback_service *p_ps);
+
+void
+playback_service_list_set_prev(playback_service *p_ps);
+
+media_item *
+playback_service_list_get_item(playback_service *p_ps);
+
+media_item *
+playback_service_list_get_item_at(playback_service *p_ps,  unsigned int i_index);
 
 #endif /* PLAYBACK_SERVICE_H */

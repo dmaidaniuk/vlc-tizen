@@ -28,6 +28,8 @@
 #include <Emotion.h>
 
 #include "playback_service.h"
+#include "media/media_list.h"
+
 #include "ui/interface.h"
 
 #define PLAYLIST_CONTEXT_COUNT (PLAYLIST_CONTEXT_OTHERS + 1)
@@ -116,6 +118,24 @@ ps_emotion_play_finished_cb(void *data, Evas_Object *obj, void *event)
 }
 
 static void
+ml_on_media_added_cb(media_list *p_ml, void *p_user_data, unsigned int i_pos,
+                     media_item *p_mi)
+{
+    playback_service *p_ps = p_user_data;
+
+    PS_SEND_CALLBACK(pf_on_media_added, i_pos, p_mi);
+}
+
+static void
+ml_on_media_removed_cb(media_list *p_ml, void *p_user_data, unsigned int i_pos,
+                        media_item *p_mi)
+{
+    playback_service *p_ps = p_user_data;
+
+    PS_SEND_CALLBACK(pf_on_media_removed, i_pos, p_mi);
+}
+
+static void
 ml_on_media_selected_cb(media_list *p_ml, void *p_user_data, unsigned int i_pos,
                         media_item *p_mi)
 {
@@ -130,6 +150,7 @@ ml_on_media_selected_cb(media_list *p_ml, void *p_user_data, unsigned int i_pos,
         if (i_pos >= 0)
             playback_service_start(p_ps);
     }
+    PS_SEND_CALLBACK(pf_on_media_selected, i_pos, p_mi);
 }
 
 static Evas_Object *
@@ -179,8 +200,8 @@ playback_service_create(application *p_app, interface *p_intf)
     for (unsigned int i = 0; i < PLAYLIST_CONTEXT_COUNT; ++i)
     {
         media_list_callbacks cbs = {
-                .pf_on_media_added = NULL,
-                .pf_on_media_removed = NULL,
+                .pf_on_media_added = ml_on_media_added_cb,
+                .pf_on_media_removed = ml_on_media_removed_cb,
                 .pf_on_media_selected = ml_on_media_selected_cb,
                 .p_user_data = p_ps,
         };
@@ -244,12 +265,6 @@ playback_service_set_context(playback_service *p_ps, enum PLAYLIST_CONTEXT i_ctx
     playback_service_stop(p_ps);
     p_ps->p_ml = p_ps->p_ml_list[i_ctx];
     return 0;
-}
-
-media_list *
-playback_service_get_ml(playback_service *p_ps)
-{
-    return p_ps->p_ml;
 }
 
 void *
@@ -453,4 +468,70 @@ playback_service_seek_backward(playback_service *p_ps)
     emotion_object_position_set(p_ps->p_e, i_time - 5);
     p_ps->b_seeking = true;
     return 0;
+}
+
+int
+playback_service_list_insert(playback_service *p_ps, int i_index, media_item *p_mi)
+{
+    return media_list_insert(p_ps->p_ml, i_index, p_mi);
+}
+
+int
+playback_service_list_remove(playback_service *p_ps, media_item *p_mi)
+{
+    return media_list_remove(p_ps->p_ml, p_mi);
+}
+
+int
+playback_service_list_remove_index(playback_service *p_ps, unsigned int i_index)
+{
+    return media_list_remove_index(p_ps->p_ml, i_index);
+}
+
+void
+playback_service_list_clear(playback_service *p_ps)
+{
+    return media_list_clear(p_ps->p_ml);
+}
+
+unsigned int
+playback_service_list_get_count(playback_service *p_ps)
+{
+    return media_list_get_count(p_ps->p_ml);
+}
+
+unsigned int
+playback_service_list_get_pos(playback_service *p_ps)
+{
+    return media_list_get_pos(p_ps->p_ml);
+}
+
+void
+playback_service_list_set_pos(playback_service *p_ps, unsigned int i_index)
+{
+    media_list_set_pos(p_ps->p_ml, i_index);
+}
+
+void
+playback_service_list_set_next(playback_service *p_ps)
+{
+    media_list_set_next(p_ps->p_ml);
+}
+
+void
+playback_service_list_set_prev(playback_service *p_ps)
+{
+    media_list_set_prev(p_ps->p_ml);
+}
+
+media_item *
+playback_service_list_get_item(playback_service *p_ps)
+{
+    return media_list_get_item(p_ps->p_ml);
+}
+
+media_item *
+playback_service_list_get_item_at(playback_service *p_ps,  unsigned int i_index)
+{
+    return media_list_get_item_at(p_ps->p_ml, i_index);
 }
