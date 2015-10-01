@@ -78,7 +78,7 @@ app_create(void *data)
     media_library_discover( app->p_mediaLibrary, application_get_media_path( app, MEDIA_DIRECTORY_MUSIC ) );
 
     /* */
-    app->p_ps = playback_service_create(app, app->p_intf);
+    app->p_ps = playback_service_create(app);
     if (!app->p_ps)
         goto error;
 

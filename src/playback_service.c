@@ -52,6 +52,7 @@ struct playback_service
     Evas_Object *p_ea;  /* emotion audio */
     Evas_Object *p_ev;  /* emotion video */
     Evas_Object *p_e;   /* emotion audio or video */
+    Evas *p_ea_evas;
     Eina_List *p_cbs_list;
 
     bool b_started;
@@ -197,7 +198,7 @@ ps_emotion_create(playback_service *p_ps, Evas *p_evas, bool b_mute_video)
 }
 
 playback_service *
-playback_service_create(application *p_app, interface *p_intf)
+playback_service_create(application *p_app)
 {
     playback_service *p_ps = calloc(1, sizeof(playback_service));
     if (!p_ps)
@@ -220,10 +221,14 @@ playback_service_create(application *p_app, interface *p_intf)
 
     p_ps->p_ml = p_ps->p_ml_list[PLAYLIST_CONTEXT_AUDIO];
 
-    emotion_init();
-    p_ps->p_ea = ps_emotion_create(p_ps, intf_get_window(p_intf), true);
+    p_ps->p_ea_evas = evas_new();
+    if (!p_ps->p_ea_evas)
+        goto error;
+
+    p_ps->p_ea = ps_emotion_create(p_ps, p_ps->p_ea_evas, true);
     if (!p_ps->p_ea)
         goto error;
+    p_ps->p_e = p_ps->p_ea;
 
     return p_ps;
 
@@ -254,8 +259,8 @@ playback_service_destroy(playback_service *p_ps)
         evas_object_del(p_ps->p_ea);
     if (p_ps->p_ev)
         evas_object_del(p_ps->p_ev);
-
-    emotion_shutdown();
+    if (p_ps->p_ea_evas)
+        evas_free(p_ps->p_ea_evas);
 
     free(p_ps);
 }

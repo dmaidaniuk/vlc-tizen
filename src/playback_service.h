@@ -50,7 +50,7 @@ struct playback_service_callbacks
 };
 
 playback_service *
-playback_service_create(application *p_app, interface *p_intf);
+playback_service_create(application *p_app);
 
 void
 playback_service_destroy(playback_service *p_ps);
