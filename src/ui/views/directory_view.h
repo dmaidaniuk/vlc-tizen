@@ -27,7 +27,9 @@
 #ifndef VIDEO_VIEW_H_
 #define VIDEO_VIEW_H_
 
+#include "ui/interface.h"
+
 Evas_Object*
-create_directory_view(const char* path, Evas_Object *parent);
+create_directory_view(interface *intf, const char* path, Evas_Object *parent);
 
 #endif /* VIDEO_VIEW_H_ */

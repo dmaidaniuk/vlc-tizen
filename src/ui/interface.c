@@ -279,7 +279,7 @@ intf_create_view(interface *intf, int view_type)
         view = create_audio_view(intf, nf_content);
         break;
     case VIEW_FILES:
-        view = create_directory_view(application_get_media_path(intf->p_app, MEDIA_DIRECTORY), nf_content);
+        view = create_directory_view(intf, application_get_media_path(intf->p_app, MEDIA_DIRECTORY), nf_content);
         break;
     case VIEW_SETTINGS:
         view = create_setting_view(nf_content);
