@@ -66,6 +66,7 @@ public:
     media_library();
 
     // IMediaLibraryCb
+    virtual void onFileAdded( FilePtr file ) override;
     virtual void onFileUpdated( FilePtr file ) override;
 
     virtual void onDiscoveryStarted( const std::string& entryPoint ) override;
@@ -100,7 +101,7 @@ media_library::media_library()
 }
 
 void
-media_library::onFileUpdated( FilePtr file )
+media_library::onFileAdded( FilePtr file )
 {
     //FIXME: This seems fishy if no discovery is in progress and some media gets updated.
     //This is very unlikely to happen for a while though.
@@ -108,9 +109,16 @@ media_library::onFileUpdated( FilePtr file )
     std::unique_lock<std::mutex> lock( m_mutex );
     if ( ++m_nbElemChanged >= 50 )
     {
+        LOGI("Enough changes to trigger an update.");
         ecore_main_loop_thread_safe_call_async( fileListChangedCb, cbUserData );
         m_nbElemChanged = 0;
     }
+}
+
+void
+media_library::onFileUpdated( FilePtr file )
+{
+    LOGW("Ignoring [%s] update", file->mrl().c_str());
 }
 
 void
@@ -186,8 +194,6 @@ media_library_discover( media_library* p_ml, const char* psz_location )
 static media_item*
 fileToMediaItem( FilePtr file )
 {
-    if ( file->isReady() == false )
-        return nullptr;
     auto type = MEDIA_ITEM_TYPE_UNKNOWN;
     switch ( file->type() )
     {
@@ -210,6 +216,10 @@ fileToMediaItem( FilePtr file )
         LOGE( "Failed to create media_item for file %s", file->mrl().c_str() );
         return nullptr;
     }
+    // If the file hasn't been parsed yet, there's no change we can do something
+    // usefull past this point, we will try again after onFileUpdated gets called.
+    if ( file->isParsed() == false )
+        return mi;
     mi->i_duration = file->duration();
     if ( file->type() == IFile::Type::VideoType )
     {
