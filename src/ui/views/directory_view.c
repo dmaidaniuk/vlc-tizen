@@ -66,7 +66,7 @@ free_list_item_data(void *data, Evas_Object *obj, void *event_info)
     /* For example when the player is launched or a new list is created */
     free(dd->file_path);
     LOGD("Path free");
-
+    free(dd);
 }
 
 Evas_Object*
