@@ -286,7 +286,7 @@ intf_show_view(interface *intf, int view_type)
             view = create_directory_view(intf, nf_content);
             break;
         case VIEW_SETTINGS:
-            view = create_setting_view(nf_content);
+            view = create_setting_view(intf, nf_content);
             break;
         case VIEW_ABOUT:
             view = create_about_view(nf_content);

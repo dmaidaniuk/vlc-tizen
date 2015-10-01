@@ -451,7 +451,7 @@ create_setting_list(Evas_Object *parent)
 }
 
 Evas_Object*
-create_setting_view(Evas_Object *parent)
+create_setting_view(interface *intf, Evas_Object *parent)
 {
     return create_setting_list(parent);
 }

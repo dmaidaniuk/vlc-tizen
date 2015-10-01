@@ -27,7 +27,9 @@
 #ifndef SETTINGS_VIEW_H_
 #define SETTINGS_VIEW_H_
 
+#include "ui/interface.h"
+
 Evas_Object*
-create_setting_view(Evas_Object *parent);
+create_setting_view(interface *, Evas_Object *parent);
 
 #endif /* SETTINGS_VIEW_H_ */
