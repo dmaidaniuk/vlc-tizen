@@ -233,21 +233,19 @@ gl_longpressed_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev
 static void
 gl_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
+    Evas_Object *list;
     setting_data *sd = data;
 
     switch(sd->id)
     {
     case SETTINGS_ID_DIRECTORIES:
     {
-        /* Create the directory popup list */
-        Evas_Object *moulaf;
-        /* */
         Evas_Object *popup = elm_popup_add(sd->parent);
 
         /* Add the more list in the popup */
-        moulaf = create_settings_popup_genlist(popup, directory_menu, 2);
-        elm_object_content_set(popup, moulaf);
-        evas_object_show(moulaf);
+        list = create_settings_popup_genlist(popup, directory_menu, 2);
+        elm_object_content_set(popup, list);
+        evas_object_show(list);
         /* */
         evas_object_show(popup);
 
@@ -255,15 +253,12 @@ gl_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
     }
     case SETTINGS_ID_HWACCELERATION:
     {
-        /* Create the hardware acceleration popup list */
-        Evas_Object *moulaf;
-        /* */
         Evas_Object *popup = elm_popup_add(sd->parent);
 
         /* Add the more list in the popup */
-        moulaf = create_settings_popup_genlist(popup, material_acceleration_menu, 4);
-        elm_object_content_set(popup, moulaf);
-        evas_object_show(moulaf);
+        list = create_settings_popup_genlist(popup, material_acceleration_menu, 4);
+        elm_object_content_set(popup, list);
+        evas_object_show(list);
         /* */
         evas_object_show(popup);
 
@@ -271,15 +266,12 @@ gl_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
     }
     case SETTINGS_ID_SUBSENC:
     {
-        /* Create the subtitles text encoding popup list */
-        Evas_Object *moulaf;
-        /* */
         Evas_Object *popup = elm_popup_add(sd->parent);
 
         /* Add the more list in the popup */
-        moulaf = create_settings_popup_genlist(popup, subtitles_text_encoding_menu, 41);
-        elm_object_content_set(popup, moulaf);
-        evas_object_show(moulaf);
+        list = create_settings_popup_genlist(popup, subtitles_text_encoding_menu, 41);
+        elm_object_content_set(popup, list);
+        evas_object_show(list);
         /* */
         evas_object_show(popup);
 
@@ -287,15 +279,12 @@ gl_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
     }
     case SETTINGS_ID_VORIENTATION:
     {
-        /* Create the video orientation popup list */
-        Evas_Object *moulaf;
-        /* */
         Evas_Object *popup = elm_popup_add(sd->parent);
 
         /* Add the more list in the popup */
-        moulaf = create_settings_popup_genlist(popup, video_orientation_menu, 6);
-        elm_object_content_set(popup, moulaf);
-        evas_object_show(moulaf);
+        list = create_settings_popup_genlist(popup, video_orientation_menu, 6);
+        elm_object_content_set(popup, list);
+        evas_object_show(list);
         /* */
         evas_object_show(popup);
 
@@ -303,15 +292,12 @@ gl_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
     }
     case SETTINGS_ID_PERFORMANCES:
     {
-        /* Create the performance popup list */
-        Evas_Object *moulaf;
-        /* */
         Evas_Object *popup = elm_popup_add(sd->parent);
 
         /* Add the more list in the popup */
-        moulaf = create_settings_popup_genlist(popup, performance_menu, 2);
-        elm_object_content_set(popup, moulaf);
-        evas_object_show(moulaf);
+        list = create_settings_popup_genlist(popup, performance_menu, 2);
+        elm_object_content_set(popup, list);
+        evas_object_show(list);
         /* */
         evas_object_show(popup);
 
@@ -319,15 +305,12 @@ gl_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
     }
     case SETTINGS_ID_DEBLOCKING:
     {
-        /* Create the deblocking filter popup list */
-        Evas_Object *moulaf;
-        /* */
         Evas_Object *popup = elm_popup_add(sd->parent);
 
         /* Add the more list in the popup */
-        moulaf = create_settings_popup_genlist(popup, deblocking_filter_settings_menu, 5);
-        elm_object_content_set(popup, moulaf);
-        evas_object_show(moulaf);
+        list = create_settings_popup_genlist(popup, deblocking_filter_settings_menu, 5);
+        elm_object_content_set(popup, list);
+        evas_object_show(list);
         /* */
         evas_object_show(popup);
 
