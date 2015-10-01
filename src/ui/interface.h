@@ -64,18 +64,27 @@ intf_show_previous_view(interface *);
 void
 intf_create_video_player(interface *, const char *psz_path);
 
-mini_player *
-intf_get_mini_player(interface *);
+void
+intf_create_audio_player(interface *, const char *psz_path);
+
+/* Mini Player */
+bool
+intf_mini_player_visible_get(interface *);
+
+bool
+intf_mini_player_visible_set(interface *intf, bool visible);
 
 void
 intf_update_mini_player(interface *);
 
+/* Other */
 Evas_Object *
 intf_get_root_box(interface *intf);
 
 Evas_Object *
 intf_get_main_naviframe(interface *intf);
 
+/* Media Library */
 void
 intf_register_file_changed(interface *intf, view_e type,
         media_library_file_list_changed_cb cb, void* p_user_data);

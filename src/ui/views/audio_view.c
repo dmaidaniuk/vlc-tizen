@@ -78,7 +78,7 @@ genlist_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
     if (S_ISREG(sb.st_mode))
     {
         /* Launch the media player */
-        create_base_player(intf_get_mini_player(ali->p_av->p_intf), ali->p_media_item->psz_path);
+        intf_create_audio_player(ali->p_av->p_intf, ali->p_media_item->psz_path);
         LOGI("VLC Player launch");
     }
 

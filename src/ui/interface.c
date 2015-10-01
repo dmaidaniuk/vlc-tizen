@@ -61,7 +61,10 @@ struct interface {
     Evas_Object *popup_toggle_btn;
     Evas_Object *popup;
 
+    /* */
     mini_player *p_mini_player;
+    Evas_Object *mini_player_box;
+
     application *p_app;
 };
 
@@ -119,7 +122,7 @@ win_back_key_cb(void *data, Evas_Object *obj, void *event_info)
             collapse_fullscreen_player(intf->p_mini_player);
     }
     /* And then the mini player */
-    else if (mini_player_visibility_state(intf->p_mini_player) == true){
+    else if (intf_mini_player_visible_get(intf) == true){
             LOGD("mini player visible");
             mini_player_stop(intf->p_mini_player);
     }
@@ -153,31 +156,13 @@ intf_show_previous_view(interface *intf)
     elm_naviframe_item_pop(intf->nf_content);
 }
 
-void
-intf_update_mini_player(interface *intf)
-{
-    if((mini_player_play_state(intf->p_mini_player) == true) && (mini_player_visibility_state(intf->p_mini_player) == false))
-    {
-        mini_player_show(intf->p_mini_player);
-    }
 
-    if((mini_player_play_state(intf->p_mini_player) == false) && (mini_player_fs_state(intf->p_mini_player) == true))
-    {
-        mini_player_stop(intf->p_mini_player);
-    }
-}
 
 /* GETTERS */
 application *
 intf_get_application(interface *p_intf)
 {
     return p_intf->p_app;
-}
-
-mini_player *
-intf_get_mini_player(interface *p_intf)
-{
-    return p_intf->p_mini_player;
 }
 
 Evas_Object*
@@ -292,6 +277,65 @@ intf_create_video_player(interface *intf, const char *psz_path)
     LOGI("Video Player started");
 }
 
+
+bool
+intf_mini_player_visible_get(interface *intf)
+{
+    if(intf->mini_player_box == NULL) {
+        LOGE("Mini Player not existant!");
+        return false;
+    }
+
+    return evas_object_visible_get(intf->mini_player_box);
+}
+
+bool
+intf_mini_player_visible_set(interface *intf, bool visible)
+{
+    if(intf->mini_player_box == NULL)
+    {
+        LOGE("Mini Player not existant!");
+        return false;
+    }
+    if(visible)
+    {
+        /* show */
+        elm_box_pack_end(intf->global_box, intf->mini_player_box);
+        evas_object_show(intf->mini_player_box);
+        elm_box_recalculate(intf->global_box);
+    }
+    else
+    {
+        elm_box_unpack(intf->global_box, intf->mini_player_box);
+        evas_object_hide(intf->mini_player_box);
+        elm_box_recalculate(intf->global_box);
+    }
+    evas_object_image_source_visible_set(intf->mini_player_box, visible);
+    return true;
+}
+
+//FIXME REMOVE
+void
+intf_update_mini_player(interface *intf)
+{
+    if((mini_player_play_state(intf->p_mini_player) == true) && (intf_mini_player_visible_get(intf) == false))
+    {
+        intf_mini_player_visible_set(intf, true);
+    }
+
+    if((mini_player_play_state(intf->p_mini_player) == false) && (mini_player_fs_state(intf->p_mini_player) == true))
+    {
+        mini_player_stop(intf->p_mini_player);
+    }
+}
+
+void
+intf_create_audio_player(interface *intf, const char *psz_path)
+{
+    create_base_player(intf->p_mini_player, psz_path);
+
+}
+
 static Evas_Object*
 create_main_content_box(interface *intf, Evas_Object *parent)
 {
@@ -299,16 +343,19 @@ create_main_content_box(interface *intf, Evas_Object *parent)
     intf->global_box = elm_box_add(parent);
     elm_box_horizontal_set(intf->global_box, EINA_FALSE);
 
-    /* Create both of the content_box subObjects */
-    intf->p_mini_player = mini_player_create(intf,application_get_playback_service(intf->p_app), intf->global_box);
+    /* Main View Naviframe */
     intf->nf_content = elm_naviframe_add(intf->global_box);
 
     /* Put the naviframe at the top of the content_box */
     evas_object_size_hint_align_set(intf->nf_content, EVAS_HINT_FILL, 0.0);
     evas_object_size_hint_weight_set(intf->nf_content, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 
-    /* Add the content naviframe in the content_box */
+    /* */
     elm_box_pack_end(intf->global_box, intf->nf_content);
+
+    /* Create both of the content_box subObjects */
+    intf->p_mini_player = mini_player_create(intf, application_get_playback_service(intf->p_app), intf->global_box, &intf->mini_player_box);
+    evas_object_hide(intf->mini_player_box);
 
     /* Correct expansion of the NaviFrame */
     evas_object_size_hint_weight_set(intf->nf_content, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);

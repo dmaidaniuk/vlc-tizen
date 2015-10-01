@@ -38,7 +38,6 @@ struct mini_player {
     playback_service *p_ps;
     playback_service_cbs_id *p_ps_cbs_id;
 
-    bool visible_state;
     bool save_state, shuffle_state, playlist_state, more_state, fs_state;
     int repeat_state;
 
@@ -77,44 +76,6 @@ const char *audio_popup_icon_names[] = {
         "jumpto", "speed", "sleep"
 };
 
-static void
-time_to_string(char *psz_time, double time)
-{
-    int sec = ((int)time % 60);
-    time /= 60;
-    int min = ((int)time % 60);
-    time /= 60;
-    int hours = (int) time;
-
-    if (hours)
-        sprintf(psz_time, "%2.2d:%2.2d:%2.2d", hours, min, sec);
-    else
-        sprintf(psz_time, "%2.2d:%2.2d", min, sec);
-}
-
-static void
-evas_change_time(Evas_Object *obj, double time)
-{
-    char psz_time[strlen("00:00:00")];
-    time_to_string(psz_time, time);
-    elm_object_text_set(obj, psz_time);
-}
-
-
-static void
-player_update_sliders(mini_player *mpd, double i_pos)
-{
-    if (mpd->slider)
-        elm_slider_value_set (mpd->slider, i_pos);
-    if (mpd->fs_slider)
-        elm_slider_value_set (mpd->fs_slider, i_pos);
-}
-
-static Evas_Object*
-create_icon(Evas_Object *parent, int count)
-{
-    return create_image(parent, audio_popup_icon_names[count]);
-}
 
 static char *
 gl_text_get_cb(void *data, Evas_Object *obj, const char *part)
@@ -148,7 +109,7 @@ gl_content_get_cb(void *data, Evas_Object *obj, const char *part)
         if (part && !strcmp(part, "elm.icon.1")) {
             content = elm_layout_add(obj);
             elm_layout_theme_set(content, "layout", "list/B/type.3", "default");
-            Evas_Object *icon = create_icon(content, apd->index);
+            Evas_Object *icon = create_image(content, audio_popup_icon_names[apd->index]);
             elm_layout_content_set(content, "elm.swallow.content", icon);
         }
     }
@@ -212,7 +173,6 @@ popup_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 static Evas_Object *
 create_audio_popup(mini_player *mpd)
 {
-
     Evas_Object *genlist;
     Elm_Object_Item *it;
 
@@ -272,6 +232,43 @@ create_audio_popup(mini_player *mpd)
 }
 
 
+/////////////////////////////////////////////////////////
+
+
+static void
+time_to_string(char *psz_time, double time)
+{
+    int sec = ((int)time % 60);
+    time /= 60;
+    int min = ((int)time % 60);
+    time /= 60;
+    int hours = (int) time;
+
+    if (hours)
+        sprintf(psz_time, "%2.2d:%2.2d:%2.2d", hours, min, sec);
+    else
+        sprintf(psz_time, "%2.2d:%2.2d", min, sec);
+}
+
+static void
+evas_change_time(Evas_Object *obj, double time)
+{
+    char psz_time[strlen("00:00:00")];
+    time_to_string(psz_time, time);
+    elm_object_text_set(obj, psz_time);
+}
+
+
+static void
+player_update_sliders(mini_player *mpd, double i_pos)
+{
+    if (mpd->slider)
+        elm_slider_value_set (mpd->slider, i_pos);
+    if (mpd->fs_slider)
+        elm_slider_value_set (mpd->fs_slider, i_pos);
+}
+
+
 
 static void
 mini_player_reset_states(mini_player *mpd)
@@ -282,13 +279,6 @@ mini_player_reset_states(mini_player *mpd)
     mpd->playlist_state = false;
     mpd->more_state = false;
     mpd->repeat_state = 0;
-}
-
-bool
-mini_player_visibility_state(mini_player *mpd)
-{
-    /* Return the current visibility state*/
-    return mpd->visible_state;
 }
 
 bool
@@ -339,40 +329,13 @@ mini_player_fs_state(mini_player *mp)
     return mp->fs_state;
 }
 
-void
-mini_player_show(mini_player *mpd)
-{
-    /* Add the previously created mini player to the box */
-    elm_box_pack_end(intf_get_root_box(mpd->intf), mpd->mini_player_box);
-
-    /* */
-    evas_object_show(mpd->mini_player_box);
-
-    /* Switch to current visibility state */
-    mpd->visible_state = true;
-}
-
-void
-mini_player_hide(mini_player *mpd)
-{
-    /* Dismiss the previously created mini player of the box */
-    elm_box_unpack(intf_get_root_box(mpd->intf), mpd->mini_player_box);
-    /* */
-
-    if (mpd->mini_player_box)
-        evas_object_hide(mpd->mini_player_box);
-
-    /* Switch to current visibility state */
-    mpd->visible_state = false;
-
-}
-
 static void
 update_player_play_pause(mini_player* mpd)
 {
     bool b_playing = playback_service_is_playing(mpd->p_ps);
     elm_image_file_set(mpd->play_pause_img, b_playing ? ICON_DIR "ic_pause_circle_normal_o.png" : ICON_DIR "ic_play_circle_normal_o.png", NULL);
     elm_image_file_set(mpd->fs_play_pause_img, b_playing ? ICON_DIR "ic_pause_circle_normal_o.png" : ICON_DIR "ic_play_circle_normal_o.png", NULL);
+    evas_object_show(mpd->play_pause_img);
 }
 
 static void
@@ -382,10 +345,7 @@ update_player_display(mini_player* mpd)
 
     if (p_mi)
     {
-        const char *psz_meta;
-
-
-        psz_meta = media_item_title(p_mi);
+        const char *psz_meta = media_item_title(p_mi);
         if (psz_meta)
         {
             elm_object_text_set(mpd->title, psz_meta);
@@ -401,8 +361,6 @@ update_player_display(mini_player* mpd)
 
     /* Change the play/pause button img */
     update_player_play_pause(mpd);
-
-    evas_object_show(mpd->play_pause_img);
 }
 
 static void
@@ -656,23 +614,19 @@ swallow_mini_player(mini_player *mpd, Evas_Object *parent)
     set_sliders_callbacks(mpd, mpd->slider);
     player_update_sliders(mpd, playback_service_get_pos(mpd->p_ps));
 
-
     /* set the cover image */
     mpd->cover = create_image(layout, "background_cone.png");
     elm_object_part_content_set(layout, "swallow.cover", mpd->cover);
 
-
     /* set the title label */
     mpd->title = elm_label_add(layout);
-    elm_object_text_set(mpd->title, "<b>Title</b>");
+    //elm_object_text_set(mpd->title, "<b>Title</b>");
     elm_object_part_content_set(layout, "swallow.title", mpd->title);
-
 
     /* set the sub title label */
     mpd->sub_title = elm_label_add(layout);
-    elm_object_text_set(mpd->sub_title, "Subtitle");
+    //elm_object_text_set(mpd->sub_title, "Subtitle");
     elm_object_part_content_set(layout, "swallow.subtitle", mpd->sub_title);
-
 
     /* set the play/pause button */
     mpd->play_pause_img = create_image(layout, "ic_pause_circle_normal_o.png");
@@ -695,7 +649,7 @@ collapse_fullscreen_player(mini_player *mpd){
     /* Update the fullscreen state bool */
     mpd->fs_state = false;
     /* Show the mini player */
-    mini_player_show(mpd);
+    intf_mini_player_visible_set(mpd->intf, true);
 }
 
 static Evas_Object*
@@ -834,7 +788,6 @@ add_fullscreen_item_table(mini_player *mpd, Evas_Object *parent)
     elm_table_pack(mpd->fs_table, mpd->fs_play_pause_img, 1, 6, 4, 2);
     evas_object_show(mpd->fs_play_pause_img);
 
-
     /* */
     mpd->fs_time = elm_label_add(parent);
     evas_change_time(mpd->fs_time, i_time);
@@ -845,7 +798,6 @@ add_fullscreen_item_table(mini_player *mpd, Evas_Object *parent)
     elm_table_pack(mpd->fs_table, mpd->fs_time, 0, 6, 1, 1);
     evas_object_show(mpd->fs_time);
 
-
     /* */
     mpd->fs_total_time = elm_label_add(parent);
     evas_change_time(mpd->fs_total_time, i_len);
@@ -855,7 +807,6 @@ add_fullscreen_item_table(mini_player *mpd, Evas_Object *parent)
     /* Put the object in the chosen slot of the item table */
     elm_table_pack(mpd->fs_table, mpd->fs_total_time, 5, 6, 1, 1);
     evas_object_show(mpd->fs_total_time);
-
 
     /* */
     if (mpd->repeat_state == 0)
@@ -932,7 +883,7 @@ mini_player_fullscreen_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_
     Evas_Object *fs_view;
 
     /* */
-    mini_player_hide(mpd);
+    intf_mini_player_visible_set(mpd->intf, false);
 
     /* Show the fullcreen box in the content naviframe */
     /* FIXME */
@@ -1005,23 +956,20 @@ create_base_player(mini_player *mpd, const char *file_path)
     update_player_display(mpd);
 
     /* Show the mini player only if it isn't already shown */
-    if (mini_player_visibility_state(mpd) == false){
-
-        mini_player_show(mpd);
+    if (intf_mini_player_visible_get(mpd->intf) == false){
+        intf_mini_player_visible_set(mpd->intf, true);
     }
 
 }
 
 mini_player*
-mini_player_create(interface *intf, playback_service *p_ps, Evas_Object *parent)
+mini_player_create(interface *intf, playback_service *p_ps, Evas_Object *parent, Evas_Object **box)
 {
     mini_player *mpd = calloc(1, sizeof(*mpd));
-
     mpd->intf = intf;
     mpd->p_ps = p_ps;
-    mpd->visible_state = false;
 
-    mpd->mini_player_box = swallow_mini_player(mpd, parent);
+    *box = mpd->mini_player_box = swallow_mini_player(mpd, parent);
 
     /* Add button callbacks */
     evas_object_smart_callback_add(mpd->play_pause_img, "clicked", play_pause_mini_player_cb, mpd);
@@ -1046,5 +994,5 @@ mini_player_stop(mini_player *mpd)
     mpd->fs_state = false;
 
     /* Hide the player */
-    mini_player_hide(mpd);
+    intf_mini_player_visible_set(mpd->intf, false);
 }
