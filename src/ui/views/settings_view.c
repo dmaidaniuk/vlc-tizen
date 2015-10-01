@@ -44,20 +44,21 @@ typedef struct settings_item
 {
     const char* title;
     const char* icon;
+    int type; // 0: title - 1: item
 
 } settings_item_s;
 
 
 settings_item_s settings_menu[] =
 {
-        {"General", ""},
-        {"Directories", "ic_menu_folder.png" },
-        {"Material  acceleration", "ic_menu_preferences.png"},
-        {"Subtitles text encoding","ic_browser_subtitle_normal.png"},
-        {"Video orientation", "ic_menu_video.png"},
-        {"Extra settings", ""},
-        {"Performances", "ic_menu_preferences.png"},
-        {"Deblocking filter settings", "ic_menu_preferences.png"}
+        {"General",                     "",                                 0},
+        {"Directories",                 "ic_menu_folder.png",               1},
+        {"Material  acceleration",      "ic_menu_preferences.png",          1},
+        {"Subtitles text encoding",     "ic_browser_subtitle_normal.png",   1},
+        {"Video orientation",           "ic_menu_video.png",                1},
+        {"Extra settings",              "",                                 0},
+        {"Performances",                "ic_menu_preferences.png",          1},
+        {"Deblocking filter settings",  "ic_menu_preferences.png",          1}
 };
 
 /* Create the setting submenu items */
@@ -410,7 +411,8 @@ create_setting_list(Evas_Object *parent)
         sd->index = index;
 
         /* Set and append headers items */
-        if ((index == 0) || (index == 5)) {
+        if (settings_menu[index].type == 0)
+        {
             hit = elm_genlist_item_append(genlist,
                     hitc,                           /* genlist item class               */
                     sd,                               /* genlist item class user data     */
@@ -422,9 +424,9 @@ create_setting_list(Evas_Object *parent)
             /* Put genlist item in the setting_data struct for callbacks */
             sd->item = hit;
         }
-
-        /* Set and append settings items */
-        else {
+        else if (settings_menu[index].type == 1)
+        {
+            /* Set and append settings items */
             sd->index = index;
             it = elm_genlist_item_append(genlist,
                     itc,                           /* genlist item class               */
