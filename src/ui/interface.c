@@ -165,12 +165,6 @@ intf_get_mini_player(interface *p_intf)
     return p_intf->p_mini_player;
 }
 
-Evas*
-intf_get_window(interface *intf)
-{
-    return evas_object_evas_get(intf->win);
-}
-
 Evas_Object*
 intf_get_sidebar(interface *intf)
 {
