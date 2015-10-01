@@ -27,6 +27,7 @@
 
 #include <Evas.h>
 #include <Elementary.h>
+#include <Emotion.h>
 
 #include "ui/interface.h"
 #include "video_player.h"
@@ -34,10 +35,13 @@
 
 typedef struct video_player
 {
+    bool b_fill;
+    bool b_decoded;
     playback_service *p_ps;
     playback_service_cbs_id *p_ps_cbs_id;
 
     /* Widgets */
+    Evas_Object *p_evas_video;
     Evas_Object *play_pause_button, *progress_slider;
 } video_player;
 
@@ -104,12 +108,86 @@ ps_on_new_time_cb(playback_service *p_ps, void *p_user_data, double i_time, doub
     elm_slider_value_set(vd->progress_slider, i_pos);
 }
 
+static void
+video_resize(video_player *vd)
+{
+    Evas_Coord i_win_x, i_win_y, i_win_w, i_win_h;
+    int i_video_w, video_h;
+
+    evas_object_geometry_get(vd->p_evas_video, &i_win_x, &i_win_y,
+                             &i_win_w, &i_win_h);
+
+    if (i_win_w <= 0 || i_win_h <= 0)
+        return;
+
+    emotion_object_size_get(vd->p_evas_video, &i_video_w, &video_h);
+    if (i_video_w <= 0 || video_h <= 0)
+        return;
+
+    LOGF("video_resize: win: %dx%d %dx%d, video: %dx%d", i_win_x, i_win_y, i_win_w, i_win_h, i_video_w, video_h);
+
+    if (!vd->b_fill)
+    {
+        if ((i_win_w <= 0) || (i_win_h <= 0) || (i_video_w <= 0) || (video_h <= 0))
+        {
+            i_win_w = 1;
+            i_win_h = 1;
+        }
+        else
+        {
+            int i_w = 1, i_h = 1;
+            double i_ratio;
+
+            i_ratio = emotion_object_ratio_get(vd->p_evas_video);
+            if (i_ratio > 0.0)
+                i_video_w = (video_h * i_ratio);
+            else
+                i_ratio = i_video_w / (double)video_h;
+
+            i_w = i_win_w;
+            i_h = ((double)i_win_w + 1.0) / i_ratio;
+            if (i_h > i_win_h)
+            {
+                i_h = i_win_h;
+                i_w = i_win_h * i_ratio;
+                if (i_w > i_win_w)
+                    i_w = i_win_w;
+            }
+            i_win_x += ((i_win_w - i_w) / 2);
+            i_win_y += ((i_win_h - i_h) / 2);
+            i_win_w = i_w;
+            i_win_h = i_h;
+       }
+    }
+
+    LOGF("video_resize: move to: %dx%d %dx%d", i_win_x, i_win_y, i_win_w, i_win_h);
+
+    evas_object_move(vd->p_evas_video, i_win_x, i_win_y);
+    evas_object_resize(vd->p_evas_video, i_win_w, i_win_h);
+}
+
+static void
+evas_video_decode_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+{
+    video_player *vd = data;
+    if (!vd->b_decoded)
+    {
+        vd->b_decoded = true;
+        video_resize(data);
+    }
+}
+
+static void
+evas_video_resize_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+{
+    video_resize(data);
+}
 
 Evas_Object*
 create_video_gui(playback_service *p_ps, Evas_Object *parent, const char* file_path)
 {
     media_item *p_mi;
-    video_player *vd = malloc(sizeof(*vd));
+    video_player *vd = calloc(1, sizeof(*vd));
     if (!vd)
         return NULL;
 
@@ -143,9 +221,16 @@ create_video_gui(playback_service *p_ps, Evas_Object *parent, const char* file_p
 
     /* */
     Evas *evas = evas_object_evas_get(layout);
-    Evas_Object *evas_video = playback_service_set_evas_video(vd->p_ps, evas);
-    evas_object_show(evas_video);
-    elm_object_part_content_set(layout, "swallow.visualization", evas_video);
+    vd->p_evas_video = playback_service_set_evas_video(vd->p_ps, evas);
+    evas_object_smart_callback_add(vd->p_evas_video, "frame_decode", evas_video_decode_cb, vd);
+    evas_object_event_callback_add(vd->p_evas_video, EVAS_CALLBACK_RESIZE, evas_video_resize_cb, vd);
+    /* FIXME: remove callback
+     * evas_object_event_callback_del(vd->p_evas_video, EVAS_CALLBACK_RESIZE, evas_video_resize_cb);
+     * evas_object_smart_callback_del(vd->p_evas_video, "frame_decode", evas_video_decode_cb);
+     */
+
+    elm_object_part_content_set(layout, "swallow.visualization", vd->p_evas_video);
+    evas_object_show(vd->p_evas_video);
 
     //create play/pause button
     vd->play_pause_button = elm_image_add(layout);
