@@ -205,11 +205,12 @@ browse(directory_view *dv, const char* path)
 }
 
 Evas_Object*
-create_directory_view(interface *intf, const char* path, Evas_Object *parent)
+create_directory_view(interface *intf, Evas_Object *parent)
 {
     directory_view *dv = malloc(sizeof(*dv));
     dv->p_intf = intf;
     dv->p_parent = parent;
 
-    return browse(dv, path);
+    char *psz_path = application_get_media_path(intf_get_application(intf), MEDIA_DIRECTORY);
+    return browse(dv, psz_path);
 }

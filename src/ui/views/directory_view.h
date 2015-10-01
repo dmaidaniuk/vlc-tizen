@@ -41,7 +41,7 @@ typedef struct directory_data {
 } directory_data;
 
 Evas_Object*
-create_directory_view(interface *intf, const char* path, Evas_Object *parent);
+create_directory_view(interface *intf, Evas_Object *parent);
 
 Evas_Object*
 browse(directory_view *dv, const char* path);
