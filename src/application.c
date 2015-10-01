@@ -78,13 +78,13 @@ app_create(void *data)
     media_library_discover( app->p_mediaLibrary, application_get_media_path( app, MEDIA_DIRECTORY_MUSIC ) );
 
     /* */
-    app->p_intf = intf_create(app);
-    if (!app->p_intf)
+    app->p_ps = playback_service_create(app, app->p_intf);
+    if (!app->p_ps)
         goto error;
 
     /* */
-    app->p_ps = playback_service_create(app, app->p_intf);
-    if (!app->p_ps)
+    app->p_intf = intf_create(app);
+    if (!app->p_intf)
         goto error;
 
     return true;
@@ -118,14 +118,15 @@ static void
 app_terminate(void *data)
 {
     application *app = data;
+
+    if (app->p_intf)
+        intf_destroy(app->p_intf);
     if (app->p_ms)
         media_storage_destroy(app->p_ms);
     if (app->p_mediaLibrary)
         media_library_delete(app->p_mediaLibrary);
     if (app->p_ps)
         playback_service_destroy(app->p_ps);
-    if (app->p_intf)
-        intf_destroy(app->p_intf);
     free(app);
 
     emotion_shutdown();
