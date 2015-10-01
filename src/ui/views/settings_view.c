@@ -74,7 +74,7 @@ popup_menu_item_s directory_menu[] =
         {"Add repository", "call_button_add_call_press.png"}
 };
 
-popup_menu_item_s material_acceleration_menu[] =
+popup_menu_item_s hardware_acceleration_menu[] =
 {
         {"Automatic", "toggle_on.png"},
         {"Disabled", "toggle_off.png"},
@@ -247,8 +247,8 @@ gl_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
         len = (int)sizeof(directory_menu) / (int)sizeof(*directory_menu);
         break;
     case SETTINGS_ID_HWACCELERATION:
-        menu = material_acceleration_menu;
-        len = (int)sizeof(material_acceleration_menu) / (int)sizeof(*material_acceleration_menu);
+        menu = hardware_acceleration_menu;
+        len = (int)sizeof(hardware_acceleration_menu) / (int)sizeof(*hardware_acceleration_menu);
         break;
     case SETTINGS_ID_SUBSENC:
         menu = subtitles_text_encoding_menu;
