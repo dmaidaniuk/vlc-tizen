@@ -27,20 +27,20 @@
 #ifndef MEDIALIBRARY_H_
 #define MEDIALIBRARY_H_
 
+#include "application.h"
 #include "media_item.h"
+#include <Elementary.h>
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 
-#include "application.h"
-
 typedef void (*media_library_file_list_changed_cb)( void* p_user_data );
 typedef void (*media_library_list_cb)( Eina_List*, void *p_user_data );
 
 media_library* media_library_create(application* p_app);
-bool media_library_start( media_library* p_media_library, media_library_file_list_changed_cb cb, void* p_user_data );
+bool media_library_start(media_library* p_media_library);
 void media_library_delete(media_library* p_media_library);
 void media_library_discover( media_library* p_ml, const char* psz_location );
 
@@ -49,6 +49,14 @@ media_library_get_video_files( media_library* p_ml, media_library_list_cb cb, vo
 
 void
 media_library_get_audio_files( media_library* p_ml, media_library_list_cb cb, void* p_user_data );
+
+void
+media_library_register_on_change(media_library* ml, media_library_file_list_changed_cb cb, void* p_data);
+
+void
+media_library_unregister_on_change(media_library* ml, media_library_file_list_changed_cb cb, void* p_data);
+
+
 
 #ifdef __cplusplus
 }

@@ -26,6 +26,7 @@
 
 #include "common.h"
 
+#include "controller/video_controller.h"
 #include "ui/interface.h"
 #include "video_view.h"
 #include "video_player.h"
@@ -33,7 +34,6 @@
 #include "ui/utils.h"
 
 #include "media/media_item.h"
-#include "media/media_library.hpp"
 
 #include <Elementary.h>
 
@@ -43,6 +43,7 @@ typedef struct video_view
 
     Evas_Object *p_parent;
     Evas_Object *p_genlist;
+    video_controller* p_controller;
 } video_view;
 
 typedef struct video_list_item
@@ -189,7 +190,6 @@ genlist_item_create(video_view *videoview, media_item* p_item, Elm_Genlist_Item_
 
     /* Item instantiation */
     vli->p_media_item = p_item;
-
     /* Set and append new item in the genlist */
     Elm_Object_Item *it = elm_genlist_item_append(videoview->p_genlist,
             itc,                            /* genlist item class               */
@@ -205,9 +205,9 @@ genlist_item_create(video_view *videoview, media_item* p_item, Elm_Genlist_Item_
 }
 
 void
-generate_video_list(Eina_List* p_list, void* p_data)
+video_view_update(video_view* vv, Eina_List* p_content)
 {
-    if ( p_list == NULL )
+    if ( p_content == NULL )
     {
         LOGI("Empty video list");
         return;
@@ -219,25 +219,14 @@ generate_video_list(Eina_List* p_list, void* p_data)
     itc->func.text_get = genlist_text_get_cb;
     itc->func.content_get = genlist_content_get_cb;
 
-    video_view* vv = (video_view*)p_data;
     Eina_List* it = NULL;
     media_item* p_item;
 
-    EINA_LIST_FOREACH( p_list, it, p_item )
+    EINA_LIST_FOREACH( p_content, it, p_item )
     {
         genlist_item_create(vv, p_item, itc);
     }
     elm_genlist_item_class_free(itc);
-    eina_list_free( p_list );
-}
-
-static void
-video_view_refresh(void* p_user_data)
-{
-    video_view* vv = (video_view*)p_user_data;
-    application* p_app = intf_get_application( vv->p_intf );
-    const media_library* p_ml = application_get_media_library( p_app );
-    media_library_get_video_files( p_ml, &generate_video_list, vv );
 }
 
 Evas_Object*
@@ -246,6 +235,7 @@ create_video_view(interface *intf, Evas_Object *parent)
     video_view *vv = malloc(sizeof(*vv));
     vv->p_intf = intf;
     vv->p_parent = parent;
+    vv->p_controller = video_controller_create( intf_get_application(intf), vv );
 
     /* Set then create the Genlist object */
     Evas_Object *genlist = vv->p_genlist = elm_genlist_add(parent);
@@ -260,9 +250,6 @@ create_video_view(interface *intf, Evas_Object *parent)
     evas_object_smart_callback_add(genlist, "loaded", genlist_loaded_cb, NULL);
     evas_object_smart_callback_add(genlist, "longpressed", genlist_longpressed_cb, NULL);
     evas_object_smart_callback_add(genlist, "contracted", genlist_contracted_cb, NULL);
-
-    /* Populate it */
-    intf_register_file_changed( intf, VIEW_VIDEO, video_view_refresh, vv );
 
     /* */
     return genlist;

@@ -2,7 +2,7 @@
  * Copyright © 2015 VideoLAN, VideoLabs SAS
  *****************************************************************************
  *
- * Authors: Jean-Baptiste Kempf <jb@videolan.org>
+ * Authors: Hugo Beauzée-Luyssen <hugo@beauzee.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,39 +23,3 @@
  * the code to a different OSI approved license, in case it is required for
  * compatibility with the Store
  *****************************************************************************/
-
-#ifndef APPLICATION_H_
-# define APPLICATION_H_
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-typedef struct application application;
-typedef struct interface interface;
-typedef struct media_library media_library;
-typedef struct playback_service playback_service;
-typedef struct media_storage media_storage;
-typedef struct media_item media_item;
-typedef struct media_list media_list;
-typedef struct video_controller video_controller;
-
-#include "system_storage.h"
-
-const char *
-application_get_media_path(application *app, media_directory_e type);
-
-const media_storage *
-application_get_media_storage(application *app);
-
-const media_library *
-application_get_media_library(application *app);
-
-playback_service *
-application_get_playback_service(application *app);
-
-#ifdef __cplusplus
-} // extern "C"
-#endif
-
-#endif

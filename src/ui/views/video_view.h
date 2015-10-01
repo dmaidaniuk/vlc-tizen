@@ -24,10 +24,17 @@
  * compatibility with the Store
  *****************************************************************************/
 
-#ifndef FILES_H_
-#define FILES_H_
+#ifndef VIDEO_VIEW_H_
+#define VIDEO_VIEW_H_
+
+#include <Elementary.h>
+
+typedef struct video_view video_view;
 
 Evas_Object*
 create_video_view(interface *intf, Evas_Object *parent);
 
-#endif /* FILES_H_ */
+void
+video_view_update(video_view* vv, Eina_List* p_content);
+
+#endif /* VIDEO_VIEW_H_ */

@@ -70,11 +70,15 @@ public:
     virtual void onDiscoveryStarted( const std::string& entryPoint ) override;
     virtual void onDiscoveryCompleted( const std::string& entryPoint ) override;
 
+    void registerOnChange(media_library_file_list_changed_cb cb, void* cbUserData);
+    void unregisterOnChange(media_library_file_list_changed_cb cb, void* cbUserData);
+
 public:
     std::unique_ptr<IMediaLibrary> ml;
     std::unique_ptr<TizenLogger> logger;
-    media_library_file_list_changed_cb fileListChangedCb;
-    void* cbUserData;
+
+private:
+    void onChange();
 
 private:
     // Holds the number of discoveries ongoing
@@ -85,12 +89,11 @@ private:
     // This can be accessed from both the discovery & metadata threads
     int m_nbElemChanged;
     std::mutex m_mutex;
+    std::vector<std::pair<media_library_file_list_changed_cb, void*>> m_onChangeCb;
 };
 
 media_library::media_library()
     : ml( MediaLibraryFactory::create() )
-    , fileListChangedCb( nullptr )
-    , cbUserData( nullptr )
     , m_nbDiscovery( 0 )
     , m_nbElemChanged( 0 )
 {
@@ -103,12 +106,11 @@ media_library::onFileAdded( FilePtr file )
 {
     //FIXME: This seems fishy if no discovery is in progress and some media gets updated.
     //This is very unlikely to happen for a while though.
-
     std::unique_lock<std::mutex> lock( m_mutex );
     if ( ++m_nbElemChanged >= 50 )
     {
         LOGI("Enough changes to trigger an update.");
-        ecore_main_loop_thread_safe_call_async( fileListChangedCb, cbUserData );
+        onChange();
         m_nbElemChanged = 0;
     }
 }
@@ -140,11 +142,40 @@ media_library::onDiscoveryCompleted( const std::string& entryPoint )
         {
             m_nbElemChanged = 0;
             LOGI("Changes detected, sending update to listeners");
-            ecore_main_loop_thread_safe_call_async( fileListChangedCb, cbUserData );
+            onChange();
         }
         LOGI( "Completed all active discovery operations" );
     }
 }
+
+void
+media_library::registerOnChange(media_library_file_list_changed_cb cb, void* cbUserData)
+{
+    m_onChangeCb.emplace_back(cb, cbUserData);
+}
+
+void
+media_library::unregisterOnChange(media_library_file_list_changed_cb cb, void* cbUserData)
+{
+    auto ite = end(m_onChangeCb);
+    for (auto it = begin(m_onChangeCb); it != ite; ++it)
+    {
+        if ((*it).first == cb && (*it).second == cb)
+        {
+            m_onChangeCb.erase(it);
+            return;
+        }
+    }
+}
+void
+media_library::onChange()
+{
+    for (auto &p : m_onChangeCb)
+    {
+        ecore_main_loop_thread_safe_call_async( p.first, p.second );
+    }
+}
+
 
 media_library *
 media_library_create(application *p_app)
@@ -161,7 +192,7 @@ media_library_create(application *p_app)
 }
 
 bool
-media_library_start( media_library* p_media_library, media_library_file_list_changed_cb cb, void* p_user_data )
+media_library_start( media_library* p_media_library)
 {
     auto appDataCStr = std::unique_ptr<char, void(*)(void*)>( system_storage_appdata_get(), &free );
     std::string appData( appDataCStr.get() );
@@ -170,8 +201,6 @@ media_library_start( media_library* p_media_library, media_library_file_list_cha
         LOGE( "Failed to fetch application data directory" );
         return false;
     }
-    p_media_library->fileListChangedCb = cb;
-    p_media_library->cbUserData = p_user_data;
     p_media_library->logger.reset( new TizenLogger );
     p_media_library->ml->setLogger( p_media_library->logger.get() );
     return p_media_library->ml->initialize( appData + "vlc.db", appData + "/snapshots", p_media_library );
@@ -291,7 +320,6 @@ media_library_get_video_files( media_library* p_ml, media_library_list_cb cb, vo
     ecore_thread_run( [](void* data, Ecore_Thread* ) {
         auto ctx = reinterpret_cast<ml_callback_context*>( data );
         auto files = ctx->p_ml->ml->videoFiles();
-        LOGE( "Got %d files", files.size() );
         Eina_List *list = nullptr;
         for ( auto& f : files )
         {
@@ -303,4 +331,16 @@ media_library_get_video_files( media_library* p_ml, media_library_list_cb cb, vo
         ctx->list = list;
         ecore_main_loop_thread_safe_call_async( intermediate_list_callback, ctx );
     }, nullptr, nullptr, ctx );
+}
+
+void
+media_library_register_on_change(media_library* ml, media_library_file_list_changed_cb cb, void* p_data)
+{
+    ml->registerOnChange(cb, p_data);
+}
+
+void
+media_library_unregister_on_change(media_library* ml, media_library_file_list_changed_cb cb, void* p_data)
+{
+    ml->unregisterOnChange(cb, p_data);
 }

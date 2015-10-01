@@ -79,8 +79,8 @@ app_create(void *data)
         goto error;
 
     /* Now that the UI is ready to receive potential updates, start the ML */
-    if ( !media_library_start( app->p_mediaLibrary, &intf_ml_file_changed, app->p_intf ) )
-            goto error;
+    if ( !media_library_start( app->p_mediaLibrary ) )
+        goto error;
     media_library_discover( app->p_mediaLibrary, application_get_media_path( app, MEDIA_DIRECTORY_VIDEOS ) );
     media_library_discover( app->p_mediaLibrary, application_get_media_path( app, MEDIA_DIRECTORY_MUSIC ) );
 
