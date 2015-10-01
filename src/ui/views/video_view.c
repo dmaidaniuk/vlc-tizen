@@ -43,7 +43,6 @@ typedef struct video_view
 
     Evas_Object *p_parent;
     Evas_Object *p_genlist;
-    Elm_Genlist_Item_Class *p_defaut_itc;
 } video_view;
 
 typedef struct video_list_item
@@ -181,19 +180,19 @@ genlist_contracted_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
 }
 
 static video_list_item *
-genlist_item_create(video_view *videoview, media_item* p_item )
+genlist_item_create(video_view *videoview, media_item* p_item, Elm_Genlist_Item_Class* itc)
 {
     /* */
     video_list_item *vli = calloc(1, sizeof(*vli));
     vli->videoview = videoview;
-    vli->itc = videoview->p_defaut_itc;
+    vli->itc = itc;
 
     /* Item instantiation */
     vli->p_media_item = p_item;
 
     /* Set and append new item in the genlist */
     Elm_Object_Item *it = elm_genlist_item_append(videoview->p_genlist,
-            videoview->p_defaut_itc,        /* genlist item class               */
+            itc,                            /* genlist item class               */
             vli,                            /* genlist item class user data     */
             NULL,                           /* genlist parent item for trees    */
             ELM_GENLIST_ITEM_NONE,          /* genlist item type                */
@@ -213,14 +212,22 @@ generate_video_list(Eina_List* p_list, void* p_data)
         LOGI("Empty video list");
         return;
     }
+
+    /* Genlist class */
+    Elm_Genlist_Item_Class *itc = elm_genlist_item_class_new();
+    itc->item_style = "2line.top.3";
+    itc->func.text_get = genlist_text_get_cb;
+    itc->func.content_get = genlist_content_get_cb;
+
     video_view* vv = (video_view*)p_data;
     Eina_List* it = NULL;
     media_item* p_item;
 
     EINA_LIST_FOREACH( p_list, it, p_item )
     {
-        genlist_item_create(vv, p_item);
+        genlist_item_create(vv, p_item, itc);
     }
+    elm_genlist_item_class_free(itc);
     eina_list_free( p_list );
 }
 
@@ -243,12 +250,6 @@ create_video_view(interface *intf, Evas_Object *parent)
     /* Set then create the Genlist object */
     Evas_Object *genlist = vv->p_genlist = elm_genlist_add(parent);
 
-    /* Genlist class */
-    Elm_Genlist_Item_Class *itc = vv->p_defaut_itc = elm_genlist_item_class_new();
-    itc->item_style = "2line.top.3";
-    itc->func.text_get = genlist_text_get_cb;
-    itc->func.content_get = genlist_content_get_cb;
-
     /* Set the genlist modes */
     elm_scroller_single_direction_set(genlist, ELM_SCROLLER_SINGLE_DIRECTION_HARD);
     elm_genlist_homogeneous_set(genlist, EINA_TRUE);
@@ -264,6 +265,5 @@ create_video_view(interface *intf, Evas_Object *parent)
     intf_register_file_changed( intf, VIEW_VIDEO, video_view_refresh, vv );
 
     /* */
-    elm_genlist_item_class_free(itc);
     return genlist;
 }
