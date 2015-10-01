@@ -239,7 +239,7 @@ create_base_layout(Evas_Object *parent)
 }
 
 static Evas_Object *
-create_button(Evas_Object *parent, char *style, char *text)
+create_button(Evas_Object *parent, char *style)
 {
     Evas_Object *button = elm_button_add(parent);
     elm_object_style_set(button, style);
@@ -282,7 +282,7 @@ intf_show_view(interface *intf, int view_type)
     /* Create then set the panel toggle btn and add his callbacks */
     if(intf->sidebar_toggle_btn == NULL)
     {
-        intf->sidebar_toggle_btn = create_button(nf_content, "naviframe/drawers", NULL);
+        intf->sidebar_toggle_btn = create_button(nf_content, "naviframe/drawers");
         evas_object_smart_callback_add(intf->sidebar_toggle_btn, "clicked", left_panel_button_clicked_cb, intf);
     }
     elm_object_part_content_set(nf_content, "title_left_btn", intf->sidebar_toggle_btn);
@@ -292,7 +292,7 @@ intf_show_view(interface *intf, int view_type)
     {
         if(intf->popup_toggle_btn == NULL)
         {
-            intf->popup_toggle_btn = create_button(nf_content, "naviframe/drawers", NULL);
+            intf->popup_toggle_btn = create_button(nf_content, "naviframe/drawers");
             evas_object_smart_callback_add(intf->popup_toggle_btn, "clicked", right_panel_button_clicked_cb, intf);
         }
         elm_object_part_content_set(nf_content, "title_right_btn", intf->popup_toggle_btn);
