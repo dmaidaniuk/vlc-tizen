@@ -1000,6 +1000,7 @@ create_base_player(mini_player *mpd, const char *file_path)
         mpd->p_ps_cbs_id = playback_service_register_callbacks(mpd->p_ps, &cbs);
     }
     playback_service_set_context(mpd->p_ps, PLAYLIST_CONTEXT_AUDIO);
+    playback_service_set_evas_video(mpd->p_ps, NULL);
     playback_service_list_clear(mpd->p_ps);
     media_item *p_mi = media_item_create(file_path, MEDIA_ITEM_TYPE_AUDIO);
     playback_service_list_append(mpd->p_ps, p_mi);
