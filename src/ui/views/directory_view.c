@@ -43,24 +43,17 @@ typedef struct directory_data {
 void
 list_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
-    directory_data_s *dd= data;
-    struct stat sb;
-    stat(dd->file_path, &sb);
+    directory_data_s *dd = data;
 
-    if (S_ISREG(sb.st_mode)){
-
-        /* Launch the media player */
-        LOGI("VLC Player launch");
-        LOGI("Won't play the video at the time. Will be soon");
-
+    if (dd->isFile){
+        /* TODO */
+        LOGD("Supposed to start playback here");
     }
-
-    else if (S_ISDIR(sb.st_mode))
+    else
     {
         /* Continue to browse media folder */
         create_directory_view(dd->file_path, dd->parent);
     }
-
 }
 
 static void
