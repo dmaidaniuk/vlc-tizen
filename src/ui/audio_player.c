@@ -41,13 +41,16 @@ struct mini_player {
     bool visible_state;
     bool save_state, shuffle_state, playlist_state, more_state, fs_state;
     int repeat_state;
-    Evas_Object *parent, *table, *fs_table, *popup;
-    Evas_Object *mini_player_box, *box, *fullscreen_box;
+
+    Evas_Object *fs_table, *popup;
+    Evas_Object *mini_player_box, *fullscreen_box;
     Evas_Object *slider, *fs_slider;
-    Evas_Object *cover, *fs_cover, *fs_view, *fs_time, *fs_total_time;
+    Evas_Object *cover, *fs_cover, *fs_time, *fs_total_time;
     Evas_Object *title, *sub_title, *fs_title, *fs_sub_title;
+
     Evas_Object *play_pause_img;
     Evas_Object *fs_play_pause_img;
+
     Evas_Object *fs_save_btn, *fs_playlist_btn, *fs_more_btn;
     Evas_Object *fs_repeat_btn, *fs_shuffle_btn;
 };
@@ -940,8 +943,6 @@ mini_player_fullscreen_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_
     evas_object_show(fs_view);
     /* Update fullscreen state bool */
     mpd->fs_state = true;
-    /* */
-    mpd->fs_view = fs_view;
 }
 
 static void
