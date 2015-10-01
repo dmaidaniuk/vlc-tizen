@@ -28,6 +28,6 @@
 #define FILES_H_
 
 Evas_Object*
-create_video_view(interface *intf, Evas_Object *parent, const char* path);
+create_video_view(interface *intf, Evas_Object *parent);
 
 #endif /* FILES_H_ */

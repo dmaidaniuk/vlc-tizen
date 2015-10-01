@@ -240,8 +240,6 @@ intf_create_view(interface *intf, int view_type)
     Evas_Object *nf_content = intf->nf_content;
     Evas_Object *view;
 
-    application *p_app = intf_get_application(intf);
-
     if(view_type == VIEW_AUTO)
         view_type = VIEW_VIDEO; /* Replace by the last saved tab */
 
@@ -249,7 +247,7 @@ intf_create_view(interface *intf, int view_type)
     switch(view_type)
     {
     case VIEW_VIDEO:
-        view = create_video_view(intf, nf_content, application_get_media_path(p_app, MEDIA_DIRECTORY_VIDEOS));
+        view = create_video_view(intf, nf_content);
         break;
     case VIEW_AUDIO:
         view = create_audio_view(intf, nf_content);

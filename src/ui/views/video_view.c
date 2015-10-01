@@ -33,6 +33,7 @@
 #include "ui/utils.h"
 
 #include "media/media_item.h"
+#include "media/media_library.hpp"
 
 #include <Elementary.h>
 
@@ -42,6 +43,7 @@ typedef struct video_view
 
     Evas_Object *p_parent;
     Evas_Object *p_genlist;
+    Elm_Genlist_Item_Class *p_defaut_itc;
 } video_view;
 
 typedef struct video_list_item
@@ -62,13 +64,10 @@ genlist_item_selected_cb(void *data, Evas_Object *obj, void *event_info)
     struct stat sb;
     stat(vli->p_media_item->psz_path, &sb);
 
+    //FIXME: This should probably go away since we now have a flattened video list.
     if (S_ISREG(sb.st_mode))
     {
         intf_create_video_player(vli->videoview->p_intf, vli->p_media_item->psz_path);
-    }
-    else if (S_ISDIR(sb.st_mode))
-    {
-        create_video_view(vli->videoview->p_intf, vli->videoview->p_parent, vli->p_media_item->psz_path);
     }
 }
 
@@ -182,20 +181,19 @@ genlist_contracted_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
 }
 
 static video_list_item *
-genlist_item_create(video_view *videoview, const char *psz_path, const char *psz_title, Elm_Genlist_Item_Class *itc)
+genlist_item_create(video_view *videoview, media_item* p_item )
 {
     /* */
     video_list_item *vli = calloc(1, sizeof(*vli));
     vli->videoview = videoview;
-    vli->itc = itc;
+    vli->itc = videoview->p_defaut_itc;
 
     /* Item instantiation */
-    vli->p_media_item = media_item_create(psz_path, MEDIA_ITEM_TYPE_VIDEO);
-    media_item_set_meta(vli->p_media_item, MEDIA_ITEM_META_TITLE, psz_title);
+    vli->p_media_item = p_item;
 
     /* Set and append new item in the genlist */
     Elm_Object_Item *it = elm_genlist_item_append(videoview->p_genlist,
-            itc,                            /* genlist item class               */
+            videoview->p_defaut_itc,        /* genlist item class               */
             vli,                            /* genlist item class user data     */
             NULL,                           /* genlist parent item for trees    */
             ELM_GENLIST_ITEM_NONE,          /* genlist item type                */
@@ -208,49 +206,34 @@ genlist_item_create(video_view *videoview, const char *psz_path, const char *psz
 }
 
 void
-generate_video_list(video_view *videoview, const char *root_path, Elm_Genlist_Item_Class *itc)
+generate_video_list(Eina_List* p_list, void* p_data)
 {
-    struct dirent* current_folder = NULL;
-    char *str_title;
-
-    if (root_path == NULL)
+    if ( p_list == NULL )
     {
-        LOGI("No video path");
+        LOGI("Empty video list");
         return;
     }
+    video_view* vv = (video_view*)p_data;
+    Eina_List* it = NULL;
+    media_item* p_item;
 
-    /* Open the path repository then put it as a dirent variable */
-    DIR *rep = opendir(root_path);
-    if  (rep == NULL)
+    EINA_LIST_FOREACH( p_list, it, p_item )
     {
-        char *error = strerror(errno);
-        LOGI("Empty repository or Error due to %s", error);
-
-        return;
+        genlist_item_create(vv, p_item);
     }
+    eina_list_free( p_list );
+}
 
-    /* Stop when the readdir have red the all repository */
-    while ((current_folder = readdir(rep)) != NULL)
-    {
-        str_title = current_folder->d_name;
-
-        /* Avoid appending for "." and ".." d_name */
-        if (str_title && (strcmp(str_title, ".")==0 || strcmp(str_title, "..")==0))
-        {
-            continue;
-        }
-
-        /* Concatenate the file path and the selected folder or file name */
-        char *psz_path;
-        asprintf(&psz_path, "%s/%s", root_path, str_title);
-
-        genlist_item_create(videoview, psz_path, str_title, itc);
-        free(psz_path);
-    }
+static void
+video_view_refresh( video_view* vv )
+{
+    application* p_app = intf_get_application( vv->p_intf );
+    const media_library* p_ml = application_get_media_library( p_app );
+    media_library_get_video_files( p_ml, &generate_video_list, vv );
 }
 
 Evas_Object*
-create_video_view(interface *intf, Evas_Object *parent, const char* path )
+create_video_view(interface *intf, Evas_Object *parent)
 {
     video_view *vv = malloc(sizeof(*vv));
     vv->p_intf = intf;
@@ -260,7 +243,7 @@ create_video_view(interface *intf, Evas_Object *parent, const char* path )
     Evas_Object *genlist = vv->p_genlist = elm_genlist_add(parent);
 
     /* Genlist class */
-    Elm_Genlist_Item_Class *itc = elm_genlist_item_class_new();
+    Elm_Genlist_Item_Class *itc = vv->p_defaut_itc = elm_genlist_item_class_new();
     itc->item_style = "2line.top.3";
     itc->func.text_get = genlist_text_get_cb;
     itc->func.content_get = genlist_content_get_cb;
@@ -277,7 +260,7 @@ create_video_view(interface *intf, Evas_Object *parent, const char* path )
     evas_object_smart_callback_add(genlist, "contracted", genlist_contracted_cb, NULL);
 
     /* Populate it */
-    generate_video_list(vv, path, itc);
+    video_view_refresh( vv );
 
     /* */
     elm_genlist_item_class_free(itc);
