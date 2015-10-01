@@ -37,6 +37,6 @@ typedef struct popup_menu_item
 } popup_menu_item_s;
 
 Evas_Object *
-create_settings_popup_genlist(Evas_Object *parent, popup_menu_item_s *directory_menu, int nb_item);
+create_settings_popup_genlist(Evas_Object *parent, popup_menu_item_s *directory_menu, int len);
 
 #endif /* MAIN_POPUP_LIST_H_ */

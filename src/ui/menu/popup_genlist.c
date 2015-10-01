@@ -40,7 +40,7 @@ typedef struct popup_genlist_data
 
     popup_menu_item_s *menu_item;
     int index;
-    int nb_item;
+    int len;
 
     Elm_Object_Item *item;
 } popup_genlist_data_s;
@@ -98,7 +98,7 @@ popup_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 
     else if(strcmp (pgd->menu_item[pgd->index].icon, "toggle_off.png") == 0)
     {
-        for(count = 0; count < pgd->nb_item; count ++)
+        for(count = 0; count < pgd->len; count ++)
         {
             if (strcmp(pgd->menu_item[count].icon, "toggle_on.png") == 0)
             {
@@ -121,16 +121,16 @@ popup_block_cb(void *data, Evas_Object *obj, void *event_info)
 }
 
 Evas_Object *
-create_settings_popup_genlist(Evas_Object *parent, popup_menu_item_s *directory_menu, int nb_item)
+create_settings_popup_genlist(Evas_Object *parent, popup_menu_item_s *directory_menu, int len)
 {
     Evas_Object *genlist;
     Elm_Object_Item *it;
     Evas_Object *box = elm_box_add(parent);
 
     /* Set the popup Y axis value */
-    if(nb_item < 6){
-        evas_object_size_hint_min_set(box, EVAS_HINT_FILL, nb_item*100);
-        evas_object_size_hint_max_set(box, EVAS_HINT_FILL, nb_item*100);
+    if(len < 6){
+        evas_object_size_hint_min_set(box, EVAS_HINT_FILL, len * 100);
+        evas_object_size_hint_max_set(box, EVAS_HINT_FILL, len * 100);
     }
 
     else{
@@ -156,14 +156,14 @@ create_settings_popup_genlist(Evas_Object *parent, popup_menu_item_s *directory_
 
 
     /* Stop when the panel list names is all used */
-    for (int index = 0; index < nb_item; index++) {
+    for (int index = 0; index < len; index++) {
 
         popup_genlist_data_s *pgd = malloc(sizeof(*pgd));
         /* Put the index and the gui_data in the cb_data struct for callbacks */
         pgd->index = index;
         pgd->parent = parent;
         pgd->menu_item = directory_menu;
-        pgd->nb_item = nb_item;
+        pgd->len = len;
 
         it = elm_genlist_item_append(genlist,
                 itc,                            /* genlist item class               */
