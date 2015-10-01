@@ -29,6 +29,7 @@
 
 #include "ui/interface.h"
 #include <Elementary.h>
+#include <efl_extension.h>
 
 typedef struct popup_menu_item
 {
@@ -37,6 +38,6 @@ typedef struct popup_menu_item
 } popup_menu_item_s;
 
 Evas_Object *
-create_settings_popup_genlist(Evas_Object *parent, popup_menu_item_s *directory_menu, int len);
+create_settings_popup_genlist(Evas_Object *parent, popup_menu_item_s *directory_menu, int len, Eext_Event_Cb cb, void *data);
 
 #endif /* MAIN_POPUP_LIST_H_ */

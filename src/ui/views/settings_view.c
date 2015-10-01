@@ -237,8 +237,10 @@ gl_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
     Evas_Object *popup;
     setting_data *sd = data;
 
-    popup_menu_item_s *menu;
-    int len;
+    popup_menu_item_s *menu = NULL;
+    int len = 0;
+    Eext_Event_Cb callback = NULL;
+    void *callback_data = NULL;
 
     switch(sd->id)
     {
@@ -267,14 +269,12 @@ gl_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
         len = (int)sizeof(deblocking_filter_settings_menu) / (int)sizeof(*deblocking_filter_settings_menu);
         break;
     default:
-        menu = NULL;
-        len = 0;
         break;
     }
 
     if (menu != NULL) {
         popup = elm_popup_add(sd->parent);
-        list = create_settings_popup_genlist(popup, menu, len);
+        list = create_settings_popup_genlist(popup, menu, len, callback, callback_data);
         elm_object_content_set(popup, list);
         evas_object_show(list);
         evas_object_show(popup);

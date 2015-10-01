@@ -43,6 +43,8 @@ typedef struct popup_genlist_data
     int len;
 
     Elm_Object_Item *item;
+
+    void *data;
 } popup_genlist_data_s;
 
 static char *
@@ -128,7 +130,7 @@ free_genlist_item_data(void *data, Evas_Object *obj, void *event_info)
 }
 
 Evas_Object *
-create_settings_popup_genlist(Evas_Object *parent, popup_menu_item_s *directory_menu, int len)
+create_settings_popup_genlist(Evas_Object *parent, popup_menu_item_s *directory_menu, int len, Eext_Event_Cb cb, void *data)
 {
     Evas_Object *genlist;
     Elm_Object_Item *it;
@@ -171,16 +173,17 @@ create_settings_popup_genlist(Evas_Object *parent, popup_menu_item_s *directory_
         pgd->parent = parent;
         pgd->menu_item = directory_menu;
         pgd->len = len;
+        pgd->data = data;
 
         it = elm_genlist_item_append(genlist,
                 itc,                            /* genlist item class               */
                 pgd,                            /* genlist item class user data     */
                 NULL,                            /* genlist parent item              */
                 ELM_GENLIST_ITEM_NONE,            /* genlist item type                */
-                popup_selected_cb,                /* genlist select smart callback    */
+                cb,                /* genlist select smart callback    */
                 pgd);                            /* genlist smart callback user data */
 
-        eext_object_event_callback_add(pgd->parent, EEXT_CALLBACK_BACK, popup_selected_cb, pgd);
+        eext_object_event_callback_add(pgd->parent, EEXT_CALLBACK_BACK, cb, pgd);
         elm_object_item_del_cb_set(it, free_genlist_item_data);
         pgd->item = it;
     }
