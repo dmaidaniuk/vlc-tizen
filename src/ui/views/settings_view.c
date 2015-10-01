@@ -155,6 +155,33 @@ popup_menu_item_s deblocking_filter_settings_menu[] =
 
 };
 
+static void
+popup_directories_selected_cb(int id, int index, popup_menu_item_s *menu_item, Evas_Object *parent, void *data)
+{
+    /* Change the icon depending on the setting state (pressed or not) */
+
+    if(strcmp (menu_item[index].icon, "toggle_on.png") == 0)
+    {
+        menu_item[index].icon = "toggle_off.png";
+    }
+
+    else if(strcmp (menu_item[index].icon, "toggle_off.png") == 0)
+    {
+        for(int count = 0; count < ((int)sizeof(directory_menu) / (int)sizeof(*directory_menu)); count ++)
+        {
+            if (strcmp(menu_item[count].icon, "toggle_on.png") == 0)
+            {
+                menu_item[count].icon = "toggle_off.png";
+            }
+        }
+
+        menu_item[index].icon = "toggle_on.png";
+    }
+
+    /* */
+    evas_object_del(parent);
+}
+
 /* Free the setting_data struct when the list is deleted */
 static void
 gl_del_cb(void *data, Evas_Object *obj EINA_UNUSED)
@@ -239,7 +266,7 @@ gl_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 
     popup_menu_item_s *menu = NULL;
     int len = 0;
-    Eext_Event_Cb callback = NULL;
+    Menu_item_callback callback = NULL;
     void *callback_data = NULL;
 
     switch(sd->id)
@@ -247,6 +274,7 @@ gl_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
     case SETTINGS_ID_DIRECTORIES:
         menu = directory_menu;
         len = (int)sizeof(directory_menu) / (int)sizeof(*directory_menu);
+        callback = popup_directories_selected_cb;
         break;
     case SETTINGS_ID_HWACCELERATION:
         menu = hardware_acceleration_menu;

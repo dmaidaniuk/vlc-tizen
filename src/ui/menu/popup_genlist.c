@@ -44,6 +44,7 @@ typedef struct popup_genlist_data
 
     Elm_Object_Item *item;
 
+    Menu_item_callback cb;
     void *data;
 } popup_genlist_data_s;
 
@@ -89,30 +90,9 @@ static void
 popup_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
     popup_genlist_data_s *pgd = data;
-    int count;
 
-    /* Change the icon depending on the setting state (pressed or not) */
-
-    if(strcmp (pgd->menu_item[pgd->index].icon, "toggle_on.png") == 0)
-    {
-        pgd->menu_item[pgd->index].icon = "toggle_off.png";
-    }
-
-    else if(strcmp (pgd->menu_item[pgd->index].icon, "toggle_off.png") == 0)
-    {
-        for(count = 0; count < pgd->len; count ++)
-        {
-            if (strcmp(pgd->menu_item[count].icon, "toggle_on.png") == 0)
-            {
-                pgd->menu_item[count].icon = "toggle_off.png";
-            }
-        }
-
-        pgd->menu_item[pgd->index].icon = "toggle_on.png";
-    }
-
-    /* */
-    evas_object_del(pgd->parent);
+    if (pgd->cb)
+        pgd->cb(42, pgd->index, pgd->menu_item, pgd->parent, pgd->data);
 }
 
 static void
@@ -130,7 +110,7 @@ free_genlist_item_data(void *data, Evas_Object *obj, void *event_info)
 }
 
 Evas_Object *
-create_settings_popup_genlist(Evas_Object *parent, popup_menu_item_s *directory_menu, int len, Eext_Event_Cb cb, void *data)
+create_settings_popup_genlist(Evas_Object *parent, popup_menu_item_s *directory_menu, int len, Menu_item_callback cb, void *data)
 {
     Evas_Object *genlist;
     Elm_Object_Item *it;
@@ -173,6 +153,7 @@ create_settings_popup_genlist(Evas_Object *parent, popup_menu_item_s *directory_
         pgd->parent = parent;
         pgd->menu_item = directory_menu;
         pgd->len = len;
+        pgd->cb = cb;
         pgd->data = data;
 
         it = elm_genlist_item_append(genlist,
@@ -180,10 +161,10 @@ create_settings_popup_genlist(Evas_Object *parent, popup_menu_item_s *directory_
                 pgd,                            /* genlist item class user data     */
                 NULL,                            /* genlist parent item              */
                 ELM_GENLIST_ITEM_NONE,            /* genlist item type                */
-                cb,                /* genlist select smart callback    */
+                popup_selected_cb,                /* genlist select smart callback    */
                 pgd);                            /* genlist smart callback user data */
 
-        eext_object_event_callback_add(pgd->parent, EEXT_CALLBACK_BACK, cb, pgd);
+        eext_object_event_callback_add(pgd->parent, EEXT_CALLBACK_BACK, popup_selected_cb, pgd);
         elm_object_item_del_cb_set(it, free_genlist_item_data);
         pgd->item = it;
     }
