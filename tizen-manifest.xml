@@ -13,6 +13,7 @@ VLC media player supports many audio and video compression methods and file form
         <privilege>http://tizen.org/privilege/mediastorage</privilege>
         <privilege>http://tizen.org/privilege/internet</privilege>
         <privilege>http://tizen.org/privilege/notification</privilege>
+        <privilege>http://tizen.org/privilege/display</privilege>
         <privilege>http://tizen.org/privilege/volume.set</privilege>
         <privilege>http://tizen.org/privilege/externalstorage</privilege>
     </privileges>
