@@ -400,7 +400,7 @@ create_setting_list(Evas_Object *parent)
 
     /* Stop when the setting list names is all used */
     for (index = 0; index < n_items; index++) {
-        setting_data *sd = calloc(1, sizeof(setting_data));
+        setting_data *sd = calloc(1, sizeof(*sd));
 
         /* Put the index in the setting_data struct for callbacks */
         sd->index = index;
