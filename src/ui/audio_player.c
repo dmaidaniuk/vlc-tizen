@@ -500,7 +500,7 @@ fs_more_player_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
         Evas_Object *popup_list;
 
         /* FIXME */
-        mpd->popup = elm_popup_add(intf_get_main_naviframe(mpd->intf));
+        mpd->popup = elm_popup_add(mpd->fs_cover);
 
         /* Size the popup */
         evas_object_size_hint_min_set(mpd->popup, 200, 200);
