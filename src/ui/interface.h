@@ -55,7 +55,7 @@ typedef enum view_e {
 } view_e;
 
 void
-intf_create_view(interface *, view_e);
+intf_show_view(interface *, view_e);
 
 // FIXME
 void

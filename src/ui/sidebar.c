@@ -105,23 +105,23 @@ gl_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
     switch(cd->index){
 
     case VIEW_VIDEO:
-        intf_create_view(cd->intf, VIEW_VIDEO);
+        intf_show_view(cd->intf, VIEW_VIDEO);
         break;
 
     case VIEW_AUDIO:
-        intf_create_view(cd->intf, VIEW_AUDIO);
+        intf_show_view(cd->intf, VIEW_AUDIO);
         break;
 
     case VIEW_FILES:
-        intf_create_view(cd->intf, VIEW_FILES);
+        intf_show_view(cd->intf, VIEW_FILES);
         break;
 
     case VIEW_SETTINGS:
-        intf_create_view(cd->intf, VIEW_SETTINGS);
+        intf_show_view(cd->intf, VIEW_SETTINGS);
         break;
 
     case VIEW_ABOUT:
-        intf_create_view(cd->intf, VIEW_ABOUT);
+        intf_show_view(cd->intf, VIEW_ABOUT);
         break;
 
         free(cd);

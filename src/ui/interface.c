@@ -262,7 +262,7 @@ needs_overflow_menu(int view_type)
 }
 
 void
-intf_create_view(interface *intf, int view_type)
+intf_show_view(interface *intf, int view_type)
 {
     if(view_type == VIEW_AUTO)
         view_type = VIEW_VIDEO; /* Replace by the last saved tab */
@@ -438,7 +438,7 @@ intf_create(application *app)
     elm_object_content_set(conform, base_layout);
 
     /* Create the default view in the content naviframe */
-    intf_create_view(intf, VIEW_AUTO);
+    intf_show_view(intf, VIEW_AUTO);
 
     /* */
     evas_object_show(intf->win);
