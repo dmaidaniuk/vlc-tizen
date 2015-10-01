@@ -72,12 +72,6 @@ static int compare_sort_items(const void *data1, const void *data2)
 	label1 = elm_object_item_text_get(li_it1);
 	label2 = elm_object_item_text_get(li_it2);
 
-	if (strcmp(label1, "..") == 0) {
-		return -1;
-	} else if (strcmp(label2, "..") == 0) {
-		return 1;
-	}
-
 	li_data1 = elm_object_item_data_get(data1);
 	li_data2 = elm_object_item_data_get(data2);
 
@@ -95,6 +89,7 @@ browse(directory_view *dv, const char* path)
     char *cpath;
     directory_data *dd;
     Evas_Object *file_list;
+    Elm_Object_Item *item;
     DIR* rep = NULL;
     struct dirent* current_folder = NULL;
     struct stat st;
@@ -145,15 +140,10 @@ browse(directory_view *dv, const char* path)
     elm_box_pack_end(box, directory);
     evas_object_show(directory);
 
-    /* Add a first list append with ".." to go back in directory */
+    /* Create the list */
     file_list = elm_list_add(dv->p_parent);
-    dd = malloc(sizeof(*dd));
-    dd->dv = dv;
-    dd->is_file = false;
-    asprintf(&dd->file_path, "%s/..", cpath);
-    Elm_Object_Item *item = elm_list_item_append(file_list, "..", NULL, NULL, list_selected_cb, dd);
-    elm_object_item_del_cb_set(item, free_list_item_data);
 
+    /* Browse the current directory */
     while ((current_folder = readdir(rep)) != NULL)
     {
         if (!current_folder->d_name)
@@ -184,13 +174,20 @@ browse(directory_view *dv, const char* path)
         dd->file_path = strdup(tmppath);
 
         /* Set and append new item in the list */
-        Elm_Object_Item *item = elm_list_item_sorted_insert(file_list, current_folder->d_name, NULL, NULL, list_selected_cb, dd, compare_sort_items);
+        item = elm_list_item_sorted_insert(file_list, current_folder->d_name, NULL, NULL, list_selected_cb, dd, compare_sort_items);
 
         /* */
         elm_object_item_del_cb_set(item, free_list_item_data);
     }
-
     closedir(rep);
+
+    /* Prepend the '..' item */
+    dd = malloc(sizeof(*dd));
+    dd->dv = dv;
+    dd->is_file = false;
+    asprintf(&dd->file_path, "%s/..", cpath);
+    item = elm_list_item_prepend(file_list, "..", NULL, NULL, list_selected_cb, dd);
+    elm_object_item_del_cb_set(item, free_list_item_data);
 
     elm_list_go(file_list);
 
