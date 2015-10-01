@@ -24,12 +24,14 @@
  * compatibility with the Store
  *****************************************************************************/
 
-#include "common.h"
 
 #ifndef ABOUT_VIEW_H_
 #define ABOUT_VIEW_H_
 
+#include "common.h"
+#include "ui/interface.h"
+
 Evas_Object*
-create_about_view(Evas_Object *parent);
+create_about_view(interface *, Evas_Object *parent);
 
 #endif /* ABOUT_VIEW_H_ */

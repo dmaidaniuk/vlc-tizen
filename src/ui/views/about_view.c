@@ -110,7 +110,7 @@ create_toolbar(Evas_Object *nf_toolbar)
 }
 
 Evas_Object *
-create_about_view(Evas_Object *parent)
+create_about_view(interface *intf, Evas_Object *parent)
 {
     /* Content box */
     Evas_Object *about_box = elm_box_add(parent);

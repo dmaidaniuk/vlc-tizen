@@ -289,7 +289,7 @@ intf_show_view(interface *intf, int view_type)
             view = create_setting_view(intf, nf_content);
             break;
         case VIEW_ABOUT:
-            view = create_about_view(nf_content);
+            view = create_about_view(intf, nf_content);
             break;
         }
         intf->nf_views[view_type] = view;
