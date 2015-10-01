@@ -272,7 +272,7 @@ playback_service_set_context(playback_service *p_ps, enum PLAYLIST_CONTEXT i_ctx
     return 0;
 }
 
-void *
+playback_service_cbs_id *
 playback_service_register_callbacks(playback_service *p_ps, playback_service_callbacks *p_cbs)
 {
     Eina_List *p_el;
@@ -289,11 +289,11 @@ playback_service_register_callbacks(playback_service *p_ps, playback_service_cal
         return NULL;
     }
     p_ps->p_cbs_list = p_el;
-    return p_cbs_dup;
+    return (playback_service_cbs_id *) p_cbs_dup;
 }
 
 void
-playback_service_unregister_callbacks(playback_service *p_ps, void *p_id)
+playback_service_unregister_callbacks(playback_service *p_ps, playback_service_cbs_id *p_id)
 {
     p_ps->p_cbs_list = eina_list_remove(p_ps->p_cbs_list, p_id);
     free(p_id);

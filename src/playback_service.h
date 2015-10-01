@@ -34,6 +34,7 @@ enum PLAYLIST_CONTEXT {
     PLAYLIST_CONTEXT_OTHERS,
 };
 
+typedef struct playback_service_cbs_id playback_service_cbs_id;
 typedef struct playback_service_callbacks playback_service_callbacks;
 struct playback_service_callbacks
 {
@@ -57,11 +58,11 @@ playback_service_destroy(playback_service *p_ps);
 int
 playback_service_set_context(playback_service *p_ps, enum PLAYLIST_CONTEXT i_ctx);
 
-void *
+playback_service_cbs_id *
 playback_service_register_callbacks(playback_service *p_ps, playback_service_callbacks *p_cbs);
 
 void
-playback_service_unregister_callbacks(playback_service *p_ps, void *p_id);
+playback_service_unregister_callbacks(playback_service *p_ps, playback_service_cbs_id *p_id);
 
 Evas_Object *
 playback_service_set_evas_video(playback_service *p_ps, Evas *p_evas);
