@@ -38,9 +38,9 @@
 void
 list_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
-    directory_data_s *dd = data;
+    directory_data *dd = data;
 
-    if (dd->isFile)
+    if (dd->is_file)
     {
         /* Start the playback of the given file */
         intf_create_video_player(dd->dv->p_intf, dd->file_path);
@@ -55,7 +55,7 @@ list_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 static void
 free_list_item_data(void *data, Evas_Object *obj, void *event_info)
 {
-    directory_data_s *dd = data;
+    directory_data *dd = data;
     /* Free the file path when the current list is deleted */
     /* For example when the player is launched or a new list is created */
     free(dd->file_path);
@@ -67,7 +67,7 @@ static int compare_sort_items(const void *data1, const void *data2)
 	const char *label1, *label2;
 	const Elm_Object_Item *li_it1 = data1;
 	const Elm_Object_Item *li_it2 = data2;
-	const directory_data_s *li_data1, *li_data2;
+	const directory_data *li_data1, *li_data2;
 
 	label1 = elm_object_item_text_get(li_it1);
 	label2 = elm_object_item_text_get(li_it2);
@@ -81,9 +81,9 @@ static int compare_sort_items(const void *data1, const void *data2)
 	li_data1 = elm_object_item_data_get(data1);
 	li_data2 = elm_object_item_data_get(data2);
 
-	if (!li_data1->isFile && li_data2->isFile)
+	if (!li_data1->is_file && li_data2->is_file)
 		return -1;
-	else if (li_data1->isFile && !li_data2->isFile)
+	else if (li_data1->is_file && !li_data2->is_file)
 		return 1;
 
 	return strcasecmp(label1, label2);
@@ -93,13 +93,13 @@ Evas_Object*
 browse(directory_view *dv, const char* path)
 {
     char *cpath;
-    directory_data_s *dd;
+    directory_data *dd;
     Evas_Object *file_list;
     DIR* rep = NULL;
     struct dirent* current_folder = NULL;
     struct stat st;
     char tmppath[PATH_MAX];
-    bool isFile;
+    bool is_file;
 
     /* Make a realpath to use a clean path in the function */
     cpath = realpath(path, NULL);
@@ -149,7 +149,7 @@ browse(directory_view *dv, const char* path)
     file_list = elm_list_add(dv->p_parent);
     dd = malloc(sizeof(*dd));
     dd->dv = dv;
-    dd->isFile = false;
+    dd->is_file = false;
     asprintf(&dd->file_path, "%s/..", cpath);
     Elm_Object_Item *item = elm_list_item_append(file_list, "..", NULL, NULL, list_selected_cb, dd);
     elm_object_item_del_cb_set(item, free_list_item_data);
@@ -172,15 +172,15 @@ browse(directory_view *dv, const char* path)
             continue;
 
         if (S_ISREG(st.st_mode))
-            isFile = true;
+            is_file = true;
         else if (S_ISDIR(st.st_mode))
-            isFile = false;
+            is_file = false;
         else
             continue;
 
         dd = malloc(sizeof(*dd));
         dd->dv = dv;
-        dd->isFile = isFile;
+        dd->is_file = is_file;
         dd->file_path = strdup(tmppath);
 
         /* Set and append new item in the list */

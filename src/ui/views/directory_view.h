@@ -37,8 +37,8 @@ typedef struct directory_view {
 typedef struct directory_data {
     directory_view *dv;
     char *file_path;
-    bool isFile;
-} directory_data_s;
+    bool is_file;
+} directory_data;
 
 Evas_Object*
 create_directory_view(interface *intf, const char* path, Evas_Object *parent);
