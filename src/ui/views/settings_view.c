@@ -245,14 +245,12 @@ gl_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
         Evas_Object *popup = elm_popup_add(sd->parent);
 
         /* Add the more list in the popup */
-        LOGI("%p", directory_menu);
         moulaf = create_settings_popup_genlist(popup, directory_menu, 2);
         elm_object_content_set(popup, moulaf);
         evas_object_show(moulaf);
         /* */
         evas_object_show(popup);
 
-        LOGI("l'index est %i", sd->index);
         break;
     }
     case SETTINGS_ID_HWACCELERATION:
@@ -263,14 +261,12 @@ gl_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
         Evas_Object *popup = elm_popup_add(sd->parent);
 
         /* Add the more list in the popup */
-        LOGI("%p", material_acceleration_menu);
         moulaf = create_settings_popup_genlist(popup, material_acceleration_menu, 4);
         elm_object_content_set(popup, moulaf);
         evas_object_show(moulaf);
         /* */
         evas_object_show(popup);
 
-        LOGI("l'index est %i", sd->index);
         break;
     }
     case SETTINGS_ID_SUBSENC:
@@ -281,14 +277,11 @@ gl_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
         Evas_Object *popup = elm_popup_add(sd->parent);
 
         /* Add the more list in the popup */
-        LOGI("%p", subtitles_text_encoding_menu);
         moulaf = create_settings_popup_genlist(popup, subtitles_text_encoding_menu, 41);
         elm_object_content_set(popup, moulaf);
         evas_object_show(moulaf);
         /* */
         evas_object_show(popup);
-
-        LOGI("l'index est %i", sd->index);
 
         break;
     }
@@ -300,13 +293,11 @@ gl_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
         Evas_Object *popup = elm_popup_add(sd->parent);
 
         /* Add the more list in the popup */
-        LOGI("%p", video_orientation_menu);
         moulaf = create_settings_popup_genlist(popup, video_orientation_menu, 6);
         elm_object_content_set(popup, moulaf);
         evas_object_show(moulaf);
         /* */
         evas_object_show(popup);
-        LOGI("l'index est %i", sd->index);
 
         break;
     }
@@ -318,13 +309,11 @@ gl_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
         Evas_Object *popup = elm_popup_add(sd->parent);
 
         /* Add the more list in the popup */
-        LOGI("%p", performance_menu);
         moulaf = create_settings_popup_genlist(popup, performance_menu, 2);
         elm_object_content_set(popup, moulaf);
         evas_object_show(moulaf);
         /* */
         evas_object_show(popup);
-        LOGI("l'index est %i", sd->index);
 
         break;
     }
@@ -336,13 +325,11 @@ gl_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
         Evas_Object *popup = elm_popup_add(sd->parent);
 
         /* Add the more list in the popup */
-        LOGI("%p", deblocking_filter_settings_menu);
         moulaf = create_settings_popup_genlist(popup, deblocking_filter_settings_menu, 5);
         elm_object_content_set(popup, moulaf);
         evas_object_show(moulaf);
         /* */
         evas_object_show(popup);
-        LOGI("l'index est %i", sd->index);
 
         break;
     }
@@ -364,7 +351,6 @@ create_setting_list(Evas_Object *parent)
     Evas_Object *genlist;
     Elm_Object_Item *hit, *it;
     int n_items = (int) sizeof(settings_menu) / (int) sizeof (*settings_menu);
-    LOGI("n_item est %i", n_items);
     int index;
 
     /* Set then create the Genlist object */
