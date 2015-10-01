@@ -1004,7 +1004,7 @@ create_base_player(mini_player *mpd, const char *file_path)
     playback_service_list_clear(mpd->p_ps);
     media_item *p_mi = media_item_create(file_path, MEDIA_ITEM_TYPE_AUDIO);
     playback_service_list_append(mpd->p_ps, p_mi);
-    playback_service_start(mpd->p_ps);
+    playback_service_start(mpd->p_ps, 0);
 
     update_player_display(mpd);
 

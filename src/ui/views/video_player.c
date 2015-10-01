@@ -165,7 +165,7 @@ create_video_gui(playback_service *p_ps, Evas_Object *parent, const char* file_p
 
     playback_service_list_clear(vd->p_ps);
     playback_service_list_append(vd->p_ps, p_mi);
-    playback_service_start(vd->p_ps);
+    playback_service_start(vd->p_ps, 0);
 
     return layout;
 }

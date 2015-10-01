@@ -68,7 +68,7 @@ Evas_Object *
 playback_service_set_evas_video(playback_service *p_ps, Evas *p_evas);
 
 int
-playback_service_start(playback_service *p_ps);
+playback_service_start(playback_service *p_ps, double i_time);
 
 int
 playback_service_stop(playback_service *p_ps);

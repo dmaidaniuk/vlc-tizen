@@ -156,7 +156,7 @@ ml_on_media_selected_cb(media_list *p_ml, void *p_user_data, unsigned int i_pos,
         /* play new media */
         playback_service_stop(p_ps);
         if (i_pos >= 0)
-            playback_service_start(p_ps);
+            playback_service_start(p_ps, 0);
     }
     PS_SEND_CALLBACK(pf_on_media_selected, i_pos, p_mi);
 }
@@ -331,7 +331,7 @@ playback_service_set_evas_video(playback_service *p_ps, Evas *p_evas)
 
 
 int
-playback_service_start(playback_service *p_ps)
+playback_service_start(playback_service *p_ps, double i_time)
 {
     media_item *p_mi;
 
@@ -351,6 +351,8 @@ playback_service_start(playback_service *p_ps)
         LOGE("emotion_object_file_set failed");
         return -1;
     }
+    if (i_time > 0)
+        emotion_object_position_set(p_ps->p_e, i_time);
 
     p_ps->b_started = true;
     return playback_service_play(p_ps);
