@@ -97,7 +97,10 @@ ps_emotion_position_update_cb(void *data, Evas_Object *obj, void *event)
     else
     {
         double i_time = emotion_object_position_get(obj);
-        PS_SEND_CALLBACK(pf_on_new_time, i_time);
+        double i_len = emotion_object_play_length_get(obj);
+        double i_pos = (i_time > 0.0 && i_len > 0.0) ? i_time / i_len : 0.0;
+
+        PS_SEND_CALLBACK(pf_on_new_time, i_time, i_pos);
     }
 }
 

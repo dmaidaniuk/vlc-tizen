@@ -947,7 +947,7 @@ mini_player_fullscreen_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_
 }
 
 static void
-ps_on_new_time_cb(playback_service *p_ps, void *p_user_data, double i_time)
+ps_on_new_time_cb(playback_service *p_ps, void *p_user_data, double i_time, double i_pos)
 {
     mini_player *mpd = p_user_data;
 
