@@ -27,6 +27,8 @@
 #include <Elementary.h>
 #include <Emotion.h>
 
+#include <device/power.h>
+
 #include "playback_service.h"
 #include "media/media_list.h"
 
@@ -45,6 +47,12 @@ static const int META_EMOTIOM_TO_MEDIA_ITEM[] = {
     MEDIA_ITEM_META_COUNT,
 };
 
+static const char *STR_POWER_LOCKS[] = {
+    "POWER_LOCK_CPU",
+    "POWER_LOCK_DISPLAY",
+    "POWER_LOCK_DISPLAY_DIM",
+};
+
 struct playback_service
 {
     media_list *p_ml_list[PLAYLIST_CONTEXT_COUNT];
@@ -54,6 +62,8 @@ struct playback_service
     Evas_Object *p_e;   /* emotion audio or video */
     Evas *p_ea_evas;
     Eina_List *p_cbs_list;
+
+    int i_current_lock;
 
     bool b_started;
     bool b_seeking;
@@ -207,6 +217,8 @@ playback_service_create(application *p_app)
     if (!p_ps)
         return NULL;
 
+    p_ps->i_current_lock = -1;
+
     for (unsigned int i = 0; i < PLAYLIST_CONTEXT_COUNT; ++i)
     {
         media_list_callbacks cbs = {
@@ -330,11 +342,34 @@ playback_service_set_evas_video(playback_service *p_ps, Evas *p_evas)
     }
 }
 
+static void
+ps_acquire_lock(playback_service *p_ps, power_lock_e i_new_lock)
+{
+    if (device_power_request_lock(i_new_lock, 0) == DEVICE_ERROR_NONE)
+    {
+        p_ps->i_current_lock = i_new_lock;
+        LOGD("ps_acquire_lock: get %s", STR_POWER_LOCKS[i_new_lock]);
+    }
+    else
+        LOGE("ps_acquire_lock: failed to get %s", STR_POWER_LOCKS[i_new_lock]);
+}
+
+static void
+ps_release_lock(playback_service *p_ps)
+{
+    if (p_ps->i_current_lock != -1)
+    {
+        device_power_release_lock(p_ps->i_current_lock);
+        LOGD("ps_release_lock: release %s", STR_POWER_LOCKS[p_ps->i_current_lock]);
+        p_ps->i_current_lock = -1;
+    }
+}
 
 int
 playback_service_start(playback_service *p_ps, double i_time)
 {
     media_item *p_mi;
+    power_lock_e i_new_lock;
 
     p_mi = media_list_get_item(p_ps->p_ml);
     if (!p_mi || !p_mi->psz_path)
@@ -352,6 +387,14 @@ playback_service_start(playback_service *p_ps, double i_time)
     if (i_time > 0)
         emotion_object_position_set(p_ps->p_e, i_time);
 
+    i_new_lock = p_ps->p_e == p_ps->p_ev ? POWER_LOCK_DISPLAY : POWER_LOCK_CPU;
+
+    if (p_ps->i_current_lock != i_new_lock)
+    {
+        ps_release_lock(p_ps);
+        ps_acquire_lock(p_ps, i_new_lock);
+    }
+
     p_ps->b_started = true;
     return playback_service_play(p_ps);
 }
@@ -365,6 +408,7 @@ playback_service_stop(playback_service *p_ps)
     playback_service_pause(p_ps);
     emotion_object_file_set(p_ps->p_e, NULL);
     p_ps->b_started = false;
+    ps_release_lock(p_ps);
     return 0;
 }
 
