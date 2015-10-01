@@ -296,6 +296,7 @@ void
 playback_service_unregister_callbacks(playback_service *p_ps, void *p_id)
 {
     p_ps->p_cbs_list = eina_list_remove(p_ps->p_cbs_list, p_id);
+    free(p_id);
 }
 
 Evas_Object *
