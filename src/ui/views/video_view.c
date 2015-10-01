@@ -208,10 +208,7 @@ void
 video_view_update(video_view* vv, Eina_List* p_content)
 {
     if ( p_content == NULL )
-    {
-        LOGI("Empty video list");
         return;
-    }
 
     /* Genlist class */
     Elm_Genlist_Item_Class *itc = elm_genlist_item_class_new();
