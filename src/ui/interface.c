@@ -87,6 +87,20 @@ struct interface {
 /* TODO : Then use the void eext_object_event_callback_add func */
 /* TODO : See more on https://developer.tizen.org/development/guides/native-application/ui/efl-extension */
 
+typedef struct interface_view
+{
+    const char* title;
+    Evas_Object* (*pf_create)(interface *, Evas_Object *);
+} interface_view;
+interface_view interface_views[VIEW_MAX] =
+{
+    { "Video",     create_video_view },
+    { "Audio",     create_audio_view },
+    { "Directory", create_directory_view },
+    { "Settings",  create_setting_view },
+    { "About",     create_about_view },
+};
+
 /* CALLBACKS */
 static void
 win_delete_request_cb(void *data, Evas_Object *obj, void *event_info)
@@ -235,23 +249,6 @@ create_button(Evas_Object *parent, char *style, char *text)
     return button;
 }
 
-static const char*
-get_view_title(int view_type){
-    switch(view_type)
-        {
-        case VIEW_AUDIO:
-            return "Audio";
-        case VIEW_FILES:
-            return "Directory";
-        case VIEW_SETTINGS:
-            return "Settings";
-        case VIEW_ABOUT:
-            return "About";
-        default:
-            return "Video";
-        }
-}
-
 static bool
 needs_overflow_menu(int view_type)
 {
@@ -274,32 +271,13 @@ intf_show_view(interface *intf, int view_type)
     if(view == NULL)
     {
         LOGD("New interface view %i", view_type);
-        switch(view_type)
-        {
-        case VIEW_VIDEO:
-            view = create_video_view(intf, nf_content);
-            break;
-        case VIEW_AUDIO:
-            view = create_audio_view(intf, nf_content);
-            break;
-        case VIEW_FILES:
-            view = create_directory_view(intf, nf_content);
-            break;
-        case VIEW_SETTINGS:
-            view = create_setting_view(intf, nf_content);
-            break;
-        case VIEW_ABOUT:
-            view = create_about_view(intf, nf_content);
-            break;
-        }
-        intf->nf_views[view_type] = view;
-
+        intf->nf_views[view_type] = view = interface_views[view_type].pf_create(intf, nf_content);
     }
     else
         LOGD("Recycling interface view %i", view_type);
 
     /* Push the view in the naviframe with the corresponding header */
-    elm_naviframe_item_push(nf_content, get_view_title(view_type), NULL, NULL, view, "basic");
+    elm_naviframe_item_push(nf_content, interface_views[view_type].title, NULL, NULL, view, "basic");
     evas_object_show(view);
 
     /* Create then set the panel toggle btn and add his callbacks */
