@@ -51,6 +51,8 @@ struct interface {
     Evas_Object *global_box; /* Root box */
     Evas_Object *nf_content; /* Main naviframe */
 
+    Evas_Object *nf_views[VIEW_MAX];
+
     /* */
     Evas_Object *sidebar;    /* Sidebar panel */
     int current_sidebar_idx;
@@ -263,35 +265,39 @@ needs_overflow_menu(int view_type)
 void
 intf_create_view(interface *intf, int view_type)
 {
-    Evas_Object *nf_content = intf->nf_content;
-    Evas_Object *view;
-
     if(view_type == VIEW_AUTO)
         view_type = VIEW_VIDEO; /* Replace by the last saved tab */
 
-    /* Create the view depending on with panel item list is selected */
-    switch(view_type)
+    Evas_Object *nf_content = intf->nf_content;
+    Evas_Object *view = intf->nf_views[view_type];
+
+    /* Create the correct view and store it */
+    if(view == NULL)
     {
-    case VIEW_VIDEO:
-        view = create_video_view(intf, nf_content);
-        break;
-    case VIEW_AUDIO:
-        view = create_audio_view(intf, nf_content);
-        break;
-    case VIEW_FILES:
-        view = create_directory_view(intf, application_get_media_path(intf->p_app, MEDIA_DIRECTORY), nf_content);
-        break;
-    case VIEW_SETTINGS:
-        view = create_setting_view(nf_content);
-        break;
-    case VIEW_ABOUT:
-        view = create_about_view(nf_content);
-        break;
+        LOGD("New interface view %i", view_type);
+        switch(view_type)
+        {
+        case VIEW_VIDEO:
+            view = create_video_view(intf, nf_content);
+            break;
+        case VIEW_AUDIO:
+            view = create_audio_view(intf, nf_content);
+            break;
+        case VIEW_FILES:
+            view = create_directory_view(intf, application_get_media_path(intf->p_app, MEDIA_DIRECTORY), nf_content);
+            break;
+        case VIEW_SETTINGS:
+            view = create_setting_view(nf_content);
+            break;
+        case VIEW_ABOUT:
+            view = create_about_view(nf_content);
+            break;
+        }
+        intf->nf_views[view_type] = view;
 
     }
-    /* Push the view in the naviframe with the corresponding header */
-    elm_naviframe_item_push(nf_content, get_view_title(view_type), NULL, NULL, view, "basic");
-    intf->current_sidebar_idx = view_type;
+    else
+        LOGD("Recycling interface view %i", view_type);
 
     /* Create then set the panel toggle btn and add his callbacks */
     intf->sidebar_toggle_btn = create_button(intf->nf_content, "naviframe/drawers", NULL);
@@ -305,6 +311,11 @@ intf_create_view(interface *intf, int view_type)
         evas_object_smart_callback_add(intf->popup_toggle_btn, "clicked", right_panel_button_clicked_cb, intf);
         elm_object_part_content_set(intf->nf_content, "title_right_btn", intf->popup_toggle_btn);
     }
+
+    /* Push the view in the naviframe with the corresponding header */
+    elm_naviframe_item_push(nf_content, get_view_title(view_type), NULL, NULL, view, "basic");
+    evas_object_show(view);
+    intf->current_sidebar_idx = view_type;
 }
 
 void
