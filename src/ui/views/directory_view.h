@@ -24,8 +24,8 @@
  * compatibility with the Store
  *****************************************************************************/
 
-#ifndef VIDEO_VIEW_H_
-#define VIDEO_VIEW_H_
+#ifndef DIRECTORY_VIEW_H_
+#define DIRECTORY_VIEW_H_
 
 #include "ui/interface.h"
 
@@ -46,4 +46,4 @@ create_directory_view(interface *intf, Evas_Object *parent);
 Evas_Object*
 browse(directory_view *dv, const char* path);
 
-#endif /* VIDEO_VIEW_H_ */
+#endif /* DIRECTORY_VIEW_H_ */
