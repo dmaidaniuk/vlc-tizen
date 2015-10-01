@@ -33,8 +33,6 @@
 
 #include "IFile.h"
 #include "ILogger.h"
-#include "IMovie.h"
-#include "IShowEpisode.h"
 #include "IVideoTrack.h"
 
 #include "media_library.hpp"
@@ -216,6 +214,7 @@ fileToMediaItem( FilePtr file )
         LOGE( "Failed to create media_item for file %s", file->mrl().c_str() );
         return nullptr;
     }
+    media_item_set_meta(mi, MEDIA_ITEM_META_TITLE, file->name().c_str());
     // If the file hasn't been parsed yet, there's no change we can do something
     // usefull past this point, we will try again after onFileUpdated gets called.
     if ( file->isParsed() == false )
@@ -236,24 +235,6 @@ fileToMediaItem( FilePtr file )
         {
             // Assume a media library problem and just let it go.
             LOGW( "Adding video file [%s] with no video tracks detected.", file->mrl().c_str() );
-        }
-        // If this is a video, let's check if we can fetch it's movie/tvshow equivalent:
-        auto movie = file->movie();
-        if ( movie != nullptr )
-        {
-            media_item_set_meta(mi, MEDIA_ITEM_META_TITLE, movie->title().c_str());
-        }
-        else
-        {
-            auto episode = file->showEpisode();
-            if ( episode != nullptr )
-            {
-                media_item_set_meta(mi, MEDIA_ITEM_META_TITLE, movie->title().c_str());
-            }
-            else
-            {
-                LOGW( "FIXME: Not a movie, not an episode, but we have no 'clip' type in MediaLibrary" );
-            }
         }
     }
     else if ( file->type() == IFile::Type::AudioType )
