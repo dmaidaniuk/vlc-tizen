@@ -163,6 +163,7 @@ ml_on_media_selected_cb(media_list *p_ml, void *p_user_data, unsigned int i_pos,
 static Evas_Object *
 ps_emotion_create(playback_service *p_ps, Evas *p_evas, bool b_mute_video)
 {
+    setenv("EMOTION_LIBVLC_DEBUG", "1", 1);
     Evas_Object *p_e = emotion_object_add(p_evas);
     if (!p_e)
     {
