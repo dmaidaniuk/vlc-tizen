@@ -27,6 +27,10 @@
 #ifndef APPLICATION_H_
 # define APPLICATION_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct application application;
 typedef struct interface interface;
 typedef struct media_library media_library;
@@ -48,5 +52,9 @@ application_get_media_library(application *app);
 
 playback_service *
 application_get_playback_service(application *app);
+
+#ifdef __cplusplus
+} // extern "C"
+#endif
 
 #endif
