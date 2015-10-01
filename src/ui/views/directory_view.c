@@ -86,14 +86,14 @@ static int compare_sort_items(const void *data1, const void *data2)
 Evas_Object*
 browse(directory_view *dv, const char* path)
 {
-    char *cpath;
-    directory_data *dd;
-    Evas_Object *file_list;
     Elm_Object_Item *item;
+    Evas_Object *file_list;
+    directory_data *dd;
     DIR* rep = NULL;
     struct dirent* current_folder = NULL;
     struct stat st;
     char tmppath[PATH_MAX];
+    char *cpath;
     bool is_file;
 
     /* Make a realpath to use a clean path in the function */
