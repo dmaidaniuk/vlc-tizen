@@ -27,12 +27,17 @@
 #include "common.h"
 
 #include <Elementary.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <dirent.h>
 
 #include "directory_view.h"
+#include "ui/utils.h"
 
 typedef struct directory_data {
     Evas_Object *parent;
     char *file_path;
+    bool isFile;
 } directory_data_s;
 
 void
@@ -65,7 +70,6 @@ free_list_item_data(void *data, Evas_Object *obj, void *event_info)
     /* Free the file path when the current list is deleted */
     /* For example when the player is launched or a new list is created */
     free(dd->file_path);
-    LOGD("Path free");
     free(dd);
 }
 
@@ -74,9 +78,24 @@ static int compare_sort_items(const void *data1, const void *data2)
 	const char *label1, *label2;
 	const Elm_Object_Item *li_it1 = data1;
 	const Elm_Object_Item *li_it2 = data2;
+	const directory_data_s *li_data1, *li_data2;
 
 	label1 = elm_object_item_text_get(li_it1);
 	label2 = elm_object_item_text_get(li_it2);
+
+	if (strcmp(label1, "..") == 0) {
+		return -1;
+	} else if (strcmp(label2, "..") == 0) {
+		return 1;
+	}
+
+	li_data1 = elm_object_item_data_get(data1);
+	li_data2 = elm_object_item_data_get(data2);
+
+	if (!li_data1->isFile && li_data2->isFile)
+		return -1;
+	else if (li_data1->isFile && !li_data2->isFile)
+		return 1;
 
 	return strcasecmp(label1, label2);
 }
@@ -84,42 +103,56 @@ static int compare_sort_items(const void *data1, const void *data2)
 Evas_Object*
 create_directory_view(const char* path, Evas_Object *parent)
 {
-    char *buff;
+    char *cpath;
     directory_data_s *dd;
-    const char *str = NULL;
     Evas_Object *file_list;
     DIR* rep = NULL;
     struct dirent* current_folder = NULL;
+    struct stat st;
+    char tmppath[PATH_MAX];
+    bool isFile;
 
     /* Make a realpath to use a clean path in the function */
-    buff = realpath(path, NULL);
+    cpath = realpath(path, NULL);
 
-    if (buff == NULL)
+    if (cpath == NULL)
     {
         LOGI("No path");
         return NULL ;
     }
 
     /* Open the path repository then put it as a dirent variable */
-    rep = opendir(buff);
+    rep = opendir(cpath);
 
     if  (rep == NULL)
     {
         char *error;
         error = strerror(errno);
         LOGI("Empty repository or Error due to %s", error);
-        free(buff);
 
-        return NULL ;
+        if (strcmp(cpath, "/") == 0)
+        {
+            /* We're already on the root directory don't open the parent directory */
+            free(cpath);
+            return NULL;
+        }
+
+        free(cpath);
+
+        /* Try to open the parent directory */
+        sprintf(tmppath, "%s/..", path);
+        return create_directory_view(tmppath, parent);
     }
 
+    /* Create the box container */
     Evas_Object *box = elm_box_add(parent);
     evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
     evas_object_size_hint_align_set(box, EVAS_HINT_FILL, EVAS_HINT_FILL);
     evas_object_show(box);
 
+    /* Create the current directory label */
     Evas_Object *directory =  elm_label_add(parent);
-    elm_object_text_set(directory, buff);
+    elm_object_text_set(directory, cpath);
     elm_box_pack_end(box, directory);
     evas_object_show(directory);
 
@@ -127,32 +160,49 @@ create_directory_view(const char* path, Evas_Object *parent)
     file_list = elm_list_add(parent);
     dd = malloc(sizeof(*dd));
     dd->parent = parent;
-    asprintf(&dd->file_path, "%s/..", buff);
+    dd->isFile = false;
+    asprintf(&dd->file_path, "%s/..", cpath);
     Elm_Object_Item *item = elm_list_item_append(file_list, "..", NULL, NULL, list_selected_cb, dd);
     elm_object_item_del_cb_set(item, free_list_item_data);
 
     while ((current_folder = readdir(rep)) != NULL)
     {
-        dd = malloc(sizeof(*dd));
-        /* Put the list parent in the directory_data struct for callbacks */
-        dd->parent = parent;
-
-        /* Concatenate the file path and the selected folder or file name */
-        asprintf(&dd->file_path, "%s/%s", buff, current_folder->d_name);
-        /* Put the folder or file name as a usable string for list item label */
-        str = current_folder->d_name;
+        if (!current_folder->d_name)
+            continue;
 
         /* Avoid genlist item append for "." and ".." d_name */
-        if (str && (strcmp(str, ".") == 0 || strcmp(str, "..") == 0))
+	    if (strcmp(current_folder->d_name, ".") == 0 || strcmp(current_folder->d_name, "..") == 0)
         {
             continue;
         }
 
+        /* Concatenate the file path and the selected folder or file name */
+        sprintf(tmppath, "%s/%s", cpath, current_folder->d_name);
+
+        if (stat(tmppath, &st) != 0)
+            continue;
+
+        if (S_ISREG(st.st_mode))
+            isFile = true;
+        else if (S_ISDIR(st.st_mode))
+            isFile = false;
+        else
+            continue;
+
+        dd = malloc(sizeof(*dd));
+        /* Put the list parent in the directory_data struct for callbacks */
+        dd->parent = parent;
+        dd->isFile = isFile;
+        dd->file_path = strdup(tmppath);
+
         /* Set and append new item in the list */
-        Elm_Object_Item *item = elm_list_item_sorted_insert(file_list, str, NULL, NULL, list_selected_cb, dd, compare_sort_items);
+        Elm_Object_Item *item = elm_list_item_sorted_insert(file_list, current_folder->d_name, NULL, NULL, list_selected_cb, dd, compare_sort_items);
+
         /* */
         elm_object_item_del_cb_set(item, free_list_item_data);
     }
+
+    closedir(rep);
 
     elm_list_go(file_list);
 
@@ -164,7 +214,7 @@ create_directory_view(const char* path, Evas_Object *parent)
     evas_object_show(file_list);
 
     elm_object_content_set(parent, box);
-    free(buff);
+    free(cpath);
 
     return box;
 }
