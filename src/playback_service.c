@@ -262,8 +262,6 @@ playback_service_destroy(playback_service *p_ps)
         evas_object_del(p_ps->p_ea);
     if (p_ps->p_ev)
         evas_object_del(p_ps->p_ev);
-    if (p_ps->p_ea_evas)
-        evas_free(p_ps->p_ea_evas);
 
     free(p_ps);
 }
