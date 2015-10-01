@@ -35,13 +35,6 @@
 #include "ui/interface.h"
 #include "ui/utils.h"
 
-typedef struct directory_data {
-    Evas_Object *parent;
-    interface *p_intf;
-    char *file_path;
-    bool isFile;
-} directory_data_s;
-
 void
 list_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
@@ -50,12 +43,12 @@ list_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
     if (dd->isFile)
     {
         /* Start the playback of the given file */
-        intf_create_video_player(dd->p_intf, dd->file_path);
+        intf_create_video_player(dd->dv->p_intf, dd->file_path);
     }
     else
     {
         /* Continue to browse media folder */
-        create_directory_view(dd->p_intf, dd->file_path, dd->parent);
+        browse(dd->dv, dd->file_path);
     }
 }
 
@@ -97,7 +90,7 @@ static int compare_sort_items(const void *data1, const void *data2)
 }
 
 Evas_Object*
-create_directory_view(interface *intf, const char* path, Evas_Object *parent)
+browse(directory_view *dv, const char* path)
 {
     char *cpath;
     directory_data_s *dd;
@@ -137,27 +130,26 @@ create_directory_view(interface *intf, const char* path, Evas_Object *parent)
 
         /* Try to open the parent directory */
         sprintf(tmppath, "%s/..", path);
-        return create_directory_view(intf, tmppath, parent);
+        return browse(dv, tmppath);
     }
 
     /* Create the box container */
-    Evas_Object *box = elm_box_add(parent);
+    Evas_Object *box = elm_box_add(dv->p_parent);
     evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
     evas_object_size_hint_align_set(box, EVAS_HINT_FILL, EVAS_HINT_FILL);
     evas_object_show(box);
 
     /* Create the current directory label */
-    Evas_Object *directory =  elm_label_add(parent);
+    Evas_Object *directory =  elm_label_add(dv->p_parent);
     elm_object_text_set(directory, cpath);
     elm_box_pack_end(box, directory);
     evas_object_show(directory);
 
     /* Add a first list append with ".." to go back in directory */
-    file_list = elm_list_add(parent);
+    file_list = elm_list_add(dv->p_parent);
     dd = malloc(sizeof(*dd));
-    dd->parent = parent;
+    dd->dv = dv;
     dd->isFile = false;
-    dd->p_intf = intf;
     asprintf(&dd->file_path, "%s/..", cpath);
     Elm_Object_Item *item = elm_list_item_append(file_list, "..", NULL, NULL, list_selected_cb, dd);
     elm_object_item_del_cb_set(item, free_list_item_data);
@@ -187,9 +179,7 @@ create_directory_view(interface *intf, const char* path, Evas_Object *parent)
             continue;
 
         dd = malloc(sizeof(*dd));
-        /* Put the list parent in the directory_data struct for callbacks */
-        dd->parent = parent;
-        dd->p_intf = intf;
+        dd->dv = dv;
         dd->isFile = isFile;
         dd->file_path = strdup(tmppath);
 
@@ -211,8 +201,18 @@ create_directory_view(interface *intf, const char* path, Evas_Object *parent)
 
     evas_object_show(file_list);
 
-    elm_object_content_set(parent, box);
+    elm_object_content_set(dv->p_parent, box);
     free(cpath);
 
     return box;
+}
+
+Evas_Object*
+create_directory_view(interface *intf, const char* path, Evas_Object *parent)
+{
+    directory_view *dv = malloc(sizeof(*dv));
+    dv->p_intf = intf;
+    dv->p_parent = parent;
+
+    return browse(dv, path);
 }
