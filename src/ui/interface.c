@@ -141,7 +141,7 @@ right_panel_button_clicked_cb(void *data, Evas_Object * obj, void *event_info)
 void
 intf_show_previous_view(interface *intf)
 {
-    intf_create_view(intf, intf->current_sidebar_idx);
+    elm_naviframe_item_pop(intf->nf_content);
 }
 
 void

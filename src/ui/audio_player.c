@@ -934,7 +934,7 @@ mini_player_fullscreen_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_
     /* Show the fullcreen box in the content naviframe */
     /* FIXME */
     fs_view = create_fullscreen_player_view(mpd, intf_get_main_naviframe(mpd->intf));
-    elm_object_content_set(intf_get_main_naviframe(mpd->intf), fs_view);
+    elm_naviframe_item_simple_push(intf_get_main_naviframe(mpd->intf), fs_view);
 
     /* */
     evas_object_show(fs_view);
