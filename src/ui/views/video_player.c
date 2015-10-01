@@ -35,6 +35,7 @@
 typedef struct video_player
 {
     playback_service *p_ps;
+    playback_service_cbs_id *p_ps_cbs_id;
 
     /* Widgets */
     Evas_Object *play_pause_button, *progress_slider;
@@ -89,6 +90,21 @@ clicked_more(void *data, Evas_Object *obj, void *event_info)
 	LOGD("more button");
 }
 
+static void
+ps_on_new_len_cb(playback_service *p_ps, void *p_user_data, double i_len)
+{
+    video_player *vd = p_user_data;
+    /* TODO */
+}
+
+static void
+ps_on_new_time_cb(playback_service *p_ps, void *p_user_data, double i_time, double i_pos)
+{
+    video_player *vd = p_user_data;
+    elm_slider_value_set(vd->progress_slider, i_pos);
+}
+
+
 Evas_Object*
 create_video_gui(playback_service *p_ps, Evas_Object *parent, const char* file_path)
 {
@@ -105,6 +121,18 @@ create_video_gui(playback_service *p_ps, Evas_Object *parent, const char* file_p
     }
 
     vd->p_ps = p_ps;
+    playback_service_callbacks cbs = {
+        .pf_on_new_len = ps_on_new_len_cb,
+        .pf_on_new_time = ps_on_new_time_cb,
+        .p_user_data = vd,
+    };
+
+    vd->p_ps_cbs_id = playback_service_register_callbacks(vd->p_ps, &cbs);
+    if (!vd->p_ps_cbs_id)
+    {
+        free(vd);
+        return NULL;
+    }
     Evas_Object *layout = elm_layout_add(parent);
 
     elm_layout_file_set(layout, VIDEOPLAYEREDJ, "media_player_renderer");
