@@ -234,88 +234,50 @@ static void
 gl_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
     Evas_Object *list;
+    Evas_Object *popup;
     setting_data *sd = data;
+
+    popup_menu_item_s *menu;
+    int len;
 
     switch(sd->id)
     {
     case SETTINGS_ID_DIRECTORIES:
-    {
-        Evas_Object *popup = elm_popup_add(sd->parent);
-
-        /* Add the more list in the popup */
-        list = create_settings_popup_genlist(popup, directory_menu, 2);
-        elm_object_content_set(popup, list);
-        evas_object_show(list);
-        /* */
-        evas_object_show(popup);
-
+        menu = directory_menu;
+        len = (int)sizeof(directory_menu) / (int)sizeof(*directory_menu);
         break;
-    }
     case SETTINGS_ID_HWACCELERATION:
-    {
-        Evas_Object *popup = elm_popup_add(sd->parent);
-
-        /* Add the more list in the popup */
-        list = create_settings_popup_genlist(popup, material_acceleration_menu, 4);
-        elm_object_content_set(popup, list);
-        evas_object_show(list);
-        /* */
-        evas_object_show(popup);
-
+        menu = material_acceleration_menu;
+        len = (int)sizeof(material_acceleration_menu) / (int)sizeof(*material_acceleration_menu);
         break;
-    }
     case SETTINGS_ID_SUBSENC:
-    {
-        Evas_Object *popup = elm_popup_add(sd->parent);
-
-        /* Add the more list in the popup */
-        list = create_settings_popup_genlist(popup, subtitles_text_encoding_menu, 41);
-        elm_object_content_set(popup, list);
-        evas_object_show(list);
-        /* */
-        evas_object_show(popup);
-
+        menu = subtitles_text_encoding_menu;
+        len = (int)sizeof(subtitles_text_encoding_menu) / (int)sizeof(*subtitles_text_encoding_menu);
         break;
-    }
     case SETTINGS_ID_VORIENTATION:
-    {
-        Evas_Object *popup = elm_popup_add(sd->parent);
-
-        /* Add the more list in the popup */
-        list = create_settings_popup_genlist(popup, video_orientation_menu, 6);
-        elm_object_content_set(popup, list);
-        evas_object_show(list);
-        /* */
-        evas_object_show(popup);
-
+        menu = video_orientation_menu;
+        len = (int)sizeof(video_orientation_menu) / (int)sizeof(*video_orientation_menu);
         break;
-    }
     case SETTINGS_ID_PERFORMANCES:
-    {
-        Evas_Object *popup = elm_popup_add(sd->parent);
-
-        /* Add the more list in the popup */
-        list = create_settings_popup_genlist(popup, performance_menu, 2);
-        elm_object_content_set(popup, list);
-        evas_object_show(list);
-        /* */
-        evas_object_show(popup);
-
+        menu = performance_menu;
+        len = (int)sizeof(performance_menu) / (int)sizeof(*performance_menu);
         break;
-    }
     case SETTINGS_ID_DEBLOCKING:
-    {
-        Evas_Object *popup = elm_popup_add(sd->parent);
-
-        /* Add the more list in the popup */
-        list = create_settings_popup_genlist(popup, deblocking_filter_settings_menu, 5);
-        elm_object_content_set(popup, list);
-        evas_object_show(list);
-        /* */
-        evas_object_show(popup);
-
+        menu = deblocking_filter_settings_menu;
+        len = (int)sizeof(deblocking_filter_settings_menu) / (int)sizeof(*deblocking_filter_settings_menu);
+        break;
+    default:
+        menu = NULL;
+        len = 0;
         break;
     }
+
+    if (menu != NULL) {
+        popup = elm_popup_add(sd->parent);
+        list = create_settings_popup_genlist(popup, menu, len);
+        elm_object_content_set(popup, list);
+        evas_object_show(list);
+        evas_object_show(popup);
     }
 }
 
