@@ -41,7 +41,7 @@ typedef struct setting_data
     Evas_Object *parent;
     Evas_Object *genlist_test;
 
-} setting_data_s;
+} setting_data;
 
 typedef struct settings_item
 {
@@ -50,10 +50,10 @@ typedef struct settings_item
     const char* icon;
     int type;
 
-} settings_item_s;
+} settings_item;
 
 
-settings_item_s settings_menu[] =
+settings_item settings_menu[] =
 {
         {0,                             "General",                      "",                                 SETTINGS_TYPE_CATEGORY},
         {SETTINGS_ID_DIRECTORIES,       "Directories",                  "ic_menu_folder.png",               SETTINGS_TYPE_ITEM},
@@ -159,7 +159,7 @@ popup_menu_item_s deblocking_filter_settings_menu[] =
 static void
 gl_del_cb(void *data, Evas_Object *obj EINA_UNUSED)
 {
-    setting_data_s *sd = data;
+    setting_data *sd = data;
     free(sd);
 }
 
@@ -172,7 +172,7 @@ create_icon(Evas_Object *parent, int count)
 static char *
 gl_text_get_cb(void *data, Evas_Object *obj, const char *part)
 {
-    setting_data_s *sd = data;
+    setting_data *sd = data;
     const Elm_Genlist_Item_Class *itc = elm_genlist_item_item_class_get(sd->item);
 
     /* Check the item class style and put the current folder or file name as a string */
@@ -194,7 +194,7 @@ gl_text_get_cb(void *data, Evas_Object *obj, const char *part)
 static Evas_Object*
 gl_content_get_cb(void *data, Evas_Object *obj, const char *part)
 {
-    setting_data_s *sd = data;
+    setting_data *sd = data;
     const Elm_Genlist_Item_Class *itc = elm_genlist_item_item_class_get(sd->item);
     Evas_Object *content = NULL;
 
@@ -233,7 +233,7 @@ gl_longpressed_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev
 static void
 gl_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
-    setting_data_s *sd = data;
+    setting_data *sd = data;
 
     switch(sd->id)
     {
@@ -400,7 +400,7 @@ create_setting_list(Evas_Object *parent)
 
     /* Stop when the setting list names is all used */
     for (index = 0; index < n_items; index++) {
-        setting_data_s *sd = calloc(1, sizeof(setting_data_s));
+        setting_data *sd = calloc(1, sizeof(setting_data));
 
         /* Put the index in the setting_data struct for callbacks */
         sd->index = index;
