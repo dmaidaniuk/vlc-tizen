@@ -28,47 +28,6 @@
 #define SETTINGS_VIEW_H_
 
 #include "ui/interface.h"
-#include "ui/menu/popup_genlist.h"
-
-/* ID */
-#define SETTINGS_ID_DIRECTORIES 1
-#define SETTINGS_ID_HWACCELERATION 2
-#define SETTINGS_ID_SUBSENC 3
-#define SETTINGS_ID_VORIENTATION 4
-#define SETTINGS_ID_PERFORMANCES 5
-#define SETTINGS_ID_DEBLOCKING 6
-
-/* Types */
-#define SETTINGS_TYPE_CATEGORY 0
-#define SETTINGS_TYPE_ITEM 1
-
-typedef struct settings_item settings_item;
-typedef void (*Settings_menu_callback)(int id, int index, settings_item *menu, int menu_len, Evas_Object *parent);
-
-typedef struct popup_menu_item popup_menu_item_s;
-
-typedef struct settings_item
-{
-    int id;
-    const char* title;
-    const char* icon;
-    int type;
-    Settings_menu_callback cb;
-} settings_item;
-
-typedef struct setting_data
-{
-    int id;
-    int index;
-    Elm_Object_Item *item;
-    Evas_Object *parent;
-    Evas_Object *genlist_test;
-
-    settings_item *menu;
-    int menu_len;
-    Settings_menu_callback global_cb;
-
-} setting_data;
 
 interface_view*
 create_setting_view(interface *intf, Evas_Object *parent);
