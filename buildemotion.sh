@@ -77,7 +77,7 @@ LIBVLC_LIBS="-L${PROJECTPATH}/lib -lvlc" \
 EMOTION_CFLAGS="-I${TIZEN_INCLUDES}/ecore-1 -I${TIZEN_INCLUDES}/evas-1 \
 -I${TIZEN_INCLUDES}/eet-1 -I${TIZEN_INCLUDES}/eina-1 -I${TIZEN_INCLUDES}/eina-1/eina \
 ${LIBVLC_CFLAGS}" \
-EMOTION_LIBS="-L${TIZEN_LIBS} -lecore -levas -leet -leina -lpthread ${LIBVLC_LIBS}" \
+EMOTION_LIBS="-L${TIZEN_LIBS} -lecore -levas -leet -leina -lpthread -ltbm ${LIBVLC_LIBS}" \
 sh ../configure --host=$TARGET_TUPLE --build=x86_64-unknown-linux \
                 ${EXTRA_PARAMS} ${EMOTION_CONFIGURE_ARGS} ${OPTS} \
                 --prefix=${EMOTION_PREFIX}
