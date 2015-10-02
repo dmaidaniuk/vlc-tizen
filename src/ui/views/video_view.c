@@ -64,16 +64,9 @@ typedef struct video_list_item
 void
 genlist_item_selected_cb(void *data, Evas_Object *obj, void *event_info)
 {
-    video_list_item *vli = data;
+    video_list_item *vli = (video_list_item*)data;
 
-    struct stat sb;
-    stat(vli->p_media_item->psz_path, &sb);
-
-    //FIXME: This should probably go away since we now have a flattened video list.
-    if (S_ISREG(sb.st_mode))
-    {
-        intf_create_video_player(vli->videoview->p_intf, vli->p_media_item->psz_path);
-    }
+    intf_create_video_player(vli->videoview->p_intf, vli->p_media_item->psz_path);
 }
 
 static void
