@@ -31,11 +31,19 @@
 #include <Elementary.h>
 #include <efl_extension.h>
 
+typedef struct settings_item settings_item;
+
+typedef void (*Settings_menu_callback)(int id, int index, settings_item *menu_item, Evas_Object *parent);
+
 typedef struct popup_menu_item
 {
     const int id;
     const char* title;
     const char* icon;
+
+    int type;
+
+    Settings_menu_callback cb;
 } popup_menu_item_s;
 
 typedef void (*Menu_item_callback)(int id, int index, popup_menu_item_s *menu_item, Evas_Object *parent, void *data);

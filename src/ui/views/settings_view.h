@@ -28,6 +28,7 @@
 #define SETTINGS_VIEW_H_
 
 #include "ui/interface.h"
+#include "ui/menu/popup_genlist.h"
 
 /* ID */
 #define SETTINGS_ID_DIRECTORIES 1
@@ -42,8 +43,9 @@
 #define SETTINGS_TYPE_ITEM 1
 
 typedef struct settings_item settings_item;
-
 typedef void (*Settings_menu_callback)(int id, int index, settings_item *menu_item, Evas_Object *parent);
+
+typedef struct popup_menu_item popup_menu_item_s;
 
 typedef struct setting_data
 {
@@ -52,6 +54,10 @@ typedef struct setting_data
     Elm_Object_Item *item;
     Evas_Object *parent;
     Evas_Object *genlist_test;
+
+    popup_menu_item_s *menu;
+    int menu_len;
+    Settings_menu_callback global_cb;
 
 } setting_data;
 

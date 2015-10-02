@@ -48,6 +48,10 @@ menu_deblocking_selected_cb(int id, int index, settings_item *menu_item, Evas_Ob
 static void
 popup_directories_selected_cb(int id, int index, popup_menu_item_s *menu_item, Evas_Object *parent, void *data);
 
+
+static Evas_Object *
+settings_list_add(popup_menu_item_s *menu, int len, Settings_menu_callback global_menu_cb, Evas_Object *parent);
+
 settings_item settings_menu[] =
 {
         {0,                             "General",                      "",                                 SETTINGS_TYPE_CATEGORY},
@@ -64,8 +68,9 @@ settings_item settings_menu[] =
 
 popup_menu_item_s directory_menu[] =
 {
-        {42, "Internal memory", "toggle_off.png"},
-        {42, "Add repository", "call_button_add_call_press.png"}
+        {42, "Directories", "", SETTINGS_TYPE_CATEGORY},
+        {42, "Internal memory", "toggle_off.png", SETTINGS_TYPE_ITEM},
+        {42, "Add repository", "call_button_add_call_press.png", SETTINGS_TYPE_ITEM}
 };
 
 popup_menu_item_s hardware_acceleration_menu[] =
@@ -153,11 +158,9 @@ static void
 menu_directories_selected_cb(int id, int index, settings_item *menu_item, Evas_Object *parent)
 {
     int len = (int)sizeof(directory_menu) / (int)sizeof(*directory_menu);
-    Evas_Object *popup = elm_popup_add(parent);
-    Evas_Object *list = create_settings_popup_genlist(popup, directory_menu, len, popup_directories_selected_cb, NULL);
-    elm_object_content_set(popup, list);
-    evas_object_show(list);
-    evas_object_show(popup);
+    Evas_Object *genlist = settings_list_add(directory_menu, len, NULL, parent);
+    elm_object_content_set(parent, genlist);
+    evas_object_show(genlist);
 }
 
 static void
@@ -299,6 +302,52 @@ gl_content_get_cb(void *data, Evas_Object *obj, const char *part)
     return content;
 }
 
+static char *
+gl_text_get_cb2(void *data, Evas_Object *obj, const char *part)
+{
+    setting_data *sd = data;
+    const Elm_Genlist_Item_Class *itc = elm_genlist_item_item_class_get(sd->item);
+
+    /* Check the item class style and put the current folder or file name as a string */
+    /* Then put this string as the genlist headers item label */
+    if (itc->item_style && !strcmp(itc->item_style, "groupindex")) {
+        if (part && !strcmp(part, "elm.text.main")) {
+            LOGD("Found");
+            return strdup(sd->menu[sd->index].title);
+        }
+    }
+    /* Or put this string as the genlist setting item label */
+    else if (itc->item_style && !strcmp(itc->item_style, "1line")) {
+        if (part && !strcmp(part, "elm.text.main.left")) {
+            LOGD("Found");
+            return strdup(sd->menu[sd->index].title);
+        }
+    }
+    LOGD("DAMN");
+    return NULL;
+}
+
+static Evas_Object*
+gl_content_get_cb2(void *data, Evas_Object *obj, const char *part)
+{
+    setting_data *sd = data;
+    const Elm_Genlist_Item_Class *itc = elm_genlist_item_item_class_get(sd->item);
+    Evas_Object *content = NULL;
+
+    /* Check the item class style and add the object needed in the item class*/
+    /* Here, puts the icon in the item class to add it to genlist items */
+    if (itc->item_style && !strcmp(itc->item_style, "1line")) {
+        if (part && !strcmp(part, "elm.icon.1")) {
+            content = elm_layout_add(obj);
+            elm_layout_theme_set(content, "layout", "list/B/type.3", "default");
+            Evas_Object *icon = create_icon(content, sd->index);
+            elm_layout_content_set(content, "elm.swallow.content", icon);
+        }
+    }
+
+    return content;
+}
+
 static void
 gl_loaded_cb(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
@@ -328,12 +377,116 @@ gl_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 }
 
 static void
+gl_selected_cb2(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
+{
+    setting_data *sd = data;
+    Settings_menu_callback item_cb = sd->menu[sd->index].cb;
+
+    if (item_cb != NULL)
+        item_cb(sd->id, sd->index, &settings_menu[sd->index], sd->parent);
+
+    if (sd->global_cb != NULL)
+        sd->global_cb(sd->id, sd->index, &settings_menu[sd->index], sd->parent);
+}
+
+static void
 gl_contracted_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
     Elm_Object_Item *it = event_info;
 
     /* Free the genlist subitems when contracted */
     elm_genlist_item_subitems_clear(it);
+}
+
+static Evas_Object *
+settings_list_add(popup_menu_item_s *menu, int len, Settings_menu_callback global_menu_cb, Evas_Object *parent)
+{
+    Evas_Object *genlist;
+    Elm_Object_Item *it, *hit = NULL;
+    int index;
+
+    /* Set then create the Genlist object */
+    Elm_Genlist_Item_Class *hitc = elm_genlist_item_class_new();
+    Elm_Genlist_Item_Class *itc = elm_genlist_item_class_new();
+
+    /* Set the headers item class */
+    hitc->item_style = "groupindex";
+    hitc->func.text_get = gl_text_get_cb2;
+    hitc->func.content_get = gl_content_get_cb2;
+    hitc->func.del = gl_del_cb;
+
+    /* Set the settings item class */
+    itc->item_style = "1line";
+    itc->func.text_get = gl_text_get_cb2;
+    itc->func.content_get = gl_content_get_cb2;
+    itc->func.del = gl_del_cb;
+
+    genlist = elm_genlist_add(parent);
+
+    /* Set the genlist scoller mode */
+    elm_scroller_single_direction_set(genlist, ELM_SCROLLER_SINGLE_DIRECTION_HARD);
+    /* Enable the genlist HOMOGENEOUS mode */
+    elm_genlist_homogeneous_set(genlist, EINA_TRUE);
+    /* Enable the genlist COMPRESS mode */
+    elm_genlist_mode_set(genlist, ELM_LIST_COMPRESS);
+
+    /* Set smart Callbacks */
+    //evas_object_smart_callback_add(genlist, "realized", gl_realized_cb, NULL);
+    //evas_object_smart_callback_add(genlist, "loaded", gl_loaded_cb, NULL);
+    //evas_object_smart_callback_add(genlist, "longpressed", gl_longpressed_cb, NULL);
+    evas_object_smart_callback_add(genlist, "contracted", gl_contracted_cb, NULL);
+
+    /* Stop when the setting list names is all used */
+    for (index = 0; index < len; index++) {
+        setting_data *sd = calloc(1, sizeof(*sd));
+
+        /* Put the index in the setting_data struct for callbacks */
+        sd->index = index;
+        sd->id = menu[index].id;
+        sd->menu = menu;
+        sd->menu_len = len;
+        sd->global_cb = global_menu_cb;
+
+        /* Set and append headers items */
+        if (menu[index].type == SETTINGS_TYPE_CATEGORY)
+        {
+            hit = elm_genlist_item_append(genlist,
+                    hitc,                           /* genlist item class               */
+                    sd,                             /* genlist item class user data     */
+                    NULL,                           /* genlist parent item              */
+                    ELM_GENLIST_ITEM_TREE,          /* genlist item type                */
+                    NULL,                           /* genlist select smart callback    */
+                    sd);                            /* genlist smart callback user data */
+
+            /* Put genlist item in the setting_data struct for callbacks */
+            sd->item = hit;
+        }
+        else if (menu[index].type == SETTINGS_TYPE_ITEM)
+        {
+            /* Set and append settings items */
+            sd->index = index;
+            it = elm_genlist_item_append(genlist,
+                    itc,                           /* genlist item class               */
+                    sd,                            /* genlist item class user data     */
+                    hit,                           /* genlist parent item              */
+                    ELM_GENLIST_ITEM_NONE,         /* genlist item type                */
+                    gl_selected_cb2,               /* genlist select smart callback    */
+                    sd);                           /* genlist smart callback user data */
+
+            /* Put genlist item in the setting_data struct for callbacks */
+            sd->parent = parent;
+            sd->item = it;
+        }
+    }
+
+    /* */
+    elm_genlist_item_class_free(hitc);
+    elm_genlist_item_class_free(itc);
+
+    evas_object_size_hint_weight_set(genlist, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+    evas_object_size_hint_align_set(genlist, EVAS_HINT_FILL, EVAS_HINT_FILL);
+
+    return genlist;
 }
 
 static Evas_Object *
