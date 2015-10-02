@@ -394,7 +394,15 @@ intf_create(application *app)
     /* Change colors */
     EDJE_COLOR_CLASS_SET_VLC_ORANGE("B011");    // Base class
     EDJE_COLOR_CLASS_SET_VLC_ORANGE("B0511");   // Naviframe base
+    EDJE_COLOR_CLASS_SET_VLC_ORANGE("B0514");   // Naviframe tab bar
+    EDJE_COLOR_CLASS_SET_VLC_ORANGE("B0514S");  // Naviframe tab bar
+    EDJE_COLOR_CLASS_SET_VLC_ORANGE("B0514P");  // Naviframe tab bar
     EDJE_COLOR_CLASS_SET_VLC_ORANGE("B0517");   // Naviframe second
+    EDJE_COLOR_CLASS_SET_VLC_ORANGE("W062L1");  // slider foreground
+    EDJE_COLOR_CLASS_SET_VLC_ORANGE("W062L2");  // slider background
+    EDJE_COLOR_CLASS_SET_VLC_ORANGE("W0641");   // slider thumb
+    EDJE_COLOR_CLASS_SET_VLC_ORANGE("W0641D");  // slider thumb disabled
+    EDJE_COLOR_CLASS_SET_VLC_ORANGE("W0641P");  // slider thumb pressed
 
     /* Handle rotations */
     if (elm_win_wm_rotation_supported_get(intf->win)) {
