@@ -28,11 +28,9 @@
 #define VIDEO_CONTROLLER_H_
 
 #include "application.h"
-
-typedef struct video_view video_view;
+#include "ui/interface.h"
 
 video_controller*
-video_controller_create( application* p_app, video_view* p_view );
-
+video_controller_create( application* p_app, view_sys* p_view );
 
 #endif /* VIDEO_CONTROLLER_H_ */

@@ -47,18 +47,18 @@ typedef enum audio_view_type
     AUDIO_VIEW_MAX,
 } audio_view_type;
 
-typedef struct audio_view
+struct view_sys
 {
     interface *p_intf;
 
     Evas_Object *nf_toolbar;
 
     Evas_Object *audio_lists[AUDIO_VIEW_MAX];
-} audio_view;
+};
 
 typedef struct audio_list_item
 {
-    const audio_view *p_av;
+    const view_sys *p_av;
 
     const Elm_Genlist_Item_Class *itc;
 
@@ -66,7 +66,7 @@ typedef struct audio_list_item
 } audio_list_item;
 
 static Evas_Object*
-create_audio_list(const audio_view *av);
+create_audio_list(const view_sys *av);
 
 static void
 genlist_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
@@ -156,7 +156,7 @@ genlist_content_get_cb(void *data, Evas_Object *obj, const char *part)
 }
 
 static audio_list_item *
-genlist_audio_item_create(const audio_view *av, Evas_Object *parent_genlist, const char *psz_path, const char *psz_title, Elm_Genlist_Item_Class *itc)
+genlist_audio_item_create(const view_sys *av, Evas_Object *parent_genlist, const char *psz_path, const char *psz_title, Elm_Genlist_Item_Class *itc)
 {
     audio_list_item *ali = malloc(sizeof(*ali));
     ali->p_av = av;
@@ -180,7 +180,7 @@ genlist_audio_item_create(const audio_view *av, Evas_Object *parent_genlist, con
 }
 
 static Evas_Object*
-genlist_create(const audio_view *av, Elm_Genlist_Item_Class **itc )
+genlist_create(const view_sys *av, Elm_Genlist_Item_Class **itc )
 {
      Evas_Object *genlist = elm_genlist_add(av->nf_toolbar);
      /* Set the genlist scoller mode */
@@ -200,7 +200,7 @@ genlist_create(const audio_view *av, Elm_Genlist_Item_Class **itc )
 }
 
 static Evas_Object*
-create_audio_list(const audio_view *av)
+create_audio_list(const view_sys *av)
 {
     Elm_Genlist_Item_Class *itc;
     Evas_Object *genlist = genlist_create(av, &itc);
@@ -256,7 +256,7 @@ create_audio_list(const audio_view *av)
 }
 
 static Evas_Object*
-create_audio_list_type(audio_view *av, audio_view_type type )
+create_audio_list_type(view_sys *av, audio_view_type type )
 {
     Evas_Object *genlist = av->audio_lists[type];
     if(genlist == NULL)
@@ -279,7 +279,7 @@ create_audio_list_type(audio_view *av, audio_view_type type )
 static void
 tabbar_item_cb(void *data, Evas_Object *obj, void *event_info)
 {
-    audio_view *av = data;
+    view_sys *av = data;
 
     /* Get the item selected in the toolbar */
     const char *str = elm_object_item_text_get((Elm_Object_Item *)event_info);
@@ -300,7 +300,7 @@ tabbar_item_cb(void *data, Evas_Object *obj, void *event_info)
 }
 
 static Evas_Object*
-create_toolbar(audio_view *av, Evas_Object *parent)
+create_toolbar(view_sys *av, Evas_Object *parent)
 {
     /* Create and set the toolbar */
     Evas_Object *tabbar = elm_toolbar_add(parent);
@@ -333,12 +333,12 @@ create_audio_view(interface *intf, Evas_Object *parent)
     interface_view *view = calloc(1, sizeof(*view));
 
     /* Setup the audio_view */
-    audio_view *av = calloc(1, sizeof(*av));
-    av->p_intf = intf;
+    view_sys *audio_view_sys = calloc(1, sizeof(*audio_view_sys));
+    audio_view_sys->p_intf = intf;
     for(int i = 0; i < AUDIO_VIEW_MAX; i++)
-        av->audio_lists[i] = NULL;
+        audio_view_sys->audio_lists[i] = NULL;
 
-    view->view_sys = av;
+    view->p_view_sys = audio_view_sys;
 
     /* Content box */
     Evas_Object *audio_box = elm_box_add(parent);
@@ -346,16 +346,16 @@ create_audio_view(interface *intf, Evas_Object *parent)
     evas_object_size_hint_align_set(audio_box, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
     /* Create the toolbar in the view */
-    Evas_Object *tabbar = create_toolbar(av, audio_box);
+    Evas_Object *tabbar = create_toolbar(audio_view_sys, audio_box);
     elm_box_pack_end(audio_box, tabbar);
     evas_object_show(tabbar);
 
     /* Toolbar Naviframe */
-    av->nf_toolbar = elm_naviframe_add(audio_box);
-    evas_object_size_hint_weight_set(av->nf_toolbar, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-    evas_object_size_hint_align_set(av->nf_toolbar, EVAS_HINT_FILL, EVAS_HINT_FILL);
-    elm_box_pack_end(audio_box, av->nf_toolbar );
-    evas_object_show(av->nf_toolbar);
+    audio_view_sys->nf_toolbar = elm_naviframe_add(audio_box);
+    evas_object_size_hint_weight_set(audio_view_sys->nf_toolbar, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+    evas_object_size_hint_align_set(audio_view_sys->nf_toolbar, EVAS_HINT_FILL, EVAS_HINT_FILL);
+    elm_box_pack_end(audio_box, audio_view_sys->nf_toolbar );
+    evas_object_show(audio_view_sys->nf_toolbar);
 
     /* Set the first item in the toolbar */
     elm_toolbar_item_selected_set(elm_toolbar_first_item_get(tabbar), EINA_TRUE);

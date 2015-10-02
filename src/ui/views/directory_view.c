@@ -212,7 +212,8 @@ create_directory_view(interface *intf, Evas_Object *parent)
     directory_view *dv = malloc(sizeof(*dv));
     dv->p_intf = intf;
     dv->p_parent = parent;
-    view->view_sys = dv;
+
+    //view->p_view_sys = dv;
 
     const char *psz_path = application_get_media_path(intf_get_application(intf), MEDIA_DIRECTORY);
     view->view = browse(dv, psz_path);

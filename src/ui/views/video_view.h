@@ -30,20 +30,19 @@
 #include "ui/interface.h"
 #include <Elementary.h>
 
-typedef struct video_view video_view;
 typedef struct video_list_item video_list_item;
 
 interface_view*
 create_video_view(interface *intf, Evas_Object *parent);
 
 void
-video_view_update(video_view* vv, Eina_List* p_content);
+video_view_update(view_sys* vv, Eina_List* p_content);
 
 video_list_item *
-video_view_append_item(video_view *videoview, media_item* p_item);
+video_view_append_item(view_sys *videoview, media_item* p_item);
 
 void
-video_view_clear(video_view* videoview);
+video_view_clear(view_sys* videoview);
 
 const media_item*
 video_list_item_get_media_item(video_list_item* p_item);

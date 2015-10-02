@@ -37,7 +37,7 @@
 
 #include <Elementary.h>
 
-typedef struct video_view
+struct view_sys
 {
     interface *p_intf;
 
@@ -46,11 +46,11 @@ typedef struct video_view
     video_controller* p_controller;
     Elm_Genlist_Item_Class* p_default_itc;
 
-} video_view;
+};
 
 typedef struct video_list_item
 {
-    video_view *videoview;
+    view_sys *videoview;
 
     const Elm_Genlist_Item_Class *itc;
 
@@ -209,7 +209,7 @@ genlist_contracted_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
 }
 
 video_list_item *
-video_view_append_item(video_view *videoview, media_item* p_item)
+video_view_append_item(view_sys *videoview, media_item* p_item)
 {
     /* */
     video_list_item *vli = calloc(1, sizeof(*vli));
@@ -239,7 +239,7 @@ video_view_append_item(video_view *videoview, media_item* p_item)
 }
 
 void
-video_view_clear(video_view* videoview)
+video_view_clear(view_sys* videoview)
 {
     elm_genlist_clear(videoview->p_genlist);
 }
@@ -248,10 +248,10 @@ interface_view*
 create_video_view(interface *intf, Evas_Object *parent)
 {
     interface_view *view = calloc(1, sizeof(*view));
-    video_view *vv = malloc(sizeof(*vv));
+    view_sys *vv = malloc(sizeof(*vv));
     vv->p_intf = intf;
     vv->p_parent = parent;
-    vv->p_controller = video_controller_create( intf_get_application(intf), vv);
+    vv->p_controller = video_controller_create(intf_get_application(intf), vv);
 
     /* Genlist class */
     vv->p_default_itc = elm_genlist_item_class_new();
@@ -259,7 +259,7 @@ create_video_view(interface *intf, Evas_Object *parent)
     vv->p_default_itc->item_style = "2line.top.3";
     vv->p_default_itc->func.text_get = genlist_text_get_cb;
     vv->p_default_itc->func.content_get = genlist_content_get_cb;
-    view->view_sys = vv;
+    view->p_view_sys = vv;
 
     /* Set then create the Genlist object */
     Evas_Object *genlist = vv->p_genlist = elm_genlist_add(parent);

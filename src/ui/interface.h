@@ -45,14 +45,16 @@ intf_get_application(interface *);
 void
 intf_destroy(interface *);
 
+typedef struct view_sys view_sys;
+
 /* Views */
 typedef struct interface_view {
     Evas_Object *view;                /* The Evas View prepared to be stacked */
-    void *view_sys;                   /* The view private data */
+    view_sys *p_view_sys;                   /* The view private data */
 
-    void (*pf_start)(void *view_sys); /* CB when the view is started/resumed */
-    void (*pf_stop) (void *view_sys);  /* CB when the view is stoped/paused */
-    bool (*pf_event)(void *view_sys, int event); /* */
+    void (*pf_start)(view_sys *p_view_sys); /* CB when the view is started/resumed */
+    void (*pf_stop) (view_sys *p_view_sys); /* CB when the view is stoped/paused */
+    bool (*pf_event)(view_sys *p_view_sys, int event); /* */
 } interface_view;
 
 typedef enum view_e {

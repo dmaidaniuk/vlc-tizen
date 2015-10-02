@@ -30,7 +30,6 @@
 #include "ui/interface.h"
 
 #include "ui/audio_player.h"
-typedef struct audio_view audio_view;
 
 interface_view *
 create_audio_view(interface *intf, Evas_Object *parent);

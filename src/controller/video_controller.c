@@ -37,7 +37,7 @@
 struct video_controller
 {
     application*    p_app;
-    video_view*     p_view;
+    view_sys*     p_view;
     // This is the content as a video_list_item list.
     Eina_List*      p_content;
 };
@@ -119,7 +119,7 @@ video_controller_file_updated_cb( void* p_data, const media_item* p_new_media_it
 }
 
 video_controller*
-video_controller_create( application* p_app, video_view* p_view )
+video_controller_create(application* p_app, view_sys* p_view )
 {
    video_controller* ctrl = calloc(1, sizeof(*ctrl));
    if ( ctrl == NULL )
