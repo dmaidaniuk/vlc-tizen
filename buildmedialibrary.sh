@@ -64,6 +64,8 @@ cmake \
     -DSQLITE3_INCLUDE_DIR="${TIZEN_INCLUDES}/" \
     -DSQLITE3_LIBRARY_DEBUG="${TIZEN_LIBS}/libsqlite3.so" \
     -DSQLITE3_LIBRARY_RELEASE="${TIZEN_LIBS}/libsqlite3.so" \
+    -DJPEG_INCLUDE_DIR="${PROJECTPATH}/vlc/contrib/${TARGET_TUPLE}/include" \
+    -DJPEG_LIBRARY="${PROJECTPATH}/vlc/contrib/${TARGET_TUPLE}/lib/libjpeg.a" \
     ..
 checkfail "medialibrary: cmake failed"
 fi
