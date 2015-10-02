@@ -341,7 +341,8 @@ create_main_content_box(interface *intf, Evas_Object *parent)
     elm_box_pack_end(intf->main_box, intf->nf_content);
 
     /* Create both of the content_box subObjects */
-    intf->p_mini_player = mini_player_create(intf, application_get_playback_service(intf->p_app), intf->main_box, &intf->mini_player_layout);
+    intf->mini_player_layout = elm_layout_add(intf->main_box);
+    intf->p_mini_player = mini_player_create(intf, application_get_playback_service(intf->p_app), intf->mini_player_layout);
     evas_object_hide(intf->mini_player_layout);
 
     /* Correct expansion of the NaviFrame */
