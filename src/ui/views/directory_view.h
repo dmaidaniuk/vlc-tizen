@@ -29,21 +29,7 @@
 
 #include "ui/interface.h"
 
-typedef struct directory_view {
-    Evas_Object *p_parent;
-    interface *p_intf;
-} directory_view;
-
-typedef struct directory_data {
-    directory_view *dv;
-    char *file_path;
-    bool is_file;
-} directory_data;
-
 interface_view*
 create_directory_view(interface *intf, Evas_Object *parent);
-
-Evas_Object*
-browse(directory_view *dv, const char* path);
 
 #endif /* DIRECTORY_VIEW_H_ */

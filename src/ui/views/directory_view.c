@@ -35,6 +35,20 @@
 #include "ui/interface.h"
 #include "ui/utils.h"
 
+typedef struct directory_view {
+    Evas_Object *p_parent;
+    interface *p_intf;
+} directory_view;
+
+typedef struct directory_data {
+    directory_view *dv;
+    char *file_path;
+    bool is_file;
+} directory_data;
+
+Evas_Object*
+browse(directory_view *dv, const char* path);
+
 void
 list_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
