@@ -67,7 +67,4 @@ typedef struct settings_item
 Evas_Object*
 create_setting_view(interface *, Evas_Object *parent);
 
-static void
-menu_directories_selected_cb(int id, int index, settings_item *menu_item, Evas_Object *parent);
-
 #endif /* SETTINGS_VIEW_H_ */
