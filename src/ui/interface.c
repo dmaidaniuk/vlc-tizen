@@ -364,9 +364,11 @@ create_main_layout(interface *intf, Evas_Object *conform)
     elm_object_content_set(conform, layout);
 }
 
-#define VLC_ORANGE 255, 136, 0, 255
+#define VLC_ORANGE_500 255, 136, 0, 255
+#define VLC_ORANGE_500_TRANSPARENT 255, 136, 0, 180
+#define VLC_GREY_400_TRANSPARENT 189, 189, 189, 128
 #define EDJE_COLOR_CLASS_SET_VLC_COLOR(x, b) edje_color_class_set((x), b, b, b)
-#define EDJE_COLOR_CLASS_SET_VLC_ORANGE(x) EDJE_COLOR_CLASS_SET_VLC_COLOR(x, VLC_ORANGE)
+#define EDJE_COLOR_CLASS_SET_VLC_ORANGE(x) EDJE_COLOR_CLASS_SET_VLC_COLOR(x, VLC_ORANGE_500)
 
 interface *
 intf_create(application *app)
@@ -380,18 +382,18 @@ intf_create(application *app)
 
     /* Change colors */
     EDJE_COLOR_CLASS_SET_VLC_ORANGE("B011");    // Base class
-
     EDJE_COLOR_CLASS_SET_VLC_ORANGE("B0511");   // Naviframe base
     EDJE_COLOR_CLASS_SET_VLC_ORANGE("B0514");   // Naviframe tab bar
     EDJE_COLOR_CLASS_SET_VLC_ORANGE("B0514S");  // Naviframe tab bar
     EDJE_COLOR_CLASS_SET_VLC_ORANGE("B0514P");  // Naviframe tab bar
     EDJE_COLOR_CLASS_SET_VLC_ORANGE("B0517");   // Naviframe second
 
-    EDJE_COLOR_CLASS_SET_VLC_ORANGE("W062L1");  // slider foreground
-    EDJE_COLOR_CLASS_SET_VLC_ORANGE("W062L2");  // slider background
+    /* Progress Bar Colors */
+    EDJE_COLOR_CLASS_SET_VLC_COLOR("W062L1", VLC_ORANGE_500_TRANSPARENT);  // slider foreground
+    EDJE_COLOR_CLASS_SET_VLC_COLOR("W062L2", VLC_GREY_400_TRANSPARENT);    // slider background
+    EDJE_COLOR_CLASS_SET_VLC_COLOR("W0641P", VLC_ORANGE_500_TRANSPARENT);  // slider thumb pressed
+    EDJE_COLOR_CLASS_SET_VLC_COLOR("W0641D", VLC_ORANGE_500_TRANSPARENT);  // slider thumb disabled
     EDJE_COLOR_CLASS_SET_VLC_ORANGE("W0641");   // slider thumb
-    EDJE_COLOR_CLASS_SET_VLC_ORANGE("W0641D");  // slider thumb disabled
-    EDJE_COLOR_CLASS_SET_VLC_ORANGE("W0641P");  // slider thumb pressed
 
     /* Handle rotations */
     if (elm_win_wm_rotation_supported_get(intf->win)) {
