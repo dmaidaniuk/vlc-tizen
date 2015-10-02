@@ -46,7 +46,9 @@
 #include "views/video_player.h"
 
 struct interface {
-    Evas_Object *win;        /* Top Window */
+    application *p_app;      /* Reference to the application */
+
+    Evas_Object *win;        /* Top Window, we need it to hide the system bar */
 
     Evas_Object *main_box;   /* Main box, contains the Naviframe and the miniplayer */
 
@@ -65,8 +67,6 @@ struct interface {
     /* Miniplayer */
     mini_player *p_mini_player;
     Evas_Object *mini_player_layout;
-
-    application *p_app;
 };
 
 /* TODO : A lot of size hints are Hard Coded with pixel values (using a Samsung Z1 phone) */
