@@ -102,9 +102,9 @@ genlist_text_get_cb(void *data, Evas_Object *obj, const char *part)
     /* Then put this string as the genlist item label */
     if (itc->item_style && !strcmp(itc->item_style, "2line.top.3")) {
         if (part && !strcmp(part, "elm.text.main.left.top")) {
-            char buf[PATH_MAX];
-            snprintf(buf, 1023, "<b>%s</b>", media_item_title(vli->p_media_item));
-            return strdup(buf);
+            char *buff;
+            asprintf(&buff, "<b>%s</b>", media_item_title(vli->p_media_item));
+            return buff;
         }
         else if (!strcmp(part, "elm.text.sub.left.bottom")) {
             if(vli->p_media_item->i_duration < 0)
