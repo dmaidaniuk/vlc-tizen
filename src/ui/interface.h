@@ -79,9 +79,6 @@ intf_update_mini_player(interface *);
 
 /* Other */
 Evas_Object *
-intf_get_root_box(interface *intf);
-
-Evas_Object *
 intf_get_main_naviframe(interface *intf);
 
 /* Media Library */

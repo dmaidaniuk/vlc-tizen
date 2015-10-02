@@ -172,12 +172,6 @@ intf_get_sidebar(interface *intf)
 }
 
 Evas_Object *
-intf_get_root_box(interface *intf)
-{
-    return intf->global_box;
-}
-
-Evas_Object *
 intf_get_main_naviframe(interface *intf)
 {
     return intf->nf_content;
