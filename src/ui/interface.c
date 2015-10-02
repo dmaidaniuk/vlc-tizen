@@ -72,10 +72,6 @@ struct interface {
 /* TODO : A lot of size hints are Hard Coded with pixel values (using a Samsung Z1 phone) */
 /* TODO : the use of Dpi or Aspect Ratio will be mandatory in the future */
 
-/* TODO : Some UI widget design are not perfect. */
-/* TODO : Using Edje will probably be mandatory to set some of the widget and get a clean UI */
-/* TODO : For examples : Headers & Toolbar Y axis scales */
-
 /* TODO : Managing Hardware Key is mandatory to publish a Tizen AppStore App */
 /* TODO : The Menu isn't currently set */
 /* TODO : This should be solved using the #include <efl_extension.h> */
