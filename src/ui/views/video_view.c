@@ -146,6 +146,13 @@ video_list_item_set_media_item(video_list_item* p_item, const media_item* p_medi
         p_item->p_media_item->psz_snapshot = strdup(p_media_item->psz_snapshot);
         b_changed = true;
     }
+    if ( p_item->p_media_item->i_w != p_media_item->i_w ||
+            p_item->p_media_item->i_h != p_media_item->i_h )
+    {
+        p_item->p_media_item->i_w = p_media_item->i_w;
+        p_item->p_media_item->i_h = p_media_item->i_h;
+        b_changed = true;
+    }
     if (b_changed == true)
     {
         ecore_main_loop_thread_safe_call_async((Ecore_Cb)elm_genlist_item_update, p_item->p_object_item);
