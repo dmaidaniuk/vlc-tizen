@@ -274,10 +274,7 @@ fileToMediaItem( FilePtr file )
         return nullptr;
     }
     media_item_set_meta(mi, MEDIA_ITEM_META_TITLE, file->name().c_str());
-    // If the file hasn't been parsed yet, there's no change we can do something
-    // usefull past this point, we will try again after onFileUpdated gets called.
-    if ( file->isParsed() == false )
-        return mi;
+
     mi->i_duration = file->duration();
     if ( file->type() == IFile::Type::VideoType )
     {

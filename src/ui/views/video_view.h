@@ -30,11 +30,24 @@
 #include <Elementary.h>
 
 typedef struct video_view video_view;
+typedef struct video_list_item video_list_item;
 
 Evas_Object*
 create_video_view(interface *intf, Evas_Object *parent);
 
 void
 video_view_update(video_view* vv, Eina_List* p_content);
+
+video_list_item *
+video_view_append_item(video_view *videoview, media_item* p_item);
+
+void
+video_view_clear(video_view* videoview);
+
+const media_item*
+video_list_item_get_media_item(video_list_item* p_item);
+
+void
+video_list_item_set_media_item(video_list_item* p_item, const media_item* p_media_item);
 
 #endif /* VIDEO_VIEW_H_ */

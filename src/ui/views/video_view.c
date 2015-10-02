@@ -44,6 +44,8 @@ typedef struct video_view
     Evas_Object *p_parent;
     Evas_Object *p_genlist;
     video_controller* p_controller;
+    Elm_Genlist_Item_Class* p_default_itc;
+
 } video_view;
 
 typedef struct video_list_item
@@ -53,6 +55,9 @@ typedef struct video_list_item
     const Elm_Genlist_Item_Class *itc;
 
     media_item *p_media_item;
+
+    //For refresh purposes.
+    Elm_Object_Item* p_object_item;
 
 } video_list_item;
 
@@ -131,6 +136,29 @@ genlist_text_get_cb(void *data, Evas_Object *obj, const char *part)
     return NULL;
 }
 
+const media_item*
+video_list_item_get_media_item(video_list_item* p_item)
+{
+    return p_item->p_media_item;
+}
+
+void
+video_list_item_set_media_item(video_list_item* p_item, const media_item* p_media_item)
+{
+    LOGI("Received update request for [%s]", p_media_item->psz_path);
+    bool b_changed = false;
+    if (p_item->p_media_item->i_duration != p_media_item->i_duration)
+    {
+        LOGI("Updated duration");
+        p_item->p_media_item->i_duration = p_media_item->i_duration;
+        b_changed = true;
+    }
+    if (b_changed == true)
+    {
+        ecore_main_loop_thread_safe_call_async(elm_genlist_item_update, p_item->p_object_item);
+    }
+}
+
 static Evas_Object*
 genlist_content_get_cb(void *data, Evas_Object *obj, const char *part)
 {
@@ -180,50 +208,40 @@ genlist_contracted_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
     elm_genlist_item_subitems_clear(it);
 }
 
-static video_list_item *
-genlist_item_create(video_view *videoview, media_item* p_item, Elm_Genlist_Item_Class* itc)
+video_list_item *
+video_view_append_item(video_view *videoview, media_item* p_item)
 {
     /* */
     video_list_item *vli = calloc(1, sizeof(*vli));
+    if (vli == NULL)
+        return NULL;
     vli->videoview = videoview;
-    vli->itc = itc;
+    vli->itc = videoview->p_default_itc;
 
     /* Item instantiation */
     vli->p_media_item = p_item;
     /* Set and append new item in the genlist */
-    Elm_Object_Item *it = elm_genlist_item_append(videoview->p_genlist,
-            itc,                            /* genlist item class               */
+    vli->p_object_item = elm_genlist_item_append(videoview->p_genlist,
+            vli->itc,                       /* genlist item class               */
             vli,                            /* genlist item class user data     */
             NULL,                           /* genlist parent item for trees    */
             ELM_GENLIST_ITEM_NONE,          /* genlist item type                */
             genlist_item_selected_cb,       /* genlist select smart callback    */
             vli);                           /* genlist smart callback user data */
-
+    if (vli->p_object_item == NULL)
+    {
+        free(vli);
+        return NULL;
+    }
     /* */
-    elm_object_item_del_cb_set(it, free_list_item);
+    elm_object_item_del_cb_set(vli->p_object_item, free_list_item);
     return vli;
 }
 
 void
-video_view_update(video_view* vv, Eina_List* p_content)
+video_view_clear(video_view* videoview)
 {
-    if ( p_content == NULL )
-        return;
-
-    /* Genlist class */
-    Elm_Genlist_Item_Class *itc = elm_genlist_item_class_new();
-    itc->item_style = "2line.top.3";
-    itc->func.text_get = genlist_text_get_cb;
-    itc->func.content_get = genlist_content_get_cb;
-
-    Eina_List* it = NULL;
-    media_item* p_item;
-
-    EINA_LIST_FOREACH( p_content, it, p_item )
-    {
-        genlist_item_create(vv, p_item, itc);
-    }
-    elm_genlist_item_class_free(itc);
+    elm_genlist_clear(videoview->p_genlist);
 }
 
 Evas_Object*
@@ -233,6 +251,13 @@ create_video_view(interface *intf, Evas_Object *parent)
     vv->p_intf = intf;
     vv->p_parent = parent;
     vv->p_controller = video_controller_create( intf_get_application(intf), vv );
+
+    /* Genlist class */
+    vv->p_default_itc = elm_genlist_item_class_new();
+    //FIXME: this is leaking, please call elm_genlist_item_class_free() from somewhere
+    vv->p_default_itc->item_style = "2line.top.3";
+    vv->p_default_itc->func.text_get = genlist_text_get_cb;
+    vv->p_default_itc->func.content_get = genlist_content_get_cb;
 
     /* Set then create the Genlist object */
     Evas_Object *genlist = vv->p_genlist = elm_genlist_add(parent);

@@ -32,10 +32,13 @@
 #include "ui/views/video_view.h"
 #include "ui/interface.h"
 
+#include <assert.h>
+
 struct video_controller
 {
     application*    p_app;
     video_view*     p_view;
+    // This is the content as a video_list_item list.
     Eina_List*      p_content;
 };
 
@@ -46,20 +49,28 @@ void
 video_controller_content_update_cb(Eina_List* p_content, void* p_data)
 {
     video_controller* ctrl = (video_controller*)p_data;
-    ctrl->p_content = p_content;
-    video_view_update( ctrl->p_view, p_content );
+    if (p_content == NULL)
+        return;
+    Eina_List* it;
+    media_item* p_item;
+
+    assert(ctrl->p_content == NULL);
+    EINA_LIST_FOREACH( p_content, it, p_item )
+    {
+        video_list_item* p_view_item = video_view_append_item( ctrl->p_view, p_item );
+        if (p_view_item == NULL)
+            continue;
+        ctrl->p_content = eina_list_append(ctrl->p_content, p_view_item);
+    }
 }
 
 /* Queries the media library for the updated video list */
 void
 video_controller_content_refresh(video_controller* ctrl)
 {
-    // If we already have some content, simply send it to the view
+    // If we already have some content, consider the view up to date
     if (ctrl->p_content != NULL)
-    {
-        video_view_update( ctrl->p_view, ctrl->p_content );
         return;
-    }
     // otherwise, update from media library
     const media_library* p_ml = application_get_media_library( ctrl->p_app );
     media_library_get_video_files(p_ml, &video_controller_content_update_cb, ctrl);
@@ -80,6 +91,33 @@ video_controller_content_changed_cb(void* p_data)
     video_controller_content_refresh(ctrl);
 }
 
+static bool
+video_controller_file_updated_cb( void* p_data, const media_item* p_new_media_item )
+{
+    LOGI("Updating: %s", p_new_media_item->psz_path);
+    video_controller* ctrl = (video_controller*)p_data;
+    if ( ctrl->p_content == NULL )
+    {
+        LOGI("No content, aborting");
+        return false;
+    }
+
+    Eina_List* it;
+    video_list_item* p_item;
+
+    EINA_LIST_FOREACH( ctrl->p_content, it, p_item )
+    {
+        const media_item* p_media_item = video_list_item_get_media_item(p_item);
+
+        if (!strcmp( p_media_item->psz_path, p_new_media_item->psz_path))
+        {
+            video_list_item_set_media_item(p_item, p_new_media_item);
+            return true;
+        }
+    }
+    return false;
+}
+
 video_controller*
 video_controller_create( application* p_app, video_view* p_view )
 {
@@ -92,5 +130,6 @@ video_controller_create( application* p_app, video_view* p_view )
    /* Populate it */
    media_library* p_ml = application_get_media_library(p_app);
    media_library_register_on_change(p_ml, video_controller_content_changed_cb, ctrl);
+   media_library_register_item_updated(p_ml, video_controller_file_updated_cb, ctrl);
    return ctrl;
 }
