@@ -55,6 +55,7 @@ app_create(void *data)
 {
     application *app = data;
 
+    eina_log_domain_level_set("emotion-libvlc", EINA_LOG_LEVELS);
     eina_init();
     ecore_evas_init();
     emotion_init();
