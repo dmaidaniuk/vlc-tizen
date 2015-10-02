@@ -48,7 +48,7 @@
 struct interface {
     Evas_Object *win;        /* Top Window */
 
-    Evas_Object *global_box; /* Root box */
+    Evas_Object *main_box; /* Root box */
     Evas_Object *nf_content; /* Main naviframe */
 
     Evas_Object *nf_views[VIEW_MAX];
@@ -147,7 +147,7 @@ static void
 right_panel_button_clicked_cb(void *data, Evas_Object * obj, void *event_info)
 {
     interface *intf = data;
-    intf->popup = create_popup(intf->global_box,intf);
+    intf->popup = create_popup(intf->main_box,intf);
 }
 
 void
@@ -286,15 +286,15 @@ intf_mini_player_visible_set(interface *intf, bool visible)
     if(visible)
     {
         /* show */
-        elm_box_pack_end(intf->global_box, intf->mini_player_box);
+        elm_box_pack_end(intf->main_box, intf->mini_player_box);
         evas_object_show(intf->mini_player_box);
-        elm_box_recalculate(intf->global_box);
+        elm_box_recalculate(intf->main_box);
     }
     else
     {
-        elm_box_unpack(intf->global_box, intf->mini_player_box);
+        elm_box_unpack(intf->main_box, intf->mini_player_box);
         evas_object_hide(intf->mini_player_box);
-        elm_box_recalculate(intf->global_box);
+        elm_box_recalculate(intf->main_box);
     }
     evas_object_image_source_visible_set(intf->mini_player_box, visible);
     return true;
@@ -326,21 +326,21 @@ static Evas_Object*
 create_main_content_box(interface *intf, Evas_Object *parent)
 {
     /* Create a content box to display the content and the mini player */
-    intf->global_box = elm_box_add(parent);
-    elm_box_horizontal_set(intf->global_box, EINA_FALSE);
+    intf->main_box = elm_box_add(parent);
+    elm_box_horizontal_set(intf->main_box, EINA_FALSE);
 
     /* Main View Naviframe */
-    intf->nf_content = elm_naviframe_add(intf->global_box);
+    intf->nf_content = elm_naviframe_add(intf->main_box);
 
     /* Put the naviframe at the top of the content_box */
     evas_object_size_hint_align_set(intf->nf_content, EVAS_HINT_FILL, 0.0);
     evas_object_size_hint_weight_set(intf->nf_content, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 
     /* */
-    elm_box_pack_end(intf->global_box, intf->nf_content);
+    elm_box_pack_end(intf->main_box, intf->nf_content);
 
     /* Create both of the content_box subObjects */
-    intf->p_mini_player = mini_player_create(intf, application_get_playback_service(intf->p_app), intf->global_box, &intf->mini_player_box);
+    intf->p_mini_player = mini_player_create(intf, application_get_playback_service(intf->p_app), intf->main_box, &intf->mini_player_box);
     evas_object_hide(intf->mini_player_box);
 
     /* Correct expansion of the NaviFrame */
@@ -351,9 +351,9 @@ create_main_content_box(interface *intf, Evas_Object *parent)
     evas_object_show(intf->nf_content);
 
     /* Ask the global box to recalculate her current children display */
-    elm_box_recalculate(intf->global_box);
+    elm_box_recalculate(intf->main_box);
 
-    return intf->global_box;
+    return intf->main_box;
 }
 
 static Evas_Object*
@@ -367,11 +367,11 @@ create_main_layout(interface *intf, Evas_Object *conform)
     elm_object_part_content_set(layout, "elm.swallow.left", intf->sidebar);
 
     /* Create the content box and put it in the layout */
-    intf->global_box = create_main_content_box(intf, layout);
-    elm_object_part_content_set(layout, "elm.swallow.content", intf->global_box);
+    intf->main_box = create_main_content_box(intf, layout);
+    elm_object_part_content_set(layout, "elm.swallow.content", intf->main_box);
 
     /* */
-    evas_object_show(intf->global_box);
+    evas_object_show(intf->main_box);
     return layout;
 }
 
