@@ -111,14 +111,14 @@ win_back_key_cb(void *data, Evas_Object *obj, void *event_info)
     else if (evas_object_visible_get(intf->popup)) {
         evas_object_del(intf->popup); //since elm_popup_dismiss doesn't work
     }
-    /* Hide the audio_player then */
-    else if (mini_player_fs_state(intf->p_mini_player) == true){
-            collapse_fullscreen_player(intf->p_mini_player);
-    }
-    /* And then the mini player */
+    /* And then the mini player (if playing) */ // FIXME
     else if (intf_mini_player_visible_get(intf) == true){
             LOGD("mini player visible");
             mini_player_stop(intf->p_mini_player);
+    }
+    /* Hide the audio_player then */
+    else if (mini_player_fs_state(intf->p_mini_player) == true){ //FIXME
+         collapse_fullscreen_player(intf->p_mini_player);
     }
     /* Finally pop out the stack */
     else {
