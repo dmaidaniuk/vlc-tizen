@@ -45,6 +45,8 @@
 #include "views/about_view.h"
 #include "views/video_player.h"
 
+#define EDJE_COLOR_CLASS_SET_VLC_ORANGE(x) edje_color_class_set((x), 255, 136, 0, 255, 255, 136, 0, 255, 255, 136, 0, 255)
+
 struct interface {
     application *p_app;      /* Reference to the application */
 
@@ -390,9 +392,9 @@ intf_create(application *app)
     elm_win_autodel_set(intf->win, EINA_TRUE);
 
     /* Change colors */
-    edje_color_class_set("B011", 255, 136, 0, 255, 255, 136, 0, 255, 255, 136, 0, 255 );  // Base class
-    edje_color_class_set("B0511", 255, 136, 0, 255, 255, 136, 0, 255, 255, 136, 0, 255 ); // Naviframe base
-    edje_color_class_set("B0517", 255, 136, 0, 255, 255, 136, 0, 255, 255, 136, 0, 255 ); // Naviframe second
+    EDJE_COLOR_CLASS_SET_VLC_ORANGE("B011");    // Base class
+    EDJE_COLOR_CLASS_SET_VLC_ORANGE("B0511");   // Naviframe base
+    EDJE_COLOR_CLASS_SET_VLC_ORANGE("B0517");   // Naviframe second
 
     /* Handle rotations */
     if (elm_win_wm_rotation_supported_get(intf->win)) {
