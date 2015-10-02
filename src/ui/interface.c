@@ -76,9 +76,6 @@ struct interface {
 /* TODO : Using Edje will probably be mandatory to set some of the widget and get a clean UI */
 /* TODO : For examples : Headers & Toolbar Y axis scales */
 
-/* TODO : Use Edje ColorClass to set the general widget colors of the app */
-/* TODO :(VLC : #ff8800 / RGBA : 255, 136, 0, 255) */
-
 /* TODO : Managing Hardware Key is mandatory to publish a Tizen AppStore App */
 /* TODO : The Menu isn't currently set */
 /* TODO : This should be solved using the #include <efl_extension.h> */
@@ -320,7 +317,6 @@ void
 intf_create_audio_player(interface *intf, const char *psz_path)
 {
     create_base_player(intf->p_mini_player, psz_path);
-
 }
 
 static Evas_Object*
