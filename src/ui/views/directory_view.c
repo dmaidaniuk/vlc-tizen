@@ -35,19 +35,19 @@
 #include "ui/interface.h"
 #include "ui/utils.h"
 
-typedef struct directory_view {
+struct view_sys {
     Evas_Object *p_parent;
     interface *p_intf;
-} directory_view;
+};
 
 typedef struct directory_data {
-    directory_view *dv;
+    view_sys *dv;
     char *file_path;
     bool is_file;
 } directory_data;
 
 Evas_Object*
-browse(directory_view *dv, const char* path);
+browse(view_sys *dv, const char* path);
 
 void
 list_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
@@ -98,7 +98,7 @@ static int compare_sort_items(const void *data1, const void *data2)
 }
 
 Evas_Object*
-browse(directory_view *dv, const char* path)
+browse(view_sys *dv, const char* path)
 {
     Elm_Object_Item *item;
     Evas_Object *file_list;
@@ -223,11 +223,11 @@ create_directory_view(interface *intf, Evas_Object *parent)
 {
     interface_view *view = calloc(1, sizeof(*view));
 
-    directory_view *dv = malloc(sizeof(*dv));
+    view_sys *dv = malloc(sizeof(*dv));
     dv->p_intf = intf;
     dv->p_parent = parent;
 
-    //view->p_view_sys = dv;
+    view->p_view_sys = dv;
 
     const char *psz_path = application_get_media_path(intf_get_application(intf), MEDIA_DIRECTORY);
     view->view = browse(dv, psz_path);
