@@ -155,7 +155,7 @@ video_list_item_set_media_item(video_list_item* p_item, const media_item* p_medi
     }
     if (b_changed == true)
     {
-        ecore_main_loop_thread_safe_call_async(elm_genlist_item_update, p_item->p_object_item);
+        ecore_main_loop_thread_safe_call_async((Ecore_Cb)elm_genlist_item_update, p_item->p_object_item);
     }
 }
 
