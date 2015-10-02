@@ -42,7 +42,7 @@ struct mini_player {
     int repeat_state;
 
     Evas_Object *fs_table, *popup;
-    Evas_Object *mini_player_box, *fullscreen_box;
+    Evas_Object *mini_player_layout, *fullscreen_box;
     Evas_Object *slider, *fs_slider;
     Evas_Object *cover, *fs_cover, *fs_time, *fs_total_time;
     Evas_Object *title, *sub_title, *fs_title, *fs_sub_title;
@@ -863,7 +863,7 @@ create_fullscreen_player_view(mini_player *mpd, Evas_Object *parent)
     /* Add the box for the fullscreen player view */
     Evas_Object *fullscreen_box = elm_box_add(parent);
     /* Add the fullscreen table layout in the fullscreen box */
-    Evas_Object *fullscreen_item_table = add_fullscreen_item_table(mpd, mpd->mini_player_box);
+    Evas_Object *fullscreen_item_table = add_fullscreen_item_table(mpd, mpd->mini_player_layout);
     /* */
     elm_box_pack_end(fullscreen_box, fullscreen_item_table);
     evas_object_show(fullscreen_item_table);
@@ -969,7 +969,7 @@ mini_player_create(interface *intf, playback_service *p_ps, Evas_Object *parent,
     mpd->intf = intf;
     mpd->p_ps = p_ps;
 
-    *box = mpd->mini_player_box = swallow_mini_player(mpd, parent);
+    *box = mpd->mini_player_layout = swallow_mini_player(mpd, parent);
 
     /* Add button callbacks */
     evas_object_smart_callback_add(mpd->play_pause_img, "clicked", play_pause_mini_player_cb, mpd);
@@ -978,7 +978,7 @@ mini_player_create(interface *intf, playback_service *p_ps, Evas_Object *parent,
     evas_object_smart_callback_add(mpd->sub_title, "clicked", mini_player_fullscreen_cb, mpd);
 
     /* Put the mini player at the bottom of the content_box */
-    evas_object_size_hint_align_set(mpd->mini_player_box, EVAS_HINT_FILL, 1.0);
+    evas_object_size_hint_align_set(mpd->mini_player_layout, EVAS_HINT_FILL, 1.0);
 
     update_player_display(mpd);
     return mpd;
