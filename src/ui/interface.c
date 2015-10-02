@@ -32,6 +32,7 @@
 #include <efl_extension.h>
 #include <storage.h>
 #include <system_settings.h>
+#include <assert.h>
 
 #include "interface.h"
 #include "sidebar.h"
@@ -122,6 +123,24 @@ win_back_key_cb(void *data, Evas_Object *obj, void *event_info)
     }
     /* Finally pop out the stack */
     else {
+        /* Get the top of the NaviFrame Stack */
+        Elm_Object_Item *it = elm_naviframe_top_item_get(intf->nf_content);
+        assert(it!=NULL); // Else we should have quit before
+
+        interface_view *view = (interface_view *)elm_object_item_data_get(it);
+        if(view){
+            if(view->pf_event != NULL &&
+               view->pf_event(view->p_view_sys, INTERFACE_VIEW_EVENT_BACK) == true ){
+                /* View has accepted the event */
+                return;
+            }
+            else if(view->pf_stop != NULL)
+            {
+                view->pf_stop(view->p_view_sys);
+            }
+        }
+
+        /* Unpop the top view */
         elm_naviframe_item_pop(intf->nf_content);
 
         /* If nothing left, exit */
@@ -217,7 +236,8 @@ intf_show_view(interface *intf, int view_type)
         LOGD("Recycling interface view %i", view_type);
 
     /* Push the view in the naviframe with the corresponding header */
-    elm_naviframe_item_push(nf_content, interface_views[view_type].title, NULL, NULL, view->view, "basic");
+    Elm_Object_Item *nf_it = elm_naviframe_item_push(nf_content, interface_views[view_type].title, NULL, NULL, view->view, "basic");
+    elm_object_item_data_set(nf_it, view);
 
     /* Create then set the panel toggle btn and add his callbacks */
     if(intf->sidebar_toggle_btn == NULL)
