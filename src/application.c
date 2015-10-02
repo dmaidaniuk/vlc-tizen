@@ -55,8 +55,9 @@ app_create(void *data)
 {
     application *app = data;
 
-    emotion_init();
+    eina_init();
     ecore_evas_init();
+    emotion_init();
 
     /* */
     app->p_ms = media_storage_create(app);
@@ -129,6 +130,7 @@ app_terminate(void *data)
 
     emotion_shutdown();
     ecore_evas_shutdown();
+    eina_shutdown();
 }
 
 static void
