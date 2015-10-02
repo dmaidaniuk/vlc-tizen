@@ -45,8 +45,6 @@
 #include "views/about_view.h"
 #include "views/video_player.h"
 
-#define EDJE_COLOR_CLASS_SET_VLC_ORANGE(x) edje_color_class_set((x), 255, 136, 0, 255, 255, 136, 0, 255, 255, 136, 0, 255)
-
 struct interface {
     application *p_app;      /* Reference to the application */
 
@@ -376,6 +374,10 @@ create_main_layout(interface *intf, Evas_Object *conform)
     elm_object_content_set(conform, layout);
 }
 
+#define VLC_ORANGE 255, 136, 0, 255
+#define EDJE_COLOR_CLASS_SET_VLC_COLOR(x, b) edje_color_class_set((x), b, b, b)
+#define EDJE_COLOR_CLASS_SET_VLC_ORANGE(x) EDJE_COLOR_CLASS_SET_VLC_COLOR(x, VLC_ORANGE)
+
 interface *
 intf_create(application *app)
 {
@@ -388,11 +390,13 @@ intf_create(application *app)
 
     /* Change colors */
     EDJE_COLOR_CLASS_SET_VLC_ORANGE("B011");    // Base class
+
     EDJE_COLOR_CLASS_SET_VLC_ORANGE("B0511");   // Naviframe base
     EDJE_COLOR_CLASS_SET_VLC_ORANGE("B0514");   // Naviframe tab bar
     EDJE_COLOR_CLASS_SET_VLC_ORANGE("B0514S");  // Naviframe tab bar
     EDJE_COLOR_CLASS_SET_VLC_ORANGE("B0514P");  // Naviframe tab bar
     EDJE_COLOR_CLASS_SET_VLC_ORANGE("B0517");   // Naviframe second
+
     EDJE_COLOR_CLASS_SET_VLC_ORANGE("W062L1");  // slider foreground
     EDJE_COLOR_CLASS_SET_VLC_ORANGE("W062L2");  // slider background
     EDJE_COLOR_CLASS_SET_VLC_ORANGE("W0641");   // slider thumb
@@ -424,7 +428,6 @@ intf_create(application *app)
     /* Add and set a bg in the conformant */
     Evas_Object *bg = elm_bg_add(conform);
     elm_bg_color_set(bg, 255, 136, 0);
-    //elm_object_style_set(bg, "indicator/headerbg");
 
     /* Add the bg in the conformant */
     elm_object_part_content_set(conform, "elm.swallow.indicator_bg", bg);
