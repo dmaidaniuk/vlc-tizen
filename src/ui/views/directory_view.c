@@ -218,6 +218,15 @@ browse(view_sys *dv, const char* path)
     return box;
 }
 
+static bool
+directory_event(view_sys *p_view_sys, int event)
+{
+    LOGE("Received event");
+    if(event == INTERFACE_VIEW_EVENT_BACK)
+        return true;
+    return false;
+}
+
 interface_view*
 create_directory_view(interface *intf, Evas_Object *parent)
 {
@@ -228,6 +237,7 @@ create_directory_view(interface *intf, Evas_Object *parent)
     dv->p_parent = parent;
 
     view->p_view_sys = dv;
+    view->pf_event = directory_event;
 
     const char *psz_path = application_get_media_path(intf_get_application(intf), MEDIA_DIRECTORY);
     view->view = browse(dv, psz_path);
