@@ -214,7 +214,7 @@ create_directory_view(interface *intf, Evas_Object *parent)
     dv->p_parent = parent;
     view->view_sys = dv;
 
-    char *psz_path = application_get_media_path(intf_get_application(intf), MEDIA_DIRECTORY);
+    const char *psz_path = application_get_media_path(intf_get_application(intf), MEDIA_DIRECTORY);
     view->view = browse(dv, psz_path);
     return view;
 }
