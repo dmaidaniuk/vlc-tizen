@@ -35,14 +35,25 @@
 typedef struct interface interface;
 typedef struct mini_player mini_player;
 
+/* Creation / Destruction */
 interface *
 intf_create(application *);
+
+application *
+intf_get_application(interface *);
 
 void
 intf_destroy(interface *);
 
-application *
-intf_get_application(interface *);
+/* Views */
+typedef struct interface_view {
+    Evas_Object *view;                /* The Evas View prepared to be stacked */
+    void *view_sys;                   /* The view private data */
+
+    void (*pf_start)(void *view_sys); /* CB when the view is started/resumed */
+    void (*pf_stop) (void *view_sys);  /* CB when the view is stoped/paused */
+    bool (*pf_event)(void *view_sys, int event); /* */
+} interface_view;
 
 typedef enum view_e {
     VIEW_AUTO = -1,

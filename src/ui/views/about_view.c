@@ -109,9 +109,11 @@ create_toolbar(Evas_Object *nf_toolbar)
     return tabbar;
 }
 
-Evas_Object *
+interface_view *
 create_about_view(interface *intf, Evas_Object *parent)
 {
+    interface_view *view = calloc(1, sizeof(*view));
+
     /* Content box */
     Evas_Object *about_box = elm_box_add(parent);
     evas_object_size_hint_weight_set(about_box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -136,5 +138,6 @@ create_about_view(interface *intf, Evas_Object *parent)
 
     /*  */
     evas_object_show(about_box);
-    return about_box;
+    view->view = about_box;
+    return view;
 }

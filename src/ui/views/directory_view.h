@@ -40,7 +40,7 @@ typedef struct directory_data {
     bool is_file;
 } directory_data;
 
-Evas_Object*
+interface_view*
 create_directory_view(interface *intf, Evas_Object *parent);
 
 Evas_Object*

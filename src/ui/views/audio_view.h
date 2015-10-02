@@ -27,11 +27,12 @@
 #ifndef AUDIO_VIEW_H_
 #define AUDIO_VIEW_H_
 
-#include "ui/audio_player.h"
+#include "ui/interface.h"
 
+#include "ui/audio_player.h"
 typedef struct audio_view audio_view;
 
-Evas_Object *
+interface_view *
 create_audio_view(interface *intf, Evas_Object *parent);
 
 #endif /* AUDIO_VIEW_H_ */

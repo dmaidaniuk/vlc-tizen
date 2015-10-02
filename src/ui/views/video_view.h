@@ -27,12 +27,13 @@
 #ifndef VIDEO_VIEW_H_
 #define VIDEO_VIEW_H_
 
+#include "ui/interface.h"
 #include <Elementary.h>
 
 typedef struct video_view video_view;
 typedef struct video_list_item video_list_item;
 
-Evas_Object*
+interface_view*
 create_video_view(interface *intf, Evas_Object *parent);
 
 void

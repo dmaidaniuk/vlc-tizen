@@ -64,7 +64,7 @@ typedef struct settings_item
     Settings_menu_callback cb;
 } settings_item;
 
-Evas_Object*
-create_setting_view(interface *, Evas_Object *parent);
+interface_view*
+create_setting_view(interface *intf, Evas_Object *parent);
 
 #endif /* SETTINGS_VIEW_H_ */

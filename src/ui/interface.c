@@ -54,7 +54,7 @@ struct interface {
 
     /* Naviframe */
     Evas_Object *nf_content; /* Main naviframe */
-    Evas_Object *nf_views[VIEW_MAX];
+    interface_view *nf_views[VIEW_MAX];
 
     /* */
     Evas_Object *sidebar;    /* Sidebar panel */
@@ -78,12 +78,11 @@ struct interface {
 /* TODO : Then use the void eext_object_event_callback_add func */
 /* TODO : See more on https://developer.tizen.org/development/guides/native-application/ui/efl-extension */
 
-typedef struct interface_view
+struct
 {
     const char* title;
-    Evas_Object* (*pf_create)(interface *, Evas_Object *);
-} interface_view;
-interface_view interface_views[VIEW_MAX] =
+    interface_view* (*pf_create)(interface *, Evas_Object *);
+} interface_views[VIEW_MAX] =
 {
     { "Video",     create_video_view },
     { "Audio",     create_audio_view },
@@ -204,7 +203,7 @@ intf_show_view(interface *intf, int view_type)
         view_type = VIEW_VIDEO; /* Replace by the last saved tab */
 
     Evas_Object *nf_content = intf->nf_content;
-    Evas_Object *view = intf->nf_views[view_type];
+    interface_view *view = intf->nf_views[view_type];
 
     /* Create the correct view and store it */
     if(view == NULL)
@@ -216,7 +215,7 @@ intf_show_view(interface *intf, int view_type)
         LOGD("Recycling interface view %i", view_type);
 
     /* Push the view in the naviframe with the corresponding header */
-    elm_naviframe_item_push(nf_content, interface_views[view_type].title, NULL, NULL, view, "basic");
+    elm_naviframe_item_push(nf_content, interface_views[view_type].title, NULL, NULL, view->view, "basic");
 
     /* Create then set the panel toggle btn and add his callbacks */
     if(intf->sidebar_toggle_btn == NULL)

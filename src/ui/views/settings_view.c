@@ -425,8 +425,11 @@ create_setting_list(Evas_Object *parent)
     return genlist;
 }
 
-Evas_Object*
+interface_view*
 create_setting_view(interface *intf, Evas_Object *parent)
 {
-    return create_setting_list(parent);
+    interface_view *view = calloc(1, sizeof(*view));
+    view->view = create_setting_list(parent);
+
+    return view;
 }

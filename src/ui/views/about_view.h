@@ -31,7 +31,7 @@
 #include "common.h"
 #include "ui/interface.h"
 
-Evas_Object*
+interface_view*
 create_about_view(interface *, Evas_Object *parent);
 
 #endif /* ABOUT_VIEW_H_ */

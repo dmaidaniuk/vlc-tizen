@@ -327,14 +327,18 @@ create_toolbar(audio_view *av, Evas_Object *parent)
     return tabbar;
 }
 
-Evas_Object *
+interface_view *
 create_audio_view(interface *intf, Evas_Object *parent)
 {
+    interface_view *view = calloc(1, sizeof(*view));
+
     /* Setup the audio_view */
     audio_view *av = calloc(1, sizeof(*av));
     av->p_intf = intf;
     for(int i = 0; i < AUDIO_VIEW_MAX; i++)
         av->audio_lists[i] = NULL;
+
+    view->view_sys = av;
 
     /* Content box */
     Evas_Object *audio_box = elm_box_add(parent);
@@ -358,6 +362,7 @@ create_audio_view(interface *intf, Evas_Object *parent)
 
     /*  */
     evas_object_show(audio_box);
+    view->view = audio_box;
 
-    return audio_box;
+    return view;
 }
