@@ -48,6 +48,11 @@ intf_destroy(interface *);
 /* Views */
 typedef struct view_sys view_sys;
 
+enum {
+    INTERFACE_VIEW_EVENT_NONE,
+    INTERFACE_VIEW_EVENT_BACK,
+    INTERFACE_VIEW_EVENT_MENU,
+};
 typedef struct interface_view {
     Evas_Object *view;                /* The Evas View prepared to be stacked */
     view_sys *p_view_sys;                   /* The view private data */
