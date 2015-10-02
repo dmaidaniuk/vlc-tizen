@@ -334,22 +334,18 @@ create_main_content_box(interface *intf, Evas_Object *parent)
 
     /* Main View Naviframe */
     intf->nf_content = elm_naviframe_add(intf->main_box);
+    evas_object_size_hint_weight_set(intf->nf_content, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+    evas_object_size_hint_align_set(intf->nf_content, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
     /* Put the naviframe at the top of the content_box */
     evas_object_size_hint_align_set(intf->nf_content, EVAS_HINT_FILL, 0.0);
     evas_object_size_hint_weight_set(intf->nf_content, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-
-    /* */
     elm_box_pack_end(intf->main_box, intf->nf_content);
 
-    /* Create both of the content_box subObjects */
+    /* Mini Player creation */
     intf->mini_player_layout = elm_layout_add(intf->main_box);
     intf->p_mini_player = mini_player_create(intf, application_get_playback_service(intf->p_app), intf->mini_player_layout);
     evas_object_hide(intf->mini_player_layout);
-
-    /* Correct expansion of the NaviFrame */
-    evas_object_size_hint_weight_set(intf->nf_content, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-    evas_object_size_hint_align_set(intf->nf_content, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
     /* */
     evas_object_show(intf->nf_content);
@@ -360,7 +356,7 @@ create_main_content_box(interface *intf, Evas_Object *parent)
     return intf->main_box;
 }
 
-static Evas_Object*
+static void
 create_main_layout(interface *intf, Evas_Object *conform)
 {
     /* Add a layout to the conformant */
@@ -376,7 +372,8 @@ create_main_layout(interface *intf, Evas_Object *conform)
 
     /* */
     evas_object_show(intf->main_box);
-    return layout;
+
+    elm_object_content_set(conform, layout);
 }
 
 interface *
@@ -384,8 +381,6 @@ intf_create(application *app)
 {
     interface *intf = calloc(1, sizeof(*intf));
     intf->p_app = app;
-
-    Evas_Object *bg, *base_layout, *conform;
 
     /* Add and set the main Window */
     intf->win = elm_win_util_standard_add(PACKAGE, PACKAGE);
@@ -416,7 +411,7 @@ intf_create(application *app)
     eext_object_event_callback_add(intf->win, EEXT_CALLBACK_MORE, right_panel_button_clicked_cb, intf);
 
     /* Add and set a conformant in the main Window */
-    conform = elm_conformant_add(intf->win);
+    Evas_Object *conform = elm_conformant_add(intf->win);
     elm_win_conformant_set(intf->win, EINA_TRUE);
     evas_object_size_hint_weight_set(conform, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 
@@ -427,7 +422,7 @@ intf_create(application *app)
     evas_object_show(conform);
 
     /* Add and set a bg in the conformant */
-    bg = elm_bg_add(conform);
+    Evas_Object *bg = elm_bg_add(conform);
     elm_bg_color_set(bg, 255, 136, 0);
     //elm_object_style_set(bg, "indicator/headerbg");
 
@@ -436,8 +431,7 @@ intf_create(application *app)
     evas_object_show(bg);
 
     /* Create the main view in the conformant */
-    base_layout = create_main_layout(intf, conform);
-    elm_object_content_set(conform, base_layout);
+    create_main_layout(intf, conform);
 
     /* Create the default view in the content naviframe */
     intf_show_view(intf, VIEW_AUTO);
