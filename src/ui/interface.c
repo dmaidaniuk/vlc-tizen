@@ -156,19 +156,11 @@ intf_show_previous_view(interface *intf)
     elm_naviframe_item_pop(intf->nf_content);
 }
 
-
-
 /* GETTERS */
 application *
 intf_get_application(interface *p_intf)
 {
     return p_intf->p_app;
-}
-
-Evas_Object*
-intf_get_sidebar(interface *intf)
-{
-    return intf->sidebar;
 }
 
 Evas_Object *
