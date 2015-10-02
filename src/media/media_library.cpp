@@ -231,9 +231,24 @@ media_library_start( media_library* p_media_library)
         LOGE( "Failed to fetch application data directory" );
         return false;
     }
+    // Always ensure the folder exists
+    errno = 0;
+    auto res = mkdir( appData.c_str(), 0700 );
+    if ( res != 0 && errno != EEXIST)
+    {
+        LOGE("Failed to create data directory: %s", strerror(errno));
+        return false;
+    }
+    auto snapshotPath = appData + "/snapshots";
+    res = mkdir( snapshotPath.c_str(), 0700 );
+    if ( res != 0 && errno != EEXIST)
+    {
+        LOGE("Failed to create snapshot directory: %s", strerror(errno));
+        return false;
+    }
     p_media_library->logger.reset( new TizenLogger );
     p_media_library->ml->setLogger( p_media_library->logger.get() );
-    return p_media_library->ml->initialize( appData + "vlc.db", appData + "/snapshots", p_media_library );
+    return p_media_library->ml->initialize( appData + "vlc.db", snapshotPath, p_media_library );
 }
 
 void
