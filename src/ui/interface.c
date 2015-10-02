@@ -123,8 +123,9 @@ win_back_key_cb(void *data, Evas_Object *obj, void *event_info)
     /* Finally pop out the stack */
     else {
         elm_naviframe_item_pop(intf->nf_content);
+
         /* If nothing left, exit */
-        if (NULL == elm_naviframe_items_get(intf->nf_content))
+        if (elm_naviframe_top_item_get(intf->nf_content) == NULL)
             ui_app_exit();
     }
 }
