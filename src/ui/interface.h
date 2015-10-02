@@ -33,7 +33,7 @@
 #include "media/media_library.hpp"
 
 typedef struct interface interface;
-typedef struct mini_player mini_player;
+
 
 /* Creation / Destruction */
 interface *
@@ -45,9 +45,9 @@ intf_get_application(interface *);
 void
 intf_destroy(interface *);
 
+/* Views */
 typedef struct view_sys view_sys;
 
-/* Views */
 typedef struct interface_view {
     Evas_Object *view;                /* The Evas View prepared to be stacked */
     view_sys *p_view_sys;                   /* The view private data */
@@ -70,10 +70,11 @@ typedef enum view_e {
 void
 intf_show_view(interface *, view_e);
 
-// FIXME
+// FIXME REMOVE
 void
 intf_show_previous_view(interface *);
 
+/* Video and Audio players */
 void
 intf_create_video_player(interface *, const char *psz_path);
 
@@ -87,6 +88,7 @@ intf_mini_player_visible_get(interface *);
 bool
 intf_mini_player_visible_set(interface *intf, bool visible);
 
+//FIXME REMOVE
 void
 intf_update_mini_player(interface *);
 
