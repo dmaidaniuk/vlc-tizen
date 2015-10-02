@@ -48,9 +48,10 @@
 struct interface {
     Evas_Object *win;        /* Top Window */
 
-    Evas_Object *main_box; /* Root box */
-    Evas_Object *nf_content; /* Main naviframe */
+    Evas_Object *main_box;   /* Main box, contains the Naviframe and the miniplayer */
 
+    /* Naviframe */
+    Evas_Object *nf_content; /* Main naviframe */
     Evas_Object *nf_views[VIEW_MAX];
 
     /* */
@@ -58,12 +59,12 @@ struct interface {
     Evas_Object *sidebar_toggle_btn;
 
     /* Context popup-menu */
-    Evas_Object *popup_toggle_btn;
     Evas_Object *popup;
+    Evas_Object *popup_toggle_btn;
 
-    /* */
+    /* Miniplayer */
     mini_player *p_mini_player;
-    Evas_Object *mini_player_box;
+    Evas_Object *mini_player_layout;
 
     application *p_app;
 };
@@ -267,18 +268,18 @@ intf_create_video_player(interface *intf, const char *psz_path)
 bool
 intf_mini_player_visible_get(interface *intf)
 {
-    if(intf->mini_player_box == NULL) {
+    if(intf->mini_player_layout == NULL) {
         LOGE("Mini Player not existant!");
         return false;
     }
 
-    return evas_object_visible_get(intf->mini_player_box);
+    return evas_object_visible_get(intf->mini_player_layout);
 }
 
 bool
 intf_mini_player_visible_set(interface *intf, bool visible)
 {
-    if(intf->mini_player_box == NULL)
+    if(intf->mini_player_layout == NULL)
     {
         LOGE("Mini Player not existant!");
         return false;
@@ -286,17 +287,17 @@ intf_mini_player_visible_set(interface *intf, bool visible)
     if(visible)
     {
         /* show */
-        elm_box_pack_end(intf->main_box, intf->mini_player_box);
-        evas_object_show(intf->mini_player_box);
+        elm_box_pack_end(intf->main_box, intf->mini_player_layout);
+        evas_object_show(intf->mini_player_layout);
         elm_box_recalculate(intf->main_box);
     }
     else
     {
-        elm_box_unpack(intf->main_box, intf->mini_player_box);
-        evas_object_hide(intf->mini_player_box);
+        elm_box_unpack(intf->main_box, intf->mini_player_layout);
+        evas_object_hide(intf->mini_player_layout);
         elm_box_recalculate(intf->main_box);
     }
-    evas_object_image_source_visible_set(intf->mini_player_box, visible);
+    evas_object_image_source_visible_set(intf->mini_player_layout, visible);
     return true;
 }
 
@@ -340,8 +341,8 @@ create_main_content_box(interface *intf, Evas_Object *parent)
     elm_box_pack_end(intf->main_box, intf->nf_content);
 
     /* Create both of the content_box subObjects */
-    intf->p_mini_player = mini_player_create(intf, application_get_playback_service(intf->p_app), intf->main_box, &intf->mini_player_box);
-    evas_object_hide(intf->mini_player_box);
+    intf->p_mini_player = mini_player_create(intf, application_get_playback_service(intf->p_app), intf->main_box, &intf->mini_player_layout);
+    evas_object_hide(intf->mini_player_layout);
 
     /* Correct expansion of the NaviFrame */
     evas_object_size_hint_weight_set(intf->nf_content, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
