@@ -29,11 +29,9 @@
 Evas_Object*
 create_image(Evas_Object *parent, const char *image_path)
 {
-    char path[PATH_MAX];
-
     Evas_Object *img = elm_icon_add(parent);
-    snprintf(path, PATH_MAX, ICON_DIR"/%s", image_path);
-    elm_image_file_set(img, path, NULL);
+
+    elm_image_file_set(img, image_path, NULL);
 
     /* */
     elm_image_resizable_set(img, EINA_TRUE, EINA_TRUE);
