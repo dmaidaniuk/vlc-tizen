@@ -33,7 +33,7 @@
 
 typedef struct settings_item settings_item;
 
-typedef void (*Settings_menu_callback)(int id, int index, settings_item *menu_item, Evas_Object *parent);
+typedef void (*Settings_menu_callback)(int id, int index, settings_item *menu, int menu_len, Evas_Object *parent);
 
 typedef struct popup_menu_item
 {
@@ -46,7 +46,7 @@ typedef struct popup_menu_item
     Settings_menu_callback cb;
 } popup_menu_item_s;
 
-typedef void (*Menu_item_callback)(int id, int index, popup_menu_item_s *menu_item, Evas_Object *parent, void *data);
+typedef void (*Menu_item_callback)(int id, int index, settings_item *menu, int menu_len, Evas_Object *parent, void *data);
 
 Evas_Object *
 create_settings_popup_genlist(Evas_Object *parent, popup_menu_item_s *directory_menu, int len, Menu_item_callback cb, void *data);

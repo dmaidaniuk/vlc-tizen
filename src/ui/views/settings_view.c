@@ -34,23 +34,23 @@
 #include <app_preference.h>
 
 static void
-menu_directories_selected_cb(int id, int index, settings_item *menu_item, Evas_Object *parent);
+menu_directories_selected_cb(int id, int index, settings_item *menu, int menu_len, Evas_Object *parent);
 static void
-menu_hwacceleration_selected_cb(int id, int index, settings_item *menu_item, Evas_Object *parent);
+menu_hwacceleration_selected_cb(int id, int index, settings_item *menu, int menu_len, Evas_Object *parent);
 static void
-menu_subsenc_selected_cb(int id, int index, settings_item *menu_item, Evas_Object *parent);
+menu_subsenc_selected_cb(int id, int index, settings_item *menu, int menu_len, Evas_Object *parent);
 static void
-menu_vorientation_selected_cb(int id, int index, settings_item *menu_item, Evas_Object *parent);
+menu_vorientation_selected_cb(int id, int index, settings_item *menu, int menu_len, Evas_Object *parent);
 static void
-menu_performance_selected_cb(int id, int index, settings_item *menu_item, Evas_Object *parent);
+menu_performance_selected_cb(int id, int index, settings_item *menu, int menu_len, Evas_Object *parent);
 static void
-menu_deblocking_selected_cb(int id, int index, settings_item *menu_item, Evas_Object *parent);
-static void
-popup_directories_selected_cb(int id, int index, popup_menu_item_s *menu_item, Evas_Object *parent, void *data);
-
+menu_deblocking_selected_cb(int id, int index, settings_item *menu, int menu_len, Evas_Object *parent);
 
 static Evas_Object *
-settings_list_add(popup_menu_item_s *menu, int len, Settings_menu_callback global_menu_cb, Evas_Object *parent);
+settings_list_add(settings_item *menu, int len, Settings_menu_callback global_menu_cb, Evas_Object *parent);
+
+static void
+settings_toggle_switch(int id, int index, settings_item *menu, int menu_len, Evas_Object *parent);
 
 settings_item settings_menu[] =
 {
@@ -66,14 +66,14 @@ settings_item settings_menu[] =
 
 /* Create the setting submenu items */
 
-popup_menu_item_s directory_menu[] =
+settings_item directory_menu[] =
 {
         {42, "Directories", "", SETTINGS_TYPE_CATEGORY},
         {42, "Internal memory", "toggle_off.png", SETTINGS_TYPE_ITEM},
         {42, "Add repository", "call_button_add_call_press.png", SETTINGS_TYPE_ITEM}
 };
 
-popup_menu_item_s hardware_acceleration_menu[] =
+settings_item hardware_acceleration_menu[] =
 {
         {42, "Automatic", "toggle_on.png"},
         {42, "Disabled", "toggle_off.png"},
@@ -81,7 +81,7 @@ popup_menu_item_s hardware_acceleration_menu[] =
         {42, "Full acceleration", "toggle_off.png"}
 };
 
-popup_menu_item_s video_orientation_menu[] =
+settings_item video_orientation_menu[] =
 {
         {42, "Automatic (sensor)", "toggle_on.png"},
         {42, "Locked at start", "toggle_off.png"},
@@ -91,7 +91,7 @@ popup_menu_item_s video_orientation_menu[] =
         {42, "Reverse portrait", "toggle_off.png"}
 };
 
-popup_menu_item_s subtitles_text_encoding_menu[] =
+settings_item subtitles_text_encoding_menu[] =
 {
         {42, "Default (Windows-1252)", "toggle_on.png"},
         {42, "Universal (UTF-8)", "toggle_off.png"},
@@ -137,14 +137,14 @@ popup_menu_item_s subtitles_text_encoding_menu[] =
 
 };
 
-popup_menu_item_s performance_menu[] =
+settings_item performance_menu[] =
 {
         {42, "Enable frame skip", "toggle_off.png"},
         {42, "Time-stretching audio", "toggle_off.png"}
 
 };
 
-popup_menu_item_s deblocking_filter_settings_menu[] =
+settings_item deblocking_filter_settings_menu[] =
 {
         {42, "Automatic", "toggle_on.png"},
         {42, "Full deblocking (slowest)", "toggle_off.png"},
@@ -155,7 +155,7 @@ popup_menu_item_s deblocking_filter_settings_menu[] =
 };
 
 static void
-menu_directories_selected_cb(int id, int index, settings_item *menu_item, Evas_Object *parent)
+menu_directories_selected_cb(int id, int index, settings_item *menu, int menu_len, Evas_Object *parent)
 {
     int len = (int)sizeof(directory_menu) / (int)sizeof(*directory_menu);
     Evas_Object *genlist = settings_list_add(directory_menu, len, NULL, parent);
@@ -164,18 +164,18 @@ menu_directories_selected_cb(int id, int index, settings_item *menu_item, Evas_O
 }
 
 static void
-menu_hwacceleration_selected_cb(int id, int index, settings_item *menu_item, Evas_Object *parent)
+menu_hwacceleration_selected_cb(int id, int index, settings_item *menu, int menu_len, Evas_Object *parent)
 {
     int len = (int)sizeof(hardware_acceleration_menu) / (int)sizeof(*hardware_acceleration_menu);
     Evas_Object *popup = elm_popup_add(parent);
-    Evas_Object *list = create_settings_popup_genlist(popup, hardware_acceleration_menu, len, NULL, NULL);
+    Evas_Object *list = create_settings_popup_genlist(popup, hardware_acceleration_menu, len, settings_toggle_switch, NULL);
     elm_object_content_set(popup, list);
     evas_object_show(list);
     evas_object_show(popup);
 }
 
 static void
-menu_subsenc_selected_cb(int id, int index, settings_item *menu_item, Evas_Object *parent)
+menu_subsenc_selected_cb(int id, int index, settings_item *menu, int menu_len, Evas_Object *parent)
 {
     int len = (int)sizeof(subtitles_text_encoding_menu) / (int)sizeof(*subtitles_text_encoding_menu);
     Evas_Object *popup = elm_popup_add(parent);
@@ -186,7 +186,7 @@ menu_subsenc_selected_cb(int id, int index, settings_item *menu_item, Evas_Objec
 }
 
 static void
-menu_vorientation_selected_cb(int id, int index, settings_item *menu_item, Evas_Object *parent)
+menu_vorientation_selected_cb(int id, int index, settings_item *menu, int menu_len, Evas_Object *parent)
 {
     int len = (int)sizeof(video_orientation_menu) / (int)sizeof(*video_orientation_menu);
     Evas_Object *popup = elm_popup_add(parent);
@@ -197,7 +197,7 @@ menu_vorientation_selected_cb(int id, int index, settings_item *menu_item, Evas_
 }
 
 static void
-menu_performance_selected_cb(int id, int index, settings_item *menu_item, Evas_Object *parent)
+menu_performance_selected_cb(int id, int index, settings_item *menu, int menu_len, Evas_Object *parent)
 {
     int len = (int)sizeof(performance_menu) / (int)sizeof(*performance_menu);
     Evas_Object *popup = elm_popup_add(parent);
@@ -208,7 +208,7 @@ menu_performance_selected_cb(int id, int index, settings_item *menu_item, Evas_O
 }
 
 static void
-menu_deblocking_selected_cb(int id, int index, settings_item *menu_item, Evas_Object *parent)
+menu_deblocking_selected_cb(int id, int index, settings_item *menu, int menu_len, Evas_Object *parent)
 {
     int len = (int)sizeof(deblocking_filter_settings_menu) / (int)sizeof(*deblocking_filter_settings_menu);
     Evas_Object *popup = elm_popup_add(parent);
@@ -219,26 +219,29 @@ menu_deblocking_selected_cb(int id, int index, settings_item *menu_item, Evas_Ob
 }
 
 static void
-popup_directories_selected_cb(int id, int index, popup_menu_item_s *menu_item, Evas_Object *parent, void *data)
+settings_toggle_switch(int id, int index, settings_item *menu, int menu_len, Evas_Object *parent)
 {
     /* Change the icon depending on the setting state (pressed or not) */
 
-    if(strcmp (menu_item[index].icon, "toggle_on.png") == 0)
+    if(strcmp (menu[index].icon, "toggle_on.png") == 0)
     {
-        menu_item[index].icon = "toggle_off.png";
+        LOGD("Meh1");
+        menu[index].icon = "toggle_off.png";
     }
 
-    else if(strcmp (menu_item[index].icon, "toggle_off.png") == 0)
+    else if(strcmp (menu[index].icon, "toggle_off.png") == 0)
     {
-        for(int count = 0; count < ((int)sizeof(directory_menu) / (int)sizeof(*directory_menu)); count ++)
+        LOGD("Meh2");
+        for(int count = 0; count < menu_len; count++)
         {
-            if (strcmp(menu_item[count].icon, "toggle_on.png") == 0)
+            LOGD("Meh3");
+            if (strcmp(menu[count].icon, "toggle_on.png") == 0)
             {
-                menu_item[count].icon = "toggle_off.png";
+                menu[count].icon = "toggle_off.png";
             }
         }
 
-        menu_item[index].icon = "toggle_on.png";
+        menu[index].icon = "toggle_on.png";
     }
 
     /* */
@@ -269,13 +272,13 @@ gl_text_get_cb(void *data, Evas_Object *obj, const char *part)
     /* Then put this string as the genlist headers item label */
     if (itc->item_style && !strcmp(itc->item_style, "groupindex")) {
         if (part && !strcmp(part, "elm.text.main")) {
-            return strdup(settings_menu[sd->index].title);
+            return strdup(sd->menu[sd->index].title);
         }
     }
     /* Or put this string as the genlist setting item label */
     else if (itc->item_style && !strcmp(itc->item_style, "1line")) {
         if (part && !strcmp(part, "elm.text.main.left")) {
-            return strdup(settings_menu[sd->index].title);
+            return strdup(sd->menu[sd->index].title);
         }
     }
     return NULL;
@@ -302,91 +305,17 @@ gl_content_get_cb(void *data, Evas_Object *obj, const char *part)
     return content;
 }
 
-static char *
-gl_text_get_cb2(void *data, Evas_Object *obj, const char *part)
-{
-    setting_data *sd = data;
-    const Elm_Genlist_Item_Class *itc = elm_genlist_item_item_class_get(sd->item);
-
-    /* Check the item class style and put the current folder or file name as a string */
-    /* Then put this string as the genlist headers item label */
-    if (itc->item_style && !strcmp(itc->item_style, "groupindex")) {
-        if (part && !strcmp(part, "elm.text.main")) {
-            LOGD("Found");
-            return strdup(sd->menu[sd->index].title);
-        }
-    }
-    /* Or put this string as the genlist setting item label */
-    else if (itc->item_style && !strcmp(itc->item_style, "1line")) {
-        if (part && !strcmp(part, "elm.text.main.left")) {
-            LOGD("Found");
-            return strdup(sd->menu[sd->index].title);
-        }
-    }
-    LOGD("DAMN");
-    return NULL;
-}
-
-static Evas_Object*
-gl_content_get_cb2(void *data, Evas_Object *obj, const char *part)
-{
-    setting_data *sd = data;
-    const Elm_Genlist_Item_Class *itc = elm_genlist_item_item_class_get(sd->item);
-    Evas_Object *content = NULL;
-
-    /* Check the item class style and add the object needed in the item class*/
-    /* Here, puts the icon in the item class to add it to genlist items */
-    if (itc->item_style && !strcmp(itc->item_style, "1line")) {
-        if (part && !strcmp(part, "elm.icon.1")) {
-            content = elm_layout_add(obj);
-            elm_layout_theme_set(content, "layout", "list/B/type.3", "default");
-            Evas_Object *icon = create_icon(content, sd->index);
-            elm_layout_content_set(content, "elm.swallow.content", icon);
-        }
-    }
-
-    return content;
-}
-
-static void
-gl_loaded_cb(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
-{
-    /* Set the callbacks when one of the genlist item is loaded */
-}
-
-static void
-gl_realized_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
-{
-    /* Set the callbacks when one of the genlist item is realized */
-}
-
-static void
-gl_longpressed_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
-{
-    /* Set the callbacks when one of the genlist item is longpress */
-}
-
 static void
 gl_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
-{
-    setting_data *sd = data;
-    Settings_menu_callback cb = settings_menu[sd->index].cb;
-
-    if (cb != NULL)
-        cb(sd->id, sd->index, &settings_menu[sd->index], sd->parent);
-}
-
-static void
-gl_selected_cb2(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
     setting_data *sd = data;
     Settings_menu_callback item_cb = sd->menu[sd->index].cb;
 
     if (item_cb != NULL)
-        item_cb(sd->id, sd->index, &settings_menu[sd->index], sd->parent);
+        item_cb(sd->id, sd->index, sd->menu, sd->menu_len, sd->parent);
 
     if (sd->global_cb != NULL)
-        sd->global_cb(sd->id, sd->index, &settings_menu[sd->index], sd->parent);
+        sd->global_cb(sd->id, sd->index, sd->menu, sd->menu_len, sd->parent);
 }
 
 static void
@@ -399,7 +328,7 @@ gl_contracted_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
 }
 
 static Evas_Object *
-settings_list_add(popup_menu_item_s *menu, int len, Settings_menu_callback global_menu_cb, Evas_Object *parent)
+settings_list_add(settings_item *menu, int len, Settings_menu_callback global_menu_cb, Evas_Object *parent)
 {
     Evas_Object *genlist;
     Elm_Object_Item *it, *hit = NULL;
@@ -411,14 +340,14 @@ settings_list_add(popup_menu_item_s *menu, int len, Settings_menu_callback globa
 
     /* Set the headers item class */
     hitc->item_style = "groupindex";
-    hitc->func.text_get = gl_text_get_cb2;
-    hitc->func.content_get = gl_content_get_cb2;
+    hitc->func.text_get = gl_text_get_cb;
+    hitc->func.content_get = gl_content_get_cb;
     hitc->func.del = gl_del_cb;
 
     /* Set the settings item class */
     itc->item_style = "1line";
-    itc->func.text_get = gl_text_get_cb2;
-    itc->func.content_get = gl_content_get_cb2;
+    itc->func.text_get = gl_text_get_cb;
+    itc->func.content_get = gl_content_get_cb;
     itc->func.del = gl_del_cb;
 
     genlist = elm_genlist_add(parent);
@@ -470,7 +399,7 @@ settings_list_add(popup_menu_item_s *menu, int len, Settings_menu_callback globa
                     sd,                            /* genlist item class user data     */
                     hit,                           /* genlist parent item              */
                     ELM_GENLIST_ITEM_NONE,         /* genlist item type                */
-                    gl_selected_cb2,               /* genlist select smart callback    */
+                    gl_selected_cb,               /* genlist select smart callback    */
                     sd);                           /* genlist smart callback user data */
 
             /* Put genlist item in the setting_data struct for callbacks */
@@ -489,100 +418,15 @@ settings_list_add(popup_menu_item_s *menu, int len, Settings_menu_callback globa
     return genlist;
 }
 
-static Evas_Object *
-create_setting_list(Evas_Object *parent)
-{
-    Evas_Object *genlist;
-    Elm_Object_Item *hit, *it;
-    int n_items = (int) sizeof(settings_menu) / (int) sizeof (*settings_menu);
-    int index;
-
-    /* Set then create the Genlist object */
-    Elm_Genlist_Item_Class *hitc = elm_genlist_item_class_new();
-    Elm_Genlist_Item_Class *itc = elm_genlist_item_class_new();
-
-    /* Set the headers item class */
-    hitc->item_style = "groupindex";
-    hitc->func.text_get = gl_text_get_cb;
-    hitc->func.content_get = gl_content_get_cb;
-    hitc->func.del = gl_del_cb;
-
-    /* Set the settings item class */
-    itc->item_style = "1line";
-    itc->func.text_get = gl_text_get_cb;
-    itc->func.content_get = gl_content_get_cb;
-    itc->func.del = gl_del_cb;
-
-    genlist = elm_genlist_add(parent);
-
-    /* Set the genlist scoller mode */
-    elm_scroller_single_direction_set(genlist, ELM_SCROLLER_SINGLE_DIRECTION_HARD);
-    /* Enable the genlist HOMOGENEOUS mode */
-    elm_genlist_homogeneous_set(genlist, EINA_TRUE);
-    /* Enable the genlist COMPRESS mode */
-    elm_genlist_mode_set(genlist, ELM_LIST_COMPRESS);
-
-    /* Set smart Callbacks */
-    evas_object_smart_callback_add(genlist, "realized", gl_realized_cb, NULL);
-    evas_object_smart_callback_add(genlist, "loaded", gl_loaded_cb, NULL);
-    evas_object_smart_callback_add(genlist, "longpressed", gl_longpressed_cb, NULL);
-    evas_object_smart_callback_add(genlist, "contracted", gl_contracted_cb, NULL);
-
-    /* Stop when the setting list names is all used */
-    for (index = 0; index < n_items; index++) {
-        setting_data *sd = calloc(1, sizeof(*sd));
-
-        /* Put the index in the setting_data struct for callbacks */
-        sd->index = index;
-        sd->id = settings_menu[index].id;
-
-        /* Set and append headers items */
-        if (settings_menu[index].type == SETTINGS_TYPE_CATEGORY)
-        {
-            hit = elm_genlist_item_append(genlist,
-                    hitc,                           /* genlist item class               */
-                    sd,                             /* genlist item class user data     */
-                    NULL,                           /* genlist parent item              */
-                    ELM_GENLIST_ITEM_TREE,          /* genlist item type                */
-                    NULL,                           /* genlist select smart callback    */
-                    sd);                            /* genlist smart callback user data */
-
-            /* Put genlist item in the setting_data struct for callbacks */
-            sd->item = hit;
-        }
-        else if (settings_menu[index].type == SETTINGS_TYPE_ITEM)
-        {
-            /* Set and append settings items */
-            sd->index = index;
-            it = elm_genlist_item_append(genlist,
-                    itc,                           /* genlist item class               */
-                    sd,                            /* genlist item class user data     */
-                    hit,                           /* genlist parent item              */
-                    ELM_GENLIST_ITEM_NONE,         /* genlist item type                */
-                    gl_selected_cb,                /* genlist select smart callback    */
-                    sd);                           /* genlist smart callback user data */
-
-            /* Put genlist item in the setting_data struct for callbacks */
-            sd->parent = parent;
-            sd->item = it;
-        }
-    }
-
-    /* */
-    elm_genlist_item_class_free(hitc);
-    elm_genlist_item_class_free(itc);
-
-    /* */
-    evas_object_show(genlist);
-
-    return genlist;
-}
-
 interface_view*
 create_setting_view(interface *intf, Evas_Object *parent)
 {
     interface_view *view = calloc(1, sizeof(*view));
-    view->view = create_setting_list(parent);
+    //view->view = create_setting_list(parent);
+
+    int len = (int)sizeof(settings_menu) / (int)sizeof(*settings_menu);
+    view->view = settings_list_add(settings_menu, len, NULL, parent);
+    evas_object_show(view->view);
 
     return view;
 }
