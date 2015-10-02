@@ -332,12 +332,10 @@ create_main_content_box(interface *intf, Evas_Object *parent)
 
     /* Main View Naviframe */
     intf->nf_content = elm_naviframe_add(intf->main_box);
-    evas_object_size_hint_weight_set(intf->nf_content, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-    evas_object_size_hint_align_set(intf->nf_content, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
     /* Put the naviframe at the top of the content_box */
-    evas_object_size_hint_align_set(intf->nf_content, EVAS_HINT_FILL, 0.0);
     evas_object_size_hint_weight_set(intf->nf_content, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+    evas_object_size_hint_align_set(intf->nf_content, EVAS_HINT_FILL, EVAS_HINT_FILL);
     elm_box_pack_end(intf->main_box, intf->nf_content);
 
     /* Mini Player creation */
