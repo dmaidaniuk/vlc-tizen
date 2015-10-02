@@ -41,7 +41,33 @@
 #define SETTINGS_TYPE_CATEGORY 0
 #define SETTINGS_TYPE_ITEM 1
 
+typedef struct settings_item settings_item;
+
+typedef void (*Settings_menu_callback)(int id, int index, settings_item *menu_item, Evas_Object *parent);
+
+typedef struct setting_data
+{
+    int id;
+    int index;
+    Elm_Object_Item *item;
+    Evas_Object *parent;
+    Evas_Object *genlist_test;
+
+} setting_data;
+
+typedef struct settings_item
+{
+    int id;
+    const char* title;
+    const char* icon;
+    int type;
+    Settings_menu_callback cb;
+} settings_item;
+
 Evas_Object*
 create_setting_view(interface *, Evas_Object *parent);
+
+static void
+menu_directories_selected_cb(int id, int index, settings_item *menu_item, Evas_Object *parent);
 
 #endif /* SETTINGS_VIEW_H_ */

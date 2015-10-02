@@ -33,30 +33,10 @@
 
 #include <app_preference.h>
 
-typedef struct setting_data
-{
-    int id;
-    int index;
-    Elm_Object_Item *item;
-    Evas_Object *parent;
-    Evas_Object *genlist_test;
-
-} setting_data;
-
-typedef struct settings_item
-{
-    int id;
-    const char* title;
-    const char* icon;
-    int type;
-
-} settings_item;
-
-
 settings_item settings_menu[] =
 {
         {0,                             "General",                      "",                                 SETTINGS_TYPE_CATEGORY},
-        {SETTINGS_ID_DIRECTORIES,       "Directories",                  "ic_menu_folder.png",               SETTINGS_TYPE_ITEM},
+        {SETTINGS_ID_DIRECTORIES,       "Directories",                  "ic_menu_folder.png",               SETTINGS_TYPE_ITEM,         menu_directories_selected_cb},
         {SETTINGS_ID_HWACCELERATION,    "Hardware acceleration",        "ic_menu_preferences.png",          SETTINGS_TYPE_ITEM},
         {SETTINGS_ID_SUBSENC,           "Subtitles text encoding",      "ic_browser_subtitle_normal.png",   SETTINGS_TYPE_ITEM},
         {SETTINGS_ID_VORIENTATION,      "Video orientation",            "ic_menu_video.png",                SETTINGS_TYPE_ITEM},
@@ -181,6 +161,17 @@ popup_directories_selected_cb(int id, int index, popup_menu_item_s *menu_item, E
     evas_object_del(parent);
 }
 
+static void
+menu_directories_selected_cb(int id, int index, settings_item *menu_item, Evas_Object *parent)
+{
+    int len = (int)sizeof(directory_menu) / (int)sizeof(*directory_menu);
+    Evas_Object *popup = elm_popup_add(parent);
+    Evas_Object *list = create_settings_popup_genlist(popup, directory_menu, len, popup_directories_selected_cb, NULL);
+    elm_object_content_set(popup, list);
+    evas_object_show(list);
+    evas_object_show(popup);
+}
+
 /* Free the setting_data struct when the list is deleted */
 static void
 gl_del_cb(void *data, Evas_Object *obj EINA_UNUSED)
@@ -259,53 +250,60 @@ gl_longpressed_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev
 static void
 gl_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
-    Evas_Object *list;
-    Evas_Object *popup;
     setting_data *sd = data;
+    Settings_menu_callback cb = settings_menu[sd->index].cb;
 
-    popup_menu_item_s *menu = NULL;
-    int len = 0;
-    Menu_item_callback callback = NULL;
-    void *callback_data = NULL;
+    if (cb != NULL)
+        cb(sd->id, sd->index, &settings_menu[sd->index], sd->parent);
 
-    switch(sd->id)
-    {
-    case SETTINGS_ID_DIRECTORIES:
-        menu = directory_menu;
-        len = (int)sizeof(directory_menu) / (int)sizeof(*directory_menu);
-        callback = popup_directories_selected_cb;
-        break;
-    case SETTINGS_ID_HWACCELERATION:
-        menu = hardware_acceleration_menu;
-        len = (int)sizeof(hardware_acceleration_menu) / (int)sizeof(*hardware_acceleration_menu);
-        break;
-    case SETTINGS_ID_SUBSENC:
-        menu = subtitles_text_encoding_menu;
-        len = (int)sizeof(subtitles_text_encoding_menu) / (int)sizeof(*subtitles_text_encoding_menu);
-        break;
-    case SETTINGS_ID_VORIENTATION:
-        menu = video_orientation_menu;
-        len = (int)sizeof(video_orientation_menu) / (int)sizeof(*video_orientation_menu);
-        break;
-    case SETTINGS_ID_PERFORMANCES:
-        menu = performance_menu;
-        len = (int)sizeof(performance_menu) / (int)sizeof(*performance_menu);
-        break;
-    case SETTINGS_ID_DEBLOCKING:
-        menu = deblocking_filter_settings_menu;
-        len = (int)sizeof(deblocking_filter_settings_menu) / (int)sizeof(*deblocking_filter_settings_menu);
-        break;
-    default:
-        break;
-    }
 
-    if (menu != NULL) {
-        popup = elm_popup_add(sd->parent);
-        list = create_settings_popup_genlist(popup, menu, len, callback, callback_data);
-        elm_object_content_set(popup, list);
-        evas_object_show(list);
-        evas_object_show(popup);
-    }
+//    Evas_Object *list;
+//    Evas_Object *popup;
+//    setting_data *sd = data;
+//
+//    popup_menu_item_s *menu = NULL;
+//    int len = 0;
+//    Menu_item_callback callback = NULL;
+//    void *callback_data = NULL;
+//
+//    switch(sd->id)
+//    {
+//    case SETTINGS_ID_DIRECTORIES:
+//        menu = directory_menu;
+//        len = (int)sizeof(directory_menu) / (int)sizeof(*directory_menu);
+//        callback = popup_directories_selected_cb;
+//        break;
+//    case SETTINGS_ID_HWACCELERATION:
+//        menu = hardware_acceleration_menu;
+//        len = (int)sizeof(hardware_acceleration_menu) / (int)sizeof(*hardware_acceleration_menu);
+//        break;
+//    case SETTINGS_ID_SUBSENC:
+//        menu = subtitles_text_encoding_menu;
+//        len = (int)sizeof(subtitles_text_encoding_menu) / (int)sizeof(*subtitles_text_encoding_menu);
+//        break;
+//    case SETTINGS_ID_VORIENTATION:
+//        menu = video_orientation_menu;
+//        len = (int)sizeof(video_orientation_menu) / (int)sizeof(*video_orientation_menu);
+//        break;
+//    case SETTINGS_ID_PERFORMANCES:
+//        menu = performance_menu;
+//        len = (int)sizeof(performance_menu) / (int)sizeof(*performance_menu);
+//        break;
+//    case SETTINGS_ID_DEBLOCKING:
+//        menu = deblocking_filter_settings_menu;
+//        len = (int)sizeof(deblocking_filter_settings_menu) / (int)sizeof(*deblocking_filter_settings_menu);
+//        break;
+//    default:
+//        break;
+//    }
+//
+//    if (menu != NULL) {
+//        popup = elm_popup_add(sd->parent);
+//        list = create_settings_popup_genlist(popup, menu, len, callback, callback_data);
+//        elm_object_content_set(popup, list);
+//        evas_object_show(list);
+//        evas_object_show(popup);
+//    }
 }
 
 static void
