@@ -246,4 +246,7 @@ create_directory_view(interface *intf, Evas_Object *parent)
 
 void
 destroy_directory_view(interface_view *view)
-{}
+{
+    free(view->p_view_sys);
+    free(view);
+}
