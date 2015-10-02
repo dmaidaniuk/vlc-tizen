@@ -225,22 +225,17 @@ settings_toggle_switch(int id, int index, settings_item *menu, int menu_len, Eva
 
     if(strcmp (menu[index].icon, "toggle_on.png") == 0)
     {
-        LOGD("Meh1");
         menu[index].icon = "toggle_off.png";
     }
-
     else if(strcmp (menu[index].icon, "toggle_off.png") == 0)
     {
-        LOGD("Meh2");
         for(int count = 0; count < menu_len; count++)
         {
-            LOGD("Meh3");
             if (strcmp(menu[count].icon, "toggle_on.png") == 0)
             {
                 menu[count].icon = "toggle_off.png";
             }
         }
-
         menu[index].icon = "toggle_on.png";
     }
 
