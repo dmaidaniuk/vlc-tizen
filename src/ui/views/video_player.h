@@ -29,7 +29,7 @@
 #ifndef VIDEOP_H_
 #define VIDEOP_H_
 
-Evas_Object*
+interface_view*
 create_video_gui(playback_service *p_ps, Evas_Object *parent, const char* file_path);
 
 void

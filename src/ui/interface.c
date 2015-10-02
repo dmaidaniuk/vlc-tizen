@@ -264,7 +264,9 @@ intf_create_video_player(interface *intf, const char *psz_path)
 {
     /* Launch the media player */
     playback_service *p_ps = application_get_playback_service(intf->p_app);
-    Evas_Object *video_player = create_video_gui(p_ps, intf->nf_content, psz_path);
+    interface_view *view = create_video_gui(p_ps, intf->nf_content, psz_path);
+
+    Evas_Object *video_player = view->view;
 
     Elm_Object_Item *it = elm_naviframe_item_push(intf->nf_content, NULL, NULL, NULL, video_player, NULL);
     elm_naviframe_item_title_enabled_set(it, EINA_FALSE, EINA_FALSE);

@@ -33,7 +33,7 @@
 #include "video_player.h"
 #include "playback_service.h"
 
-typedef struct video_player
+struct view_sys
 {
     bool b_fill;
     bool b_decoded;
@@ -43,12 +43,12 @@ typedef struct video_player
     /* Widgets */
     Evas_Object *p_evas_video;
     Evas_Object *play_pause_button, *progress_slider;
-} video_player;
+};
 
 static void
 _on_slider_changed_cb(void *data, Evas_Object *obj, void *event_info)
 {
-    video_player *vd = data;
+    view_sys *vd = data;
 
     playback_service_seek_pos(vd->p_ps, elm_slider_value_get(obj));
 }
@@ -56,7 +56,7 @@ _on_slider_changed_cb(void *data, Evas_Object *obj, void *event_info)
 static void
 clicked_play_pause(void *data, Evas_Object *obj, void *event_info)
 {
-    video_player *vd = data;
+    view_sys *vd = data;
 
     elm_image_file_set(vd->play_pause_button,
                        playback_service_toggle_play_pause(vd->p_ps) ?
@@ -67,7 +67,7 @@ clicked_play_pause(void *data, Evas_Object *obj, void *event_info)
 static void
 clicked_backward(void *data, Evas_Object *obj, void *event_info)
 {
-    video_player *vd = data;
+    view_sys *vd = data;
 
     playback_service_seek_backward(vd->p_ps);
 }
@@ -75,7 +75,7 @@ clicked_backward(void *data, Evas_Object *obj, void *event_info)
 static void
 clicked_forward(void *data, Evas_Object *obj, void *event_info)
 {
-    video_player *vd = data;
+    view_sys *vd = data;
 
     playback_service_seek_forward(vd->p_ps);
 }
@@ -97,19 +97,19 @@ clicked_more(void *data, Evas_Object *obj, void *event_info)
 static void
 ps_on_new_len_cb(playback_service *p_ps, void *p_user_data, double i_len)
 {
-    video_player *vd = p_user_data;
+    view_sys *vd = p_user_data;
     /* TODO */
 }
 
 static void
 ps_on_new_time_cb(playback_service *p_ps, void *p_user_data, double i_time, double i_pos)
 {
-    video_player *vd = p_user_data;
+    view_sys *vd = p_user_data;
     elm_slider_value_set(vd->progress_slider, i_pos);
 }
 
 static void
-video_resize(video_player *vd)
+video_resize(view_sys *vd)
 {
     Evas_Coord i_win_x, i_win_y, i_win_w, i_win_h;
     int i_video_w, video_h;
@@ -169,7 +169,7 @@ video_resize(video_player *vd)
 static void
 evas_video_decode_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
-    video_player *vd = data;
+    view_sys *vd = data;
     if (!vd->b_decoded)
     {
         vd->b_decoded = true;
@@ -186,16 +186,18 @@ evas_video_resize_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
 static void
 layout_touch_up_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
-    video_player *vd = data;
+    view_sys *vd = data;
 
     LOGF("layout_touch_up_cb");
 }
 
-Evas_Object*
+interface_view*
 create_video_gui(playback_service *p_ps, Evas_Object *parent, const char* file_path)
 {
     media_item *p_mi;
-    video_player *vd = calloc(1, sizeof(*vd));
+    interface_view *view = calloc(1, sizeof(*view));
+
+    view_sys *vd = view->p_view_sys = calloc(1, sizeof(*vd));
     if (!vd)
         return NULL;
 
@@ -290,7 +292,8 @@ create_video_gui(playback_service *p_ps, Evas_Object *parent, const char* file_p
     playback_service_list_append(vd->p_ps, p_mi);
     playback_service_start(vd->p_ps, 0);
 
-    return layout;
+    view->view = layout;
+    return view;
 }
 
 void
