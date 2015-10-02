@@ -48,6 +48,7 @@ error:
 void
 media_item_destroy(media_item *p_mi)
 {
+    free(p_mi->psz_snapshot);
     for (unsigned int i = 0; i < MEDIA_ITEM_META_COUNT; ++i)
         free(p_mi->psz_metas[i]);
     free(p_mi->psz_path);

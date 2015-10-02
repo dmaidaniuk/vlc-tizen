@@ -59,6 +59,8 @@ typedef struct media_item {
 
     //FIXME replace with a union
     int i_w, i_h;                   /* in pixels */
+
+    char* psz_snapshot;             /* Path to a snapshot file */
 } media_item;
 
 media_item *

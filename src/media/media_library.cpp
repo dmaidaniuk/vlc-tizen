@@ -222,7 +222,7 @@ media_library_create(application *p_app)
 }
 
 bool
-media_library_start( media_library* p_media_library)
+media_library_start(media_library* p_media_library)
 {
     auto appDataCStr = std::unique_ptr<char, void(*)(void*)>( system_storage_appdata_get(), &free );
     std::string appData( appDataCStr.get() );
@@ -307,6 +307,8 @@ fileToMediaItem( FilePtr file )
             // Assume a media library problem and just let it go.
             LOGW( "Adding video file [%s] with no video tracks detected.", file->mrl().c_str() );
         }
+        if (file->snapshot().length() > 0)
+            mi->psz_snapshot = strdup(file->snapshot().c_str());
     }
     else if ( file->type() == IFile::Type::AudioType )
     {

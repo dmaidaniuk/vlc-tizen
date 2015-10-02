@@ -84,12 +84,6 @@ free_list_item(void *data, Evas_Object *obj, void *event_info)
     free(vli);
 }
 
-static Evas_Object*
-create_default_icon(Evas_Object *parent)
-{
-    return create_image(parent, "background_cone.png");
-}
-
 static char *
 duration_string(int64_t duration)
 {
@@ -145,12 +139,18 @@ video_list_item_get_media_item(video_list_item* p_item)
 void
 video_list_item_set_media_item(video_list_item* p_item, const media_item* p_media_item)
 {
-    LOGI("Received update request for [%s]", p_media_item->psz_path);
     bool b_changed = false;
     if (p_item->p_media_item->i_duration != p_media_item->i_duration)
     {
-        LOGI("Updated duration");
         p_item->p_media_item->i_duration = p_media_item->i_duration;
+        b_changed = true;
+    }
+    if (p_media_item->psz_snapshot != NULL && (
+            p_item->p_media_item->psz_snapshot == NULL ||
+            strcmp( p_item->p_media_item->psz_snapshot, p_media_item->psz_snapshot)))
+    {
+        free(p_item->p_media_item->psz_snapshot);
+        p_item->p_media_item->psz_snapshot = strdup(p_media_item->psz_snapshot);
         b_changed = true;
     }
     if (b_changed == true)
@@ -173,7 +173,11 @@ genlist_content_get_cb(void *data, Evas_Object *obj, const char *part)
         if (part && !strcmp(part, "elm.icon.1")) {
             layout = elm_layout_add(obj);
             elm_layout_theme_set(layout, "layout", "list/B/type.1", "default");
-            Evas_Object *icon = create_default_icon(layout);
+            Evas_Object *icon;
+            if (vli->p_media_item->psz_snapshot != NULL)
+                icon = create_image(layout, vli->p_media_item->psz_snapshot);
+            else
+                icon = create_image(layout, ICON_DIR "background_cone.png");
             elm_layout_content_set(layout, "elm.swallow.content", icon);
         }
     }
