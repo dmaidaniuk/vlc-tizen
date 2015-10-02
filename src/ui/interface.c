@@ -399,6 +399,11 @@ intf_create(application *app)
     interface *intf = calloc(1, sizeof(*intf));
     intf->p_app = app;
 
+#ifdef __arm__
+    /* no opengl for emulator */
+    elm_config_accel_preference_set("opengl");
+#endif
+
     /* Add and set the main Window */
     intf->win = elm_win_util_standard_add(PACKAGE, PACKAGE);
     elm_win_autodel_set(intf->win, EINA_TRUE);
