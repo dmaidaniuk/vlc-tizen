@@ -82,13 +82,14 @@ struct
 {
     const char* title;
     interface_view* (*pf_create)(interface *, Evas_Object *);
+    void (*pf_destroy)(interface_view *);
 } interface_views[VIEW_MAX] =
 {
-    { "Video",     create_video_view },
-    { "Audio",     create_audio_view },
-    { "Directory", create_directory_view },
-    { "Settings",  create_setting_view },
-    { "About",     create_about_view },
+    { "Video",     create_video_view    , destroy_video_view },
+    { "Audio",     create_video_view    , destroy_video_view },
+    { "Directory", create_directory_view, destroy_directory_view },
+    { "Settings",  create_setting_view  , destroy_setting_view },
+    { "About",     create_about_view    , destroy_about_view },
 };
 
 /* CALLBACKS */
