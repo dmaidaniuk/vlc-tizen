@@ -233,3 +233,7 @@ create_directory_view(interface *intf, Evas_Object *parent)
     view->view = browse(dv, psz_path);
     return view;
 }
+
+void
+destroy_directory_view(interface_view *view)
+{}

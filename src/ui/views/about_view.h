@@ -34,4 +34,7 @@
 interface_view*
 create_about_view(interface *, Evas_Object *parent);
 
+void
+destroy_about_view(interface_view *);
+
 #endif /* ABOUT_VIEW_H_ */

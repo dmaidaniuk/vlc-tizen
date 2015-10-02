@@ -433,3 +433,8 @@ create_setting_view(interface *intf, Evas_Object *parent)
 
     return view;
 }
+
+void
+destroy_setting_view(interface_view *view)
+{
+}

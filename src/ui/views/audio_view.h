@@ -34,4 +34,7 @@
 interface_view *
 create_audio_view(interface *intf, Evas_Object *parent);
 
+void
+destroy_audio_view(interface_view *);
+
 #endif /* AUDIO_VIEW_H_ */

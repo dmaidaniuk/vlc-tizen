@@ -67,4 +67,7 @@ typedef struct settings_item
 interface_view*
 create_setting_view(interface *intf, Evas_Object *parent);
 
+void
+destroy_setting_view(interface_view *);
+
 #endif /* SETTINGS_VIEW_H_ */

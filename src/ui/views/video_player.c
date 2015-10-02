@@ -292,3 +292,8 @@ create_video_gui(playback_service *p_ps, Evas_Object *parent, const char* file_p
 
     return layout;
 }
+
+void
+destroy_video_player(interface_view *view)
+{
+}

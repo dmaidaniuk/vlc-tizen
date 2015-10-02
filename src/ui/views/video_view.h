@@ -32,9 +32,14 @@
 
 typedef struct video_list_item video_list_item;
 
+/* */
 interface_view*
 create_video_view(interface *intf, Evas_Object *parent);
 
+void
+destroy_video_view(interface_view *);
+
+/* Controller / View */
 void
 video_view_update(view_sys* vv, Eina_List* p_content);
 

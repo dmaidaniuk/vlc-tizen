@@ -366,3 +366,8 @@ create_audio_view(interface *intf, Evas_Object *parent)
 
     return view;
 }
+
+void
+destroy_audio_view(interface_view *view)
+{
+}

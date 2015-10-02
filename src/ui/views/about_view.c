@@ -141,3 +141,8 @@ create_about_view(interface *intf, Evas_Object *parent)
     view->view = about_box;
     return view;
 }
+
+void
+destroy_about_view(interface_view *view)
+{
+}

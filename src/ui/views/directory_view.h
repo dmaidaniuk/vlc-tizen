@@ -32,4 +32,7 @@
 interface_view*
 create_directory_view(interface *intf, Evas_Object *parent);
 
+void
+destroy_directory_view(interface_view *);
+
 #endif /* DIRECTORY_VIEW_H_ */

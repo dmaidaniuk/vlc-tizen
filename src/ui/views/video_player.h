@@ -32,4 +32,7 @@
 Evas_Object*
 create_video_gui(playback_service *p_ps, Evas_Object *parent, const char* file_path);
 
+void
+destroy_video_player(interface_view *);
+
 #endif /* VIDEOP_H_ */
