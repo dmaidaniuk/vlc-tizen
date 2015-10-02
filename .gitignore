@@ -10,7 +10,7 @@
 /Release/
 /lib/*.so*
 /emotion/
-libvlcpp
-medialibrary
+/libvlcpp/
+/medialibrary/
 *~
 res/edje/*.edj
