@@ -66,7 +66,7 @@ genlist_item_selected_cb(void *data, Evas_Object *obj, void *event_info)
 {
     video_list_item *vli = (video_list_item*)data;
 
-    intf_create_video_player(vli->videoview->p_intf, vli->p_media_item->psz_path);
+    intf_video_player_play(vli->videoview->p_intf, vli->p_media_item->psz_path);
 }
 
 static void

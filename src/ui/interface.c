@@ -260,32 +260,36 @@ intf_show_view(interface *intf, int view_type)
     }
 }
 
-void
-intf_video_player_play(interface *intf, const char *psz_path)
-{
-    interface_view *player = intf->video_player;
-    Elm_Object_Item *it = elm_naviframe_item_push(intf->nf_content, NULL, NULL, NULL, player->view, NULL);
-    elm_naviframe_item_title_enabled_set(it, EINA_FALSE, EINA_FALSE);
-
-    /* */
-    evas_object_show(player->view);
-
-    /* We want fullscreen */
-    elm_win_indicator_mode_set(intf->win, ELM_WIN_INDICATOR_HIDE);
-}
-
-void
-intf_create_video_player(interface *intf, const char *psz_path)
+/* Video Player */
+static void
+intf_video_player_create(interface *intf)
 {
     /* Prepare the media player */
     playback_service *p_ps = application_get_playback_service(intf->p_app);
 
-    intf->video_player = create_video_gui(p_ps, intf->nf_content, psz_path);
-
-    /* */
-    LOGI("Video Player started");
+    intf->video_player = create_video_player(p_ps, intf->nf_content);
 }
 
+void
+intf_video_player_play(interface *intf, const char *psz_path)
+{
+    if(intf->video_player == NULL)
+        intf_video_player_create(intf);
+
+    Evas_Object *view = intf->video_player->view;
+
+    /* Push it on top of the view */
+    Elm_Object_Item *it = elm_naviframe_item_push(intf->nf_content, NULL, NULL, NULL, view, NULL);
+    elm_naviframe_item_title_enabled_set(it, EINA_FALSE, EINA_FALSE);
+
+    /* */
+    evas_object_show(view);
+
+    video_player_start(intf->video_player, psz_path);
+
+    /* We want fullscreen */
+    elm_win_indicator_mode_set(intf->win, ELM_WIN_INDICATOR_HIDE);
+}
 
 bool
 intf_mini_player_visible_get(interface *intf)
