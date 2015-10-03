@@ -104,7 +104,7 @@ free_list_item_data(void *data, Evas_Object *obj, void *event_info)
 static Evas_Object*
 create_icon_unknown(Evas_Object *parent)
 {
-    return create_image(parent, "background_cone.png" );
+    return create_icon(parent, "background_cone.png" );
 }
 
 static char *

@@ -27,13 +27,28 @@
 #include <Elementary.h>
 
 Evas_Object*
-create_image(Evas_Object *parent, const char *image_path)
+create_icon(Evas_Object *parent, const char *image_path)
 {
     char path[PATH_MAX];
 
     Evas_Object *img = elm_icon_add(parent);
     snprintf(path, PATH_MAX, ICON_DIR"/%s", image_path);
     elm_image_file_set(img, path, NULL);
+
+    /* */
+    elm_image_resizable_set(img, EINA_TRUE, EINA_TRUE);
+    evas_object_size_hint_align_set(img, EVAS_HINT_FILL, EVAS_HINT_FILL);
+    evas_object_size_hint_weight_set(img, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+
+    return img;
+}
+
+
+Evas_Object*
+create_image(Evas_Object *parent, const char *image_path)
+{
+    Evas_Object *img = elm_icon_add(parent);
+    elm_image_file_set(img, image_path, NULL);
 
     /* */
     elm_image_resizable_set(img, EINA_TRUE, EINA_TRUE);

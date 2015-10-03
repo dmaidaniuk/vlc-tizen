@@ -76,7 +76,7 @@ gl_content_get_cb(void *data, Evas_Object *obj, const char *part)
         if (part && !strcmp(part, "elm.icon.right")) {
             content = elm_layout_add(obj);
             elm_layout_theme_set(content, "layout", "list/A/right.icon", "default");
-            Evas_Object *icon = create_image(pgd->parent, pgd->menu[pgd->index].icon);
+            Evas_Object *icon = create_icon(pgd->parent, pgd->menu[pgd->index].icon);
             elm_layout_content_set(content, "elm.swallow.content", icon);
         }
     }

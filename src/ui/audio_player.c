@@ -109,7 +109,7 @@ gl_content_get_cb(void *data, Evas_Object *obj, const char *part)
         if (part && !strcmp(part, "elm.icon.1")) {
             content = elm_layout_add(obj);
             elm_layout_theme_set(content, "layout", "list/B/type.3", "default");
-            Evas_Object *icon = create_image(content, audio_popup_icon_names[apd->index]);
+            Evas_Object *icon = create_icon(content, audio_popup_icon_names[apd->index]);
             elm_layout_content_set(content, "elm.swallow.content", icon);
         }
     }
@@ -612,7 +612,7 @@ swallow_mini_player(mini_player *mpd, Evas_Object *layout)
     player_update_sliders(mpd, playback_service_get_pos(mpd->p_ps));
 
     /* set the cover image */
-    mpd->cover = create_image(layout, "background_cone.png");
+    mpd->cover = create_icon(layout, "background_cone.png");
     elm_object_part_content_set(layout, "swallow.cover", mpd->cover);
 
     /* set the title label */
@@ -626,7 +626,7 @@ swallow_mini_player(mini_player *mpd, Evas_Object *layout)
     elm_object_part_content_set(layout, "swallow.subtitle", mpd->sub_title);
 
     /* set the play/pause button */
-    mpd->play_pause_img = create_image(layout, "ic_pause_circle_normal_o.png");
+    mpd->play_pause_img = create_icon(layout, "ic_pause_circle_normal_o.png");
     elm_object_part_content_set(layout, "swallow.play", mpd->play_pause_img);
 }
 
@@ -684,10 +684,10 @@ add_fullscreen_item_table(mini_player *mpd, Evas_Object *parent)
     /* */
     if (mpd->save_state == FALSE)
     {
-        mpd->fs_save_btn = create_image(parent, "ic_save_normal.png");
+        mpd->fs_save_btn = create_icon(parent, "ic_save_normal.png");
     }
     else {
-        mpd->fs_save_btn = create_image(parent, "ic_save_pressed.png");
+        mpd->fs_save_btn = create_icon(parent, "ic_save_pressed.png");
     }
     evas_object_size_hint_min_set(mpd->fs_save_btn, 50, 50);
     evas_object_size_hint_max_set(mpd->fs_save_btn, 50, 50);
@@ -699,10 +699,10 @@ add_fullscreen_item_table(mini_player *mpd, Evas_Object *parent)
     /* */
     if (mpd->playlist_state == FALSE)
     {
-        mpd->fs_playlist_btn = create_image(parent, "ic_playlist_normal.png");
+        mpd->fs_playlist_btn = create_icon(parent, "ic_playlist_normal.png");
     }
     else {
-        mpd->fs_playlist_btn = create_image(parent, "ic_playlist_pressed.png");
+        mpd->fs_playlist_btn = create_icon(parent, "ic_playlist_pressed.png");
     }
     evas_object_size_hint_min_set(mpd->fs_playlist_btn, 50, 50);
     evas_object_size_hint_max_set(mpd->fs_playlist_btn, 50, 50);
@@ -714,10 +714,10 @@ add_fullscreen_item_table(mini_player *mpd, Evas_Object *parent)
     /* */
     if (mpd->more_state == FALSE)
     {
-        mpd->fs_more_btn = create_image(parent, "ic_more_circle_normal_o.png");
+        mpd->fs_more_btn = create_icon(parent, "ic_more_circle_normal_o.png");
     }
     else {
-        mpd->fs_more_btn = create_image(parent, "ic_more_circle_pressed_o.png");
+        mpd->fs_more_btn = create_icon(parent, "ic_more_circle_pressed_o.png");
     }
     evas_object_size_hint_min_set(mpd->fs_more_btn, 50, 50);
     evas_object_size_hint_max_set(mpd->fs_more_btn, 50, 50);
@@ -727,7 +727,7 @@ add_fullscreen_item_table(mini_player *mpd, Evas_Object *parent)
     evas_object_show(mpd->fs_more_btn);
 
     /* */
-    fs_padding = create_image(parent, "");
+    fs_padding = create_icon(parent, "");
     evas_object_size_hint_min_set(fs_padding, 400, 40);
     evas_object_size_hint_max_set(fs_padding, 400, 40);
     evas_object_size_hint_align_set(fs_padding, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -736,7 +736,7 @@ add_fullscreen_item_table(mini_player *mpd, Evas_Object *parent)
     evas_object_show(fs_padding);
 
     /* */
-    mpd->fs_cover = create_image(parent, "background_cone.png");
+    mpd->fs_cover = create_icon(parent, "background_cone.png");
     evas_object_size_hint_min_set(mpd->fs_cover, 400, 400);
     evas_object_size_hint_max_set(mpd->fs_cover, 400, 400);
     evas_object_size_hint_align_set(mpd->fs_cover, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -745,7 +745,7 @@ add_fullscreen_item_table(mini_player *mpd, Evas_Object *parent)
     evas_object_show(mpd->fs_cover);
 
     /* */
-    fs_padding = create_image(parent, "");
+    fs_padding = create_icon(parent, "");
     evas_object_size_hint_min_set(fs_padding, 400, 40);
     evas_object_size_hint_max_set(fs_padding, 400, 40);
     evas_object_size_hint_align_set(fs_padding, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -806,15 +806,15 @@ add_fullscreen_item_table(mini_player *mpd, Evas_Object *parent)
     /* */
     if (mpd->repeat_state == 0)
     {
-        mpd->fs_repeat_btn = create_image(parent, "ic_repeat_normal.png");
+        mpd->fs_repeat_btn = create_icon(parent, "ic_repeat_normal.png");
     }
     else if (mpd->repeat_state == 1)
     {
-        mpd->fs_repeat_btn = create_image(parent, "ic_repeat_pressed.png");
+        mpd->fs_repeat_btn = create_icon(parent, "ic_repeat_pressed.png");
     }
     else
     {
-        mpd->fs_repeat_btn = create_image(parent, "ic_repeat_one_pressed.png");
+        mpd->fs_repeat_btn = create_icon(parent, "ic_repeat_one_pressed.png");
     }
     evas_object_size_hint_min_set(mpd->fs_repeat_btn, 100, 50);
     evas_object_size_hint_max_set(mpd->fs_repeat_btn, 100, 50);
@@ -825,10 +825,10 @@ add_fullscreen_item_table(mini_player *mpd, Evas_Object *parent)
 
     /* */
     if (mpd->shuffle_state == FALSE){
-        mpd->fs_shuffle_btn = create_image(parent, "ic_shuffle_normal.png");
+        mpd->fs_shuffle_btn = create_icon(parent, "ic_shuffle_normal.png");
     }
     else {
-        mpd->fs_shuffle_btn = create_image(parent, "ic_shuffle_pressed.png");
+        mpd->fs_shuffle_btn = create_icon(parent, "ic_shuffle_pressed.png");
     }
     evas_object_size_hint_min_set(mpd->fs_shuffle_btn, 100, 50);
     evas_object_size_hint_max_set(mpd->fs_shuffle_btn, 100, 50);

@@ -90,7 +90,7 @@ gl_content_get_cb(void *data, Evas_Object *obj, const char *part)
         if (part && !strcmp(part, "elm.icon.1")) {
             content = elm_layout_add(obj);
             elm_layout_theme_set(content, "layout", "list/B/type.3", "default");
-            Evas_Object *icon = create_image(content, action_items[gpd->index].icon);
+            Evas_Object *icon = create_icon(content, action_items[gpd->index].icon);
             elm_layout_content_set(content, "elm.swallow.content", icon);
         }
     }
