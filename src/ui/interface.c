@@ -56,6 +56,7 @@ struct interface {
     /* Naviframe */
     Evas_Object *nf_content; /* Main naviframe */
     interface_view *nf_views[VIEW_MAX];
+    interface_view *video_player;
 
     /* */
     Evas_Object *sidebar;    /* Sidebar panel */
@@ -260,21 +261,26 @@ intf_show_view(interface *intf, int view_type)
 }
 
 void
-intf_create_video_player(interface *intf, const char *psz_path)
+intf_video_player_play(interface *intf, const char *psz_path)
 {
-    /* Launch the media player */
-    playback_service *p_ps = application_get_playback_service(intf->p_app);
-    interface_view *view = create_video_gui(p_ps, intf->nf_content, psz_path);
-
-    Evas_Object *video_player = view->view;
-
-    Elm_Object_Item *it = elm_naviframe_item_push(intf->nf_content, NULL, NULL, NULL, video_player, NULL);
+    interface_view *player = intf->video_player;
+    Elm_Object_Item *it = elm_naviframe_item_push(intf->nf_content, NULL, NULL, NULL, player->view, NULL);
     elm_naviframe_item_title_enabled_set(it, EINA_FALSE, EINA_FALSE);
 
-    evas_object_show(video_player);
+    /* */
+    evas_object_show(player->view);
 
     /* We want fullscreen */
     elm_win_indicator_mode_set(intf->win, ELM_WIN_INDICATOR_HIDE);
+}
+
+void
+intf_create_video_player(interface *intf, const char *psz_path)
+{
+    /* Prepare the media player */
+    playback_service *p_ps = application_get_playback_service(intf->p_app);
+
+    intf->video_player = create_video_gui(p_ps, intf->nf_content, psz_path);
 
     /* */
     LOGI("Video Player started");

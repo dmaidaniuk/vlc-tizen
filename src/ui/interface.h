@@ -84,6 +84,9 @@ void
 intf_create_video_player(interface *, const char *psz_path);
 
 void
+intf_video_player_play(interface *intf, const char *psz_path);
+
+void
 intf_create_audio_player(interface *, const char *psz_path);
 
 /* Mini Player */
