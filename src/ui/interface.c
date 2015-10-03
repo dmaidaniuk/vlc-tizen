@@ -88,7 +88,7 @@ struct
 } interface_views[VIEW_MAX] =
 {
     { "Video",     create_video_view    , destroy_video_view },
-    { "Audio",     create_video_view    , destroy_video_view },
+    { "Audio",     create_audio_view    , destroy_audio_view },
     { "Directory", create_directory_view, destroy_directory_view },
     { "Settings",  create_setting_view  , destroy_setting_view },
     { "About",     create_about_view    , destroy_about_view },
