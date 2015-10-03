@@ -236,10 +236,6 @@ create_video_gui(playback_service *p_ps, Evas_Object *parent, const char* file_p
     vd->p_evas_video = playback_service_set_evas_video(vd->p_ps, evas);
     evas_object_smart_callback_add(vd->p_evas_video, "frame_decode", evas_video_decode_cb, vd);
     evas_object_event_callback_add(vd->p_evas_video, EVAS_CALLBACK_RESIZE, evas_video_resize_cb, vd);
-    /* FIXME: remove callback
-     * evas_object_event_callback_del(vd->p_evas_video, EVAS_CALLBACK_RESIZE, evas_video_resize_cb);
-     * evas_object_smart_callback_del(vd->p_evas_video, "frame_decode", evas_video_decode_cb);
-     */
 
     elm_object_part_content_set(layout, "swallow.visualization", vd->p_evas_video);
     evas_object_show(vd->p_evas_video);
@@ -299,4 +295,8 @@ create_video_gui(playback_service *p_ps, Evas_Object *parent, const char* file_p
 void
 destroy_video_player(interface_view *view)
 {
+    evas_object_event_callback_del(view->p_view_sys->p_evas_video, EVAS_CALLBACK_RESIZE, evas_video_resize_cb);
+    evas_object_smart_callback_del(view->p_view_sys, "frame_decode", evas_video_decode_cb);
+    free(view->p_view_sys);
+    free(view);
 }
