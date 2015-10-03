@@ -143,6 +143,7 @@ win_back_key_cb(void *data, Evas_Object *obj, void *event_info)
 
         /* Unpop the top view */
         elm_naviframe_item_pop(intf->nf_content);
+        elm_win_indicator_mode_set(intf->win, ELM_WIN_INDICATOR_SHOW);
 
         /* If nothing left, exit */
         if (elm_naviframe_top_item_get(intf->nf_content) == NULL)
