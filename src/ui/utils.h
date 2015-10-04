@@ -33,7 +33,7 @@ Evas_Object*
 create_image(Evas_Object *parent, const char *image_path);
 
 char *
-duration_string(int64_t duration);
+media_timetostr(int64_t time);
 
 #endif /* UTILS_H_ */
 

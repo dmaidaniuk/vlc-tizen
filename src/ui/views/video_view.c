@@ -93,7 +93,7 @@ genlist_text_get_cb(void *data, Evas_Object *obj, const char *part)
             if(vli->p_media_item->i_duration < 0)
                 return NULL;
             else
-                return duration_string(vli->p_media_item->i_duration/1000);
+                return media_timetostr(vli->p_media_item->i_duration/1000);
         }
         else if (!strcmp(part, "elm.text.sub.right.bottom")) {
             if (vli->p_media_item->i_w <= 0 || vli->p_media_item->i_h <= 0)

@@ -102,7 +102,7 @@ ps_on_new_len_cb(playback_service *p_ps, void *p_user_data, double i_len)
 {
     view_sys *vd = p_user_data;
 
-    char *str = duration_string((int64_t)i_len);
+    char *str = media_timetostr((int64_t)i_len);
     elm_object_text_set(vd->duration_text, str);
     free(str);
 }
@@ -113,7 +113,7 @@ ps_on_new_time_cb(playback_service *p_ps, void *p_user_data, double i_time, doub
     view_sys *vd = p_user_data;
     elm_slider_value_set(vd->progress_slider, i_pos);
 
-    char *str = duration_string((int64_t)i_time);
+    char *str = media_timetostr((int64_t)i_time);
     elm_object_text_set(vd->time_text, str);
     free(str);
 }

@@ -59,13 +59,13 @@ create_image(Evas_Object *parent, const char *image_path)
 }
 
 char *
-duration_string(int64_t duration)
+media_timetostr(int64_t time)
 {
     lldiv_t d;
     long long sec;
     char *str;
 
-    d = lldiv(duration, 60);
+    d = lldiv(time, 60);
     sec = d.rem;
     d = lldiv(d.quot, 60);
     asprintf(&str, "%02lld:%02lld:%02lld", d.quot, d.rem, sec);
