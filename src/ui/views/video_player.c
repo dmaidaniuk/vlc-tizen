@@ -51,18 +51,18 @@ struct view_sys
 static void
 _on_slider_changed_cb(void *data, Evas_Object *obj, void *event_info)
 {
-    view_sys *vd = data;
+    view_sys *p_view_sys = data;
 
-    playback_service_seek_pos(vd->p_ps, elm_slider_value_get(obj));
+    playback_service_seek_pos(p_view_sys->p_ps, elm_slider_value_get(obj));
 }
 
 static void
 clicked_play_pause(void *data, Evas_Object *obj, void *event_info)
 {
-    view_sys *vd = data;
+    view_sys *p_view_sys = data;
 
-    elm_image_file_set(vd->play_pause_button,
-                       playback_service_toggle_play_pause(vd->p_ps) ?
+    elm_image_file_set(p_view_sys->play_pause_button,
+                       playback_service_toggle_play_pause(p_view_sys->p_ps) ?
                                ICON_DIR "ic_pause_circle_normal_o.png" :
                                ICON_DIR "ic_play_circle_normal_o.png", NULL);
 }
@@ -70,17 +70,17 @@ clicked_play_pause(void *data, Evas_Object *obj, void *event_info)
 static void
 clicked_backward(void *data, Evas_Object *obj, void *event_info)
 {
-    view_sys *vd = data;
+    view_sys *p_view_sys = data;
 
-    playback_service_seek_backward(vd->p_ps);
+    playback_service_seek_backward(p_view_sys->p_ps);
 }
 
 static void
 clicked_forward(void *data, Evas_Object *obj, void *event_info)
 {
-    view_sys *vd = data;
+    view_sys *p_view_sys = data;
 
-    playback_service_seek_forward(vd->p_ps);
+    playback_service_seek_forward(p_view_sys->p_ps);
 }
 
 static void
@@ -100,43 +100,43 @@ clicked_more(void *data, Evas_Object *obj, void *event_info)
 static void
 ps_on_new_len_cb(playback_service *p_ps, void *p_user_data, double i_len)
 {
-    view_sys *vd = p_user_data;
+    view_sys *p_view_sys = p_user_data;
 
     char *str = media_timetostr((int64_t)i_len);
-    elm_object_text_set(vd->duration_text, str);
+    elm_object_text_set(p_view_sys->duration_text, str);
     free(str);
 }
 
 static void
 ps_on_new_time_cb(playback_service *p_ps, void *p_user_data, double i_time, double i_pos)
 {
-    view_sys *vd = p_user_data;
-    elm_slider_value_set(vd->progress_slider, i_pos);
+    view_sys *p_view_sys = p_user_data;
+    elm_slider_value_set(p_view_sys->progress_slider, i_pos);
 
     char *str = media_timetostr((int64_t)i_time);
-    elm_object_text_set(vd->time_text, str);
+    elm_object_text_set(p_view_sys->time_text, str);
     free(str);
 }
 
 static void
-video_resize(view_sys *vd)
+video_resize(view_sys *p_view_sys)
 {
     Evas_Coord i_win_x, i_win_y, i_win_w, i_win_h;
     int i_video_w, video_h;
 
-    evas_object_geometry_get(vd->p_evas_video, &i_win_x, &i_win_y,
+    evas_object_geometry_get(p_view_sys->p_evas_video, &i_win_x, &i_win_y,
                              &i_win_w, &i_win_h);
 
     if (i_win_w <= 0 || i_win_h <= 0)
         return;
 
-    emotion_object_size_get(vd->p_evas_video, &i_video_w, &video_h);
+    emotion_object_size_get(p_view_sys->p_evas_video, &i_video_w, &video_h);
     if (i_video_w <= 0 || video_h <= 0)
         return;
 
     LOGF("video_resize: win: %dx%d %dx%d, video: %dx%d", i_win_x, i_win_y, i_win_w, i_win_h, i_video_w, video_h);
 
-    if (!vd->b_fill)
+    if (!p_view_sys->b_fill)
     {
         if ((i_win_w <= 0) || (i_win_h <= 0) || (i_video_w <= 0) || (video_h <= 0))
         {
@@ -148,7 +148,7 @@ video_resize(view_sys *vd)
             int i_w = 1, i_h = 1;
             double i_ratio;
 
-            i_ratio = emotion_object_ratio_get(vd->p_evas_video);
+            i_ratio = emotion_object_ratio_get(p_view_sys->p_evas_video);
             if (i_ratio > 0.0)
                 i_video_w = (video_h * i_ratio);
             else
@@ -172,17 +172,17 @@ video_resize(view_sys *vd)
 
     LOGF("video_resize: move to: %dx%d %dx%d", i_win_x, i_win_y, i_win_w, i_win_h);
 
-    evas_object_move(vd->p_evas_video, i_win_x, i_win_y);
-    evas_object_resize(vd->p_evas_video, i_win_w, i_win_h);
+    evas_object_move(p_view_sys->p_evas_video, i_win_x, i_win_y);
+    evas_object_resize(p_view_sys->p_evas_video, i_win_w, i_win_h);
 }
 
 static void
 evas_video_decode_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
-    view_sys *vd = data;
-    if (!vd->b_decoded)
+    view_sys *p_view_sys = data;
+    if (!p_view_sys->b_decoded)
     {
-        vd->b_decoded = true;
+        p_view_sys->b_decoded = true;
         video_resize(data);
     }
 }
@@ -196,7 +196,7 @@ evas_video_resize_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
 static void
 layout_touch_up_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
-    view_sys *vd = data;
+    view_sys *p_view_sys = data;
 
     LOGF("layout_touch_up_cb");
 }
