@@ -24,14 +24,12 @@
  * compatibility with the Store
  *****************************************************************************/
 
-#include "IMediaLibrary.h"
+#include "common.h"
 
 #include <Ecore.h>
 
-#include "common.h"
-
+#include "IMediaLibrary.h"
 #include "IVideoTrack.h"
-
 #include "media_library_private.hpp"
 #include "system_storage.h"
 

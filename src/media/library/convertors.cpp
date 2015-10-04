@@ -24,6 +24,8 @@
  * compatibility with the Store
  *****************************************************************************/
 
+#include "common.h"
+
 #include "media_library_private.hpp"
 #include "IVideoTrack.h"
 
