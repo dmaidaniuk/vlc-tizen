@@ -192,17 +192,17 @@ layout_touch_up_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED
 }
 
 bool
-video_player_start(interface_view *view, const char* file_path)
+video_player_start(view_sys *p_view_sys, const char* file_path)
 {
     media_item *p_mi = media_item_create(file_path, MEDIA_ITEM_TYPE_VIDEO);
     if (!p_mi)
         return false;
 
     LOGE("playback_service_start: %s", p_mi->psz_path);
-    playback_service_set_context(view->p_view_sys->p_ps, PLAYLIST_CONTEXT_VIDEO);
+    playback_service_set_context(p_view_sys->p_ps, PLAYLIST_CONTEXT_VIDEO);
 
-    playback_service_list_append(view->p_view_sys->p_ps, p_mi);
-    playback_service_start(view->p_view_sys->p_ps, 0);
+    playback_service_list_append(p_view_sys->p_ps, p_mi);
+    playback_service_start(p_view_sys->p_ps, 0);
     return true;
 }
 

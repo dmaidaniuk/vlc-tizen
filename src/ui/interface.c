@@ -286,7 +286,7 @@ intf_video_player_play(interface *intf, const char *psz_path)
     /* */
     evas_object_show(view);
 
-    video_player_start(intf->video_player, psz_path);
+    video_player_start(intf->video_player->p_view_sys, psz_path);
 
     /* We want fullscreen */
     elm_win_indicator_mode_set(intf->win, ELM_WIN_INDICATOR_HIDE);
