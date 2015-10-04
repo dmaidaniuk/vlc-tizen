@@ -57,3 +57,17 @@ create_image(Evas_Object *parent, const char *image_path)
 
     return img;
 }
+
+char *
+duration_string(int64_t duration)
+{
+    lldiv_t d;
+    long long sec;
+    char *str;
+
+    d = lldiv(duration, 60);
+    sec = d.rem;
+    d = lldiv(d.quot, 60);
+    asprintf(&str, "%02lld:%02lld:%02lld", d.quot, d.rem, sec);
+    return str;
+}

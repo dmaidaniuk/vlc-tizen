@@ -32,5 +32,8 @@ create_icon(Evas_Object *parent, const char *icon_name);
 Evas_Object*
 create_image(Evas_Object *parent, const char *image_path);
 
+char *
+duration_string(int64_t duration);
+
 #endif /* UTILS_H_ */
 

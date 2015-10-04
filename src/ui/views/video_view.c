@@ -76,21 +76,6 @@ free_list_item(void *data, Evas_Object *obj, void *event_info)
 }
 
 static char *
-duration_string(int64_t duration)
-{
-    lldiv_t d;
-    long long sec;
-    char *str;
-
-    duration /= 1000;
-    d = lldiv(duration, 60);
-    sec = d.rem;
-    d = lldiv(d.quot, 60);
-    asprintf(&str, "%02lld:%02lld:%02lld", d.quot, d.rem, sec);
-    return str;
-}
-
-static char *
 genlist_text_get_cb(void *data, Evas_Object *obj, const char *part)
 {
     video_list_item *vli = data;
@@ -108,7 +93,7 @@ genlist_text_get_cb(void *data, Evas_Object *obj, const char *part)
             if(vli->p_media_item->i_duration < 0)
                 return NULL;
             else
-                return duration_string(vli->p_media_item->i_duration);
+                return duration_string(vli->p_media_item->i_duration/1000);
         }
         else if (!strcmp(part, "elm.text.sub.right.bottom")) {
             if (vli->p_media_item->i_w <= 0 || vli->p_media_item->i_h <= 0)
