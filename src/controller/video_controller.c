@@ -72,7 +72,7 @@ video_controller_content_refresh(video_controller* ctrl)
     if (ctrl->p_content != NULL)
         return;
     // otherwise, update from media library
-    const media_library* p_ml = application_get_media_library( ctrl->p_app );
+    media_library* p_ml = (media_library*)application_get_media_library( ctrl->p_app );
     media_library_get_video_files(p_ml, &video_controller_content_update_cb, ctrl);
 }
 
@@ -128,7 +128,7 @@ video_controller_create(application* p_app, view_sys* p_view )
    ctrl->p_view = p_view;
 
    /* Populate it */
-   media_library* p_ml = application_get_media_library(p_app);
+   media_library* p_ml = (media_library*)application_get_media_library(p_app);
    media_library_register_on_change(p_ml, video_controller_content_changed_cb, ctrl);
    media_library_register_item_updated(p_ml, video_controller_file_updated_cb, ctrl);
    return ctrl;
