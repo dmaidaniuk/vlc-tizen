@@ -41,11 +41,9 @@ struct view_sys
 {
     interface *p_intf;
 
-    Evas_Object *p_parent;
     Evas_Object *p_genlist;
     video_controller* p_controller;
     Elm_Genlist_Item_Class* p_default_itc;
-
 };
 
 typedef struct video_list_item
@@ -254,7 +252,6 @@ create_video_view(interface *intf, Evas_Object *parent)
     interface_view *view = calloc(1, sizeof(*view));
     view_sys *vv = malloc(sizeof(*vv));
     vv->p_intf = intf;
-    vv->p_parent = parent;
     vv->p_controller = video_controller_create(intf_get_application(intf), vv);
 
     /* Genlist class */
