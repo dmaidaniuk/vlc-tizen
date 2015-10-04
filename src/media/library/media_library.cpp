@@ -26,76 +26,15 @@
 
 #include "IMediaLibrary.h"
 
-#include <mutex>
 #include <Ecore.h>
 
 #include "common.h"
 
-#include "IFile.h"
-#include "ILogger.h"
 #include "IVideoTrack.h"
 
-#include "media_library.hpp"
+#include "media_library_private.hpp"
 #include "system_storage.h"
 
-static media_item* fileToMediaItem( FilePtr file );
-
-class TizenLogger : public ILogger
-{
-    virtual void Error( const std::string& msg ) override
-    {
-        dlog_print( DLOG_ERROR, "medialibrary", msg.c_str() );
-    }
-
-    virtual void Warning( const std::string& msg ) override
-    {
-        dlog_print( DLOG_WARN, "medialibrary", msg.c_str() );
-    }
-
-    virtual void Info( const std::string& msg ) override
-    {
-        dlog_print( DLOG_INFO, "medialibrary", msg.c_str() );
-    }
-};
-
-struct media_library : public IMediaLibraryCb
-{
-public:
-    media_library();
-    virtual ~media_library() = default;
-
-    // IMediaLibraryCb
-    virtual void onFileAdded( FilePtr file ) override;
-    virtual void onFileUpdated( FilePtr file ) override;
-
-    virtual void onDiscoveryStarted( const std::string& entryPoint ) override;
-    virtual void onDiscoveryCompleted( const std::string& entryPoint ) override;
-
-    void registerOnChange(media_library_file_list_changed_cb cb, void* cbUserData);
-    void unregisterOnChange(media_library_file_list_changed_cb cb, void* cbUserData);
-
-    void registerOnItemUpdated(media_library_item_updated_cb cb, void* userData);
-    void unregisterOnItemUpdated(media_library_item_updated_cb cb, void* userData);
-
-public:
-    std::unique_ptr<IMediaLibrary> ml;
-    std::unique_ptr<TizenLogger> logger;
-
-private:
-    void onChange();
-
-private:
-    // Holds the number of discoveries ongoing
-    // This gets incremented by the caller thread (most likely the main loop)
-    // and gets decremented by the discovery thread, hence the need for atomic
-    int m_nbDiscovery;
-    // Holds the number of changes since last call to fileListChangedCb.
-    // This can be accessed from both the discovery & metadata threads
-    int m_nbElemChanged;
-    std::mutex m_mutex;
-    std::vector<std::pair<media_library_file_list_changed_cb, void*>> m_onChangeCb;
-    std::vector<std::pair<media_library_item_updated_cb, void*>> m_onItemUpdatedCb;
-};
 
 media_library::media_library()
     : ml( MediaLibraryFactory::create() )
@@ -264,59 +203,6 @@ media_library_discover( media_library* p_ml, const char* psz_location )
     p_ml->ml->discover( psz_location );
 }
 
-static media_item*
-fileToMediaItem( FilePtr file )
-{
-    auto type = MEDIA_ITEM_TYPE_UNKNOWN;
-    switch ( file->type() )
-    {
-    case IFile::Type::VideoType:
-        type = MEDIA_ITEM_TYPE_VIDEO;
-        break;
-    case IFile::Type::AudioType:
-        type = MEDIA_ITEM_TYPE_AUDIO;
-        break;
-    default:
-        LOGW( "Unknown file type: %d", file->type() );
-        return nullptr;
-    }
-    auto mi = media_item_create( file->mrl().c_str(), type );
-    if ( mi == nullptr )
-    {
-        //FIXME: What should we do? This won't be run again until the next time
-        //we restore the media library. Also, do we care? This is likely E_NOMEM, so we
-        //might have bigger problems than a missing file...
-        LOGE( "Failed to create media_item for file %s", file->mrl().c_str() );
-        return nullptr;
-    }
-    media_item_set_meta(mi, MEDIA_ITEM_META_TITLE, file->name().c_str());
-
-    mi->i_duration = file->duration();
-    if ( file->type() == IFile::Type::VideoType )
-    {
-        auto vtracks = file->videoTracks();
-        if ( vtracks.size() != 0 )
-        {
-            if ( vtracks.size() > 1 )
-                LOGW( "Ignoring file [%s] extra video tracks for file description", file->mrl().c_str() );
-            auto vtrack = vtracks[0];
-            mi->i_w = vtrack->width();
-            mi->i_h = vtrack->height();
-        }
-        else
-        {
-            // Assume a media library problem and just let it go.
-            LOGW( "Adding video file [%s] with no video tracks detected.", file->mrl().c_str() );
-        }
-        if (file->snapshot().length() > 0)
-            mi->psz_snapshot = strdup(file->snapshot().c_str());
-    }
-    else if ( file->type() == IFile::Type::AudioType )
-    {
-        // So far, nothing to do here.
-    }
-    return mi;
-}
 
 struct ml_callback_context
 {
