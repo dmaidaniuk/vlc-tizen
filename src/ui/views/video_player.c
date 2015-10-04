@@ -43,6 +43,8 @@ struct view_sys
     /* Widgets */
     Evas_Object *p_evas_video;
     Evas_Object *play_pause_button, *progress_slider;
+
+    Evas_Object *time_text, *duration_text;
 };
 
 static void
@@ -98,7 +100,15 @@ static void
 ps_on_new_len_cb(playback_service *p_ps, void *p_user_data, double i_len)
 {
     view_sys *vd = p_user_data;
-    /* TODO */
+
+    lldiv_t d;
+    long long sec;
+    char *str;
+    d = lldiv((long long)i_len, 60);
+    sec = d.rem;
+    d = lldiv(d.quot, 60);
+    asprintf(&str, "%02lld:%02lld:%02lld", d.quot, d.rem, sec);
+    elm_object_text_set(vd->duration_text, str);
 }
 
 static void
@@ -106,6 +116,15 @@ ps_on_new_time_cb(playback_service *p_ps, void *p_user_data, double i_time, doub
 {
     view_sys *vd = p_user_data;
     elm_slider_value_set(vd->progress_slider, i_pos);
+
+    lldiv_t d;
+    long long sec;
+    char *str;
+    d = lldiv((long long)i_time, 60);
+    sec = d.rem;
+    d = lldiv(d.quot, 60);
+    asprintf(&str, "%02lld:%02lld:%02lld", d.quot, d.rem, sec);
+    elm_object_text_set(vd->time_text, str);
 }
 
 static void
@@ -294,6 +313,20 @@ create_video_player(playback_service *p_ps, Evas_Object *parent)
     //slider callbacks
     evas_object_smart_callback_add(p_sys->progress_slider, "slider,drag,stop", _on_slider_changed_cb, p_sys);
     evas_object_smart_callback_add(p_sys->progress_slider, "changed", _on_slider_changed_cb, p_sys);
+
+    // Duration
+    Evas_Object *text_duration = elm_label_add(layout);
+    elm_object_part_content_set(layout, "swallow.duration", text_duration);
+    elm_label_slide_mode_set(text_duration, ELM_LABEL_SLIDE_MODE_NONE);
+    elm_object_text_set(text_duration, "--:--:--");
+    p_sys->duration_text = text_duration;
+
+    // Time
+    Evas_Object *text_time = elm_label_add(layout);
+    elm_object_part_content_set(layout, "swallow.time", text_time);
+    elm_label_slide_mode_set(text_time, ELM_LABEL_SLIDE_MODE_NONE);
+    elm_object_text_set(text_time, "--:--:--");
+    p_sys->time_text = text_time;
 
     view->view = layout;
 

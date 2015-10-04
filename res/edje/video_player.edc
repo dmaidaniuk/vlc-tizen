@@ -71,6 +71,38 @@ collections
                 }
             }
             part{
+                name: "swallow.time";
+                type: SWALLOW;
+                description{
+                    color: 255 0 0 255; // transparent black
+                    visible: 1;
+                    rel1{ //top-left corner
+                        relative: 0.05 0.3;
+                        to: "hub_background";
+                    }
+                    rel2{ //bottom-right corner
+                        relative: 0.15 0.4;
+                        to: "hub_background";
+                    }
+                }
+            }
+            part{
+                name: "swallow.duration";
+                type: SWALLOW;
+                description{
+                    color: 255 0 0 255; // transparent black
+                    visible: 1;
+                    rel1{ //top-left corner
+                        relative: 0.85 0.3;
+                        to: "hub_background";
+                    }
+                    rel2{ //bottom-right corner
+                        relative: 0.95 0.4;
+                        to: "hub_background";
+                    }
+                }
+            }
+            part{
                 name: "swallow.progress";
                 type: SWALLOW;
 
