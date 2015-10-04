@@ -71,15 +71,6 @@ struct interface {
     Evas_Object *mini_player_layout;
 };
 
-/* TODO : A lot of size hints are Hard Coded with pixel values (using a Samsung Z1 phone) */
-/* TODO : the use of Dpi or Aspect Ratio will be mandatory in the future */
-
-/* TODO : Managing Hardware Key is mandatory to publish a Tizen AppStore App */
-/* TODO : The Menu isn't currently set */
-/* TODO : This should be solved using the #include <efl_extension.h> */
-/* TODO : Then use the void eext_object_event_callback_add func */
-/* TODO : See more on https://developer.tizen.org/development/guides/native-application/ui/efl-extension */
-
 struct
 {
     const char* title;
