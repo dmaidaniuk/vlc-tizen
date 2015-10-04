@@ -479,5 +479,21 @@ intf_create(application *app)
 void
 intf_destroy(interface *intf)
 {
+    /* Destroy the views */
+    for(int i = 0; i< VIEW_MAX; i++)
+        if(intf->nf_views[i] != NULL)
+            interface_views[i].pf_destroy(intf->nf_views[i]);
+
+    /* Video Player */
+    if(intf->video_player != NULL)
+        destroy_video_player(intf->video_player);
+
+    if(intf->p_mini_player != NULL)
+        ;//FIXME
+
+    /* The window is the parent of all the objects:
+    win, layout, main_box, nf_content, sidebar, sidebar_toggle_btn,
+    popup, popup_toggle_btn, mini_player_layout, no need to free them */
+
     free(intf);
 }
