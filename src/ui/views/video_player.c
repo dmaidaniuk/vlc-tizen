@@ -36,6 +36,8 @@
 
 struct view_sys
 {
+    interface *intf;
+
     bool b_fill;
     bool b_decoded;
     playback_service *p_ps;
@@ -222,6 +224,13 @@ video_player_start(view_sys *p_view_sys, const char* file_path)
 }
 
 static void
+ps_on_stop_cb(playback_service *p_ps, void *p_user_data, media_item *p_mi)
+{
+    view_sys *p_view_sys = p_user_data;
+    intf_show_previous_view(p_view_sys->intf);
+}
+
+static void
 video_player_stop(view_sys *p_sys)
 {
     playback_service_list_clear(p_sys->p_ps);
@@ -229,7 +238,7 @@ video_player_stop(view_sys *p_sys)
 }
 
 interface_view*
-create_video_player(playback_service *p_ps, Evas_Object *parent)
+create_video_player(interface *intf, playback_service *p_ps, Evas_Object *parent)
 {
     interface_view *view = calloc(1, sizeof(*view));
 
@@ -237,10 +246,13 @@ create_video_player(playback_service *p_ps, Evas_Object *parent)
     if (!p_sys)
         return NULL;
 
+    p_sys->intf = intf;
+
     p_sys->p_ps = p_ps;
     playback_service_callbacks cbs = {
         .pf_on_new_len = ps_on_new_len_cb,
         .pf_on_new_time = ps_on_new_time_cb,
+        .pf_on_stopped = ps_on_stop_cb,
         .p_user_data = p_sys,
     };
 

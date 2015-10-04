@@ -30,7 +30,7 @@
 #define VIDEOP_H_
 
 interface_view*
-create_video_player(playback_service *p_ps, Evas_Object *parent);
+create_video_player(interface *, playback_service *p_ps, Evas_Object *parent);
 
 bool
 video_player_start(view_sys*, const char*);

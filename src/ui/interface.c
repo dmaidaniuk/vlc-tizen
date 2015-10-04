@@ -238,7 +238,7 @@ intf_video_player_create(interface *intf)
     /* Prepare the media player */
     playback_service *p_ps = application_get_playback_service(intf->p_app);
 
-    intf->video_player = create_video_player(p_ps, intf->nf_content);
+    intf->video_player = create_video_player(intf, p_ps, intf->nf_content);
 }
 
 void
