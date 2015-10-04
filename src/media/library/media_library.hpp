@@ -28,7 +28,7 @@
 #define MEDIALIBRARY_H_
 
 #include "application.h"
-#include "media_item.h"
+#include "media/media_item.h"
 #include <Elementary.h>
 
 #ifdef __cplusplus

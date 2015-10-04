@@ -30,7 +30,7 @@
 #include "common.h"
 #include "application.h"
 
-#include "media/media_library.hpp"
+#include "media/library/media_library.hpp"
 
 typedef struct interface interface;
 

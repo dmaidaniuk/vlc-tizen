@@ -28,7 +28,7 @@
 #include "video_controller.h"
 
 #include "application.h"
-#include "media/media_library.hpp"
+#include "media/library/media_library.hpp"
 #include "ui/views/video_view.h"
 #include "ui/interface.h"
 
