@@ -428,8 +428,8 @@ intf_create(application *app)
     EDJE_COLOR_CLASS_SET_VLC_ORANGE("B0517");   // Naviframe second
 
     /* Progress Bar Colors */
-    EDJE_COLOR_CLASS_SET_VLC_COLOR("W062L1", VLC_GREY_400_TRANSPARENT);  // slider background
-    EDJE_COLOR_CLASS_SET_VLC_COLOR("W062L2", VLC_ORANGE_500_TRANSPARENT); // slider foreground
+    EDJE_COLOR_CLASS_SET_VLC_COLOR("W062L1", VLC_GREY_400_TRANSPARENT);    // slider background
+    EDJE_COLOR_CLASS_SET_VLC_COLOR("W062L2", VLC_ORANGE_500_TRANSPARENT);  // slider foreground
     EDJE_COLOR_CLASS_SET_VLC_COLOR("W0641P", VLC_ORANGE_500_TRANSPARENT);  // slider thumb pressed
     EDJE_COLOR_CLASS_SET_VLC_COLOR("W0641D", VLC_ORANGE_500_TRANSPARENT);  // slider thumb disabled
     EDJE_COLOR_CLASS_SET_VLC_ORANGE("W0641");   // slider thumb
