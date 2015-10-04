@@ -178,19 +178,6 @@ intf_get_main_naviframe(interface *intf)
 }
 
 /* CREATION */
-static Evas_Object*
-create_base_layout(Evas_Object *parent)
-{
-    Evas_Object *layout;
-    layout = elm_layout_add(parent);
-
-    /* */
-    elm_layout_theme_set(layout, "layout", "drawer", "panel");
-    evas_object_show(layout);
-
-    return layout;
-}
-
 static Evas_Object *
 create_button(Evas_Object *parent, char *style)
 {
@@ -275,6 +262,7 @@ intf_video_player_play(interface *intf, const char *psz_path)
     elm_win_indicator_mode_set(intf->win, ELM_WIN_INDICATOR_HIDE);
 }
 
+/* Mini Player */
 bool
 intf_mini_player_visible_get(interface *intf)
 {
@@ -333,7 +321,7 @@ intf_create_audio_player(interface *intf, const char *psz_path)
 }
 
 static Evas_Object*
-create_main_content_box(interface *intf, Evas_Object *parent)
+create_main_box(interface *intf, Evas_Object *parent)
 {
     /* Create a content box to display the content and the mini player */
     intf->main_box = elm_box_add(parent);
@@ -365,14 +353,16 @@ static void
 create_main_layout(interface *intf, Evas_Object *conform)
 {
     /* Add a layout to the conformant */
-    Evas_Object *layout = create_base_layout(conform);
+    Evas_Object *layout = elm_layout_add(conform);
+    elm_layout_theme_set(layout, "layout", "drawer", "panel");
+    evas_object_show(layout);
 
     /* Create the panel and put it in the layout */
     intf->sidebar = create_sidebar(intf, layout);
     elm_object_part_content_set(layout, "elm.swallow.left", intf->sidebar);
 
     /* Create the content box and put it in the layout */
-    intf->main_box = create_main_content_box(intf, layout);
+    intf->main_box = create_main_box(intf, layout);
     elm_object_part_content_set(layout, "elm.swallow.content", intf->main_box);
 
     /* */
