@@ -138,5 +138,8 @@ void
 video_controller_destroy(video_controller *ctrl)
 {
     eina_list_free(ctrl->p_content);
+    media_library* p_ml = (media_library*)application_get_media_library(ctrl->p_app);
+    media_library_unregister_on_change(p_ml, &video_controller_content_changed_cb, ctrl);
+    media_library_unregister_item_updated(p_ml, &video_controller_file_updated_cb, ctrl);
     free(ctrl);
 }
