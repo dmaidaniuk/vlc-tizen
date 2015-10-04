@@ -61,6 +61,19 @@ collections
                 description{
                     state: "default" 0.0;
                     color: 0 0 0 180; // transparent black
+                    visible: 1;
+                    rel1{ //top-left corner
+                        relative: 0.05 0.65;
+                    }
+                    rel2{ //bottom-right corner
+                        relative: 0.95 0.95;
+                    }
+                    max: -1 120;
+                }
+                description{
+                    state: "hidden" 0.0;
+                    color: 0 0 0 0; // invisible
+                    visible: 0;
                     rel1{ //top-left corner
                         relative: 0.05 0.65;
                     }
@@ -73,6 +86,7 @@ collections
             part{
                 name: "swallow.time";
                 type: SWALLOW;
+                clip_to: "hub_background";
                 description{
                     color: 255 0 0 255; // transparent black
                     visible: 1;
@@ -89,6 +103,7 @@ collections
             part{
                 name: "swallow.duration";
                 type: SWALLOW;
+                clip_to: "hub_background";
                 description{
                     color: 255 0 0 255; // transparent black
                     visible: 1;
@@ -105,7 +120,7 @@ collections
             part{
                 name: "swallow.progress";
                 type: SWALLOW;
-
+                clip_to: "hub_background";
                 description {
                     state: "pause" 0.0;
                     rel1 {
@@ -121,6 +136,7 @@ collections
             part{
                 name: "hub_button";
                 type: RECT;
+                clip_to: "hub_background";
                 description{
                     state: "default" 0.0;
                     visible: 0;
@@ -138,6 +154,7 @@ collections
             part {
                 name: "swallow.lock_button";
                 type: SWALLOW;
+                clip_to: "hub_background";
                 description {
                     visible: 0;
                     rel1 {
@@ -155,6 +172,7 @@ collections
             part {
                 name: "swallow.backward_button";
                 type: SWALLOW;
+                clip_to: "hub_background";
                 description {
                     rel1 {
                         relative: 0.2 0.0;
@@ -171,6 +189,7 @@ collections
             part {
                 name: "swallow.play_button";
                 type: SWALLOW;
+                clip_to: "hub_background";
                 description {
                     state: "pause" 0.0;
                     aspect: 1.0 1.0;
@@ -190,6 +209,7 @@ collections
             part {
                 name: "swallow.forward_button";
                 type: SWALLOW;
+                clip_to: "hub_background";
                 description {
                     rel1 {
                         relative: 0.6 0.0;
@@ -206,6 +226,7 @@ collections
             part {
                 name: "swallow.more_button";
                 type: SWALLOW;
+                clip_to: "hub_background";
                 description {
                     visible: 0;
                     rel1 {
@@ -221,5 +242,19 @@ collections
                 }
             }
         } //parts
+        programs {
+            program {
+                signal: "hub_background,hide";
+                source: "";
+                action: STATE_SET "hidden" 0.0;
+                target: "hub_background";
+            }
+            program {
+                signal: "hub_background,show";
+                source: "";
+                action: STATE_SET "default" 0.0;
+                target: "hub_background";
+            }
+        }
     }
 }
