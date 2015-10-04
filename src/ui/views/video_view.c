@@ -284,7 +284,7 @@ void
 destroy_video_view(interface_view *view)
 {
     elm_genlist_item_class_free(view->p_view_sys->p_default_item_class);
-    //video_controller_destroy
+    video_controller_destroy(view->p_view_sys->p_controller);
     free(view->p_view_sys);
     free(view);
 }

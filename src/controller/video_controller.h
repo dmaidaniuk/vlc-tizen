@@ -33,4 +33,7 @@
 video_controller*
 video_controller_create( application* p_app, view_sys* p_view );
 
+void
+video_controller_destroy(video_controller *);
+
 #endif /* VIDEO_CONTROLLER_H_ */

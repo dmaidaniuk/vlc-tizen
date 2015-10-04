@@ -133,3 +133,10 @@ video_controller_create(application* p_app, view_sys* p_view )
    media_library_register_item_updated(p_ml, video_controller_file_updated_cb, ctrl);
    return ctrl;
 }
+
+void
+video_controller_destroy(video_controller *ctrl)
+{
+    eina_list_free(ctrl->p_content);
+    free(ctrl);
+}
