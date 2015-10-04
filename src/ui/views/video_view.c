@@ -41,22 +41,22 @@ struct view_sys
 {
     interface *p_intf;
 
-    Evas_Object *p_genlist;
     video_controller* p_controller;
-    Elm_Genlist_Item_Class* p_default_itc;
+
+    Evas_Object *p_video_list;
+    Elm_Genlist_Item_Class* p_default_item_class;
 };
 
 typedef struct video_list_item
 {
     view_sys *videoview;
 
-    const Elm_Genlist_Item_Class *itc;
-
     media_item *p_media_item;
+
+    const Elm_Genlist_Item_Class *itc;
 
     //For refresh purposes.
     Elm_Object_Item* p_object_item;
-
 } video_list_item;
 
 void
@@ -218,12 +218,12 @@ video_view_append_item(view_sys *videoview, media_item* p_item)
     if (vli == NULL)
         return NULL;
     vli->videoview = videoview;
-    vli->itc = videoview->p_default_itc;
+    vli->itc = videoview->p_default_item_class;
 
     /* Item instantiation */
     vli->p_media_item = p_item;
     /* Set and append new item in the genlist */
-    vli->p_object_item = elm_genlist_item_append(videoview->p_genlist,
+    vli->p_object_item = elm_genlist_item_append(videoview->p_video_list,
             vli->itc,                       /* genlist item class               */
             vli,                            /* genlist item class user data     */
             NULL,                           /* genlist parent item for trees    */
@@ -243,33 +243,32 @@ video_view_append_item(view_sys *videoview, media_item* p_item)
 void
 video_view_clear(view_sys* videoview)
 {
-    elm_genlist_clear(videoview->p_genlist);
+    elm_genlist_clear(videoview->p_video_list);
 }
 
 interface_view*
 create_video_view(interface *intf, Evas_Object *parent)
 {
     interface_view *view = calloc(1, sizeof(*view));
-    view_sys *vv = malloc(sizeof(*vv));
-    vv->p_intf = intf;
-    vv->p_controller = video_controller_create(intf_get_application(intf), vv);
+    view_sys *p_sys = view->p_view_sys = malloc(sizeof(*p_sys));
+    p_sys->p_intf = intf;
+    p_sys->p_controller = video_controller_create(intf_get_application(intf), p_sys);
 
     /* Genlist class */
-    vv->p_default_itc = elm_genlist_item_class_new();
-    vv->p_default_itc->item_style = "2line.top.3";
-    vv->p_default_itc->func.text_get = genlist_text_get_cb;
-    vv->p_default_itc->func.content_get = genlist_content_get_cb;
-    view->p_view_sys = vv;
+    p_sys->p_default_item_class = elm_genlist_item_class_new();
+    p_sys->p_default_item_class->item_style = "2line.top.3";
+    p_sys->p_default_item_class->func.text_get = genlist_text_get_cb;
+    p_sys->p_default_item_class->func.content_get = genlist_content_get_cb;
 
-    /* Set then create the Genlist object */
-    Evas_Object *genlist = vv->p_genlist = elm_genlist_add(parent);
+    /* Create the Video Genlist */
+    Evas_Object *genlist = p_sys->p_video_list = elm_genlist_add(parent);
 
     /* Set the genlist modes */
     elm_scroller_single_direction_set(genlist, ELM_SCROLLER_SINGLE_DIRECTION_HARD);
     elm_genlist_homogeneous_set(genlist, EINA_TRUE);
     elm_genlist_mode_set(genlist, ELM_LIST_COMPRESS);
 
-    /* Set smart Callbacks */
+    /* Set smart Callbacks on the list */
     evas_object_smart_callback_add(genlist, "realized", genlist_realized_cb, NULL);
     evas_object_smart_callback_add(genlist, "loaded", genlist_loaded_cb, NULL);
     evas_object_smart_callback_add(genlist, "longpressed", genlist_longpressed_cb, NULL);
@@ -284,7 +283,8 @@ create_video_view(interface *intf, Evas_Object *parent)
 void
 destroy_video_view(interface_view *view)
 {
-    elm_genlist_item_class_free(view->p_view_sys->p_default_itc);
+    elm_genlist_item_class_free(view->p_view_sys->p_default_item_class);
+    //video_controller_destroy
     free(view->p_view_sys);
     free(view);
 }
