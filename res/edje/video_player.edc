@@ -60,7 +60,7 @@ collections
                 type: RECT;
                 description{
                     state: "default" 0.0;
-                    color: 0 0 0 180; // transparent black
+                    color: 255 255 255 255; // transparent black
                     visible: 1;
                     rel1{ //top-left corner
                         relative: 0.05 0.65;
@@ -72,7 +72,7 @@ collections
                 }
                 description{
                     state: "hidden" 0.0;
-                    color: 0 0 0 0; // invisible
+                    color: 255 255 255 0; // invisible
                     visible: 0;
                     rel1{ //top-left corner
                         relative: 0.05 0.65;
@@ -81,6 +81,23 @@ collections
                         relative: 0.95 0.95;
                     }
                     max: -1 120;
+                }
+            }
+            part{
+                name: "hub_color";
+                type: RECT;
+                clip_to: "hub_background";
+                description{
+                    color: 0 0 0 180; // transparent black
+                    visible: 1;
+                    rel1{ //top-left corner
+                        relative: 0.0 0.0;
+                        to: "hub_background";
+                    }
+                    rel2{ //bottom-right corner
+                        relative: 1.0 1.0;
+                        to: "hub_background";
+                    }
                 }
             }
             part{
