@@ -26,12 +26,15 @@
 
 #include <mutex>
 
+#include "IAlbum.h"
 #include "IFile.h"
 #include "ILogger.h"
 #include "media_library.hpp"
 #include "media/media_item.h"
+#include "media/album_item.h"
 
 media_item* fileToMediaItem( FilePtr file );
+album_item* albumToAlbumItem( AlbumPtr album );
 
 class TizenLogger : public ILogger
 {

@@ -82,3 +82,13 @@ fileToMediaItem( FilePtr file )
     }
     return mi;
 }
+
+album_item*
+albumToAlbumItem( AlbumPtr album )
+{
+    auto p_item = album_item_create(album->title().c_str());
+    if (p_item == nullptr)
+        return nullptr;
+    p_item->i_release_date = album->releaseDate();
+    return p_item;
+}
