@@ -201,10 +201,16 @@ video_player_start(interface_view *view, const char* file_path)
     LOGE("playback_service_start: %s", p_mi->psz_path);
     playback_service_set_context(view->p_view_sys->p_ps, PLAYLIST_CONTEXT_VIDEO);
 
-    playback_service_list_clear(view->p_view_sys->p_ps);
     playback_service_list_append(view->p_view_sys->p_ps, p_mi);
     playback_service_start(view->p_view_sys->p_ps, 0);
     return true;
+}
+
+static void
+video_player_stop(view_sys *p_sys)
+{
+    playback_service_list_clear(p_sys->p_ps);
+    playback_service_stop(p_sys->p_ps);
 }
 
 interface_view*
@@ -290,6 +296,8 @@ create_video_player(playback_service *p_ps, Evas_Object *parent)
     evas_object_smart_callback_add(p_sys->progress_slider, "changed", _on_slider_changed_cb, p_sys);
 
     view->view = layout;
+
+    view->pf_stop = video_player_stop;
     return view;
 }
 
