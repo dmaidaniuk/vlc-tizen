@@ -154,7 +154,7 @@ static void
 right_panel_button_clicked_cb(void *data, Evas_Object * obj, void *event_info)
 {
     interface *intf = data;
-    intf->popup = create_popup(intf->main_box,intf);
+    intf->popup = create_popup(intf->main_box, intf);
 }
 
 void

@@ -259,7 +259,6 @@ create_video_view(interface *intf, Evas_Object *parent)
 
     /* Genlist class */
     vv->p_default_itc = elm_genlist_item_class_new();
-    //FIXME: this is leaking, please call elm_genlist_item_class_free() from somewhere
     vv->p_default_itc->item_style = "2line.top.3";
     vv->p_default_itc->func.text_get = genlist_text_get_cb;
     vv->p_default_itc->func.content_get = genlist_content_get_cb;
@@ -288,4 +287,7 @@ create_video_view(interface *intf, Evas_Object *parent)
 void
 destroy_video_view(interface_view *view)
 {
+    elm_genlist_item_class_free(view->p_view_sys->p_default_itc);
+    free(view->p_view_sys);
+    free(view);
 }
