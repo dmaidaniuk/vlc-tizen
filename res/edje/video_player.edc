@@ -261,18 +261,21 @@ collections
         } //parts
         programs {
             program {
+                name: "hide_background";
                 signal: "hub_background,hide";
                 source: "";
                 action: STATE_SET "hidden" 0.0;
                 target: "hub_background";
-                transition: LINEAR 0.8;
+                transition: LINEAR 1.0;
+                in: 4.0 0.5;
             }
             program {
                 signal: "hub_background,show";
                 source: "";
                 action: STATE_SET "default" 0.0;
                 target: "hub_background";
-                transition: LINEAR 0.8;
+                transition: LINEAR 0.2;
+                after: "hide_background";
             }
         }
     }

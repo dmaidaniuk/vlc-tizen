@@ -43,6 +43,7 @@ struct view_sys
 
     /* Widgets */
     Evas_Object *p_evas_video;
+    Evas_Object *layout;
     Evas_Object *play_pause_button, *progress_slider;
 
     Evas_Object *time_text, *duration_text;
@@ -198,6 +199,8 @@ layout_touch_up_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED
 {
     view_sys *p_view_sys = data;
 
+    elm_object_signal_emit(p_view_sys->layout, "hub_background,show", "");
+
     LOGF("layout_touch_up_cb");
 }
 
@@ -213,6 +216,7 @@ video_player_start(view_sys *p_view_sys, const char* file_path)
 
     playback_service_list_append(p_view_sys->p_ps, p_mi);
     playback_service_start(p_view_sys->p_ps, 0);
+    elm_object_signal_emit(p_view_sys->layout, "hub_background,show", "");
     return true;
 }
 
@@ -247,7 +251,7 @@ create_video_player(playback_service *p_ps, Evas_Object *parent)
     }
 
     /* Create the layout */
-    Evas_Object *layout = elm_layout_add(parent);
+    Evas_Object *layout = p_sys->layout = elm_layout_add(parent);
     elm_layout_file_set(layout, VIDEOPLAYEREDJ, "media_player_renderer");
     evas_object_size_hint_weight_set(layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
     evas_object_size_hint_align_set(layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
