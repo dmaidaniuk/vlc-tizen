@@ -45,8 +45,6 @@ struct view_sys
     Evas_Object *p_evas_video;
     Evas_Object *layout;
     Evas_Object *play_pause_button, *progress_slider;
-
-    Evas_Object *time_text, *duration_text;
 };
 
 static void
@@ -104,7 +102,7 @@ ps_on_new_len_cb(playback_service *p_ps, void *p_user_data, double i_len)
     view_sys *p_view_sys = p_user_data;
 
     char *str = media_timetostr((int64_t)i_len);
-    elm_object_text_set(p_view_sys->duration_text, str);
+    elm_object_part_text_set(p_view_sys->layout, "duration", str);
     free(str);
 }
 
@@ -115,7 +113,7 @@ ps_on_new_time_cb(playback_service *p_ps, void *p_user_data, double i_time, doub
     elm_slider_value_set(p_view_sys->progress_slider, i_pos);
 
     char *str = media_timetostr((int64_t)i_time);
-    elm_object_text_set(p_view_sys->time_text, str);
+    elm_object_part_text_set(p_view_sys->layout, "time", str);
     free(str);
 }
 
@@ -207,6 +205,9 @@ layout_touch_up_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED
 bool
 video_player_start(view_sys *p_view_sys, const char* file_path)
 {
+    elm_object_part_text_set(p_view_sys->layout, "duration", "--:--:--");
+    elm_object_part_text_set(p_view_sys->layout, "time", "--:--:--");
+
     media_item *p_mi = media_item_create(file_path, MEDIA_ITEM_TYPE_VIDEO);
     if (!p_mi)
         return false;
@@ -308,20 +309,6 @@ create_video_player(playback_service *p_ps, Evas_Object *parent)
     //slider callbacks
     evas_object_smart_callback_add(p_sys->progress_slider, "slider,drag,stop", _on_slider_changed_cb, p_sys);
     evas_object_smart_callback_add(p_sys->progress_slider, "changed", _on_slider_changed_cb, p_sys);
-
-    // Duration
-    Evas_Object *text_duration = elm_label_add(layout);
-    elm_object_part_content_set(layout, "swallow.duration", text_duration);
-    elm_label_slide_mode_set(text_duration, ELM_LABEL_SLIDE_MODE_NONE);
-    elm_object_text_set(text_duration, "--:--:--");
-    p_sys->duration_text = text_duration;
-
-    // Time
-    Evas_Object *text_time = elm_label_add(layout);
-    elm_object_part_content_set(layout, "swallow.time", text_time);
-    elm_label_slide_mode_set(text_time, ELM_LABEL_SLIDE_MODE_NONE);
-    elm_object_text_set(text_time, "--:--:--");
-    p_sys->time_text = text_time;
 
     view->view = layout;
 

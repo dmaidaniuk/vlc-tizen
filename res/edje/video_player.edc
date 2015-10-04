@@ -101,37 +101,47 @@ collections
                 }
             }
             part{
-                name: "swallow.time";
-                type: SWALLOW;
+                name: "time";
+                type: TEXT;
                 clip_to: "hub_background";
                 description{
-                    color: 255 0 0 255; // transparent black
-                    visible: 1;
-                    rel1{ //top-left corner
-                        relative: 0.05 0.3;
-                        to: "hub_background";
-                    }
-                    rel2{ //bottom-right corner
-                        relative: 0.15 0.4;
-                        to: "hub_background";
-                    }
+					min: 50 50;
+					state: "default" 0.0;
+					color: 255 136 0 255; /* orange */
+					visible: 1;
+					rel1.relative: 0.05 0.2;
+					rel1.to: "hub_background";
+					rel2.relative: 0.25 0.4;
+					rel2.to: "hub_background";
+					text {
+					    align: 0.0 0.5;
+						font: "arial";
+						size: 20;
+						min: 1 1;
+						text: "--:--:--";
+					}
                 }
             }
             part{
-                name: "swallow.duration";
-                type: SWALLOW;
+                name: "duration";
+                type: TEXT;
                 clip_to: "hub_background";
-                description{
-                    color: 255 0 0 255; // transparent black
-                    visible: 1;
-                    rel1{ //top-left corner
-                        relative: 0.85 0.3;
-                        to: "hub_background";
-                    }
-                    rel2{ //bottom-right corner
-                        relative: 0.95 0.4;
-                        to: "hub_background";
-                    }
+                description {
+					min: 50 50;
+					state: "default" 0.0;
+					color: 255 136 0 255; /* orange */
+					visible: 1;
+					rel1.relative: 0.75 0.2;
+                    rel1.to: "hub_background";
+					rel2.relative: 0.95 0.4;
+					rel2.to: "hub_background";
+					text {
+						align: 1.0 0.5;
+						font: "arial";
+						size: 20;
+						min: 1 1;
+						text: "--:--:--";
+					}
                 }
             }
             part{
@@ -144,7 +154,7 @@ collections
                        relative: 0.0 0.0;
                        to: "hub_background";
                     }
-                       rel2 {
+                    rel2 {
                        relative: 1.0 0.3;
                        to: "hub_background";
                     }
@@ -266,15 +276,15 @@ collections
                 source: "";
                 action: STATE_SET "hidden" 0.0;
                 target: "hub_background";
-                transition: LINEAR 1.0;
-                in: 4.0 0.5;
+                transition: LINEAR 1.2;
+                in: 5.0 0.5;
             }
             program {
                 signal: "hub_background,show";
                 source: "";
                 action: STATE_SET "default" 0.0;
                 target: "hub_background";
-                transition: LINEAR 0.2;
+                transition: LINEAR 0.3;
                 after: "hide_background";
             }
         }
