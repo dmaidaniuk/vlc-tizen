@@ -30,6 +30,7 @@
 #include <Emotion.h>
 
 #include "ui/interface.h"
+#include "ui/utils.h"
 #include "video_player.h"
 #include "playback_service.h"
 
@@ -101,14 +102,9 @@ ps_on_new_len_cb(playback_service *p_ps, void *p_user_data, double i_len)
 {
     view_sys *vd = p_user_data;
 
-    lldiv_t d;
-    long long sec;
-    char *str;
-    d = lldiv((long long)i_len, 60);
-    sec = d.rem;
-    d = lldiv(d.quot, 60);
-    asprintf(&str, "%02lld:%02lld:%02lld", d.quot, d.rem, sec);
+    char *str = duration_string((int64_t)i_len);
     elm_object_text_set(vd->duration_text, str);
+    free(str);
 }
 
 static void
@@ -117,14 +113,9 @@ ps_on_new_time_cb(playback_service *p_ps, void *p_user_data, double i_time, doub
     view_sys *vd = p_user_data;
     elm_slider_value_set(vd->progress_slider, i_pos);
 
-    lldiv_t d;
-    long long sec;
-    char *str;
-    d = lldiv((long long)i_time, 60);
-    sec = d.rem;
-    d = lldiv(d.quot, 60);
-    asprintf(&str, "%02lld:%02lld:%02lld", d.quot, d.rem, sec);
+    char *str = duration_string((int64_t)i_time);
     elm_object_text_set(vd->time_text, str);
+    free(str);
 }
 
 static void
