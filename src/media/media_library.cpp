@@ -62,6 +62,7 @@ struct media_library : public IMediaLibraryCb
 {
 public:
     media_library();
+    virtual ~media_library() = default;
 
     // IMediaLibraryCb
     virtual void onFileAdded( FilePtr file ) override;
