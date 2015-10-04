@@ -248,12 +248,14 @@ collections
                 source: "";
                 action: STATE_SET "hidden" 0.0;
                 target: "hub_background";
+                transition: LINEAR 0.8;
             }
             program {
                 signal: "hub_background,show";
                 source: "";
                 action: STATE_SET "default" 0.0;
                 target: "hub_background";
+                transition: LINEAR 0.8;
             }
         }
     }
