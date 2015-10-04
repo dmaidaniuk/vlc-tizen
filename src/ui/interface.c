@@ -76,13 +76,14 @@ struct
     const char* title;
     interface_view* (*pf_create)(interface *, Evas_Object *);
     void (*pf_destroy)(interface_view *);
+    bool b_overflow_menu;
 } interface_views[VIEW_MAX] =
 {
-    { "Video",     create_video_view    , destroy_video_view },
-    { "Audio",     create_audio_view    , destroy_audio_view },
-    { "Directory", create_directory_view, destroy_directory_view },
-    { "Settings",  create_setting_view  , destroy_setting_view },
-    { "About",     create_about_view    , destroy_about_view },
+    { "Video",     create_video_view    , destroy_video_view,     true},
+    { "Audio",     create_audio_view    , destroy_audio_view,     true},
+    { "Directory", create_directory_view, destroy_directory_view, false},
+    { "Settings",  create_setting_view  , destroy_setting_view,   false},
+    { "About",     create_about_view    , destroy_about_view,     false},
 };
 
 /* CALLBACKS */
@@ -201,15 +202,6 @@ create_button(Evas_Object *parent, char *style)
     return button;
 }
 
-static bool
-needs_overflow_menu(int view_type)
-{
-    if((view_type == VIEW_AUDIO)||(view_type == VIEW_VIDEO))
-        return true;
-    else
-        return false;
-}
-
 void
 intf_show_view(interface *intf, int view_type)
 {
@@ -241,7 +233,7 @@ intf_show_view(interface *intf, int view_type)
     elm_object_part_content_set(nf_content, "title_left_btn", intf->sidebar_toggle_btn);
 
     /* */
-    if(needs_overflow_menu(view_type))
+    if(interface_views[view_type].b_overflow_menu)
     {
         if(intf->popup_toggle_btn == NULL)
         {
