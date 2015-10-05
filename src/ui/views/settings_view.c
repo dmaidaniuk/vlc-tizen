@@ -123,8 +123,8 @@ settings_item subtitles_text_encoding_menu[] =
 
 settings_item performance_menu[] =
 {
-        {42, "Enable frame skip", NULL, SETTINGS_TYPE_TOGGLE},
-        {42, "Time-stretching audio", NULL, SETTINGS_TYPE_TOGGLE}
+        {PERFORMANCE_FRAME_SKIP, "Enable frame skip", NULL, SETTINGS_TYPE_TOGGLE},
+        {PERFORMANCE_STRETCH, "Time-stretching audio", NULL, SETTINGS_TYPE_TOGGLE}
 
 };
 
@@ -231,6 +231,13 @@ menu_performance_selected_cb(settings_menu_selected *selected, view_sys* p_view_
 {
     int len = (int)sizeof(performance_menu) / (int)sizeof(*performance_menu);
     Evas_Object *popup = settings_popup_add(performance_menu, len, settings_toggle_switch, p_view_sys, parent);
+
+    bool frameskip = (bool)settings_get_int("FRAME_SKIP", 0);
+    bool stretch = (bool)settings_get_int("AUDIO_STRETCH", 0);
+
+    settings_toggle_set_one_by_id(performance_menu, len, PERFORMANCE_FRAME_SKIP, frameskip, false);
+    settings_toggle_set_one_by_id(performance_menu, len, PERFORMANCE_STRETCH, stretch, false);
+
     evas_object_show(popup);
 }
 
