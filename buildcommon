@@ -57,7 +57,7 @@ if [ -z "$TIZEN_ABI" ]; then
     exit 1
 fi
 
-source ${TIZEN_SDK}/sdk.version
+. ${TIZEN_SDK}/sdk.version
 
 mkdir -p ${PROJECTPATH}/lib
 

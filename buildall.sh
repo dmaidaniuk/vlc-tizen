@@ -2,7 +2,7 @@
 
 SCRIPT=$(readlink -f "$0")
 PROJECTPATH=$(dirname "$SCRIPT")
-source ${PROJECTPATH}/buildcommon
+. ${PROJECTPATH}/buildcommon
 
 ${PROJECTPATH}/buildvlc.sh $*
 checkfail "buildvlc.sh failed"
