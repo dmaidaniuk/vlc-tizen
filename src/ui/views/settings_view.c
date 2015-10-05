@@ -29,44 +29,8 @@
 #include "settings_view.h"
 #include "ui/interface.h"
 #include "ui/utils.h"
-#include "ui/views/settings.h"
 
 #include <app_preference.h>
-
-/* ID */
-#define SETTINGS_ID_DIRECTORIES 1
-#define SETTINGS_ID_HWACCELERATION 2
-#define SETTINGS_ID_SUBSENC 3
-#define SETTINGS_ID_VORIENTATION 4
-#define SETTINGS_ID_PERFORMANCES 5
-#define SETTINGS_ID_DEBLOCKING 6
-
-/* Types */
-#define SETTINGS_TYPE_CATEGORY 0
-#define SETTINGS_TYPE_ITEM 1
-#define SETTINGS_TYPE_TOGGLE 2
-
-static void
-menu_directories_selected_cb(int id, int index, settings_item *menu, int menu_len, Evas_Object *parent);
-static void
-menu_hwacceleration_selected_cb(int id, int index, settings_item *menu, int menu_len, Evas_Object *parent);
-static void
-menu_subsenc_selected_cb(int id, int index, settings_item *menu, int menu_len, Evas_Object *parent);
-static void
-menu_vorientation_selected_cb(int id, int index, settings_item *menu, int menu_len, Evas_Object *parent);
-static void
-menu_performance_selected_cb(int id, int index, settings_item *menu, int menu_len, Evas_Object *parent);
-static void
-menu_deblocking_selected_cb(int id, int index, settings_item *menu, int menu_len, Evas_Object *parent);
-
-static Evas_Object *
-settings_list_add(settings_item *menu, int len, Settings_menu_callback global_menu_cb, Evas_Object *parent);
-
-static Evas_Object *
-settings_popup_add(settings_item *menu, int menu_len, Settings_menu_callback global_menu_cb, Evas_Object *parent);
-
-static void
-settings_toggle_switch(int id, int index, settings_item *menu, int menu_len, Evas_Object *parent);
 
 settings_item settings_menu[] =
 {
@@ -92,9 +56,9 @@ settings_item directory_menu[] =
 settings_item hardware_acceleration_menu[] =
 {
         {42, "Automatic", NULL, SETTINGS_TYPE_TOGGLE},
-        {42, "Disabled", NULL, SETTINGS_TYPE_TOGGLE},
-        {42, "Decoding acceleration", NULL, SETTINGS_TYPE_TOGGLE},
-        {42, "Full acceleration", NULL, SETTINGS_TYPE_TOGGLE}
+        {43, "Disabled", NULL, SETTINGS_TYPE_TOGGLE},
+        {44, "Decoding acceleration", NULL, SETTINGS_TYPE_TOGGLE},
+        {45, "Full acceleration", NULL, SETTINGS_TYPE_TOGGLE}
 };
 
 settings_item video_orientation_menu[] =
