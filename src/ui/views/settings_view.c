@@ -32,6 +32,10 @@
 
 #include <app_preference.h>
 
+struct view_sys {
+    Evas_Object *popup;
+};
+
 settings_item settings_menu[] =
 {
         {0,                             "General",                      "",                                 SETTINGS_TYPE_CATEGORY},
@@ -446,11 +450,24 @@ settings_popup_add(settings_item *menu, int menu_len, Settings_menu_callback glo
     return popup;
 }
 
+bool
+view_callback(view_sys *p_view_sys, interface_view_event event)
+{
+    if(p_view_sys->popup != NULL) {
+        evas_object_del(p_view_sys->popup); // elm_popup_dismiss: https://imgur.com/DcALYG4
+        return true;
+    }
+    return false;
+}
+
 interface_view*
 create_setting_view(interface *intf, Evas_Object *parent)
 {
     interface_view *view = calloc(1, sizeof(*view));
     //view->view = create_setting_list(parent);
+
+    view->p_view_sys = calloc(1, sizeof(*view->p_view_sys));
+    view->pf_event = view_callback;
 
     int len = (int)sizeof(settings_menu) / (int)sizeof(*settings_menu);
     view->view = settings_list_add(settings_menu, len, NULL, parent);
@@ -462,5 +479,6 @@ create_setting_view(interface *intf, Evas_Object *parent)
 void
 destroy_setting_view(interface_view *view)
 {
+    free(view->p_view_sys);
     free(view);
 }
