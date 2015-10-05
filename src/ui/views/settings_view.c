@@ -33,7 +33,7 @@
 #include <app_preference.h>
 
 struct view_sys {
-    Evas_Object *popup;
+    Evas_Object *nav;
 };
 
 settings_item settings_menu[] =
@@ -182,7 +182,7 @@ menu_directories_selected_cb(int id, int index, settings_item *menu, int menu_le
 {
     int len = (int)sizeof(directory_menu) / (int)sizeof(*directory_menu);
     Evas_Object *genlist = settings_list_add(directory_menu, len, NULL, p_view_sys, parent);
-    elm_object_content_set(parent, genlist);
+    elm_naviframe_item_push(p_view_sys->nav, NULL, NULL, NULL, genlist, NULL);
     evas_object_show(genlist);
 }
 
@@ -469,11 +469,8 @@ settings_popup_add(settings_item *menu, int menu_len, Settings_menu_callback glo
 bool
 view_callback(view_sys *p_view_sys, interface_view_event event)
 {
-    if(p_view_sys->popup != NULL) {
-        evas_object_del(p_view_sys->popup); // elm_popup_dismiss: https://imgur.com/DcALYG4
-        return true;
-    }
-    return false;
+    elm_naviframe_item_pop(p_view_sys->nav);
+    return true;
 }
 
 interface_view*
@@ -482,6 +479,7 @@ create_setting_view(interface *intf, Evas_Object *parent)
     interface_view *view = calloc(1, sizeof(*view));
 
     view->p_view_sys = calloc(1, sizeof(*view->p_view_sys));
+    view->p_view_sys->nav = intf_get_main_naviframe(intf);
     view->pf_event = view_callback;
 
     int len = (int)sizeof(settings_menu) / (int)sizeof(*settings_menu);
