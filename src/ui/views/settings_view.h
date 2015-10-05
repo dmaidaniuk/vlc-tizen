@@ -48,7 +48,6 @@ typedef struct settings_item settings_item;
 
 /* Functions pointers */
 typedef void (*Settings_menu_callback)(int id, int index, settings_item *menu, int menu_len, view_sys* p_view_sys, Evas_Object *parent);
-typedef void (*Menu_item_callback)(int id, int index, settings_item *menu, int menu_len, view_sys* p_view_sys, Evas_Object *parent, void *data);
 
 /* Structs */
 typedef struct settings_item
@@ -68,7 +67,6 @@ typedef struct setting_data
     int index;
     Elm_Object_Item *item;
     Evas_Object *parent;
-    Evas_Object *genlist_test;
 
     settings_item *menu;
     int menu_len;
@@ -77,30 +75,6 @@ typedef struct setting_data
     view_sys* p_view_sys;
 } setting_data;
 
-typedef struct popup_genlist_data
-{
-    Evas_Object *parent;
-    Elm_Object_Item *item;
-
-    settings_item *menu;
-    int index;
-    int menu_len;
-
-    Menu_item_callback cb;
-    void *data;
-} popup_genlist_data_s;
-
-typedef struct popup_menu_item
-{
-    const int id;
-    const char* title;
-    const char* icon;
-
-    int type;
-
-    Settings_menu_callback cb;
-} popup_menu_item_s;
-
 /* Declarations */
 interface_view*
 create_setting_view(interface *intf, Evas_Object *parent);
@@ -108,26 +82,26 @@ create_setting_view(interface *intf, Evas_Object *parent);
 void
 destroy_setting_view(interface_view *);
 
-static void
+void
 menu_directories_selected_cb(int id, int index, settings_item *menu, int menu_len, view_sys* p_view_sys, Evas_Object *parent);
-static void
+void
 menu_hwacceleration_selected_cb(int id, int index, settings_item *menu, int menu_len, view_sys* p_view_sys, Evas_Object *parent);
-static void
+void
 menu_subsenc_selected_cb(int id, int index, settings_item *menu, int menu_len, view_sys* p_view_sys, Evas_Object *parent);
-static void
+void
 menu_vorientation_selected_cb(int id, int index, settings_item *menu, int menu_len, view_sys* p_view_sys, Evas_Object *parent);
-static void
+void
 menu_performance_selected_cb(int id, int index, settings_item *menu, int menu_len, view_sys* p_view_sys, Evas_Object *parent);
-static void
+void
 menu_deblocking_selected_cb(int id, int index, settings_item *menu, int menu_len, view_sys* p_view_sys, Evas_Object *parent);
 
-static Evas_Object *
+Evas_Object *
 settings_list_add(settings_item *menu, int len, Settings_menu_callback global_menu_cb, view_sys* p_view_sys, Evas_Object *parent);
 
-static Evas_Object *
+Evas_Object *
 settings_popup_add(settings_item *menu, int menu_len, Settings_menu_callback global_menu_cb, view_sys* p_view_sys, Evas_Object *parent);
 
-static void
+void
 settings_toggle_switch(int id, int index, settings_item *menu, int menu_len, view_sys* p_view_sys, Evas_Object *parent);
 
 #endif /* SETTINGS_VIEW_H_ */

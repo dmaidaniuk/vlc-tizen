@@ -177,7 +177,7 @@ settings_toggle_set_one_by_id(settings_item *menu, int menu_len, int id, bool va
     }
 }
 
-static void
+void
 menu_directories_selected_cb(int id, int index, settings_item *menu, int menu_len, view_sys* p_view_sys, Evas_Object *parent)
 {
     int len = (int)sizeof(directory_menu) / (int)sizeof(*directory_menu);
@@ -186,7 +186,7 @@ menu_directories_selected_cb(int id, int index, settings_item *menu, int menu_le
     evas_object_show(genlist);
 }
 
-static void
+void
 menu_hwacceleration_selected_cb(int id, int index, settings_item *menu, int menu_len, view_sys* p_view_sys, Evas_Object *parent)
 {
     int len = (int)sizeof(hardware_acceleration_menu) / (int)sizeof(*hardware_acceleration_menu);
@@ -194,7 +194,7 @@ menu_hwacceleration_selected_cb(int id, int index, settings_item *menu, int menu
     evas_object_show(popup);
 }
 
-static void
+void
 menu_subsenc_selected_cb(int id, int index, settings_item *menu, int menu_len, view_sys* p_view_sys, Evas_Object *parent)
 {
     int len = (int)sizeof(subtitles_text_encoding_menu) / (int)sizeof(*subtitles_text_encoding_menu);
@@ -202,7 +202,7 @@ menu_subsenc_selected_cb(int id, int index, settings_item *menu, int menu_len, v
     evas_object_show(popup);
 }
 
-static void
+void
 menu_vorientation_selected_cb(int id, int index, settings_item *menu, int menu_len, view_sys* p_view_sys, Evas_Object *parent)
 {
     int len = (int)sizeof(video_orientation_menu) / (int)sizeof(*video_orientation_menu);
@@ -210,7 +210,7 @@ menu_vorientation_selected_cb(int id, int index, settings_item *menu, int menu_l
     evas_object_show(popup);
 }
 
-static void
+void
 menu_performance_selected_cb(int id, int index, settings_item *menu, int menu_len, view_sys* p_view_sys, Evas_Object *parent)
 {
     int len = (int)sizeof(performance_menu) / (int)sizeof(*performance_menu);
@@ -218,7 +218,7 @@ menu_performance_selected_cb(int id, int index, settings_item *menu, int menu_le
     evas_object_show(popup);
 }
 
-static void
+void
 menu_deblocking_selected_cb(int id, int index, settings_item *menu, int menu_len, view_sys* p_view_sys, Evas_Object *parent)
 {
     int len = (int)sizeof(deblocking_filter_settings_menu) / (int)sizeof(*deblocking_filter_settings_menu);
@@ -226,7 +226,7 @@ menu_deblocking_selected_cb(int id, int index, settings_item *menu, int menu_len
     evas_object_show(popup);
 }
 
-static void
+void
 settings_toggle_switch(int id, int index, settings_item *menu, int menu_len, view_sys* p_view_sys, Evas_Object *parent)
 {
     settings_toggle_set_one_by_index(menu, menu_len, index, true, true);
