@@ -106,13 +106,13 @@ win_back_key_cb(void *data, Evas_Object *obj, void *event_info)
         evas_object_del(intf->popup); //since elm_popup_dismiss doesn't work
     }
     /* And then the mini player (if playing) */ // FIXME
-    else if (intf_mini_player_visible_get(intf) == true){
-            LOGD("mini player visible");
-            mini_player_stop(intf->p_mini_player);
+    else if (intf_mini_player_visible_get(intf) == true) {
+        LOGD("mini player visible");
+        mini_player_stop(intf->p_mini_player);
     }
     /* Hide the audio_player then */
-    else if (mini_player_fs_state(intf->p_mini_player) == true){ //FIXME
-         collapse_fullscreen_player(intf->p_mini_player);
+    else if (mini_player_fs_state(intf->p_mini_player) == true) { //FIXME
+        collapse_fullscreen_player(intf->p_mini_player);
     }
     /* Finally pop out the stack */
     else {
@@ -123,7 +123,7 @@ win_back_key_cb(void *data, Evas_Object *obj, void *event_info)
         interface_view *view = (interface_view *)elm_object_item_data_get(it);
         if(view){
             if(view->pf_event != NULL &&
-               view->pf_event(view->p_view_sys, INTERFACE_VIEW_EVENT_BACK) == true ){
+               view->pf_event(view->p_view_sys, INTERFACE_VIEW_EVENT_BACK) == true ) {
                 /* View has accepted the event */
                 return;
             }
