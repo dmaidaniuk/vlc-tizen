@@ -92,14 +92,14 @@ clicked_forward(void *data, Evas_Object *obj, void *event_info)
 static void
 clicked_lock(void *data, Evas_Object *obj, void *event_info)
 {
-   //TODO lock action
+    /* TODO lock action */
 	LOGD("lock button");
 }
 
 static void
 clicked_more(void *data, Evas_Object *obj, void *event_info)
 {
-   //TODO more action
+    /* TODO more action */
 	LOGD("more button");
 }
 
@@ -326,30 +326,30 @@ create_video_player(interface *intf, playback_service *p_ps, Evas_Object *parent
     /* create play/pause button */
     p_sys->play_pause_button = elm_image_add(layout);
     elm_image_file_set(p_sys->play_pause_button, ICON_DIR"ic_pause_circle_normal_o.png", NULL);
-    //attach to edje layout
+    /* attach to edje layout */
     elm_object_part_content_set(layout, "swallow.play_button", p_sys->play_pause_button);
 
-    //create backward button
+    /* create backward button */
     p_sys->backward_button = elm_image_add(layout);
     elm_image_file_set(p_sys->backward_button, ICON_DIR"ic_backward_circle_normal_o.png", NULL);
     elm_object_part_content_set(layout, "swallow.backward_button", p_sys->backward_button);
 
-    //create forward button
+    /* create forward button */
     p_sys->forward_button = elm_image_add(layout);
     elm_image_file_set(p_sys->forward_button, ICON_DIR"ic_forward_circle_normal_o.png", NULL);
     elm_object_part_content_set(layout, "swallow.forward_button", p_sys->forward_button);
 
-    //create lock button
+    /* create lock button */
     p_sys->lock_button = elm_image_add(layout);
     elm_image_file_set(p_sys->lock_button, ICON_DIR"ic_lock_circle_normal_o.png", NULL);
     elm_object_part_content_set(layout, "swallow.lock_button", p_sys->lock_button);
 
-    //create more button
+    /* create more button */
     p_sys->more_button = elm_image_add(layout);
     elm_image_file_set(p_sys->more_button, ICON_DIR"ic_more_circle_normal_o.png", NULL);
     elm_object_part_content_set(layout, "swallow.more_button", p_sys->more_button);
 
-    //progress slider
+    /* progress slider */
     p_sys->progress_slider = elm_slider_add(layout);
     elm_slider_horizontal_set(p_sys->progress_slider, EINA_TRUE);
     elm_object_part_content_set(layout, "swallow.progress", p_sys->progress_slider);
