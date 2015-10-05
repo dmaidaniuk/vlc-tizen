@@ -194,7 +194,7 @@ static void
 menu_subsenc_selected_cb(int id, int index, settings_item *menu, int menu_len, Evas_Object *parent)
 {
     int len = (int)sizeof(subtitles_text_encoding_menu) / (int)sizeof(*subtitles_text_encoding_menu);
-    Evas_Object *popup = settings_popup_add(subtitles_text_encoding_menu, len, NULL, parent);
+    Evas_Object *popup = settings_popup_add(subtitles_text_encoding_menu, len, settings_toggle_switch, parent);
     evas_object_show(popup);
 }
 
@@ -202,7 +202,7 @@ static void
 menu_vorientation_selected_cb(int id, int index, settings_item *menu, int menu_len, Evas_Object *parent)
 {
     int len = (int)sizeof(video_orientation_menu) / (int)sizeof(*video_orientation_menu);
-    Evas_Object *popup = settings_popup_add(video_orientation_menu, len, NULL, parent);
+    Evas_Object *popup = settings_popup_add(video_orientation_menu, len, settings_toggle_switch, parent);
     evas_object_show(popup);
 }
 
@@ -210,7 +210,7 @@ static void
 menu_performance_selected_cb(int id, int index, settings_item *menu, int menu_len, Evas_Object *parent)
 {
     int len = (int)sizeof(performance_menu) / (int)sizeof(*performance_menu);
-    Evas_Object *popup = settings_popup_add(performance_menu, len, NULL, parent);
+    Evas_Object *popup = settings_popup_add(performance_menu, len, settings_toggle_switch, parent);
     evas_object_show(popup);
 }
 
@@ -218,14 +218,14 @@ static void
 menu_deblocking_selected_cb(int id, int index, settings_item *menu, int menu_len, Evas_Object *parent)
 {
     int len = (int)sizeof(deblocking_filter_settings_menu) / (int)sizeof(*deblocking_filter_settings_menu);
-    Evas_Object *popup = settings_popup_add(deblocking_filter_settings_menu, len, NULL, parent);
+    Evas_Object *popup = settings_popup_add(deblocking_filter_settings_menu, len, settings_toggle_switch, parent);
     evas_object_show(popup);
 }
 
 static void
 settings_toggle_switch(int id, int index, settings_item *menu, int menu_len, Evas_Object *parent)
 {
-    //TODO
+    settings_toggle_set_one_by_index(menu, menu_len, index, true, true);
     evas_object_del(parent);
 }
 
