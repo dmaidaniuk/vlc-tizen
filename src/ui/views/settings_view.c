@@ -59,10 +59,10 @@ settings_item directory_menu[] =
 
 settings_item hardware_acceleration_menu[] =
 {
-        {42, "Automatic", NULL, SETTINGS_TYPE_TOGGLE},
-        {43, "Disabled", NULL, SETTINGS_TYPE_TOGGLE},
-        {44, "Decoding acceleration", NULL, SETTINGS_TYPE_TOGGLE},
-        {45, "Full acceleration", NULL, SETTINGS_TYPE_TOGGLE}
+        {HWACCELERATION_AUTOMATIC, "Automatic", NULL, SETTINGS_TYPE_TOGGLE},
+        {HWACCELERATION_DISABLED, "Disabled", NULL, SETTINGS_TYPE_TOGGLE},
+        {HWACCELERATION_DECODING, "Decoding acceleration", NULL, SETTINGS_TYPE_TOGGLE},
+        {HWACCELERATION_FULL, "Full acceleration", NULL, SETTINGS_TYPE_TOGGLE}
 };
 
 settings_item video_orientation_menu[] =
@@ -189,8 +189,13 @@ menu_directories_selected_cb(settings_menu_selected *selected, view_sys* p_view_
 void
 menu_hwacceleration_selected_cb(settings_menu_selected *selected, view_sys* p_view_sys, Evas_Object *parent)
 {
+    int value;
+    if (preference_get_int("HWACCELERATION", &value) == PREFERENCE_ERROR_NO_KEY)
+        value = HWACCELERATION_AUTOMATIC;
+
     int len = (int)sizeof(hardware_acceleration_menu) / (int)sizeof(*hardware_acceleration_menu);
     Evas_Object *popup = settings_popup_add(hardware_acceleration_menu, len, settings_toggle_switch, p_view_sys, parent);
+    settings_toggle_set_one_by_id(hardware_acceleration_menu, len, value, true, true);
     evas_object_show(popup);
 }
 
