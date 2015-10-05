@@ -130,11 +130,11 @@ settings_item performance_menu[] =
 
 settings_item deblocking_filter_settings_menu[] =
 {
-        {42, "Automatic", NULL, SETTINGS_TYPE_TOGGLE},
-        {42, "Full deblocking (slowest)", NULL, SETTINGS_TYPE_TOGGLE},
-        {42, "Medium deblocking", NULL, SETTINGS_TYPE_TOGGLE},
-        {42, "Low deblocking", NULL, SETTINGS_TYPE_TOGGLE},
-        {42, "No deblocking (fastest)", NULL, SETTINGS_TYPE_TOGGLE}
+        {DEBLOCKING_AUTOMATIC, "Automatic", NULL, SETTINGS_TYPE_TOGGLE},
+        {DEBLOCKING_FULL, "Full deblocking (slowest)", NULL, SETTINGS_TYPE_TOGGLE},
+        {DEBLOCKING_MEDIUM, "Medium deblocking", NULL, SETTINGS_TYPE_TOGGLE},
+        {DEBLOCKING_LOW, "Low deblocking", NULL, SETTINGS_TYPE_TOGGLE},
+        {DEBLOCKING_NO, "No deblocking (fastest)", NULL, SETTINGS_TYPE_TOGGLE}
 
 };
 
@@ -244,8 +244,10 @@ menu_performance_selected_cb(settings_menu_selected *selected, view_sys* p_view_
 void
 menu_deblocking_selected_cb(settings_menu_selected *selected, view_sys* p_view_sys, Evas_Object *parent)
 {
+    int value = settings_get_int("DEBLOCKING", DEBLOCKING_AUTOMATIC);
     int len = (int)sizeof(deblocking_filter_settings_menu) / (int)sizeof(*deblocking_filter_settings_menu);
     Evas_Object *popup = settings_popup_add(deblocking_filter_settings_menu, len, settings_toggle_switch, p_view_sys, parent);
+    settings_toggle_set_one_by_id(deblocking_filter_settings_menu, len, value, true, true);
     evas_object_show(popup);
 }
 
