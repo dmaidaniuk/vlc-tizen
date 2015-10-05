@@ -63,6 +63,9 @@ menu_deblocking_selected_cb(int id, int index, settings_item *menu, int menu_len
 static Evas_Object *
 settings_list_add(settings_item *menu, int len, Settings_menu_callback global_menu_cb, Evas_Object *parent);
 
+static Evas_Object *
+settings_popup_add(settings_item *menu, int menu_len, Settings_menu_callback global_menu_cb, Evas_Object *parent);
+
 static void
 settings_toggle_switch(int id, int index, settings_item *menu, int menu_len, Evas_Object *parent);
 
@@ -89,10 +92,10 @@ settings_item directory_menu[] =
 
 settings_item hardware_acceleration_menu[] =
 {
-        {42, "Automatic", "toggle_on.png"},
-        {42, "Disabled", "toggle_off.png"},
-        {42, "Decoding acceleration", "toggle_off.png"},
-        {42, "Full acceleration", "toggle_off.png"}
+        {42, "Automatic", "toggle_on.png", SETTINGS_TYPE_TOGGLE},
+        {42, "Disabled", "toggle_off.png", SETTINGS_TYPE_TOGGLE},
+        {42, "Decoding acceleration", "toggle_off.png", SETTINGS_TYPE_TOGGLE},
+        {42, "Full acceleration", "toggle_off.png", SETTINGS_TYPE_TOGGLE}
 };
 
 settings_item video_orientation_menu[] =
@@ -180,11 +183,9 @@ menu_directories_selected_cb(int id, int index, settings_item *menu, int menu_le
 static void
 menu_hwacceleration_selected_cb(int id, int index, settings_item *menu, int menu_len, Evas_Object *parent)
 {
+    //Evas_Object *list = create_settings_popup_genlist(popup, hardware_acceleration_menu, len, settings_toggle_switch, NULL);
     int len = (int)sizeof(hardware_acceleration_menu) / (int)sizeof(*hardware_acceleration_menu);
-    Evas_Object *popup = elm_popup_add(parent);
-    Evas_Object *list = create_settings_popup_genlist(popup, hardware_acceleration_menu, len, settings_toggle_switch, NULL);
-    elm_object_content_set(popup, list);
-    evas_object_show(list);
+    Evas_Object *popup = settings_popup_add(hardware_acceleration_menu, len, settings_toggle_switch, parent);
     evas_object_show(popup);
 }
 
@@ -235,25 +236,7 @@ menu_deblocking_selected_cb(int id, int index, settings_item *menu, int menu_len
 static void
 settings_toggle_switch(int id, int index, settings_item *menu, int menu_len, Evas_Object *parent)
 {
-    /* Change the icon depending on the setting state (pressed or not) */
-
-    if(strcmp (menu[index].icon, "toggle_on.png") == 0)
-    {
-        menu[index].icon = "toggle_off.png";
-    }
-    else if(strcmp (menu[index].icon, "toggle_off.png") == 0)
-    {
-        for(int count = 0; count < menu_len; count++)
-        {
-            if (strcmp(menu[count].icon, "toggle_on.png") == 0)
-            {
-                menu[count].icon = "toggle_off.png";
-            }
-        }
-        menu[index].icon = "toggle_on.png";
-    }
-
-    /* */
+    //TODO
     evas_object_del(parent);
 }
 
@@ -402,6 +385,7 @@ settings_list_add(settings_item *menu, int len, Settings_menu_callback global_me
 
             /* Put genlist item in the setting_data struct for callbacks */
             sd->item = hit;
+            //elm_object_item_del_cb_set(hit, free_genlist_item_data);
         }
         else if (menu[index].type == SETTINGS_TYPE_ITEM || menu[index].type == SETTINGS_TYPE_TOGGLE)
         {
@@ -418,6 +402,7 @@ settings_list_add(settings_item *menu, int len, Settings_menu_callback global_me
             /* Put genlist item in the setting_data struct for callbacks */
             sd->parent = parent;
             sd->item = it;
+            //elm_object_item_del_cb_set(it, free_genlist_item_data);
         }
     }
 
@@ -429,6 +414,43 @@ settings_list_add(settings_item *menu, int len, Settings_menu_callback global_me
     evas_object_size_hint_align_set(genlist, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
     return genlist;
+}
+
+static void
+popup_block_cb(void *data, Evas_Object *obj, void *event_info)
+{
+    Evas_Object *parent = data;
+    evas_object_del(parent);
+}
+
+static Evas_Object *
+settings_popup_add(settings_item *menu, int menu_len, Settings_menu_callback global_menu_cb, Evas_Object *parent)
+{
+    Evas_Object *popup = elm_popup_add(parent);
+    Evas_Object *box = elm_box_add(popup);
+    Evas_Object *genlist;
+
+    /* Set the popup Y axis value */
+    if(menu_len < 6){
+        evas_object_size_hint_min_set(box, EVAS_HINT_FILL, menu_len * 100);
+        evas_object_size_hint_max_set(box, EVAS_HINT_FILL, menu_len * 100);
+    }
+
+    else{
+        evas_object_size_hint_min_set(box, EVAS_HINT_FILL, 500);
+        evas_object_size_hint_max_set(box, EVAS_HINT_FILL, 500);
+    }
+
+    genlist = settings_list_add(menu, menu_len, global_menu_cb, popup);
+
+    elm_box_pack_end(box, genlist);
+
+    evas_object_smart_callback_add(popup, "block,clicked", popup_block_cb, popup);
+
+    elm_object_content_set(popup, box);
+    evas_object_show(genlist);
+
+    return popup;
 }
 
 interface_view*
