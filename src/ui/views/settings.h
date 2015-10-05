@@ -42,6 +42,8 @@ typedef struct settings_item
     const char* icon;
     int type;
     Settings_menu_callback cb;
+
+    bool toggled;
 } settings_item;
 
 typedef struct setting_data

@@ -276,9 +276,13 @@ gl_content_get_cb(void *data, Evas_Object *obj, const char *part)
         if (sd->menu[sd->index].type == SETTINGS_TYPE_TOGGLE)
         {
             if (part && !strcmp(part, "elm.icon.right")) {
+                Evas_Object *icon;
                 content = elm_layout_add(obj);
                 elm_layout_theme_set(content, "layout", "list/A/right.icon", "default");
-                Evas_Object *icon = create_icon(sd->parent, "toggle_off.png");
+                if (sd->menu[sd->index].toggled)
+                    icon = create_icon(sd->parent, "toggle_on.png");
+                else
+                    icon = create_icon(sd->parent, "toggle_off.png");
                 elm_layout_content_set(content, "elm.swallow.content", icon);
             }
         }
