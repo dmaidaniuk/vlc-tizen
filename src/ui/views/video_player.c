@@ -57,18 +57,18 @@ static void video_player_stop(view_sys *p_sys);
 static void
 _on_slider_changed_cb(void *data, Evas_Object *obj, void *event_info)
 {
-    view_sys *p_view_sys = data;
+    view_sys *p_sys = data;
 
-    playback_service_seek_pos(p_view_sys->p_ps, elm_slider_value_get(obj));
+    playback_service_seek_pos(p_sys->p_ps, elm_slider_value_get(obj));
 }
 
 static void
 clicked_play_pause(void *data, Evas_Object *obj, void *event_info)
 {
-    view_sys *p_view_sys = data;
+    view_sys *p_sys = data;
 
-    elm_image_file_set(p_view_sys->play_pause_button,
-                       playback_service_toggle_play_pause(p_view_sys->p_ps) ?
+    elm_image_file_set(p_sys->play_pause_button,
+                       playback_service_toggle_play_pause(p_sys->p_ps) ?
                                ICON_DIR "ic_pause_circle_normal_o.png" :
                                ICON_DIR "ic_play_circle_normal_o.png", NULL);
 }
@@ -76,17 +76,17 @@ clicked_play_pause(void *data, Evas_Object *obj, void *event_info)
 static void
 clicked_backward(void *data, Evas_Object *obj, void *event_info)
 {
-    view_sys *p_view_sys = data;
+    view_sys *p_sys = data;
 
-    playback_service_seek_backward(p_view_sys->p_ps);
+    playback_service_seek_backward(p_sys->p_ps);
 }
 
 static void
 clicked_forward(void *data, Evas_Object *obj, void *event_info)
 {
-    view_sys *p_view_sys = data;
+    view_sys *p_sys = data;
 
-    playback_service_seek_forward(p_view_sys->p_ps);
+    playback_service_seek_forward(p_sys->p_ps);
 }
 
 static void
@@ -106,30 +106,30 @@ clicked_more(void *data, Evas_Object *obj, void *event_info)
 static void
 ps_on_new_len_cb(playback_service *p_ps, void *p_user_data, double i_len)
 {
-    view_sys *p_view_sys = p_user_data;
+    view_sys *p_sys = p_user_data;
 
     char *str = media_timetostr((int64_t)i_len);
-    elm_object_part_text_set(p_view_sys->layout, "duration", str);
+    elm_object_part_text_set(p_sys->layout, "duration", str);
     free(str);
 }
 
 static void
 ps_on_new_time_cb(playback_service *p_ps, void *p_user_data, double i_time, double i_pos)
 {
-    view_sys *p_view_sys = p_user_data;
-    elm_slider_value_set(p_view_sys->progress_slider, i_pos);
+    view_sys *p_sys = p_user_data;
+    elm_slider_value_set(p_sys->progress_slider, i_pos);
 
     char *str = media_timetostr((int64_t)i_time);
-    elm_object_part_text_set(p_view_sys->layout, "time", str);
+    elm_object_part_text_set(p_sys->layout, "time", str);
     free(str);
 }
 
 static void
 layout_touch_up_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
-    view_sys *p_view_sys = data;
+    view_sys *p_sys = data;
 
-    elm_object_signal_emit(p_view_sys->layout, "hub_background,show", "");
+    elm_object_signal_emit(p_sys->layout, "hub_background,show", "");
 
     LOGF("layout_touch_up_cb");
 }
@@ -137,8 +137,8 @@ layout_touch_up_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED
 static void
 ps_on_stop_cb(playback_service *p_ps, void *p_user_data, media_item *p_mi)
 {
-    view_sys *p_view_sys = p_user_data;
-    intf_show_previous_view(p_view_sys->intf);
+    view_sys *p_sys = p_user_data;
+    intf_show_previous_view(p_sys->intf);
 }
 
 bool
