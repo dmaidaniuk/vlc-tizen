@@ -28,6 +28,7 @@
 #define SETTINGS_VIEW_H_
 
 #include "ui/interface.h"
+#include "ui/views/settings.h"
 
 interface_view*
 create_setting_view(interface *intf, Evas_Object *parent);

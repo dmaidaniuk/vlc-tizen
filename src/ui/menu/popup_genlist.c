@@ -28,29 +28,18 @@
 #include <efl_extension.h>
 
 #include "ui/interface.h"
+#include "ui/views/settings.h"
 
 #include "ui/utils.h"
 
 #include "popup_genlist.h"
 
 
-typedef struct popup_genlist_data
-{
-    Evas_Object *parent;
-    Elm_Object_Item *item;
-
-    popup_menu_item_s *menu;
-    int index;
-    int menu_len;
-
-    Menu_item_callback cb;
-    void *data;
-} popup_genlist_data_s;
-
 static char *
 gl_text_get_cb(void *data, Evas_Object *obj, const char *part)
 {
     popup_genlist_data_s *pgd = data;
+
     const Elm_Genlist_Item_Class *itc = elm_genlist_item_item_class_get(pgd->item);
 
     /* Check the item class style and put the current folder or file name as a string */
@@ -110,7 +99,7 @@ free_genlist_item_data(void *data, Evas_Object *obj, void *event_info)
 }
 
 Evas_Object *
-create_settings_popup_genlist(Evas_Object *parent, popup_menu_item_s *menu, int menu_len, Menu_item_callback cb, void *data)
+create_settings_popup_genlist(Evas_Object *parent, settings_item *menu, int menu_len, Menu_item_callback cb, void *data)
 {
     Evas_Object *genlist;
     Elm_Object_Item *it;
