@@ -155,6 +155,19 @@ static void
 right_panel_button_clicked_cb(void *data, Evas_Object * obj, void *event_info)
 {
     interface *intf = data;
+
+    /* */
+    Elm_Object_Item *it = elm_naviframe_top_item_get(intf->nf_content);
+
+    /* We probably have an interface_view at the top */ //FIXME videoplayer
+    interface_view *view = (interface_view *)elm_object_item_data_get(it);
+    if(view) {
+        if(view->pf_event != NULL &&
+           view->pf_event(view->p_view_sys, INTERFACE_VIEW_EVENT_MENU) == true ) {
+            /* View has accepted the event */
+            return;
+        }
+    }
     intf->popup = create_popup(intf->main_box, intf);
 }
 
