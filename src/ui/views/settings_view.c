@@ -28,7 +28,6 @@
 
 #include "settings_view.h"
 #include "ui/interface.h"
-#include "ui/menu/popup_genlist.h"
 #include "ui/utils.h"
 #include "ui/views/settings.h"
 
@@ -86,88 +85,88 @@ settings_item settings_menu[] =
 settings_item directory_menu[] =
 {
         {42, "Directories", "", SETTINGS_TYPE_CATEGORY},
-        {42, "Internal memory", "toggle_off.png", SETTINGS_TYPE_TOGGLE},
+        {42, "Internal memory", NULL, SETTINGS_TYPE_TOGGLE},
         {42, "Add repository", "call_button_add_call_press.png", SETTINGS_TYPE_ITEM}
 };
 
 settings_item hardware_acceleration_menu[] =
 {
-        {42, "Automatic", "toggle_on.png", SETTINGS_TYPE_TOGGLE},
-        {42, "Disabled", "toggle_off.png", SETTINGS_TYPE_TOGGLE},
-        {42, "Decoding acceleration", "toggle_off.png", SETTINGS_TYPE_TOGGLE},
-        {42, "Full acceleration", "toggle_off.png", SETTINGS_TYPE_TOGGLE}
+        {42, "Automatic", NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Disabled", NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Decoding acceleration", NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Full acceleration", NULL, SETTINGS_TYPE_TOGGLE}
 };
 
 settings_item video_orientation_menu[] =
 {
-        {42, "Automatic (sensor)", "toggle_on.png"},
-        {42, "Locked at start", "toggle_off.png"},
-        {42, "Landscape", "toggle_off.png"},
-        {42, "Portrait", "toggle_off.png"},
-        {42, "Reverse landscape", "toggle_off.png"},
-        {42, "Reverse portrait", "toggle_off.png"}
+        {42, "Automatic (sensor)", NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Locked at start", NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Landscape", NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Portrait", NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Reverse landscape", NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Reverse portrait", NULL, SETTINGS_TYPE_TOGGLE}
 };
 
 settings_item subtitles_text_encoding_menu[] =
 {
-        {42, "Default (Windows-1252)", "toggle_on.png"},
-        {42, "Universal (UTF-8)", "toggle_off.png"},
-        {42, "Universal (UTF-16)", "toggle_off.png"},
-        {42, "Universal (big endian UTF-16)", "toggle_off.png"},
-        {42, "Universal (little endian UTF-16)", "toggle_off.png"},
-        {42, "Universal, Chinese (GB18030)", "toggle_off.png"},
-        {42, "Western European (Latin-9)", "toggle_off.png"},
-        {42, "Western European (Windows-1252)", "toggle_off.png"},
-        {42, "Western European (IBM 00850)", "toggle_off.png"},
-        {42, "Eastern European (Latin-2)", "toggle_off.png"},
-        {42, "Eastern European (Windows-1250)", "toggle_off.png"},
-        {42, "Esperanto (Latin-3)", "toggle_off.png"},
-        {42, "Nordic (Latin-6)", "toggle_off.png"},
-        {42, "Cyrillic (Windows-1251)", "toggle_off.png"},
-        {42, "Russian (KOI8-R)", "toggle_off.png"},
-        {42, "Ukrainian (KOI8-U)", "toggle_off.png"},
-        {42, "Arabic (ISO 8859-6)", "toggle_off.png"},
-        {42, "Arabic (Windows-1256)", "toggle_off.png"},
-        {42, "Greek (ISO 8859-7)", "toggle_off.png"},
-        {42, "Greek (Windows-1253)", "toggle_off.png"},
-        {42, "Hebrew (ISO 8859-8)", "toggle_off.png"},
-        {42, "Hebrew (Windows-1255)", "toggle_off.png"},
-        {42, "Turkish (ISO 8859-9)", "toggle_off.png"},
-        {42, "Turkish (Windows-1254)", "toggle_off.png"},
-        {42, "Thai (TIS 620-2533/ISO 8859-11)", "toggle_off.png"},
-        {42, "Thai (Windows-874)", "toggle_off.png"},
-        {42, "Baltic (Latin-7)", "toggle_off.png"},
-        {42, "Baltic (Windows-1257)", "toggle_off.png"},
-        {42, "Celtic (Latin-8)", "toggle_off.png"},
-        {42, "South-Estearn (Latin-10)", "toggle_off.png"},
-        {42, "Simplified Chinese (ISO-2022-CN-EXT)", "toggle_off.png"},
-        {42, "Simplified Chinese Unix (EUC-CN)", "toggle_off.png"},
-        {42, "Japanese (7-bits JIS/ISO-2022-JP-2)", "toggle_off.png"},
-        {42, "Japanese (Shift JIS)", "toggle_off.png"},
-        {42, "Korean (EUC-KR/CP949)", "toggle_off.png"},
-        {42, "Korean (ISO-2022-KR)", "toggle_off.png"},
-        {42, "Traditional Chinese (Big5)", "toggle_off.png"},
-        {42, "Traditional Chinese Unix (EUC-TW)", "toggle_off.png"},
-        {42, "Hong-Kong Supplementary (HKSCS)", "toggle_off.png"},
-        {42, "Vietnamese (VISCII)", "toggle_off.png"},
-        {42, "Vietnamese (Windows-1258)", "toggle_off.png"}
+        {42, "Default (Windows-1252)", NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Universal (UTF-8)", NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Universal (UTF-16)", NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Universal (big endian UTF-16)", NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Universal (little endian UTF-16)", NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Universal, Chinese (GB18030)", NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Western European (Latin-9)", NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Western European (Windows-1252)", NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Western European (IBM 00850)", NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Eastern European (Latin-2)", NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Eastern European (Windows-1250)", NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Esperanto (Latin-3)", NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Nordic (Latin-6)", NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Cyrillic (Windows-1251)", NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Russian (KOI8-R)", NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Ukrainian (KOI8-U)", NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Arabic (ISO 8859-6)", NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Arabic (Windows-1256)", NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Greek (ISO 8859-7)", NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Greek (Windows-1253)", NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Hebrew (ISO 8859-8)", NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Hebrew (Windows-1255)", NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Turkish (ISO 8859-9)", NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Turkish (Windows-1254)", NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Thai (TIS 620-2533/ISO 8859-11)", NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Thai (Windows-874)", NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Baltic (Latin-7)", NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Baltic (Windows-1257)", NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Celtic (Latin-8)", NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "South-Estearn (Latin-10)", NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Simplified Chinese (ISO-2022-CN-EXT)", NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Simplified Chinese Unix (EUC-CN)", NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Japanese (7-bits JIS/ISO-2022-JP-2)", NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Japanese (Shift JIS)", NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Korean (EUC-KR/CP949)", NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Korean (ISO-2022-KR)", NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Traditional Chinese (Big5)", NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Traditional Chinese Unix (EUC-TW)", NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Hong-Kong Supplementary (HKSCS)", NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Vietnamese (VISCII)", NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Vietnamese (Windows-1258)", NULL, SETTINGS_TYPE_TOGGLE}
 
 };
 
 settings_item performance_menu[] =
 {
-        {42, "Enable frame skip", "toggle_off.png"},
-        {42, "Time-stretching audio", "toggle_off.png"}
+        {42, "Enable frame skip", NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Time-stretching audio", NULL, SETTINGS_TYPE_TOGGLE}
 
 };
 
 settings_item deblocking_filter_settings_menu[] =
 {
-        {42, "Automatic", "toggle_on.png"},
-        {42, "Full deblocking (slowest)", "toggle_off.png"},
-        {42, "Medium deblocking", "toggle_off.png"},
-        {42, "Low deblocking", "toggle_off.png"},
-        {42, "No deblocking (fastest)", "toggle_off.png"}
+        {42, "Automatic", NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Full deblocking (slowest)", NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Medium deblocking", NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Low deblocking", NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "No deblocking (fastest)", NULL, SETTINGS_TYPE_TOGGLE}
 
 };
 
@@ -183,7 +182,6 @@ menu_directories_selected_cb(int id, int index, settings_item *menu, int menu_le
 static void
 menu_hwacceleration_selected_cb(int id, int index, settings_item *menu, int menu_len, Evas_Object *parent)
 {
-    //Evas_Object *list = create_settings_popup_genlist(popup, hardware_acceleration_menu, len, settings_toggle_switch, NULL);
     int len = (int)sizeof(hardware_acceleration_menu) / (int)sizeof(*hardware_acceleration_menu);
     Evas_Object *popup = settings_popup_add(hardware_acceleration_menu, len, settings_toggle_switch, parent);
     evas_object_show(popup);
@@ -193,10 +191,7 @@ static void
 menu_subsenc_selected_cb(int id, int index, settings_item *menu, int menu_len, Evas_Object *parent)
 {
     int len = (int)sizeof(subtitles_text_encoding_menu) / (int)sizeof(*subtitles_text_encoding_menu);
-    Evas_Object *popup = elm_popup_add(parent);
-    Evas_Object *list = create_settings_popup_genlist(popup, subtitles_text_encoding_menu, len, NULL, NULL);
-    elm_object_content_set(popup, list);
-    evas_object_show(list);
+    Evas_Object *popup = settings_popup_add(subtitles_text_encoding_menu, len, NULL, parent);
     evas_object_show(popup);
 }
 
@@ -204,10 +199,7 @@ static void
 menu_vorientation_selected_cb(int id, int index, settings_item *menu, int menu_len, Evas_Object *parent)
 {
     int len = (int)sizeof(video_orientation_menu) / (int)sizeof(*video_orientation_menu);
-    Evas_Object *popup = elm_popup_add(parent);
-    Evas_Object *list = create_settings_popup_genlist(popup, video_orientation_menu, len, NULL, NULL);
-    elm_object_content_set(popup, list);
-    evas_object_show(list);
+    Evas_Object *popup = settings_popup_add(video_orientation_menu, len, NULL, parent);
     evas_object_show(popup);
 }
 
@@ -215,10 +207,7 @@ static void
 menu_performance_selected_cb(int id, int index, settings_item *menu, int menu_len, Evas_Object *parent)
 {
     int len = (int)sizeof(performance_menu) / (int)sizeof(*performance_menu);
-    Evas_Object *popup = elm_popup_add(parent);
-    Evas_Object *list = create_settings_popup_genlist(popup, performance_menu, len, NULL, NULL);
-    elm_object_content_set(popup, list);
-    evas_object_show(list);
+    Evas_Object *popup = settings_popup_add(performance_menu, len, NULL, parent);
     evas_object_show(popup);
 }
 
@@ -226,10 +215,7 @@ static void
 menu_deblocking_selected_cb(int id, int index, settings_item *menu, int menu_len, Evas_Object *parent)
 {
     int len = (int)sizeof(deblocking_filter_settings_menu) / (int)sizeof(*deblocking_filter_settings_menu);
-    Evas_Object *popup = elm_popup_add(parent);
-    Evas_Object *list = create_settings_popup_genlist(popup, deblocking_filter_settings_menu, len, NULL, NULL);
-    elm_object_content_set(popup, list);
-    evas_object_show(list);
+    Evas_Object *popup = settings_popup_add(deblocking_filter_settings_menu, len, NULL, parent);
     evas_object_show(popup);
 }
 
