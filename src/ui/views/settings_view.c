@@ -188,49 +188,49 @@ settings_get_int(char *key, int default_value)
 }
 
 void
-menu_directories_selected_cb(settings_menu_selected *selected, view_sys* p_view_sys, Evas_Object *parent)
+menu_directories_selected_cb(settings_menu_selected *selected, view_sys* p_view_sys, void *data, Evas_Object *parent)
 {
     int len = (int)sizeof(directory_menu) / (int)sizeof(*directory_menu);
-    Evas_Object *genlist = settings_list_add(directory_menu, len, NULL, p_view_sys, parent);
+    Evas_Object *genlist = settings_list_add(directory_menu, len, NULL, NULL, p_view_sys, parent);
     elm_naviframe_item_push(p_view_sys->nav, NULL, NULL, NULL, genlist, NULL);
     evas_object_show(genlist);
 }
 
 void
-menu_hwacceleration_selected_cb(settings_menu_selected *selected, view_sys* p_view_sys, Evas_Object *parent)
+menu_hwacceleration_selected_cb(settings_menu_selected *selected, view_sys* p_view_sys, void *data, Evas_Object *parent)
 {
     int value = settings_get_int("HWACCELERATION", HWACCELERATION_AUTOMATIC);
     int len = (int)sizeof(hardware_acceleration_menu) / (int)sizeof(*hardware_acceleration_menu);
-    Evas_Object *popup = settings_popup_add(hardware_acceleration_menu, len, settings_toggle_switch, p_view_sys, parent);
+    Evas_Object *popup = settings_popup_add(hardware_acceleration_menu, len, settings_toggle_switch, NULL, p_view_sys, parent);
     settings_toggle_set_one_by_id(hardware_acceleration_menu, len, value, true, true);
     evas_object_show(popup);
 }
 
 void
-menu_subsenc_selected_cb(settings_menu_selected *selected, view_sys* p_view_sys, Evas_Object *parent)
+menu_subsenc_selected_cb(settings_menu_selected *selected, view_sys* p_view_sys, void *data, Evas_Object *parent)
 {
     int value = settings_get_int("SUBENC", 0); // WARNING: we store the index, instead of the ID
     int len = (int)sizeof(subtitles_text_encoding_menu) / (int)sizeof(*subtitles_text_encoding_menu);
-    Evas_Object *popup = settings_popup_add(subtitles_text_encoding_menu, len, settings_toggle_switch, p_view_sys, parent);
+    Evas_Object *popup = settings_popup_add(subtitles_text_encoding_menu, len, settings_toggle_switch, NULL, p_view_sys, parent);
     settings_toggle_set_one_by_index(subtitles_text_encoding_menu, len, value, true, true);
     evas_object_show(popup);
 }
 
 void
-menu_vorientation_selected_cb(settings_menu_selected *selected, view_sys* p_view_sys, Evas_Object *parent)
+menu_vorientation_selected_cb(settings_menu_selected *selected, view_sys* p_view_sys, void *data, Evas_Object *parent)
 {
     int value = settings_get_int("ORIENTATION", ORIENTATION_AUTOMATIC);
     int len = (int)sizeof(video_orientation_menu) / (int)sizeof(*video_orientation_menu);
-    Evas_Object *popup = settings_popup_add(video_orientation_menu, len, settings_toggle_switch, p_view_sys, parent);
+    Evas_Object *popup = settings_popup_add(video_orientation_menu, len, settings_toggle_switch, NULL, p_view_sys, parent);
     settings_toggle_set_one_by_id(video_orientation_menu, len, value, true, true);
     evas_object_show(popup);
 }
 
 void
-menu_performance_selected_cb(settings_menu_selected *selected, view_sys* p_view_sys, Evas_Object *parent)
+menu_performance_selected_cb(settings_menu_selected *selected, view_sys* p_view_sys, void *data, Evas_Object *parent)
 {
     int len = (int)sizeof(performance_menu) / (int)sizeof(*performance_menu);
-    Evas_Object *popup = settings_popup_add(performance_menu, len, settings_toggle_switch, p_view_sys, parent);
+    Evas_Object *popup = settings_popup_add(performance_menu, len, settings_toggle_switch, NULL, p_view_sys, parent);
 
     bool frameskip = (bool)settings_get_int("FRAME_SKIP", 0);
     bool stretch = (bool)settings_get_int("AUDIO_STRETCH", 0);
@@ -242,17 +242,17 @@ menu_performance_selected_cb(settings_menu_selected *selected, view_sys* p_view_
 }
 
 void
-menu_deblocking_selected_cb(settings_menu_selected *selected, view_sys* p_view_sys, Evas_Object *parent)
+menu_deblocking_selected_cb(settings_menu_selected *selected, view_sys* p_view_sys, void *data, Evas_Object *parent)
 {
     int value = settings_get_int("DEBLOCKING", DEBLOCKING_AUTOMATIC);
     int len = (int)sizeof(deblocking_filter_settings_menu) / (int)sizeof(*deblocking_filter_settings_menu);
-    Evas_Object *popup = settings_popup_add(deblocking_filter_settings_menu, len, settings_toggle_switch, p_view_sys, parent);
+    Evas_Object *popup = settings_popup_add(deblocking_filter_settings_menu, len, settings_toggle_switch, NULL, p_view_sys, parent);
     settings_toggle_set_one_by_id(deblocking_filter_settings_menu, len, value, true, true);
     evas_object_show(popup);
 }
 
 void
-settings_toggle_switch(settings_menu_selected *selected, view_sys* p_view_sys, Evas_Object *parent)
+settings_toggle_switch(settings_menu_selected *selected, view_sys* p_view_sys, void *data, Evas_Object *parent)
 {
     settings_toggle_set_one_by_index(selected->menu, selected->menu_len, selected->index, true, true);
     evas_object_del(parent);
@@ -345,10 +345,10 @@ gl_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
     Settings_menu_callback item_cb = sd->selected.menu[sd->selected.index].cb;
 
     if (item_cb != NULL)
-        item_cb(&sd->selected, sd->p_view_sys, sd->parent);
+        item_cb(&sd->selected, sd->p_view_sys, sd->data, sd->parent);
 
     if (sd->global_cb != NULL)
-        sd->global_cb(&sd->selected, sd->p_view_sys, sd->parent);
+        sd->global_cb(&sd->selected, sd->p_view_sys, sd->data, sd->parent);
 }
 
 static void
@@ -361,7 +361,7 @@ gl_contracted_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
 }
 
 Evas_Object *
-settings_list_add(settings_item *menu, int len, Settings_menu_callback global_menu_cb, view_sys* p_view_sys, Evas_Object *parent)
+settings_list_add(settings_item *menu, int len, Settings_menu_callback global_menu_cb, void *data, view_sys* p_view_sys, Evas_Object *parent)
 {
     Evas_Object *genlist;
     Elm_Object_Item *it, *hit = NULL;
@@ -409,6 +409,7 @@ settings_list_add(settings_item *menu, int len, Settings_menu_callback global_me
         sd->selected.menu = menu;
         sd->selected.menu_len = len;
         sd->global_cb = global_menu_cb;
+        sd->data = data;
 
         /* Set and append headers items */
         if (menu[index].type == SETTINGS_TYPE_CATEGORY)
@@ -462,7 +463,7 @@ popup_block_cb(void *data, Evas_Object *obj, void *event_info)
 }
 
 Evas_Object *
-settings_popup_add(settings_item *menu, int menu_len, Settings_menu_callback global_menu_cb, view_sys* p_view_sys, Evas_Object *parent)
+settings_popup_add(settings_item *menu, int menu_len, Settings_menu_callback global_menu_cb, void *data, view_sys* p_view_sys, Evas_Object *parent)
 {
     Evas_Object *popup = elm_popup_add(parent);
     Evas_Object *box = elm_box_add(popup);
@@ -479,7 +480,7 @@ settings_popup_add(settings_item *menu, int menu_len, Settings_menu_callback glo
         evas_object_size_hint_max_set(box, EVAS_HINT_FILL, 500);
     }
 
-    genlist = settings_list_add(menu, menu_len, global_menu_cb, p_view_sys, popup);
+    genlist = settings_list_add(menu, menu_len, global_menu_cb, data, p_view_sys, popup);
 
     elm_box_pack_end(box, genlist);
 
@@ -508,7 +509,7 @@ create_setting_view(interface *intf, Evas_Object *parent)
     view->pf_event = view_callback;
 
     int len = (int)sizeof(settings_menu) / (int)sizeof(*settings_menu);
-    view->view = settings_list_add(settings_menu, len, NULL, view->p_view_sys, view->p_view_sys->nav);
+    view->view = settings_list_add(settings_menu, len, NULL, NULL, view->p_view_sys, view->p_view_sys->nav);
     evas_object_show(view->view);
 
     return view;
