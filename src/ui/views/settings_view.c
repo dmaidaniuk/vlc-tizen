@@ -313,7 +313,7 @@ gl_contracted_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
     elm_genlist_item_subitems_clear(it);
 }
 
-static Evas_Object *
+Evas_Object *
 settings_list_add(settings_item *menu, int len, Settings_menu_callback global_menu_cb, Evas_Object *parent)
 {
     Evas_Object *genlist;
@@ -413,7 +413,7 @@ popup_block_cb(void *data, Evas_Object *obj, void *event_info)
     evas_object_del(parent);
 }
 
-static Evas_Object *
+Evas_Object *
 settings_popup_add(settings_item *menu, int menu_len, Settings_menu_callback global_menu_cb, Evas_Object *parent)
 {
     Evas_Object *popup = elm_popup_add(parent);
