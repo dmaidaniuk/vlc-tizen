@@ -170,6 +170,45 @@ settings_item deblocking_filter_settings_menu[] =
 
 };
 
+void
+settings_toggle_set_all(settings_item *menu, int menu_len, bool value)
+{
+    for (int i = 0; i < menu_len; i++)
+    {
+        menu[i].toggled = value;
+    }
+}
+
+void
+settings_toggle_set_one_by_index(settings_item *menu, int menu_len, int index, bool value, bool toggle_others)
+{
+    if (toggle_others) {
+        for (int i = 0; i < menu_len; i++)
+        {
+            menu[i].toggled = !value;
+        }
+    }
+    menu[index].toggled = value;
+}
+
+void
+settings_toggle_set_one_by_id(settings_item *menu, int menu_len, int id, bool value, bool toggle_others)
+{
+    for (int i = 0; i < menu_len; i++)
+    {
+        if (menu[i].id == id)
+        {
+            menu[i].toggled = value;
+            if (!toggle_others)
+                break;
+        }
+        else if (toggle_others)
+        {
+            menu[i].toggled = !value;
+        }
+    }
+}
+
 static void
 menu_directories_selected_cb(int id, int index, settings_item *menu, int menu_len, Evas_Object *parent)
 {
