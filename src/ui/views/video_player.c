@@ -214,6 +214,21 @@ video_player_start(view_sys *p_view_sys, const char* file_path)
     if (!p_mi)
         return false;
 
+    p_sys->p_ps = p_ps;
+    playback_service_callbacks cbs = {
+        .pf_on_new_len = ps_on_new_len_cb,
+        .pf_on_new_time = ps_on_new_time_cb,
+        .pf_on_stopped = ps_on_stop_cb,
+        .p_user_data = p_sys,
+    };
+
+    p_sys->p_ps_cbs_id = playback_service_register_callbacks(p_sys->p_ps, &cbs);
+    if (!p_sys->p_ps_cbs_id)
+    {
+        free(p_mi);
+        return false;
+    }
+
     LOGE("playback_service_start: %s", p_mi->psz_path);
     playback_service_set_context(p_view_sys->p_ps, PLAYLIST_CONTEXT_VIDEO);
 
@@ -233,6 +248,7 @@ ps_on_stop_cb(playback_service *p_ps, void *p_user_data, media_item *p_mi)
 static void
 video_player_stop(view_sys *p_sys)
 {
+    playback_service_unregister_callbacks(p_sys->p_ps, p_sys->p_ps_cbs_id);
     playback_service_list_clear(p_sys->p_ps);
     playback_service_stop(p_sys->p_ps);
 }
@@ -247,21 +263,6 @@ create_video_player(interface *intf, playback_service *p_ps, Evas_Object *parent
         return NULL;
 
     p_sys->intf = intf;
-
-    p_sys->p_ps = p_ps;
-    playback_service_callbacks cbs = {
-        .pf_on_new_len = ps_on_new_len_cb,
-        .pf_on_new_time = ps_on_new_time_cb,
-        .pf_on_stopped = ps_on_stop_cb,
-        .p_user_data = p_sys,
-    };
-
-    p_sys->p_ps_cbs_id = playback_service_register_callbacks(p_sys->p_ps, &cbs);
-    if (!p_sys->p_ps_cbs_id)
-    {
-        free(p_sys);
-        return NULL;
-    }
 
     /* Create the layout */
     Evas_Object *layout = p_sys->layout = elm_layout_add(parent);
