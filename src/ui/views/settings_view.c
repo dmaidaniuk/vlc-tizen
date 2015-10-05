@@ -139,46 +139,46 @@ settings_item deblocking_filter_settings_menu[] =
 };
 
 void
-settings_toggle_set_all(settings_item *menu, int menu_len, bool value)
+settings_toggle_set_all(settings_menu_selected *selected, bool value)
 {
-    for (int i = 0; i < menu_len; i++)
+    for (int i = 0; i < selected->menu_len; i++)
     {
-        menu[i].toggled = value;
+        selected->menu[i].toggled = value;
     }
 }
 
 void
-settings_toggle_set_one_by_index(settings_item *menu, int menu_len, int index, bool value, bool toggle_others)
+settings_toggle_set_one_by_index(settings_menu_selected *selected, int index, bool value, bool toggle_others)
 {
     if (toggle_others) {
-        for (int i = 0; i < menu_len; i++)
+        for (int i = 0; i < selected->menu_len; i++)
         {
-            menu[i].toggled = !value;
+            selected->menu[i].toggled = !value;
         }
     }
-    menu[index].toggled = value;
+    selected->menu[index].toggled = value;
 }
 
 void
-settings_toggle_set_one_by_id(settings_item *menu, int menu_len, int id, bool value, bool toggle_others)
+settings_toggle_set_one_by_id(settings_menu_selected *selected, int id, bool value, bool toggle_others)
 {
-    for (int i = 0; i < menu_len; i++)
+    for (int i = 0; i < selected->menu_len; i++)
     {
-        if (menu[i].id == id)
+        if (selected->menu[i].id == id)
         {
-            menu[i].toggled = value;
+            selected->menu[i].toggled = value;
             if (!toggle_others)
                 break;
         }
         else if (toggle_others)
         {
-            menu[i].toggled = !value;
+            selected->menu[i].toggled = !value;
         }
     }
 }
 
 void
-menu_directories_selected_cb(int id, int index, settings_item *menu, int menu_len, view_sys* p_view_sys, Evas_Object *parent)
+menu_directories_selected_cb(settings_menu_selected *selected, view_sys* p_view_sys, Evas_Object *parent)
 {
     int len = (int)sizeof(directory_menu) / (int)sizeof(*directory_menu);
     Evas_Object *genlist = settings_list_add(directory_menu, len, NULL, p_view_sys, parent);
@@ -187,7 +187,7 @@ menu_directories_selected_cb(int id, int index, settings_item *menu, int menu_le
 }
 
 void
-menu_hwacceleration_selected_cb(int id, int index, settings_item *menu, int menu_len, view_sys* p_view_sys, Evas_Object *parent)
+menu_hwacceleration_selected_cb(settings_menu_selected *selected, view_sys* p_view_sys, Evas_Object *parent)
 {
     int len = (int)sizeof(hardware_acceleration_menu) / (int)sizeof(*hardware_acceleration_menu);
     Evas_Object *popup = settings_popup_add(hardware_acceleration_menu, len, settings_toggle_switch, p_view_sys, parent);
@@ -195,7 +195,7 @@ menu_hwacceleration_selected_cb(int id, int index, settings_item *menu, int menu
 }
 
 void
-menu_subsenc_selected_cb(int id, int index, settings_item *menu, int menu_len, view_sys* p_view_sys, Evas_Object *parent)
+menu_subsenc_selected_cb(settings_menu_selected *selected, view_sys* p_view_sys, Evas_Object *parent)
 {
     int len = (int)sizeof(subtitles_text_encoding_menu) / (int)sizeof(*subtitles_text_encoding_menu);
     Evas_Object *popup = settings_popup_add(subtitles_text_encoding_menu, len, settings_toggle_switch, p_view_sys, parent);
@@ -203,7 +203,7 @@ menu_subsenc_selected_cb(int id, int index, settings_item *menu, int menu_len, v
 }
 
 void
-menu_vorientation_selected_cb(int id, int index, settings_item *menu, int menu_len, view_sys* p_view_sys, Evas_Object *parent)
+menu_vorientation_selected_cb(settings_menu_selected *selected, view_sys* p_view_sys, Evas_Object *parent)
 {
     int len = (int)sizeof(video_orientation_menu) / (int)sizeof(*video_orientation_menu);
     Evas_Object *popup = settings_popup_add(video_orientation_menu, len, settings_toggle_switch, p_view_sys, parent);
@@ -211,7 +211,7 @@ menu_vorientation_selected_cb(int id, int index, settings_item *menu, int menu_l
 }
 
 void
-menu_performance_selected_cb(int id, int index, settings_item *menu, int menu_len, view_sys* p_view_sys, Evas_Object *parent)
+menu_performance_selected_cb(settings_menu_selected *selected, view_sys* p_view_sys, Evas_Object *parent)
 {
     int len = (int)sizeof(performance_menu) / (int)sizeof(*performance_menu);
     Evas_Object *popup = settings_popup_add(performance_menu, len, settings_toggle_switch, p_view_sys, parent);
@@ -219,7 +219,7 @@ menu_performance_selected_cb(int id, int index, settings_item *menu, int menu_le
 }
 
 void
-menu_deblocking_selected_cb(int id, int index, settings_item *menu, int menu_len, view_sys* p_view_sys, Evas_Object *parent)
+menu_deblocking_selected_cb(settings_menu_selected *selected, view_sys* p_view_sys, Evas_Object *parent)
 {
     int len = (int)sizeof(deblocking_filter_settings_menu) / (int)sizeof(*deblocking_filter_settings_menu);
     Evas_Object *popup = settings_popup_add(deblocking_filter_settings_menu, len, settings_toggle_switch, p_view_sys, parent);
@@ -227,9 +227,9 @@ menu_deblocking_selected_cb(int id, int index, settings_item *menu, int menu_len
 }
 
 void
-settings_toggle_switch(int id, int index, settings_item *menu, int menu_len, view_sys* p_view_sys, Evas_Object *parent)
+settings_toggle_switch(settings_menu_selected *selected, view_sys* p_view_sys, Evas_Object *parent)
 {
-    settings_toggle_set_one_by_index(menu, menu_len, index, true, true);
+    settings_toggle_set_one_by_index(selected, selected->index, true, true);
     evas_object_del(parent);
 }
 
@@ -259,13 +259,13 @@ gl_text_get_cb(void *data, Evas_Object *obj, const char *part)
     /* Then put this string as the genlist headers item label */
     if (itc->item_style && !strcmp(itc->item_style, "groupindex")) {
         if (part && !strcmp(part, "elm.text.main")) {
-            return strdup(sd->menu[sd->index].title);
+            return strdup(sd->selected.menu[sd->selected.index].title);
         }
     }
     /* Or put this string as the genlist setting item label */
     else if (itc->item_style && !strcmp(itc->item_style, "1line")) {
         if (part && !strcmp(part, "elm.text.main.left")) {
-            return strdup(sd->menu[sd->index].title);
+            return strdup(sd->selected.menu[sd->selected.index].title);
         }
     }
     return NULL;
@@ -289,19 +289,19 @@ gl_content_get_cb(void *data, Evas_Object *obj, const char *part)
     /* Check the item class style and add the object needed in the item class*/
     /* Here, puts the icon in the item class to add it to genlist items */
     if (itc->item_style && !strcmp(itc->item_style, "1line")) {
-        if (part && !strcmp(part, "elm.icon.1") && sd->menu[sd->index].icon != NULL) {
+        if (part && !strcmp(part, "elm.icon.1") && sd->selected.menu[sd->selected.index].icon != NULL) {
             content = elm_layout_add(obj);
             elm_layout_theme_set(content, "layout", "list/B/type.3", "default");
-            Evas_Object *icon = create_icon(content, sd->menu[sd->index].icon);
+            Evas_Object *icon = create_icon(content, sd->selected.menu[sd->selected.index].icon);
             elm_layout_content_set(content, "elm.swallow.content", icon);
         }
-        if (sd->menu[sd->index].type == SETTINGS_TYPE_TOGGLE)
+        if (sd->selected.menu[sd->selected.index].type == SETTINGS_TYPE_TOGGLE)
         {
             if (part && !strcmp(part, "elm.icon.right")) {
                 Evas_Object *icon;
                 content = elm_layout_add(obj);
                 elm_layout_theme_set(content, "layout", "list/A/right.icon", "default");
-                if (sd->menu[sd->index].toggled)
+                if (sd->selected.menu[sd->selected.index].toggled)
                     icon = create_icon(sd->parent, "toggle_on.png");
                 else
                     icon = create_icon(sd->parent, "toggle_off.png");
@@ -317,13 +317,13 @@ static void
 gl_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
     settings_internal_data *sd = data;
-    Settings_menu_callback item_cb = sd->menu[sd->index].cb;
+    Settings_menu_callback item_cb = sd->selected.menu[sd->selected.index].cb;
 
     if (item_cb != NULL)
-        item_cb(sd->id, sd->index, sd->menu, sd->menu_len, sd->p_view_sys, sd->parent);
+        item_cb(&sd->selected, sd->p_view_sys, sd->parent);
 
     if (sd->global_cb != NULL)
-        sd->global_cb(sd->id, sd->index, sd->menu, sd->menu_len, sd->p_view_sys, sd->parent);
+        sd->global_cb(&sd->selected, sd->p_view_sys, sd->parent);
 }
 
 static void
@@ -379,10 +379,10 @@ settings_list_add(settings_item *menu, int len, Settings_menu_callback global_me
 
         /* Put the index in the settings_internal_data struct for callbacks */
         sd->p_view_sys = p_view_sys;
-        sd->index = index;
-        sd->id = menu[index].id;
-        sd->menu = menu;
-        sd->menu_len = len;
+        sd->selected.index = index;
+        sd->selected.id = menu[index].id;
+        sd->selected.menu = menu;
+        sd->selected.menu_len = len;
         sd->global_cb = global_menu_cb;
 
         /* Set and append headers items */
@@ -403,7 +403,7 @@ settings_list_add(settings_item *menu, int len, Settings_menu_callback global_me
         else if (menu[index].type == SETTINGS_TYPE_ITEM || menu[index].type == SETTINGS_TYPE_TOGGLE)
         {
             /* Set and append settings items */
-            sd->index = index;
+            sd->selected.index = index;
             it = elm_genlist_item_append(genlist,
                     itc,                           /* genlist item class               */
                     sd,                            /* genlist item class user data     */
