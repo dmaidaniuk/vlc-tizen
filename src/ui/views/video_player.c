@@ -47,7 +47,12 @@ struct view_sys
     Evas_Object *p_evas_video;
     Evas_Object *layout;
     Evas_Object *play_pause_button, *progress_slider;
+    Evas_Object *backward_button, *forward_button;
+    Evas_Object *lock_button, *more_button;
+
 };
+
+static void video_player_stop(view_sys *p_sys);
 
 static void
 _on_slider_changed_cb(void *data, Evas_Object *obj, void *event_info)
@@ -204,17 +209,41 @@ layout_touch_up_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED
     LOGF("layout_touch_up_cb");
 }
 
-bool
-video_player_start(view_sys *p_view_sys, const char* file_path)
+static void
+ps_on_stop_cb(playback_service *p_ps, void *p_user_data, media_item *p_mi)
 {
-    elm_object_part_text_set(p_view_sys->layout, "duration", "--:--:--");
-    elm_object_part_text_set(p_view_sys->layout, "time", "--:--:--");
+    view_sys *p_view_sys = p_user_data;
+    intf_show_previous_view(p_view_sys->intf);
+}
+
+bool
+video_player_start(view_sys *p_sys, const char* file_path)
+{
+    elm_object_part_text_set(p_sys->layout, "duration", "--:--:--");
+    elm_object_part_text_set(p_sys->layout, "time", "--:--:--");
 
     media_item *p_mi = media_item_create(file_path, MEDIA_ITEM_TYPE_VIDEO);
     if (!p_mi)
         return false;
 
-    p_sys->p_ps = p_ps;
+    evas_object_smart_callback_add(p_sys->p_evas_video, "frame_decode", evas_video_decode_cb, p_sys);
+    evas_object_event_callback_add(p_sys->p_evas_video, EVAS_CALLBACK_RESIZE, evas_video_resize_cb, p_sys);
+
+    /* layout callbacks */
+    evas_object_event_callback_add(p_sys->layout, EVAS_CALLBACK_MOUSE_UP, layout_touch_up_cb, p_sys);
+    evas_object_event_callback_add(p_sys->layout, EVAS_CALLBACK_MULTI_UP, layout_touch_up_cb, p_sys);
+
+    /* click callbacks */
+    evas_object_smart_callback_add(p_sys->play_pause_button, "clicked", clicked_play_pause, p_sys);
+    evas_object_smart_callback_add(p_sys->backward_button, "clicked", clicked_backward, p_sys);
+    evas_object_smart_callback_add(p_sys->forward_button, "clicked", clicked_forward, p_sys);
+    evas_object_smart_callback_add(p_sys->lock_button, "clicked", clicked_lock, p_sys);
+    evas_object_smart_callback_add(p_sys->more_button, "clicked", clicked_more, p_sys);
+
+    /*slider callbacks */
+    evas_object_smart_callback_add(p_sys->progress_slider, "slider,drag,stop", _on_slider_changed_cb, p_sys);
+    evas_object_smart_callback_add(p_sys->progress_slider, "changed", _on_slider_changed_cb, p_sys);
+
     playback_service_callbacks cbs = {
         .pf_on_new_len = ps_on_new_len_cb,
         .pf_on_new_time = ps_on_new_time_cb,
@@ -226,31 +255,46 @@ video_player_start(view_sys *p_view_sys, const char* file_path)
     if (!p_sys->p_ps_cbs_id)
     {
         free(p_mi);
+        video_player_stop(p_sys);
         return false;
     }
 
     LOGE("playback_service_start: %s", p_mi->psz_path);
-    playback_service_set_context(p_view_sys->p_ps, PLAYLIST_CONTEXT_VIDEO);
+    playback_service_set_context(p_sys->p_ps, PLAYLIST_CONTEXT_VIDEO);
 
-    playback_service_list_append(p_view_sys->p_ps, p_mi);
-    playback_service_start(p_view_sys->p_ps, 0);
-    elm_object_signal_emit(p_view_sys->layout, "hub_background,show", "");
+    playback_service_list_append(p_sys->p_ps, p_mi);
+    playback_service_start(p_sys->p_ps, 0);
+    elm_object_signal_emit(p_sys->layout, "hub_background,show", "");
     return true;
-}
-
-static void
-ps_on_stop_cb(playback_service *p_ps, void *p_user_data, media_item *p_mi)
-{
-    view_sys *p_view_sys = p_user_data;
-    intf_show_previous_view(p_view_sys->intf);
 }
 
 static void
 video_player_stop(view_sys *p_sys)
 {
-    playback_service_unregister_callbacks(p_sys->p_ps, p_sys->p_ps_cbs_id);
-    playback_service_list_clear(p_sys->p_ps);
-    playback_service_stop(p_sys->p_ps);
+    evas_object_smart_callback_del(p_sys->p_evas_video, "frame_decode", evas_video_decode_cb);
+    evas_object_event_callback_del(p_sys->p_evas_video, EVAS_CALLBACK_RESIZE, evas_video_resize_cb);
+
+    /* layout callbacks */
+    evas_object_event_callback_del(p_sys->layout, EVAS_CALLBACK_MOUSE_UP, layout_touch_up_cb);
+    evas_object_event_callback_del(p_sys->layout, EVAS_CALLBACK_MULTI_UP, layout_touch_up_cb);
+
+    /* click callbacks */
+    evas_object_smart_callback_del(p_sys->play_pause_button, "clicked", clicked_play_pause);
+    evas_object_smart_callback_del(p_sys->backward_button, "clicked", clicked_backward);
+    evas_object_smart_callback_del(p_sys->forward_button, "clicked", clicked_forward);
+    evas_object_smart_callback_del(p_sys->lock_button, "clicked", clicked_lock);
+    evas_object_smart_callback_del(p_sys->more_button, "clicked", clicked_more);
+
+    /*slider callbacks */
+    evas_object_smart_callback_del(p_sys->progress_slider, "slider,drag,stop", _on_slider_changed_cb);
+    evas_object_smart_callback_del(p_sys->progress_slider, "changed", _on_slider_changed_cb);
+
+    if (p_sys->p_ps_cbs_id)
+    {
+        playback_service_unregister_callbacks(p_sys->p_ps, p_sys->p_ps_cbs_id);
+        playback_service_list_clear(p_sys->p_ps);
+        playback_service_stop(p_sys->p_ps);
+    }
 }
 
 interface_view*
@@ -263,21 +307,18 @@ create_video_player(interface *intf, playback_service *p_ps, Evas_Object *parent
         return NULL;
 
     p_sys->intf = intf;
+    p_sys->p_ps = p_ps;
 
     /* Create the layout */
     Evas_Object *layout = p_sys->layout = elm_layout_add(parent);
     elm_layout_file_set(layout, VIDEOPLAYEREDJ, "media_player_renderer");
     evas_object_size_hint_weight_set(layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
     evas_object_size_hint_align_set(layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
-    evas_object_event_callback_add(layout, EVAS_CALLBACK_MOUSE_UP, layout_touch_up_cb, p_sys);
-    evas_object_event_callback_add(layout, EVAS_CALLBACK_MULTI_UP, layout_touch_up_cb, p_sys);
     evas_object_show(layout);
 
     /* Create the evas */
     Evas *evas = evas_object_evas_get(layout);
     p_sys->p_evas_video = playback_service_set_evas_video(p_sys->p_ps, evas);
-    evas_object_smart_callback_add(p_sys->p_evas_video, "frame_decode", evas_video_decode_cb, p_sys);
-    evas_object_event_callback_add(p_sys->p_evas_video, EVAS_CALLBACK_RESIZE, evas_video_resize_cb, p_sys);
 
     elm_object_part_content_set(layout, "swallow.visualization", p_sys->p_evas_video);
     evas_object_show(p_sys->p_evas_video);
@@ -287,41 +328,31 @@ create_video_player(interface *intf, playback_service *p_ps, Evas_Object *parent
     elm_image_file_set(p_sys->play_pause_button, ICON_DIR"ic_pause_circle_normal_o.png", NULL);
     //attach to edje layout
     elm_object_part_content_set(layout, "swallow.play_button", p_sys->play_pause_button);
-    //click callback
-    evas_object_smart_callback_add(p_sys->play_pause_button, "clicked", clicked_play_pause, p_sys);
 
     //create backward button
-    Evas_Object *backward_button = elm_image_add(layout);
-    elm_image_file_set(backward_button, ICON_DIR"ic_backward_circle_normal_o.png", NULL);
-    elm_object_part_content_set(layout, "swallow.backward_button", backward_button);
-    evas_object_smart_callback_add(backward_button, "clicked", clicked_backward, p_sys);
+    p_sys->backward_button = elm_image_add(layout);
+    elm_image_file_set(p_sys->backward_button, ICON_DIR"ic_backward_circle_normal_o.png", NULL);
+    elm_object_part_content_set(layout, "swallow.backward_button", p_sys->backward_button);
 
     //create forward button
-    Evas_Object *forward_button = elm_image_add(layout);
-    elm_image_file_set(forward_button, ICON_DIR"ic_forward_circle_normal_o.png", NULL);
-    elm_object_part_content_set(layout, "swallow.forward_button", forward_button);
-    evas_object_smart_callback_add(forward_button, "clicked", clicked_forward, p_sys);
+    p_sys->forward_button = elm_image_add(layout);
+    elm_image_file_set(p_sys->forward_button, ICON_DIR"ic_forward_circle_normal_o.png", NULL);
+    elm_object_part_content_set(layout, "swallow.forward_button", p_sys->forward_button);
 
     //create lock button
-    Evas_Object *lock_button = elm_image_add(layout);
-    elm_image_file_set(lock_button, ICON_DIR"ic_lock_circle_normal_o.png", NULL);
-    elm_object_part_content_set(layout, "swallow.lock_button", lock_button);
-    evas_object_smart_callback_add(lock_button, "clicked", clicked_lock, p_sys);
+    p_sys->lock_button = elm_image_add(layout);
+    elm_image_file_set(p_sys->lock_button, ICON_DIR"ic_lock_circle_normal_o.png", NULL);
+    elm_object_part_content_set(layout, "swallow.lock_button", p_sys->lock_button);
 
     //create more button
-    Evas_Object *more_button = elm_image_add(layout);
-    elm_image_file_set(more_button, ICON_DIR"ic_more_circle_normal_o.png", NULL);
-    elm_object_part_content_set(layout, "swallow.more_button", more_button);
-    evas_object_smart_callback_add(more_button, "clicked", clicked_more, p_sys);
+    p_sys->more_button = elm_image_add(layout);
+    elm_image_file_set(p_sys->more_button, ICON_DIR"ic_more_circle_normal_o.png", NULL);
+    elm_object_part_content_set(layout, "swallow.more_button", p_sys->more_button);
 
     //progress slider
     p_sys->progress_slider = elm_slider_add(layout);
     elm_slider_horizontal_set(p_sys->progress_slider, EINA_TRUE);
     elm_object_part_content_set(layout, "swallow.progress", p_sys->progress_slider);
-
-    //slider callbacks
-    evas_object_smart_callback_add(p_sys->progress_slider, "slider,drag,stop", _on_slider_changed_cb, p_sys);
-    evas_object_smart_callback_add(p_sys->progress_slider, "changed", _on_slider_changed_cb, p_sys);
 
     view->view = layout;
 
@@ -332,8 +363,6 @@ create_video_player(interface *intf, playback_service *p_ps, Evas_Object *parent
 void
 destroy_video_player(interface_view *view)
 {
-    evas_object_event_callback_del(view->p_view_sys->p_evas_video, EVAS_CALLBACK_RESIZE, evas_video_resize_cb);
-    evas_object_smart_callback_del(view->p_view_sys->p_evas_video, "frame_decode", evas_video_decode_cb);
     free(view->p_view_sys);
     free(view);
 }
