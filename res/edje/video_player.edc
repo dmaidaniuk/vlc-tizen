@@ -105,6 +105,7 @@ collections
                 type: TEXT;
                 clip_to: "hub_background";
                 description{
+                    fixed: 1 1;
 					min: 50 50;
 					state: "default" 0.0;
 					color: 255 136 0 255; /* orange */
@@ -127,6 +128,7 @@ collections
                 type: TEXT;
                 clip_to: "hub_background";
                 description {
+                    fixed: 1 1;
 					min: 50 50;
 					state: "default" 0.0;
 					color: 255 136 0 255; /* orange */
@@ -149,6 +151,7 @@ collections
                 type: SWALLOW;
                 clip_to: "hub_background";
                 description {
+                    fixed: 1 1;
                     state: "pause" 0.0;
                     rel1 {
                        relative: 0.0 0.0;
