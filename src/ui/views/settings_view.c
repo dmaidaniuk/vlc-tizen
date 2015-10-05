@@ -246,7 +246,14 @@ static char *
 gl_text_get_cb(void *data, Evas_Object *obj, const char *part)
 {
     setting_data *sd = data;
+
+    if (!sd || !sd->item || !part)
+        return NULL;
+
     const Elm_Genlist_Item_Class *itc = elm_genlist_item_item_class_get(sd->item);
+
+    if (!itc)
+        return NULL;
 
     /* Check the item class style and put the current folder or file name as a string */
     /* Then put this string as the genlist headers item label */
@@ -268,7 +275,15 @@ static Evas_Object*
 gl_content_get_cb(void *data, Evas_Object *obj, const char *part)
 {
     setting_data *sd = data;
+
+    if (!sd || !sd->item || !part)
+        return NULL;
+
     const Elm_Genlist_Item_Class *itc = elm_genlist_item_item_class_get(sd->item);
+
+    if (!itc)
+        return NULL;
+
     Evas_Object *content = NULL;
 
     /* Check the item class style and add the object needed in the item class*/
