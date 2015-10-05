@@ -67,12 +67,12 @@ settings_item hardware_acceleration_menu[] =
 
 settings_item video_orientation_menu[] =
 {
-        {42, "Automatic (sensor)", NULL, SETTINGS_TYPE_TOGGLE},
-        {42, "Locked at start", NULL, SETTINGS_TYPE_TOGGLE},
-        {42, "Landscape", NULL, SETTINGS_TYPE_TOGGLE},
-        {42, "Portrait", NULL, SETTINGS_TYPE_TOGGLE},
-        {42, "Reverse landscape", NULL, SETTINGS_TYPE_TOGGLE},
-        {42, "Reverse portrait", NULL, SETTINGS_TYPE_TOGGLE}
+        {ORIENTATION_AUTOMATIC, "Automatic (sensor)", NULL, SETTINGS_TYPE_TOGGLE},
+        {ORIENTATION_LOCKED, "Locked at start", NULL, SETTINGS_TYPE_TOGGLE},
+        {ORIENTATION_LANDSCAPE, "Landscape", NULL, SETTINGS_TYPE_TOGGLE},
+        {ORIENTATION_PORTRAIT, "Portrait", NULL, SETTINGS_TYPE_TOGGLE},
+        {ORIENTATION_R_LANDSCAPE, "Reverse landscape", NULL, SETTINGS_TYPE_TOGGLE},
+        {ORIENTATION_R_PORTRAIT, "Reverse portrait", NULL, SETTINGS_TYPE_TOGGLE}
 };
 
 settings_item subtitles_text_encoding_menu[] =
@@ -219,8 +219,10 @@ menu_subsenc_selected_cb(settings_menu_selected *selected, view_sys* p_view_sys,
 void
 menu_vorientation_selected_cb(settings_menu_selected *selected, view_sys* p_view_sys, Evas_Object *parent)
 {
+    int value = settings_get_int("ORIENTATION", ORIENTATION_AUTOMATIC);
     int len = (int)sizeof(video_orientation_menu) / (int)sizeof(*video_orientation_menu);
     Evas_Object *popup = settings_popup_add(video_orientation_menu, len, settings_toggle_switch, p_view_sys, parent);
+    settings_toggle_set_one_by_id(video_orientation_menu, len, value, true, true);
     evas_object_show(popup);
 }
 
