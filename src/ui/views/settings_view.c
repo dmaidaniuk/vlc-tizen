@@ -209,8 +209,10 @@ menu_hwacceleration_selected_cb(settings_menu_selected *selected, view_sys* p_vi
 void
 menu_subsenc_selected_cb(settings_menu_selected *selected, view_sys* p_view_sys, Evas_Object *parent)
 {
+    int value = settings_get_int("SUBENC", 0); // WARNING: we store the index, instead of the ID
     int len = (int)sizeof(subtitles_text_encoding_menu) / (int)sizeof(*subtitles_text_encoding_menu);
     Evas_Object *popup = settings_popup_add(subtitles_text_encoding_menu, len, settings_toggle_switch, p_view_sys, parent);
+    settings_toggle_set_one_by_index(subtitles_text_encoding_menu, len, value, true, true);
     evas_object_show(popup);
 }
 
