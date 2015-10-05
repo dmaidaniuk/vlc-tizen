@@ -125,81 +125,6 @@ ps_on_new_time_cb(playback_service *p_ps, void *p_user_data, double i_time, doub
 }
 
 static void
-video_resize(view_sys *p_view_sys)
-{
-    Evas_Coord i_win_x, i_win_y, i_win_w, i_win_h;
-    int i_video_w, video_h;
-
-    evas_object_geometry_get(p_view_sys->p_evas_video, &i_win_x, &i_win_y,
-                             &i_win_w, &i_win_h);
-
-    if (i_win_w <= 0 || i_win_h <= 0)
-        return;
-
-    emotion_object_size_get(p_view_sys->p_evas_video, &i_video_w, &video_h);
-    if (i_video_w <= 0 || video_h <= 0)
-        return;
-
-    LOGF("video_resize: win: %dx%d %dx%d, video: %dx%d", i_win_x, i_win_y, i_win_w, i_win_h, i_video_w, video_h);
-
-    if (!p_view_sys->b_fill)
-    {
-        if ((i_win_w <= 0) || (i_win_h <= 0) || (i_video_w <= 0) || (video_h <= 0))
-        {
-            i_win_w = 1;
-            i_win_h = 1;
-        }
-        else
-        {
-            int i_w = 1, i_h = 1;
-            double i_ratio;
-
-            i_ratio = emotion_object_ratio_get(p_view_sys->p_evas_video);
-            if (i_ratio > 0.0)
-                i_video_w = (video_h * i_ratio);
-            else
-                i_ratio = i_video_w / (double)video_h;
-
-            i_w = i_win_w;
-            i_h = ((double)i_win_w + 1.0) / i_ratio;
-            if (i_h > i_win_h)
-            {
-                i_h = i_win_h;
-                i_w = i_win_h * i_ratio;
-                if (i_w > i_win_w)
-                    i_w = i_win_w;
-            }
-            i_win_x += ((i_win_w - i_w) / 2);
-            i_win_y += ((i_win_h - i_h) / 2);
-            i_win_w = i_w;
-            i_win_h = i_h;
-       }
-    }
-
-    LOGF("video_resize: move to: %dx%d %dx%d", i_win_x, i_win_y, i_win_w, i_win_h);
-
-    evas_object_move(p_view_sys->p_evas_video, i_win_x, i_win_y);
-    evas_object_resize(p_view_sys->p_evas_video, i_win_w, i_win_h);
-}
-
-static void
-evas_video_decode_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
-{
-    view_sys *p_view_sys = data;
-    if (!p_view_sys->b_decoded)
-    {
-        p_view_sys->b_decoded = true;
-        video_resize(data);
-    }
-}
-
-static void
-evas_video_resize_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
-{
-    video_resize(data);
-}
-
-static void
 layout_touch_up_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
     view_sys *p_view_sys = data;
@@ -225,9 +150,6 @@ video_player_start(view_sys *p_sys, const char* file_path)
     media_item *p_mi = media_item_create(file_path, MEDIA_ITEM_TYPE_VIDEO);
     if (!p_mi)
         return false;
-
-    evas_object_smart_callback_add(p_sys->p_evas_video, "frame_decode", evas_video_decode_cb, p_sys);
-    evas_object_event_callback_add(p_sys->p_evas_video, EVAS_CALLBACK_RESIZE, evas_video_resize_cb, p_sys);
 
     /* layout callbacks */
     evas_object_event_callback_add(p_sys->layout, EVAS_CALLBACK_MOUSE_UP, layout_touch_up_cb, p_sys);
@@ -265,15 +187,13 @@ video_player_start(view_sys *p_sys, const char* file_path)
     playback_service_list_append(p_sys->p_ps, p_mi);
     playback_service_start(p_sys->p_ps, 0);
     elm_object_signal_emit(p_sys->layout, "hub_background,show", "");
+
     return true;
 }
 
 static void
 video_player_stop(view_sys *p_sys)
 {
-    evas_object_smart_callback_del(p_sys->p_evas_video, "frame_decode", evas_video_decode_cb);
-    evas_object_event_callback_del(p_sys->p_evas_video, EVAS_CALLBACK_RESIZE, evas_video_resize_cb);
-
     /* layout callbacks */
     evas_object_event_callback_del(p_sys->layout, EVAS_CALLBACK_MOUSE_UP, layout_touch_up_cb);
     evas_object_event_callback_del(p_sys->layout, EVAS_CALLBACK_MULTI_UP, layout_touch_up_cb);
@@ -321,6 +241,7 @@ create_video_player(interface *intf, playback_service *p_ps, Evas_Object *parent
     p_sys->p_evas_video = playback_service_set_evas_video(p_sys->p_ps, evas);
 
     elm_object_part_content_set(layout, "swallow.visualization", p_sys->p_evas_video);
+    emotion_object_keep_aspect_set(p_sys->p_evas_video, EMOTION_ASPECT_KEEP_BOTH);
     evas_object_show(p_sys->p_evas_video);
 
     /* create play/pause button */
