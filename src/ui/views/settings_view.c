@@ -139,40 +139,40 @@ settings_item deblocking_filter_settings_menu[] =
 };
 
 void
-settings_toggle_set_all(settings_menu_selected *selected, bool value)
+settings_toggle_set_all(settings_item *menu, int menu_len, bool value)
 {
-    for (int i = 0; i < selected->menu_len; i++)
+    for (int i = 0; i < menu_len; i++)
     {
-        selected->menu[i].toggled = value;
+        menu[i].toggled = value;
     }
 }
 
 void
-settings_toggle_set_one_by_index(settings_menu_selected *selected, int index, bool value, bool toggle_others)
+settings_toggle_set_one_by_index(settings_item *menu, int menu_len, int index, bool value, bool toggle_others)
 {
     if (toggle_others) {
-        for (int i = 0; i < selected->menu_len; i++)
+        for (int i = 0; i < menu_len; i++)
         {
-            selected->menu[i].toggled = !value;
+            menu[i].toggled = !value;
         }
     }
-    selected->menu[index].toggled = value;
+    menu[index].toggled = value;
 }
 
 void
-settings_toggle_set_one_by_id(settings_menu_selected *selected, int id, bool value, bool toggle_others)
+settings_toggle_set_one_by_id(settings_item *menu, int menu_len, int id, bool value, bool toggle_others)
 {
-    for (int i = 0; i < selected->menu_len; i++)
+    for (int i = 0; i < menu_len; i++)
     {
-        if (selected->menu[i].id == id)
+        if (menu[i].id == id)
         {
-            selected->menu[i].toggled = value;
+            menu[i].toggled = value;
             if (!toggle_others)
                 break;
         }
         else if (toggle_others)
         {
-            selected->menu[i].toggled = !value;
+            menu[i].toggled = !value;
         }
     }
 }
@@ -229,7 +229,7 @@ menu_deblocking_selected_cb(settings_menu_selected *selected, view_sys* p_view_s
 void
 settings_toggle_switch(settings_menu_selected *selected, view_sys* p_view_sys, Evas_Object *parent)
 {
-    settings_toggle_set_one_by_index(selected, selected->index, true, true);
+    settings_toggle_set_one_by_index(selected->menu, selected->menu_len, selected->index, true, true);
     evas_object_del(parent);
 }
 
