@@ -177,6 +177,16 @@ settings_toggle_set_one_by_id(settings_item *menu, int menu_len, int id, bool va
     }
 }
 
+int
+settings_get_int(char *key, int default_value)
+{
+    int value;
+    if (preference_get_int(key, &value) != PREFERENCE_ERROR_NONE)
+            value = default_value;
+
+    return value;
+}
+
 void
 menu_directories_selected_cb(settings_menu_selected *selected, view_sys* p_view_sys, Evas_Object *parent)
 {
@@ -189,10 +199,7 @@ menu_directories_selected_cb(settings_menu_selected *selected, view_sys* p_view_
 void
 menu_hwacceleration_selected_cb(settings_menu_selected *selected, view_sys* p_view_sys, Evas_Object *parent)
 {
-    int value;
-    if (preference_get_int("HWACCELERATION", &value) == PREFERENCE_ERROR_NO_KEY)
-        value = HWACCELERATION_AUTOMATIC;
-
+    int value = settings_get_int("HWACCELERATION", HWACCELERATION_AUTOMATIC);
     int len = (int)sizeof(hardware_acceleration_menu) / (int)sizeof(*hardware_acceleration_menu);
     Evas_Object *popup = settings_popup_add(hardware_acceleration_menu, len, settings_toggle_switch, p_view_sys, parent);
     settings_toggle_set_one_by_id(hardware_acceleration_menu, len, value, true, true);
