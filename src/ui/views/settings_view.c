@@ -233,11 +233,11 @@ settings_toggle_switch(int id, int index, settings_item *menu, int menu_len, vie
     evas_object_del(parent);
 }
 
-/* Free the setting_data struct when the list is deleted */
+/* Free the settings_internal_data struct when the list is deleted */
 static void
 gl_del_cb(void *data, Evas_Object *obj EINA_UNUSED)
 {
-    setting_data *sd = data;
+    settings_internal_data *sd = data;
     free(sd);
 }
 
@@ -245,7 +245,7 @@ gl_del_cb(void *data, Evas_Object *obj EINA_UNUSED)
 static char *
 gl_text_get_cb(void *data, Evas_Object *obj, const char *part)
 {
-    setting_data *sd = data;
+    settings_internal_data *sd = data;
 
     if (!sd || !sd->item || !part)
         return NULL;
@@ -274,7 +274,7 @@ gl_text_get_cb(void *data, Evas_Object *obj, const char *part)
 static Evas_Object*
 gl_content_get_cb(void *data, Evas_Object *obj, const char *part)
 {
-    setting_data *sd = data;
+    settings_internal_data *sd = data;
 
     if (!sd || !sd->item || !part)
         return NULL;
@@ -316,7 +316,7 @@ gl_content_get_cb(void *data, Evas_Object *obj, const char *part)
 static void
 gl_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
-    setting_data *sd = data;
+    settings_internal_data *sd = data;
     Settings_menu_callback item_cb = sd->menu[sd->index].cb;
 
     if (item_cb != NULL)
@@ -375,9 +375,9 @@ settings_list_add(settings_item *menu, int len, Settings_menu_callback global_me
 
     /* Stop when the setting list names is all used */
     for (index = 0; index < len; index++) {
-        setting_data *sd = calloc(1, sizeof(*sd));
+        settings_internal_data *sd = calloc(1, sizeof(*sd));
 
-        /* Put the index in the setting_data struct for callbacks */
+        /* Put the index in the settings_internal_data struct for callbacks */
         sd->p_view_sys = p_view_sys;
         sd->index = index;
         sd->id = menu[index].id;
@@ -396,7 +396,7 @@ settings_list_add(settings_item *menu, int len, Settings_menu_callback global_me
                     NULL,                           /* genlist select smart callback    */
                     sd);                            /* genlist smart callback user data */
 
-            /* Put genlist item in the setting_data struct for callbacks */
+            /* Put genlist item in the settings_internal_data struct for callbacks */
             sd->item = hit;
             //elm_object_item_del_cb_set(hit, free_genlist_item_data);
         }
@@ -412,7 +412,7 @@ settings_list_add(settings_item *menu, int len, Settings_menu_callback global_me
                     gl_selected_cb,               /* genlist select smart callback    */
                     sd);                           /* genlist smart callback user data */
 
-            /* Put genlist item in the setting_data struct for callbacks */
+            /* Put genlist item in the settings_internal_data struct for callbacks */
             sd->parent = parent;
             sd->item = it;
             //elm_object_item_del_cb_set(it, free_genlist_item_data);

@@ -61,7 +61,7 @@ typedef struct settings_item
     bool toggled;
 } settings_item;
 
-typedef struct setting_data
+typedef struct settings_internal_data
 {
     int id;
     int index;
@@ -73,7 +73,7 @@ typedef struct setting_data
     Settings_menu_callback global_cb;
 
     view_sys* p_view_sys;
-} setting_data;
+} settings_internal_data;
 
 /* Declarations */
 interface_view*
