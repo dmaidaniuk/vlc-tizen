@@ -267,7 +267,7 @@ gl_content_get_cb(void *data, Evas_Object *obj, const char *part)
     /* Check the item class style and add the object needed in the item class*/
     /* Here, puts the icon in the item class to add it to genlist items */
     if (itc->item_style && !strcmp(itc->item_style, "1line")) {
-        if (part && !strcmp(part, "elm.icon.1")) {
+        if (part && !strcmp(part, "elm.icon.1") && sd->menu[sd->index].icon != NULL) {
             content = elm_layout_add(obj);
             elm_layout_theme_set(content, "layout", "list/B/type.3", "default");
             Evas_Object *icon = create_icon(content, sd->menu[sd->index].icon);
