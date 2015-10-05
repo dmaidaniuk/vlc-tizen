@@ -45,6 +45,7 @@
 /* Types */
 #define SETTINGS_TYPE_CATEGORY 0
 #define SETTINGS_TYPE_ITEM 1
+#define SETTINGS_TYPE_TOGGLE 2
 
 static void
 menu_directories_selected_cb(int id, int index, settings_item *menu, int menu_len, Evas_Object *parent);
@@ -82,7 +83,7 @@ settings_item settings_menu[] =
 settings_item directory_menu[] =
 {
         {42, "Directories", "", SETTINGS_TYPE_CATEGORY},
-        {42, "Internal memory", "toggle_off.png", SETTINGS_TYPE_ITEM},
+        {42, "Internal memory", "toggle_off.png", SETTINGS_TYPE_TOGGLE},
         {42, "Add repository", "call_button_add_call_press.png", SETTINGS_TYPE_ITEM}
 };
 
@@ -303,6 +304,15 @@ gl_content_get_cb(void *data, Evas_Object *obj, const char *part)
             Evas_Object *icon = create_icon(content, settings_menu[sd->index].icon);
             elm_layout_content_set(content, "elm.swallow.content", icon);
         }
+        if (sd->menu[sd->index].type == SETTINGS_TYPE_TOGGLE)
+        {
+            if (part && !strcmp(part, "elm.icon.right")) {
+                content = elm_layout_add(obj);
+                elm_layout_theme_set(content, "layout", "list/A/right.icon", "default");
+                Evas_Object *icon = create_icon(sd->parent, "toggle_off.png");
+                elm_layout_content_set(content, "elm.swallow.content", icon);
+            }
+        }
     }
 
     return content;
@@ -393,7 +403,7 @@ settings_list_add(settings_item *menu, int len, Settings_menu_callback global_me
             /* Put genlist item in the setting_data struct for callbacks */
             sd->item = hit;
         }
-        else if (menu[index].type == SETTINGS_TYPE_ITEM)
+        else if (menu[index].type == SETTINGS_TYPE_ITEM || menu[index].type == SETTINGS_TYPE_TOGGLE)
         {
             /* Set and append settings items */
             sd->index = index;
