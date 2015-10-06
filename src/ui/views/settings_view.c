@@ -190,6 +190,29 @@ settings_get_int(char *key, int default_value)
 }
 
 void
+settings_simple_save_toggle(settings_menu_selected *selected, view_sys* p_view_sys, void *data, Evas_Object *parent)
+{
+    settings_menu_context *ctx = data;
+
+    if (ctx == NULL)
+        return;
+
+    switch (ctx->menu_id)
+    {
+    case SETTINGS_ID_HWACCELERATION:
+        // Select the item (and unselect others)
+        settings_toggle_set_one_by_index(selected->menu, selected->menu_len, selected->index, true, true);
+        // Save the value
+        preference_set_int("HWACCELERATION", selected->menu[selected->index].id);
+        // Close the popup
+        evas_object_del(parent);
+        break;
+    }
+
+    free(ctx);
+}
+
+void
 menu_directories_selected_cb(settings_menu_selected *selected, view_sys* p_view_sys, void *data, Evas_Object *parent)
 {
     Evas_Object *genlist = settings_list_add(directory_menu, COUNT_OF(directory_menu), NULL, NULL, p_view_sys, parent);
@@ -200,9 +223,12 @@ menu_directories_selected_cb(settings_menu_selected *selected, view_sys* p_view_
 void
 menu_hwacceleration_selected_cb(settings_menu_selected *selected, view_sys* p_view_sys, void *data, Evas_Object *parent)
 {
+    settings_menu_context *ctx = malloc(sizeof(*ctx));
+    ctx->menu_id = SETTINGS_ID_HWACCELERATION;
+
     int value = settings_get_int("HWACCELERATION", HWACCELERATION_AUTOMATIC);
     int len = COUNT_OF(hardware_acceleration_menu);
-    Evas_Object *popup = settings_popup_add(hardware_acceleration_menu, len, settings_toggle_switch, NULL, p_view_sys, parent);
+    Evas_Object *popup = settings_popup_add(hardware_acceleration_menu, len, settings_simple_save_toggle, ctx, p_view_sys, parent);
     settings_toggle_set_one_by_id(hardware_acceleration_menu, len, value, true, true);
     evas_object_show(popup);
 }
