@@ -54,12 +54,12 @@ struct view_sys {
 
 settings_item settings_menu[] =
 {
-        {0,                             "General",                      "",                                 SETTINGS_TYPE_CATEGORY},
+        {0,                             "General",                      NULL,                               SETTINGS_TYPE_CATEGORY},
         {SETTINGS_ID_DIRECTORIES,       "Directories",                  "ic_menu_folder.png",               SETTINGS_TYPE_ITEM,         menu_directories_selected_cb},
         {SETTINGS_ID_HWACCELERATION,    "Hardware acceleration",        "ic_menu_preferences.png",          SETTINGS_TYPE_ITEM,         menu_hwacceleration_selected_cb},
         {SETTINGS_ID_SUBSENC,           "Subtitles text encoding",      "ic_browser_subtitle_normal.png",   SETTINGS_TYPE_ITEM,         menu_subsenc_selected_cb},
         {SETTINGS_ID_VORIENTATION,      "Video orientation",            "ic_menu_video.png",                SETTINGS_TYPE_ITEM,         menu_vorientation_selected_cb},
-        {0,                             "Extra settings",               "",                                 SETTINGS_TYPE_CATEGORY},
+        {0,                             "Extra settings",               NULL,                               SETTINGS_TYPE_CATEGORY},
         {SETTINGS_ID_PERFORMANCES,      "Performances",                 "ic_menu_preferences.png",          SETTINGS_TYPE_ITEM,         menu_performance_selected_cb},
         {SETTINGS_ID_DEBLOCKING,        "Deblocking filter settings",   "ic_menu_preferences.png",          SETTINGS_TYPE_ITEM,         menu_deblocking_selected_cb}
 };
@@ -68,9 +68,9 @@ settings_item settings_menu[] =
 
 settings_item directory_menu[] =
 {
-        {42, "Directories", "", SETTINGS_TYPE_CATEGORY},
-        {42, "Internal memory", NULL, SETTINGS_TYPE_TOGGLE},
-        {42, "Add repository", "call_button_add_call_press.png", SETTINGS_TYPE_ITEM}
+        {42, "Directories",     NULL,                               SETTINGS_TYPE_CATEGORY},
+        {42, "Internal memory", NULL,                               SETTINGS_TYPE_TOGGLE},
+        {42, "Add repository",  "call_button_add_call_press.png",   SETTINGS_TYPE_ITEM}
 };
 
 settings_item hardware_acceleration_menu[] =
