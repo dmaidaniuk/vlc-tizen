@@ -75,82 +75,82 @@ settings_item directory_menu[] =
 
 settings_item hardware_acceleration_menu[] =
 {
-        {HWACCELERATION_AUTOMATIC, "Automatic", NULL, SETTINGS_TYPE_TOGGLE},
-        {HWACCELERATION_DISABLED, "Disabled", NULL, SETTINGS_TYPE_TOGGLE},
-        {HWACCELERATION_DECODING, "Decoding acceleration", NULL, SETTINGS_TYPE_TOGGLE},
-        {HWACCELERATION_FULL, "Full acceleration", NULL, SETTINGS_TYPE_TOGGLE}
+        {HWACCELERATION_AUTOMATIC,  "Automatic",                NULL, SETTINGS_TYPE_TOGGLE},
+        {HWACCELERATION_DISABLED,   "Disabled",                 NULL, SETTINGS_TYPE_TOGGLE},
+        {HWACCELERATION_DECODING,   "Decoding acceleration",    NULL, SETTINGS_TYPE_TOGGLE},
+        {HWACCELERATION_FULL,       "Full acceleration",        NULL, SETTINGS_TYPE_TOGGLE}
 };
 
 settings_item video_orientation_menu[] =
 {
-        {ORIENTATION_AUTOMATIC, "Automatic (sensor)", NULL, SETTINGS_TYPE_TOGGLE},
-        {ORIENTATION_LOCKED, "Locked at start", NULL, SETTINGS_TYPE_TOGGLE},
-        {ORIENTATION_LANDSCAPE, "Landscape", NULL, SETTINGS_TYPE_TOGGLE},
-        {ORIENTATION_PORTRAIT, "Portrait", NULL, SETTINGS_TYPE_TOGGLE},
-        {ORIENTATION_R_LANDSCAPE, "Reverse landscape", NULL, SETTINGS_TYPE_TOGGLE},
-        {ORIENTATION_R_PORTRAIT, "Reverse portrait", NULL, SETTINGS_TYPE_TOGGLE}
+        {ORIENTATION_AUTOMATIC,     "Automatic (sensor)",   NULL, SETTINGS_TYPE_TOGGLE},
+        {ORIENTATION_LOCKED,        "Locked at start",      NULL, SETTINGS_TYPE_TOGGLE},
+        {ORIENTATION_LANDSCAPE,     "Landscape",            NULL, SETTINGS_TYPE_TOGGLE},
+        {ORIENTATION_PORTRAIT,      "Portrait",             NULL, SETTINGS_TYPE_TOGGLE},
+        {ORIENTATION_R_LANDSCAPE,   "Reverse landscape",    NULL, SETTINGS_TYPE_TOGGLE},
+        {ORIENTATION_R_PORTRAIT,    "Reverse portrait",     NULL, SETTINGS_TYPE_TOGGLE}
 };
 
 settings_item subtitles_text_encoding_menu[] =
 {
-        {42, "Default (Windows-1252)", NULL, SETTINGS_TYPE_TOGGLE},
-        {42, "Universal (UTF-8)", NULL, SETTINGS_TYPE_TOGGLE},
-        {42, "Universal (UTF-16)", NULL, SETTINGS_TYPE_TOGGLE},
-        {42, "Universal (big endian UTF-16)", NULL, SETTINGS_TYPE_TOGGLE},
-        {42, "Universal (little endian UTF-16)", NULL, SETTINGS_TYPE_TOGGLE},
-        {42, "Universal, Chinese (GB18030)", NULL, SETTINGS_TYPE_TOGGLE},
-        {42, "Western European (Latin-9)", NULL, SETTINGS_TYPE_TOGGLE},
-        {42, "Western European (Windows-1252)", NULL, SETTINGS_TYPE_TOGGLE},
-        {42, "Western European (IBM 00850)", NULL, SETTINGS_TYPE_TOGGLE},
-        {42, "Eastern European (Latin-2)", NULL, SETTINGS_TYPE_TOGGLE},
-        {42, "Eastern European (Windows-1250)", NULL, SETTINGS_TYPE_TOGGLE},
-        {42, "Esperanto (Latin-3)", NULL, SETTINGS_TYPE_TOGGLE},
-        {42, "Nordic (Latin-6)", NULL, SETTINGS_TYPE_TOGGLE},
-        {42, "Cyrillic (Windows-1251)", NULL, SETTINGS_TYPE_TOGGLE},
-        {42, "Russian (KOI8-R)", NULL, SETTINGS_TYPE_TOGGLE},
-        {42, "Ukrainian (KOI8-U)", NULL, SETTINGS_TYPE_TOGGLE},
-        {42, "Arabic (ISO 8859-6)", NULL, SETTINGS_TYPE_TOGGLE},
-        {42, "Arabic (Windows-1256)", NULL, SETTINGS_TYPE_TOGGLE},
-        {42, "Greek (ISO 8859-7)", NULL, SETTINGS_TYPE_TOGGLE},
-        {42, "Greek (Windows-1253)", NULL, SETTINGS_TYPE_TOGGLE},
-        {42, "Hebrew (ISO 8859-8)", NULL, SETTINGS_TYPE_TOGGLE},
-        {42, "Hebrew (Windows-1255)", NULL, SETTINGS_TYPE_TOGGLE},
-        {42, "Turkish (ISO 8859-9)", NULL, SETTINGS_TYPE_TOGGLE},
-        {42, "Turkish (Windows-1254)", NULL, SETTINGS_TYPE_TOGGLE},
-        {42, "Thai (TIS 620-2533/ISO 8859-11)", NULL, SETTINGS_TYPE_TOGGLE},
-        {42, "Thai (Windows-874)", NULL, SETTINGS_TYPE_TOGGLE},
-        {42, "Baltic (Latin-7)", NULL, SETTINGS_TYPE_TOGGLE},
-        {42, "Baltic (Windows-1257)", NULL, SETTINGS_TYPE_TOGGLE},
-        {42, "Celtic (Latin-8)", NULL, SETTINGS_TYPE_TOGGLE},
-        {42, "South-Estearn (Latin-10)", NULL, SETTINGS_TYPE_TOGGLE},
-        {42, "Simplified Chinese (ISO-2022-CN-EXT)", NULL, SETTINGS_TYPE_TOGGLE},
-        {42, "Simplified Chinese Unix (EUC-CN)", NULL, SETTINGS_TYPE_TOGGLE},
-        {42, "Japanese (7-bits JIS/ISO-2022-JP-2)", NULL, SETTINGS_TYPE_TOGGLE},
-        {42, "Japanese (Shift JIS)", NULL, SETTINGS_TYPE_TOGGLE},
-        {42, "Korean (EUC-KR/CP949)", NULL, SETTINGS_TYPE_TOGGLE},
-        {42, "Korean (ISO-2022-KR)", NULL, SETTINGS_TYPE_TOGGLE},
-        {42, "Traditional Chinese (Big5)", NULL, SETTINGS_TYPE_TOGGLE},
-        {42, "Traditional Chinese Unix (EUC-TW)", NULL, SETTINGS_TYPE_TOGGLE},
-        {42, "Hong-Kong Supplementary (HKSCS)", NULL, SETTINGS_TYPE_TOGGLE},
-        {42, "Vietnamese (VISCII)", NULL, SETTINGS_TYPE_TOGGLE},
-        {42, "Vietnamese (Windows-1258)", NULL, SETTINGS_TYPE_TOGGLE}
+        {42, "Default (Windows-1252)",                  NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Universal (UTF-8)",                       NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Universal (UTF-16)",                      NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Universal (big endian UTF-16)",           NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Universal (little endian UTF-16)",        NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Universal, Chinese (GB18030)",            NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Western European (Latin-9)",              NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Western European (Windows-1252)",         NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Western European (IBM 00850)",            NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Eastern European (Latin-2)",              NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Eastern European (Windows-1250)",         NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Esperanto (Latin-3)",                     NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Nordic (Latin-6)",                        NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Cyrillic (Windows-1251)",                 NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Russian (KOI8-R)",                        NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Ukrainian (KOI8-U)",                      NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Arabic (ISO 8859-6)",                     NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Arabic (Windows-1256)",                   NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Greek (ISO 8859-7)",                      NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Greek (Windows-1253)",                    NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Hebrew (ISO 8859-8)",                     NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Hebrew (Windows-1255)",                   NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Turkish (ISO 8859-9)",                    NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Turkish (Windows-1254)",                  NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Thai (TIS 620-2533/ISO 8859-11)",         NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Thai (Windows-874)",                      NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Baltic (Latin-7)",                        NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Baltic (Windows-1257)",                   NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Celtic (Latin-8)",                        NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "South-Estearn (Latin-10)",                NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Simplified Chinese (ISO-2022-CN-EXT)",    NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Simplified Chinese Unix (EUC-CN)",        NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Japanese (7-bits JIS/ISO-2022-JP-2)",     NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Japanese (Shift JIS)",                    NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Korean (EUC-KR/CP949)",                   NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Korean (ISO-2022-KR)",                    NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Traditional Chinese (Big5)",              NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Traditional Chinese Unix (EUC-TW)",       NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Hong-Kong Supplementary (HKSCS)",         NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Vietnamese (VISCII)",                     NULL, SETTINGS_TYPE_TOGGLE},
+        {42, "Vietnamese (Windows-1258)",               NULL, SETTINGS_TYPE_TOGGLE}
 
 };
 
 settings_item performance_menu[] =
 {
-        {PERFORMANCE_FRAME_SKIP, "Enable frame skip", NULL, SETTINGS_TYPE_TOGGLE},
-        {PERFORMANCE_STRETCH, "Time-stretching audio", NULL, SETTINGS_TYPE_TOGGLE}
+        {PERFORMANCE_FRAME_SKIP, "Enable frame skip",   NULL, SETTINGS_TYPE_TOGGLE},
+        {PERFORMANCE_STRETCH, "Time-stretching audio",  NULL, SETTINGS_TYPE_TOGGLE}
 
 };
 
 settings_item deblocking_filter_settings_menu[] =
 {
-        {DEBLOCKING_AUTOMATIC, "Automatic", NULL, SETTINGS_TYPE_TOGGLE},
-        {DEBLOCKING_FULL, "Full deblocking (slowest)", NULL, SETTINGS_TYPE_TOGGLE},
-        {DEBLOCKING_MEDIUM, "Medium deblocking", NULL, SETTINGS_TYPE_TOGGLE},
-        {DEBLOCKING_LOW, "Low deblocking", NULL, SETTINGS_TYPE_TOGGLE},
-        {DEBLOCKING_NO, "No deblocking (fastest)", NULL, SETTINGS_TYPE_TOGGLE}
+        {DEBLOCKING_AUTOMATIC, "Automatic",             NULL, SETTINGS_TYPE_TOGGLE},
+        {DEBLOCKING_FULL, "Full deblocking (slowest)",  NULL, SETTINGS_TYPE_TOGGLE},
+        {DEBLOCKING_MEDIUM, "Medium deblocking",        NULL, SETTINGS_TYPE_TOGGLE},
+        {DEBLOCKING_LOW, "Low deblocking",              NULL, SETTINGS_TYPE_TOGGLE},
+        {DEBLOCKING_NO, "No deblocking (fastest)",      NULL, SETTINGS_TYPE_TOGGLE}
 
 };
 
