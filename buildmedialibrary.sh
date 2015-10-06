@@ -47,7 +47,7 @@ if [ ! -e ./Makefile -o "$RELEASE" = 1 -o ../CMakeLists.txt -nt ./Makefile ]; th
 CPPFLAGS="$CPPFLAGS" \
 CFLAGS="$CFLAGS ${EXTRA_CFLAGS}" \
 CXXFLAGS="$CFLAGS ${EXTRA_CXXFLAGS} -pthread" \
-LDFLAGS="$LDFLAGS -static-libstdc++" \
+LDFLAGS="$LDFLAGS -static-libstdc++ -latomic" \
 CC="${CROSS_COMPILE}gcc -fPIC --sysroot=${SYSROOT}" \
 CXX="${CROSS_COMPILE}g++ -fPIC --sysroot=${SYSROOT} -D__cpp_static_assert=200410" \
 NM="${CROSS_COMPILE}nm" \
