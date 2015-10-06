@@ -47,7 +47,7 @@ if [ ! -e ./Makefile -o "$RELEASE" = 1 -o ../CMakeLists.txt -nt ./Makefile ]; th
 CPPFLAGS="$CPPFLAGS" \
 CFLAGS="$CFLAGS ${EXTRA_CFLAGS}" \
 CXXFLAGS="$CFLAGS ${EXTRA_CXXFLAGS} -pthread" \
-LDFLAGS="$LDFLAGS -static-libstdc++ -latomic" \
+LDFLAGS="$LDFLAGS -static-libstdc++" \
 CC="${CROSS_COMPILE}gcc -fPIC --sysroot=${SYSROOT}" \
 CXX="${CROSS_COMPILE}g++ -fPIC --sysroot=${SYSROOT} -D__cpp_static_assert=200410" \
 NM="${CROSS_COMPILE}nm" \
@@ -66,6 +66,7 @@ cmake \
     -DSQLITE3_LIBRARY_RELEASE="${TIZEN_LIBS}/libsqlite3.so" \
     -DJPEG_INCLUDE_DIR="${PROJECTPATH}/vlc/contrib/${TARGET_TUPLE}/include" \
     -DJPEG_LIBRARY="${PROJECTPATH}/vlc/contrib/${TARGET_TUPLE}/lib/libjpeg.a" \
+    -DEXTRA_LIBS="${SYSROOT}/${TARGET_TUPLE}/lib/libatomic.a" \
     ..
 checkfail "medialibrary: cmake failed"
 fi
