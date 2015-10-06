@@ -215,9 +215,6 @@ create_audio_list(const view_sys *av)
     char *buff = realpath(path, NULL);
     path = buff;
 
-    /* Open the path repository then put it as a dirent variable */
-    DIR* rep = opendir(path);
-
     LOGI("Audio View %s ", path);
     if (path == NULL)
     {
@@ -225,6 +222,8 @@ create_audio_list(const view_sys *av)
         return NULL ;
     }
 
+    /* Open the path repository then put it as a dirent variable */
+    DIR* rep = opendir(path);
     if  (rep == NULL)
     {
         char *error;
