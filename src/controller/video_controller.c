@@ -54,7 +54,7 @@ video_controller_content_update_cb(Eina_List* p_content, void* p_data)
     Eina_List* it;
     media_item* p_item;
 
-    assert(ctrl->p_content == NULL);
+    // If we get multiple content updates, p_ctrl->p_content can't be != NULL
     EINA_LIST_FOREACH( p_content, it, p_item )
     {
         video_list_item* p_view_item = video_view_append_item( ctrl->p_view, p_item );
@@ -69,6 +69,8 @@ void
 video_controller_content_refresh(video_controller* ctrl)
 {
     // If we already have some content, consider the view up to date
+    // In case content gets updated, media library will call video_controller_content_changed_cb
+    // causing us to clear the cached content.
     if (ctrl->p_content != NULL)
         return;
     // otherwise, update from media library
