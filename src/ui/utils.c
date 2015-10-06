@@ -68,6 +68,9 @@ media_timetostr(int64_t time)
     d = lldiv(time, 60);
     sec = d.rem;
     d = lldiv(d.quot, 60);
-    asprintf(&str, "%02lld:%02lld:%02lld", d.quot, d.rem, sec);
+    if (d.quot > 0)
+        asprintf(&str, "%02lld:%02lld:%02lld", d.quot, d.rem, sec);
+    else
+        asprintf(&str, "%02lld:%02lld", d.rem, sec);
     return str;
 }
