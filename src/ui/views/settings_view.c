@@ -212,6 +212,11 @@ settings_simple_save_toggle(settings_menu_selected *selected, view_sys* p_view_s
         preference_set_int("SUBENC", selected->index);
         evas_object_del(parent);
         break;
+    case SETTINGS_ID_VORIENTATION:
+        settings_toggle_set_one_by_index(selected->menu, selected->menu_len, selected->index, true, true);
+        preference_set_int("ORIENTATION", selected->menu[selected->index].id);
+        evas_object_del(parent);
+        break;
     }
 
     free(ctx);
@@ -254,9 +259,12 @@ menu_subsenc_selected_cb(settings_menu_selected *selected, view_sys* p_view_sys,
 void
 menu_vorientation_selected_cb(settings_menu_selected *selected, view_sys* p_view_sys, void *data, Evas_Object *parent)
 {
+    settings_menu_context *ctx = malloc(sizeof(*ctx));
+    ctx->menu_id = SETTINGS_ID_VORIENTATION;
+
     int value = settings_get_int("ORIENTATION", ORIENTATION_AUTOMATIC);
     int len = COUNT_OF(video_orientation_menu);
-    Evas_Object *popup = settings_popup_add(video_orientation_menu, len, settings_toggle_switch, NULL, p_view_sys, parent);
+    Evas_Object *popup = settings_popup_add(video_orientation_menu, len, settings_simple_save_toggle, ctx, p_view_sys, parent);
     settings_toggle_set_one_by_id(video_orientation_menu, len, value, true, true);
     evas_object_show(popup);
 }
