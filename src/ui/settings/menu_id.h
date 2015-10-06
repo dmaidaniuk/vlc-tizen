@@ -2,7 +2,7 @@
  * Copyright © 2015 VideoLAN, VideoLabs SAS
  *****************************************************************************
  *
- * Authors: Nicolas Rechatin [nicolas@videolabs.io]
+ * Authors: Ludovic Fauvet <etix@videolan.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,23 +24,40 @@
  * compatibility with the Store
  *****************************************************************************/
 
-#ifndef SETTINGS_VIEW_H_
-#define SETTINGS_VIEW_H_
+#ifndef SETTINGS_MENU_ID_H_
+#define SETTINGS_MENU_ID_H_
 
-#include "ui/settings/settings.h"
-#include "ui/settings/menu_id.h"
-#include "ui/interface.h"
+/* ID */
+typedef enum menu_id
+{
+    SETTINGS_ID_DIRECTORIES = 1000,
+    SETTINGS_ID_HWACCELERATION,
+    SETTINGS_ID_SUBSENC,
+    SETTINGS_ID_VORIENTATION,
+    SETTINGS_ID_PERFORMANCES,
+    SETTINGS_ID_DEBLOCKING,
 
-/* Structs */
-typedef struct settings_menu_context {
-    menu_id menu_id;
-} settings_menu_context;
+    HWACCELERATION_AUTOMATIC = 2000,
+    HWACCELERATION_DISABLED,
+    HWACCELERATION_DECODING,
+    HWACCELERATION_FULL,
 
-/* Declarations */
-interface_view*
-create_setting_view(interface *intf, Evas_Object *parent);
+    ORIENTATION_AUTOMATIC = 3000,
+    ORIENTATION_LOCKED,
+    ORIENTATION_LANDSCAPE,
+    ORIENTATION_PORTRAIT,
+    ORIENTATION_R_LANDSCAPE,
+    ORIENTATION_R_PORTRAIT,
 
-void
-destroy_setting_view(interface_view *);
+    PERFORMANCE_FRAME_SKIP = 4000,
+    PERFORMANCE_STRETCH,
 
-#endif /* SETTINGS_VIEW_H_ */
+    DEBLOCKING_AUTOMATIC = 5000,
+    DEBLOCKING_FULL,
+    DEBLOCKING_MEDIUM,
+    DEBLOCKING_LOW,
+    DEBLOCKING_NO,
+
+} menu_id;
+
+#endif

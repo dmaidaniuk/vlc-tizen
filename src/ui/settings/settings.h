@@ -29,6 +29,7 @@
 #define SETTINGS_H_
 
 #include "ui/interface.h"
+#include "ui/settings/menu_id.h"
 
 /* Defines */
 #define SETTINGS_TYPE_CATEGORY 0
@@ -47,7 +48,7 @@ typedef void (*Settings_menu_callback)(settings_menu_selected *menu_info, view_s
 // Structs
 typedef struct settings_menu_selected
 {
-    int id;
+    menu_id id;
     int index;
     int menu_len;
     settings_item *menu;
@@ -56,7 +57,7 @@ typedef struct settings_menu_selected
 
 typedef struct settings_item
 {
-    int id;
+    menu_id id;
     const char* title;
     const char* icon;
     int type;

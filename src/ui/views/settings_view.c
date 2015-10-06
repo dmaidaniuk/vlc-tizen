@@ -198,6 +198,8 @@ settings_simple_save_toggle(settings_menu_selected *selected, view_sys* p_view_s
         preference_set_int("DEBLOCKING", selected->menu[selected->index].id);
         evas_object_del(parent);
         break;
+    default:
+        break;
     }
 
     free(ctx);
