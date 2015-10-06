@@ -217,6 +217,17 @@ settings_simple_save_toggle(settings_menu_selected *selected, view_sys* p_view_s
         preference_set_int("ORIENTATION", selected->menu[selected->index].id);
         evas_object_del(parent);
         break;
+    case SETTINGS_ID_PERFORMANCES:
+    {
+        bool newvalue = !selected->menu[selected->index].toggled;
+        settings_toggle_set_one_by_index(selected->menu, selected->menu_len, selected->index, newvalue, false);
+        if (selected->menu[selected->index].id == PERFORMANCE_FRAME_SKIP)
+            preference_set_int("FRAME_SKIP", newvalue);
+        else if (selected->menu[selected->index].id == PERFORMANCE_STRETCH)
+            preference_set_int("AUDIO_STRETCH", newvalue);
+        evas_object_del(parent);
+        break;
+    }
     }
 
     free(ctx);
@@ -272,8 +283,11 @@ menu_vorientation_selected_cb(settings_menu_selected *selected, view_sys* p_view
 void
 menu_performance_selected_cb(settings_menu_selected *selected, view_sys* p_view_sys, void *data, Evas_Object *parent)
 {
+    settings_menu_context *ctx = malloc(sizeof(*ctx));
+    ctx->menu_id = SETTINGS_ID_PERFORMANCES;
+
     int len = COUNT_OF(performance_menu);
-    Evas_Object *popup = settings_popup_add(performance_menu, len, settings_toggle_switch, NULL, p_view_sys, parent);
+    Evas_Object *popup = settings_popup_add(performance_menu, len, settings_simple_save_toggle, ctx, p_view_sys, parent);
 
     bool frameskip = (bool)settings_get_int("FRAME_SKIP", 0);
     bool stretch = (bool)settings_get_int("AUDIO_STRETCH", 0);
