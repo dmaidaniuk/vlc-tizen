@@ -238,14 +238,14 @@ create_audio_list(const view_sys *av)
         char *psz_path;
         char *str = current_folder->d_name;
 
-        /* Concatenate the file path and the selected folder or file name */
-        asprintf(&psz_path, "%s/%s", path, str);
-
         /* Avoid genlist item append for "." and ".." d_name */
         if (str && (strcmp(str, ".")==0 || strcmp(str, "..")==0))
         {
             continue;
         }
+
+        /* Concatenate the file path and the selected folder or file name */
+        asprintf(&psz_path, "%s/%s", path, str);
 
         genlist_audio_item_create(av, genlist, psz_path, str, itc);
         free(psz_path);
