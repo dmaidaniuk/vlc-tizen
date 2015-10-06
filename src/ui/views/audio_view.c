@@ -208,6 +208,9 @@ create_audio_list(const view_sys *av)
     application *p_app = intf_get_application(av->p_intf);
     const char *path = application_get_media_path(p_app, MEDIA_DIRECTORY_MUSIC);
 
+    if (path == NULL)
+        return NULL;
+
     /* Make a realpath to use a clean path in the function */
     char *buff = realpath(path, NULL);
     path = buff;
