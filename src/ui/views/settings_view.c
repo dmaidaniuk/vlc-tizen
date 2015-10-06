@@ -268,13 +268,6 @@ menu_deblocking_selected_cb(settings_menu_selected *selected, view_sys* p_view_s
     evas_object_show(popup);
 }
 
-void
-settings_toggle_switch(settings_menu_selected *selected, view_sys* p_view_sys, void *data, Evas_Object *parent)
-{
-    settings_toggle_set_one_by_index(selected->menu, selected->menu_len, selected->index, true, true);
-    evas_object_del(parent);
-}
-
 bool
 view_callback(view_sys *p_view_sys, interface_view_event event)
 {

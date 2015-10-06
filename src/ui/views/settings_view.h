@@ -84,7 +84,4 @@ menu_performance_selected_cb(settings_menu_selected *selected, view_sys* p_view_
 void
 menu_deblocking_selected_cb(settings_menu_selected *selected, view_sys* p_view_sys, void *data, Evas_Object *parent);
 
-void
-settings_toggle_switch(settings_menu_selected *selected, view_sys* p_view_sys, void *data, Evas_Object *parent);
-
 #endif /* SETTINGS_VIEW_H_ */
