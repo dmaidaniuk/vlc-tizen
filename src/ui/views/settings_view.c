@@ -68,9 +68,8 @@ settings_item settings_menu[] =
 
 settings_item directory_menu[] =
 {
-        {42, "Directories",     NULL,                               SETTINGS_TYPE_CATEGORY},
-        {42, "Internal memory", NULL,                               SETTINGS_TYPE_TOGGLE},
-        {42, "Add repository",  "call_button_add_call_press.png",   SETTINGS_TYPE_ITEM}
+        {DIRECTORIES_INTERNAL,      "Internal memory", NULL,                               SETTINGS_TYPE_TOGGLE},
+        {DIRECTORIES_ADDLOCATION,   "Add location",    "call_button_add_call_press.png",   SETTINGS_TYPE_ITEM}
 };
 
 settings_item hardware_acceleration_menu[] =
@@ -155,6 +154,26 @@ settings_item deblocking_filter_settings_menu[] =
 };
 
 void
+settings_directories_save(settings_menu_selected *selected, view_sys* p_view_sys, void *data, Evas_Object *parent)
+{
+    switch (selected->menu[selected->index].id)
+    {
+    case DIRECTORIES_INTERNAL:
+    {
+        bool newvalue = !selected->menu[selected->index].toggled;
+        settings_toggle_set_one_by_id(directory_menu, 2, DIRECTORIES_INTERNAL, newvalue, false);
+        elm_genlist_item_update(selected->item);
+        preference_set_int("DIRECTORIES_INTERNAL", newvalue ? 1 : 0);
+        break;
+    }
+    case DIRECTORIES_ADDLOCATION:
+        break;
+    default:
+        break;
+    }
+}
+
+void
 settings_simple_save_toggle(settings_menu_selected *selected, view_sys* p_view_sys, void *data, Evas_Object *parent)
 {
     settings_menu_context *ctx = data;
@@ -208,7 +227,10 @@ settings_simple_save_toggle(settings_menu_selected *selected, view_sys* p_view_s
 void
 menu_directories_selected_cb(settings_menu_selected *selected, view_sys* p_view_sys, void *data, Evas_Object *parent)
 {
-    Evas_Object *genlist = settings_list_add(directory_menu, COUNT_OF(directory_menu), NULL, NULL, p_view_sys, parent);
+    bool internal = (bool)settings_get_int("DIRECTORIES_INTERNAL", 1);
+    int len = COUNT_OF(directory_menu);
+    Evas_Object *genlist = settings_list_add(directory_menu, len, settings_directories_save, NULL, p_view_sys, parent);
+    settings_toggle_set_one_by_id(directory_menu, len, DIRECTORIES_INTERNAL, internal, false);
     elm_naviframe_item_push(p_view_sys->nav, "Media library", NULL, NULL, genlist, NULL);
     evas_object_show(genlist);
 }
