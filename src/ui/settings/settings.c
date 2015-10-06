@@ -241,7 +241,7 @@ settings_list_add(settings_item *menu, int len, Settings_menu_callback global_me
                     sd);                            /* genlist smart callback user data */
 
             /* Put genlist item in the settings_internal_data struct for callbacks */
-            sd->item = hit;
+            sd->item = sd->selected.item = hit;
             //elm_object_item_del_cb_set(hit, free_genlist_item_data);
         }
         else if (menu[index].type == SETTINGS_TYPE_ITEM || menu[index].type == SETTINGS_TYPE_TOGGLE)
@@ -258,7 +258,7 @@ settings_list_add(settings_item *menu, int len, Settings_menu_callback global_me
 
             /* Put genlist item in the settings_internal_data struct for callbacks */
             sd->parent = parent;
-            sd->item = it;
+            sd->item = sd->selected.item = it;
             //elm_object_item_del_cb_set(it, free_genlist_item_data);
         }
     }

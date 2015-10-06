@@ -53,6 +53,8 @@ typedef struct settings_menu_selected
     int menu_len;
     settings_item *menu;
 
+    Elm_Object_Item *item;
+
 } settings_menu_selected;
 
 typedef struct settings_item
