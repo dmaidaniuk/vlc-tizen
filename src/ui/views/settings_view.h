@@ -27,6 +27,7 @@
 #ifndef SETTINGS_VIEW_H_
 #define SETTINGS_VIEW_H_
 
+#include "ui/settings/settings.h"
 #include "ui/interface.h"
 
 /* ID */
@@ -58,57 +59,10 @@
 #define DEBLOCKING_LOW 4
 #define DEBLOCKING_NO 5
 
-
-/* Types */
-#define SETTINGS_TYPE_CATEGORY 0
-#define SETTINGS_TYPE_ITEM 1
-#define SETTINGS_TYPE_TOGGLE 2
-
-/* Forward declartions */
-struct settings_item;
-typedef struct settings_item settings_item;
-struct settings_menu_selected;
-typedef struct settings_menu_selected settings_menu_selected;
-
-/* Functions pointers */
-typedef void (*Settings_menu_callback)(settings_menu_selected *menu_info, view_sys* p_view_sys, void *data, Evas_Object *parent);
-
 /* Structs */
 typedef struct settings_menu_context {
     int menu_id;
 } settings_menu_context;
-
-typedef struct settings_menu_selected
-{
-    int id;
-    int index;
-    int menu_len;
-    settings_item *menu;
-
-} settings_menu_selected;
-
-typedef struct settings_item
-{
-    int id;
-    const char* title;
-    const char* icon;
-    int type;
-    Settings_menu_callback cb;
-
-    bool toggled;
-} settings_item;
-
-typedef struct settings_internal_data
-{
-    settings_menu_selected selected;
-    Elm_Object_Item *item;
-    Evas_Object *parent;
-
-    Settings_menu_callback global_cb;
-
-    view_sys* p_view_sys;
-    void *data;
-} settings_internal_data;
 
 /* Declarations */
 interface_view*
@@ -129,12 +83,6 @@ void
 menu_performance_selected_cb(settings_menu_selected *selected, view_sys* p_view_sys, void *data, Evas_Object *parent);
 void
 menu_deblocking_selected_cb(settings_menu_selected *selected, view_sys* p_view_sys, void *data, Evas_Object *parent);
-
-Evas_Object *
-settings_list_add(settings_item *menu, int len, Settings_menu_callback global_menu_cb, void *data, view_sys* p_view_sys, Evas_Object *parent);
-
-Evas_Object *
-settings_popup_add(settings_item *menu, int menu_len, Settings_menu_callback global_menu_cb, void *data, view_sys* p_view_sys, Evas_Object *parent);
 
 void
 settings_toggle_switch(settings_menu_selected *selected, view_sys* p_view_sys, void *data, Evas_Object *parent);
