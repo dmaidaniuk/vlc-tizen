@@ -67,6 +67,9 @@ public:
     virtual void onDiscoveryStarted( const std::string& entryPoint ) override;
     virtual void onDiscoveryCompleted( const std::string& entryPoint ) override;
 
+    virtual void onReloadStarted() override;
+    virtual void onReloadCompleted() override;
+
     void registerOnChange(media_library_file_list_changed_cb cb, void* cbUserData);
     void unregisterOnChange(media_library_file_list_changed_cb cb, void* cbUserData);
 

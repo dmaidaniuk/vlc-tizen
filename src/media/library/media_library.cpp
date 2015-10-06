@@ -97,6 +97,18 @@ media_library::onDiscoveryCompleted( const std::string& entryPoint )
 }
 
 void
+media_library::onReloadStarted()
+{
+    LOGI("Reloading media library...");
+}
+
+void
+media_library::onReloadCompleted()
+{
+    LOGI("Media library reload completed.");
+}
+
+void
 media_library::registerOnChange(media_library_file_list_changed_cb cb, void* cbUserData)
 {
     m_onChangeCb.emplace_back(cb, cbUserData);
