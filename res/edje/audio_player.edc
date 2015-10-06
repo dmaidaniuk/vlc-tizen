@@ -1,0 +1,174 @@
+/*****************************************************************************
+ * Copyright © 2015 VideoLAN, VideoLabs SAS
+ *****************************************************************************
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin Street, Fifth Floor, Boston MA 02110-1301, USA.
+ *****************************************************************************/
+/*
+ * By committing to this project, you allow VideoLAN and VideoLabs to relicense
+ * the code to a different OSI approved license, in case it is required for
+ * compatibility with the Store
+ *****************************************************************************/
+collections {
+   base_scale: 1.8;
+   group { 
+      name: "audio_player";
+      parts {
+         part{
+            name: "background";
+            type: RECT;
+            description {
+               color: 245 245 245 255;
+               state: "default" 0.0;
+               rel1{relative: 0.0 0.0;}
+               rel2{relative: 1.0 1.0;}
+               }
+            }
+
+         part {
+            name: "hub_header";
+            type: RECT;
+            description {
+               state: "default" 0.0;
+               color: 250 250 250 255;
+               rel1 {relative: 0.0 0.0;}
+               rel2 {relative: 1.0 0.1;}
+               }
+            part {
+               name: "cover_button";
+               type: SWALLOW;
+               description {
+                  state: "default" 0.0;
+                  rel1 {relative: 0.0 0.0;}
+                  rel2 {relative: 0.1 1.0;}
+               }
+            }
+            part {
+               name: "switch_cover_button";
+               type: SWALLOW;
+               description {
+                  state: "default" 0.0;
+                  rel1 {relative: 0.7 .0.0;}
+                  rel2 {relative: 0.8 1.0;}
+               }
+            }
+            part {
+               name: "save_playlist_button";
+               type: SWALLOW;
+               description {
+                  state: "default" 0.0;
+                  rel1 {relative: 0.8 .0.0;}
+                  rel2 {relative: 0.9 1.0;}
+               }
+            }
+            part {
+               name: "more_button";
+               type: SWALLOW;
+               description {
+                  state: "default" 0.0;
+                  rel1 {relative: 0.9 .0.0;}
+                  rel2 {relative: 1.0 1.0;}
+               }
+            }
+            part {
+               name: "title_text";
+               type: TEXT;
+               description {
+                  state: "default" 0.0;
+                  color: 33 33 33 255;
+                  rel1.relative: 0.1 0.0;
+                  rel2.relative: 0.7 0.5;
+                  text {
+                     align: 0.03 1.0;
+                     size: 20;
+                     min: 1 1;
+                     text: "Title";
+                  }
+               }
+            }
+            part {
+               name: "subtitle_text";
+               type: TEXT;
+               description {
+                  state: "default" 0.0;
+                  color: 33 33 33 255;
+                  rel1.relative: 0.1 0.5;
+                  rel2.relative: 0.7 1.0;
+                  text {
+                     align: 0.03 1.0;
+                     size: 20;
+                     min: 1 1;
+                     text: "Subtitle";
+                  }
+               }
+            }
+         }
+
+         part {
+            name: "hub_miniplayer";
+            type: RECT;
+            description {
+               state: "default" 0.0;
+               color: 250 250 250 255;
+               rel1 {relative: 0.0 0.9;}
+               rel2 {relative: 1.0 1.0;}
+            }
+            part {
+               name: "shuffle_button";
+               type: SWALLOW;
+               description {
+                  state: "default" 0.0;
+                  rel1 {relative: 0.0 0.0;}
+                  rel2 {relative: 0.1 1.0;}
+               }
+            }
+            part {
+               name: "previous_button";
+               type: SWALLOW;
+               description {
+                  state: "default" 0.0;
+                  rel1 {relative: 0.35 0.0;}
+                  rel2 {relative: 0.45 1.0;}
+               }
+            }
+            part {
+               name: "play_button";
+               type: SWALLOW;
+               description {
+                  state: "default" 0.0;
+                  rel1 {relative: 0.45 0.0;}
+                  rel2 {relative: 0.55 1.0;}
+               }
+            }
+            part {
+               name: "next_button";
+               type: SWALLOW;
+               description {
+                  state: "default" 0.0;
+                  rel1 {relative: 0.55 0.0;}
+                  rel2 {relative: 0.65 1.0;}
+               }
+            }
+            part {
+               name: "repeat_button";
+               type: SWALLOW;
+               description {
+                  state: "default" 0.0;
+                  rel1 {relative: 0.9 0.0;}
+                  rel2 {relative: 1.0 1.0;}
+               }
+            }
+   }
+}
