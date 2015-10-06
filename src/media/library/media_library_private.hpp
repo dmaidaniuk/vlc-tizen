@@ -77,8 +77,11 @@ public:
     void unregisterOnItemUpdated(media_library_item_updated_cb cb, void* userData);
 
 public:
-    std::unique_ptr<IMediaLibrary> ml;
+    // Logger needs to be before ml, since ml will take a raw pointer to the logger.
+    // yes, it sucks, but unique_ptr is too restrictive, and shared_ptr is overkill.
+    // I'll make up my mind someday, I promise.
     std::unique_ptr<TizenLogger> logger;
+    std::unique_ptr<IMediaLibrary> ml;
 
 private:
     void onChange();
