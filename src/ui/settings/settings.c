@@ -79,7 +79,7 @@ settings_get_int(char *key, int default_value)
 }
 
 static void
-gl_del_cb(void *data, Evas_Object *obj EINA_UNUSED)
+gl_del_cb(void *data, Evas_Object *obj, void *event_info)
 {
     settings_internal_data *sd = data;
     free(sd);
@@ -193,13 +193,11 @@ settings_list_add(settings_item *menu, int len, Settings_menu_callback global_me
     hitc->item_style = "groupindex";
     hitc->func.text_get = gl_text_get_cb;
     hitc->func.content_get = gl_content_get_cb;
-    hitc->func.del = gl_del_cb;
 
     /* Set the settings item class */
     itc->item_style = "1line";
     itc->func.text_get = gl_text_get_cb;
     itc->func.content_get = gl_content_get_cb;
-    itc->func.del = gl_del_cb;
 
     genlist = elm_genlist_add(parent);
 
@@ -242,7 +240,7 @@ settings_list_add(settings_item *menu, int len, Settings_menu_callback global_me
 
             /* Put genlist item in the settings_internal_data struct for callbacks */
             sd->item = sd->selected.item = hit;
-            //elm_object_item_del_cb_set(hit, free_genlist_item_data);
+            elm_object_item_del_cb_set(hit, gl_del_cb);
         }
         else if (menu[index].type == SETTINGS_TYPE_ITEM || menu[index].type == SETTINGS_TYPE_TOGGLE)
         {
@@ -259,7 +257,7 @@ settings_list_add(settings_item *menu, int len, Settings_menu_callback global_me
             /* Put genlist item in the settings_internal_data struct for callbacks */
             sd->parent = parent;
             sd->item = sd->selected.item = it;
-            //elm_object_item_del_cb_set(it, free_genlist_item_data);
+            elm_object_item_del_cb_set(it, gl_del_cb);
         }
     }
 
