@@ -74,6 +74,10 @@ typedef struct settings_menu_selected settings_menu_selected;
 typedef void (*Settings_menu_callback)(settings_menu_selected *menu_info, view_sys* p_view_sys, void *data, Evas_Object *parent);
 
 /* Structs */
+typedef struct settings_menu_context {
+    int menu_id;
+} settings_menu_context;
+
 typedef struct settings_menu_selected
 {
     int id;
