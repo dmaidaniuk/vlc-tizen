@@ -192,7 +192,7 @@ menu_directories_selected_cb(settings_menu_selected *selected, view_sys* p_view_
 {
     int len = (int)sizeof(directory_menu) / (int)sizeof(*directory_menu);
     Evas_Object *genlist = settings_list_add(directory_menu, len, NULL, NULL, p_view_sys, parent);
-    elm_naviframe_item_push(p_view_sys->nav, NULL, NULL, NULL, genlist, NULL);
+    elm_naviframe_item_push(p_view_sys->nav, "Media library", NULL, NULL, genlist, NULL);
     evas_object_show(genlist);
 }
 
