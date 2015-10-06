@@ -207,6 +207,11 @@ settings_simple_save_toggle(settings_menu_selected *selected, view_sys* p_view_s
         // Close the popup
         evas_object_del(parent);
         break;
+    case SETTINGS_ID_SUBSENC:
+        settings_toggle_set_one_by_index(selected->menu, selected->menu_len, selected->index, true, true);
+        preference_set_int("SUBENC", selected->index);
+        evas_object_del(parent);
+        break;
     }
 
     free(ctx);
@@ -236,9 +241,12 @@ menu_hwacceleration_selected_cb(settings_menu_selected *selected, view_sys* p_vi
 void
 menu_subsenc_selected_cb(settings_menu_selected *selected, view_sys* p_view_sys, void *data, Evas_Object *parent)
 {
+    settings_menu_context *ctx = malloc(sizeof(*ctx));
+    ctx->menu_id = SETTINGS_ID_SUBSENC;
+
     int value = settings_get_int("SUBENC", 0); // WARNING: we store the index, instead of the ID
     int len = COUNT_OF(subtitles_text_encoding_menu);
-    Evas_Object *popup = settings_popup_add(subtitles_text_encoding_menu, len, settings_toggle_switch, NULL, p_view_sys, parent);
+    Evas_Object *popup = settings_popup_add(subtitles_text_encoding_menu, len, settings_simple_save_toggle, ctx, p_view_sys, parent);
     settings_toggle_set_one_by_index(subtitles_text_encoding_menu, len, value, true, true);
     evas_object_show(popup);
 }
