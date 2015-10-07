@@ -46,6 +46,7 @@ typedef enum pref_bool {
     PREF_FRAME_SKIP = 3000,
     PREF_AUDIO_STRETCH,
     PREF_DIRECTORIES_INTERNAL,
+    PREF_DEVELOPER_VERBOSE,
 } pref_bool;
 
 void

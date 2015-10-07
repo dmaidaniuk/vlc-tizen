@@ -53,6 +53,7 @@ pref_key_id_map mapping[] =
         {{PREF_FRAME_SKIP}, "FRAME_SKIP"},
         {{PREF_AUDIO_STRETCH}, "AUDIO_STRETCH"},
         {{PREF_DIRECTORIES_INTERNAL}, "DIRECTORIES_INTERNAL"},
+        {{PREF_DEVELOPER_VERBOSE}, "PREF_DEVELOPER_VERBOSE"},
         {{0}}
 };
 
@@ -176,7 +177,10 @@ preferences_get_libvlc_options()
 
     strcat(buf, "--subsdec-encoding system "); //TODO find a way to pass the value
     strcat(buf, "--stats ");
-    strcat(buf, "-vv");
+    if (preferences_get_bool(PREF_DEVELOPER_VERBOSE, false))
+        strcat(buf, "-vv");
+    else
+        strcat(buf, "-vvv");
 
     return buf;
 }

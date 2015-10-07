@@ -48,6 +48,8 @@ void
 menu_performance_selected_cb(settings_menu_selected *selected, view_sys* p_view_sys, void *data, Evas_Object *parent);
 void
 menu_deblocking_selected_cb(settings_menu_selected *selected, view_sys* p_view_sys, void *data, Evas_Object *parent);
+void
+menu_developer_selected_cb(settings_menu_selected *selected, view_sys* p_view_sys, void *data, Evas_Object *parent);
 
 struct view_sys {
     Evas_Object *nav;
@@ -62,7 +64,8 @@ settings_item settings_menu[] =
         {SETTINGS_ID_VORIENTATION,      "Video orientation",            "ic_menu_video.png",                SETTINGS_TYPE_ITEM,         menu_vorientation_selected_cb},
         {0,                             "Extra settings",               NULL,                               SETTINGS_TYPE_CATEGORY},
         {SETTINGS_ID_PERFORMANCES,      "Performances",                 "ic_menu_preferences.png",          SETTINGS_TYPE_ITEM,         menu_performance_selected_cb},
-        {SETTINGS_ID_DEBLOCKING,        "Deblocking filter settings",   "ic_menu_preferences.png",          SETTINGS_TYPE_ITEM,         menu_deblocking_selected_cb}
+        {SETTINGS_ID_DEBLOCKING,        "Deblocking filter settings",   "ic_menu_preferences.png",          SETTINGS_TYPE_ITEM,         menu_deblocking_selected_cb},
+        {SETTINGS_ID_DEVELOPER,         "Developer",                    "ic_menu_preferences.png",          SETTINGS_TYPE_ITEM,         menu_developer_selected_cb}
 };
 
 /* Create the setting submenu items */
@@ -154,6 +157,11 @@ settings_item deblocking_filter_settings_menu[] =
 
 };
 
+settings_item developer_menu[] =
+{
+        {DEVELOPER_VERBOSE, "Verbose", NULL, SETTINGS_TYPE_TOGGLE}
+};
+
 void
 settings_directories_save(settings_menu_selected *selected, view_sys* p_view_sys, void *data, Evas_Object *parent)
 {
@@ -218,6 +226,15 @@ settings_simple_save_toggle(settings_menu_selected *selected, view_sys* p_view_s
         preferences_set_enum(PREF_DEBLOCKING, selected->menu[selected->index].id);
         evas_object_del(parent);
         break;
+    case SETTINGS_ID_DEVELOPER:
+    {
+        bool newvalue = !selected->menu[selected->index].toggled;
+        settings_toggle_set_one_by_index(selected->menu, selected->menu_len, selected->index, newvalue, false);
+        elm_genlist_item_update(selected->item);
+        if (selected->menu[selected->index].id == DEVELOPER_VERBOSE)
+            preferences_set_bool(PREF_DEVELOPER_VERBOSE, newvalue);
+        break;
+    }
     default:
         break;
     }
@@ -313,6 +330,21 @@ menu_deblocking_selected_cb(settings_menu_selected *selected, view_sys* p_view_s
     settings_toggle_set_one_by_id(deblocking_filter_settings_menu, len, value, true, true);
     evas_object_show(popup);
     evas_object_event_callback_add(popup, EVAS_CALLBACK_FREE, delete_context_cb, ctx);
+}
+
+void
+menu_developer_selected_cb(settings_menu_selected *selected, view_sys* p_view_sys, void *data, Evas_Object *parent)
+{
+    settings_menu_context *ctx = malloc(sizeof(*ctx));
+    ctx->menu_id = SETTINGS_ID_DEVELOPER;
+
+    bool verbose = preferences_get_bool(PREF_DEVELOPER_VERBOSE, false);
+    int len = COUNT_OF(developer_menu);
+    Evas_Object *genlist = settings_list_add(developer_menu, len, settings_simple_save_toggle, ctx, p_view_sys, parent);
+    settings_toggle_set_one_by_id(developer_menu, len, DEVELOPER_VERBOSE, verbose, false);
+    elm_naviframe_item_push(p_view_sys->nav, "Developer options", NULL, NULL, genlist, NULL);
+    evas_object_show(genlist);
+    evas_object_event_callback_add(genlist, EVAS_CALLBACK_FREE, delete_context_cb, ctx);
 }
 
 bool

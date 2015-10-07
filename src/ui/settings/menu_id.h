@@ -37,6 +37,7 @@ typedef enum menu_id
     SETTINGS_ID_VORIENTATION,
     SETTINGS_ID_PERFORMANCES,
     SETTINGS_ID_DEBLOCKING,
+    SETTINGS_ID_DEVELOPER,
 
     /* Submenu */
     DIRECTORIES_INTERNAL = 1000,
@@ -62,6 +63,8 @@ typedef enum menu_id
     DEBLOCKING_MEDIUM,
     DEBLOCKING_LOW,
     DEBLOCKING_NO,
+
+    DEVELOPER_VERBOSE = 6000,
 
 } menu_id;
 
