@@ -95,6 +95,6 @@ void
 settings_toggle_set_one_by_index(settings_item *menu, int menu_len, int index, bool value, bool toggle_others);
 
 void
-settings_toggle_set_one_by_id(settings_item *menu, int menu_len, int id, bool value, bool toggle_others);
+settings_toggle_set_one_by_id(settings_item *menu, int menu_len, menu_id id, bool value, bool toggle_others);
 
 #endif
