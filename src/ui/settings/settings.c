@@ -262,10 +262,9 @@ settings_list_add(settings_item *menu, int len, Settings_menu_callback global_me
 }
 
 static void
-popup_block_cb(void *data, Evas_Object *obj, void *event_info)
+popup_close_cb(void *data, Evas_Object *obj, void *event_info)
 {
-    Evas_Object *parent = data;
-    evas_object_del(parent);
+    evas_object_del(obj);
 }
 
 Evas_Object *
@@ -290,7 +289,7 @@ settings_popup_add(settings_item *menu, int menu_len, Settings_menu_callback glo
 
     elm_box_pack_end(box, genlist);
 
-    evas_object_smart_callback_add(popup, "block,clicked", popup_block_cb, popup);
+    evas_object_smart_callback_add(popup, "block,clicked", popup_close_cb, NULL);
 
     elm_object_content_set(popup, box);
     evas_object_show(genlist);
