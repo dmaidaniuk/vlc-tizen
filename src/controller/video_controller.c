@@ -42,25 +42,38 @@ struct video_controller
     Eina_List*      p_content;
 };
 
+static void
+video_controller_add_item(video_controller* ctrl, const media_item* p_item)
+{
+    media_item* p_new_item = media_item_copy( p_item );
+    if (p_new_item == NULL)
+        return;
+    video_list_item* p_view_item = video_view_append_item( ctrl->p_view, p_new_item );
+    if (p_view_item == NULL)
+    {
+        media_item_destroy(p_new_item);
+        return;
+    }
+    ctrl->p_content = eina_list_append(ctrl->p_content, p_view_item);
+}
+
 /* Called by the Media Library with updated video list
  * Guaranteed to be called from the main loop
  */
 void
 video_controller_content_update_cb(Eina_List* p_content, void* p_data)
 {
-    video_controller* ctrl = (video_controller*)p_data;
     if (p_content == NULL)
         return;
+    video_controller* ctrl = (video_controller*)p_data;
     Eina_List* it;
     media_item* p_item;
 
-    // If we get multiple content updates, p_ctrl->p_content can't be != NULL
+    assert( ctrl->p_content == NULL );
+    video_view_clear(ctrl->p_view);
     EINA_LIST_FOREACH( p_content, it, p_item )
     {
-        video_list_item* p_view_item = video_view_append_item( ctrl->p_view, p_item );
-        if (p_view_item == NULL)
-            continue;
-        ctrl->p_content = eina_list_append(ctrl->p_content, p_view_item);
+        video_controller_add_item(ctrl, p_item);
     }
 }
 
@@ -68,45 +81,46 @@ video_controller_content_update_cb(Eina_List* p_content, void* p_data)
 void
 video_controller_content_refresh(video_controller* ctrl)
 {
-    // If we already have some content, consider the view up to date
-    // In case content gets updated, media library will call video_controller_content_changed_cb
-    // causing us to clear the cached content.
-    if (ctrl->p_content != NULL)
-        return;
-    // otherwise, update from media library
-    media_library* p_ml = (media_library*)application_get_media_library( ctrl->p_app );
-    media_library_get_video_files(p_ml, &video_controller_content_update_cb, ctrl);
-}
-
-/* Called when media library signals a content change */
-void
-video_controller_content_changed_cb(void* p_data)
-{
-    video_controller* ctrl = (video_controller*)p_data;
-    // Discard previous content if any, and ask ML for the
-    // new content
+    // Discard previous content if any, and ask ML for the new content
     if (ctrl->p_content != NULL)
     {
         eina_list_free(ctrl->p_content);
         ctrl->p_content = NULL;
     }
+    // otherwise, update from media library
+    media_library* p_ml = (media_library*)application_get_media_library( ctrl->p_app );
+    media_library_get_video_files(p_ml, &video_controller_content_update_cb, ctrl);
+}
+
+/*
+ * Called when media library signals a content change
+ * Guaranteed to be called from the main loop
+ */
+void
+video_controller_content_changed_cb(void* p_data)
+{
+    LOGI("Media Library content changed");
+    video_controller* ctrl = (video_controller*)p_data;
     video_controller_content_refresh(ctrl);
 }
 
 static bool
-video_controller_file_updated_cb( void* p_data, const media_item* p_new_media_item )
+video_controller_file_updated_cb( void* p_data, const media_item* p_new_media_item, bool b_added )
 {
-    LOGI("Updating: %s", p_new_media_item->psz_path);
-    video_controller* ctrl = (video_controller*)p_data;
-    if ( ctrl->p_content == NULL )
-    {
-        LOGI("No content, aborting");
+    if ( p_new_media_item->i_type != MEDIA_ITEM_TYPE_VIDEO )
         return false;
+    video_controller* ctrl = (video_controller*)p_data;
+    if ( b_added )
+    {
+        video_controller_add_item(ctrl, p_new_media_item);
+        return true;
     }
+
+    if ( ctrl->p_content == NULL )
+        return false;
 
     Eina_List* it;
     video_list_item* p_item;
-
     EINA_LIST_FOREACH( ctrl->p_content, it, p_item )
     {
         const media_item* p_media_item = video_list_item_get_media_item(p_item);

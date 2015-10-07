@@ -36,8 +36,6 @@
 
 media_library::media_library()
     : ml( MediaLibraryFactory::create() )
-    , m_nbDiscovery( 0 )
-    , m_nbElemChanged( 0 )
 {
     if ( ml == nullptr )
         throw std::runtime_error( "Failed to initialize MediaLibrary" );
@@ -46,54 +44,43 @@ media_library::media_library()
 void
 media_library::onFileAdded( FilePtr file )
 {
-    //FIXME: This seems fishy if no discovery is in progress and some media gets updated.
-    //This is very unlikely to happen for a while though.
-    std::unique_lock<std::mutex> lock( m_mutex );
-    if ( ++m_nbElemChanged >= 50 )
-    {
-        LOGI("Enough changes to trigger an update.");
-        onChange();
-        m_nbElemChanged = 0;
-    }
+    sendFileUpdate( file, true );
 }
 
 void
 media_library::onFileUpdated( FilePtr file )
 {
+    sendFileUpdate( file, false );
+}
+
+void
+media_library::sendFileUpdate( FilePtr file, bool added )
+{
     auto item = fileToMediaItem( file );
-    auto item_ptr = std::unique_ptr<media_item, void(*)(media_item*)> ( item, &media_item_destroy );
-    for ( auto& p : m_onItemUpdatedCb )
-    {
-        if ( p.first( p.second, item ) == true )
-            break;
-    }
+    LOGI("Updated file %s %d", item->psz_path, item->i_duration);
+    auto ctx = new FileUpdateCallbackCtx{this, item, added};
+    ecore_main_loop_thread_safe_call_async([](void* data) {
+        auto ctx = reinterpret_cast<FileUpdateCallbackCtx*>(data);
+        auto item_ptr = std::unique_ptr<media_item, void(*)(media_item*)> ( ctx->item, &media_item_destroy );
+        for ( auto& p : ctx->ml->m_onItemUpdatedCb )
+        {
+            if ( p.first( p.second, ctx->item, ctx->added ) == true )
+                break;
+        }
+        delete ctx;
+    }, ctx);
 }
 
 void
 media_library::onDiscoveryStarted( const std::string& entryPoint )
 {
     LOGI( "Starting [%s] discovery", entryPoint.c_str() );
-    std::unique_lock<std::mutex> lock( m_mutex );
-    m_nbDiscovery++;
 }
 
 void
 media_library::onDiscoveryCompleted( const std::string& entryPoint )
 {
     LOGI("Completed [%s] discovery", entryPoint.c_str() );
-    std::unique_lock<std::mutex> lock( m_mutex );
-    if ( --m_nbDiscovery == 0 )
-    {
-        // If this is the last discovery, and some files got updated, send a final update
-
-        if ( m_nbElemChanged != 0 )
-        {
-            m_nbElemChanged = 0;
-            LOGI("Changes detected, sending update to listeners");
-            onChange();
-        }
-        LOGI( "Completed all active discovery operations" );
-    }
 }
 
 void
@@ -106,6 +93,10 @@ void
 media_library::onReloadCompleted()
 {
     LOGI("Media library reload completed.");
+    for (auto &p : m_onChangeCb)
+    {
+        ecore_main_loop_thread_safe_call_async( p.first, p.second );
+    }
 }
 
 void
@@ -125,15 +116,6 @@ media_library::unregisterOnChange(media_library_file_list_changed_cb cb, void* c
             m_onChangeCb.erase(it);
             return;
         }
-    }
-}
-
-void
-media_library::onChange()
-{
-    for (auto &p : m_onChangeCb)
-    {
-        ecore_main_loop_thread_safe_call_async( p.first, p.second );
     }
 }
 

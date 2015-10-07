@@ -68,11 +68,6 @@ fileToMediaItem( FilePtr file )
             mi->i_w = vtrack->width();
             mi->i_h = vtrack->height();
         }
-        else
-        {
-            // Assume a media library problem and just let it go.
-            LOGW( "Adding video file [%s] with no video tracks detected.", file->mrl().c_str() );
-        }
         if (file->snapshot().length() > 0)
             mi->psz_snapshot = strdup(file->snapshot().c_str());
     }

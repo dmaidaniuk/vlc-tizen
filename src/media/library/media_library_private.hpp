@@ -84,17 +84,19 @@ public:
     std::unique_ptr<IMediaLibrary> ml;
 
 private:
-    void onChange();
+    void sendFileUpdate( FilePtr item, bool added );
 
 private:
-    // Holds the number of discoveries ongoing
-    // This gets incremented by the caller thread (most likely the main loop)
-    // and gets decremented by the discovery thread, hence the need for atomic
-    int m_nbDiscovery;
-    // Holds the number of changes since last call to fileListChangedCb.
-    // This can be accessed from both the discovery & metadata threads
-    int m_nbElemChanged;
-    std::mutex m_mutex;
+    struct FileUpdateCallbackCtx
+    {
+        FileUpdateCallbackCtx(media_library* _ml, media_item* _item, bool _added)
+            : ml(_ml), item(_item), added(_added) {}
+        media_library* ml;
+        media_item* item;
+        bool added;
+    };
+
+private:
     std::vector<std::pair<media_library_file_list_changed_cb, void*>> m_onChangeCb;
     std::vector<std::pair<media_library_item_updated_cb, void*>> m_onItemUpdatedCb;
 };

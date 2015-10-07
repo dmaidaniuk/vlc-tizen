@@ -115,31 +115,11 @@ video_list_item_get_media_item(video_list_item* p_item)
 void
 video_list_item_set_media_item(video_list_item* p_item, const media_item* p_media_item)
 {
-    bool b_changed = false;
-    if (p_item->p_media_item->i_duration != p_media_item->i_duration)
-    {
-        p_item->p_media_item->i_duration = p_media_item->i_duration;
-        b_changed = true;
-    }
-    if (p_media_item->psz_snapshot != NULL && (
-            p_item->p_media_item->psz_snapshot == NULL ||
-            strcmp( p_item->p_media_item->psz_snapshot, p_media_item->psz_snapshot)))
-    {
-        free(p_item->p_media_item->psz_snapshot);
-        p_item->p_media_item->psz_snapshot = strdup(p_media_item->psz_snapshot);
-        b_changed = true;
-    }
-    if ( p_item->p_media_item->i_w != p_media_item->i_w ||
-            p_item->p_media_item->i_h != p_media_item->i_h )
-    {
-        p_item->p_media_item->i_w = p_media_item->i_w;
-        p_item->p_media_item->i_h = p_media_item->i_h;
-        b_changed = true;
-    }
-    if (b_changed == true)
-    {
-        ecore_main_loop_thread_safe_call_async((Ecore_Cb)elm_genlist_item_update, p_item->p_object_item);
-    }
+    media_item* p_new = media_item_copy(p_media_item);
+    if (p_new == NULL)
+        return;
+    p_item->p_media_item = p_new;
+    ecore_main_loop_thread_safe_call_async((Ecore_Cb)elm_genlist_item_update, p_item->p_object_item);
 }
 
 static Evas_Object*

@@ -44,7 +44,7 @@ typedef void (*media_library_list_cb)( Eina_List*, void *p_user_data );
  * looking to update.
  * There is no warranty about which thread will call this callback.
  */
-typedef bool (*media_library_item_updated_cb)( void *p_user_data, const media_item* p_item );
+typedef bool (*media_library_item_updated_cb)( void *p_user_data, const media_item* p_item, bool b_new );
 
 media_library*
 media_library_create(application* p_app);
