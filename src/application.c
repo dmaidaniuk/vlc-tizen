@@ -58,7 +58,7 @@ app_create(void *data)
 
     if ((options = preferences_get_libvlc_options()) != NULL)
     {
-        if (setenv("libvlc-options", options, 0) != 0)
+        if (setenv("EMOTION_LIBVLC_ARGS", options, 0) != 0)
             LOGE("Failed setting environment");
         LOGD("libvlc options: %s", options);
         free(options);
