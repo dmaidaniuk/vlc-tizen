@@ -56,6 +56,7 @@ app_create(void *data)
     application *app = data;
     char *options;
 
+    /* Prepare libvlc options */
     if ((options = preferences_get_libvlc_options()) != NULL)
     {
         if (setenv("EMOTION_LIBVLC_ARGS", options, 0) != 0)
@@ -68,7 +69,16 @@ app_create(void *data)
         LOGE("Unable to allocate memory");
     }
 
-    eina_log_domain_level_set("emotion-libvlc", EINA_LOG_LEVELS);
+    /* Set libvlc-emotion verbosity level */
+    int eina_log_level = EINA_LOG_LEVELS;
+    if (preferences_get_bool(PREF_DEVELOPER_VERBOSE, false))
+    {
+        // We're in verbose mode
+        eina_log_level = EINA_LOG_LEVEL_DBG;
+    }
+    eina_log_domain_level_set("emotion-libvlc", eina_log_level);
+
+    /* */
     eina_init();
     ecore_evas_init();
     emotion_init();
