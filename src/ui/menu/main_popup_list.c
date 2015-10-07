@@ -27,7 +27,6 @@
 #include "common.h"
 
 #include <Elementary.h>
-#include <efl_extension.h>
 
 #include "main_popup_list.h"
 
@@ -206,9 +205,6 @@ create_popup(Evas_Object *parent, interface *intf)
 
     /* */
     //evas_object_smart_callback_add(popup, "clicked", cancel_cb, intf); // FIXME
-
-    /* Callback for the back key */
-    eext_object_event_callback_add(popup, EEXT_CALLBACK_LAST, eext_popup_back_cb, NULL);
 
     evas_object_size_hint_weight_set(popup, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 
