@@ -28,6 +28,7 @@
 
 #include "settings_view.h"
 #include "ui/settings/settings.h"
+#include "preferences/preferences.h"
 #include "ui/interface.h"
 #include "ui/utils.h"
 
@@ -163,7 +164,7 @@ settings_directories_save(settings_menu_selected *selected, view_sys* p_view_sys
         bool newvalue = !selected->menu[selected->index].toggled;
         settings_toggle_set_one_by_id(directory_menu, 2, DIRECTORIES_INTERNAL, newvalue, false);
         elm_genlist_item_update(selected->item);
-        preference_set_int("DIRECTORIES_INTERNAL", newvalue ? 1 : 0);
+        preferences_set_bool(PREF_DIRECTORIES_INTERNAL, newvalue ? true : false);
         break;
     }
     case DIRECTORIES_ADDLOCATION:
@@ -187,18 +188,18 @@ settings_simple_save_toggle(settings_menu_selected *selected, view_sys* p_view_s
         // Select the item (and unselect others)
         settings_toggle_set_one_by_index(selected->menu, selected->menu_len, selected->index, true, true);
         // Save the value
-        preference_set_int("HWACCELERATION", selected->menu[selected->index].id);
+        preferences_set_enum(PREF_HWACCELERATION, selected->menu[selected->index].id);
         // Close the popup
         evas_object_del(parent);
         break;
     case SETTINGS_ID_SUBSENC:
         settings_toggle_set_one_by_index(selected->menu, selected->menu_len, selected->index, true, true);
-        preference_set_int("SUBENC", selected->index);
+        preferences_set_index(PREF_SUBSENC, selected->index);
         evas_object_del(parent);
         break;
     case SETTINGS_ID_VORIENTATION:
         settings_toggle_set_one_by_index(selected->menu, selected->menu_len, selected->index, true, true);
-        preference_set_int("ORIENTATION", selected->menu[selected->index].id);
+        preferences_set_enum(PREF_ORIENTATION, selected->menu[selected->index].id);
         evas_object_del(parent);
         break;
     case SETTINGS_ID_PERFORMANCES:
@@ -206,15 +207,15 @@ settings_simple_save_toggle(settings_menu_selected *selected, view_sys* p_view_s
         bool newvalue = !selected->menu[selected->index].toggled;
         settings_toggle_set_one_by_index(selected->menu, selected->menu_len, selected->index, newvalue, false);
         if (selected->menu[selected->index].id == PERFORMANCE_FRAME_SKIP)
-            preference_set_int("FRAME_SKIP", newvalue);
+            preferences_set_bool(PREF_FRAME_SKIP, newvalue);
         else if (selected->menu[selected->index].id == PERFORMANCE_STRETCH)
-            preference_set_int("AUDIO_STRETCH", newvalue);
+            preferences_set_bool(PREF_AUDIO_STRETCH, newvalue);
         evas_object_del(parent);
         break;
     }
     case SETTINGS_ID_DEBLOCKING:
         settings_toggle_set_one_by_index(selected->menu, selected->menu_len, selected->index, true, true);
-        preference_set_int("DEBLOCKING", selected->menu[selected->index].id);
+        preferences_set_enum(PREF_DEBLOCKING, selected->menu[selected->index].id);
         evas_object_del(parent);
         break;
     default:
@@ -231,7 +232,7 @@ void delete_context_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 void
 menu_directories_selected_cb(settings_menu_selected *selected, view_sys* p_view_sys, void *data, Evas_Object *parent)
 {
-    bool internal = (bool)settings_get_int("DIRECTORIES_INTERNAL", 1);
+    bool internal = preferences_get_bool(PREF_DIRECTORIES_INTERNAL, true);
     int len = COUNT_OF(directory_menu);
     Evas_Object *genlist = settings_list_add(directory_menu, len, settings_directories_save, NULL, p_view_sys, parent);
     settings_toggle_set_one_by_id(directory_menu, len, DIRECTORIES_INTERNAL, internal, false);
@@ -245,7 +246,7 @@ menu_hwacceleration_selected_cb(settings_menu_selected *selected, view_sys* p_vi
     settings_menu_context *ctx = malloc(sizeof(*ctx));
     ctx->menu_id = SETTINGS_ID_HWACCELERATION;
 
-    int value = settings_get_int("HWACCELERATION", HWACCELERATION_AUTOMATIC);
+    menu_id value = preferences_get_enum(PREF_HWACCELERATION, HWACCELERATION_AUTOMATIC);
     int len = COUNT_OF(hardware_acceleration_menu);
     Evas_Object *popup = settings_popup_add(hardware_acceleration_menu, len, settings_simple_save_toggle, ctx, p_view_sys, parent);
     settings_toggle_set_one_by_id(hardware_acceleration_menu, len, value, true, true);
@@ -259,7 +260,7 @@ menu_subsenc_selected_cb(settings_menu_selected *selected, view_sys* p_view_sys,
     settings_menu_context *ctx = malloc(sizeof(*ctx));
     ctx->menu_id = SETTINGS_ID_SUBSENC;
 
-    int value = settings_get_int("SUBENC", 0); // WARNING: we store the index, instead of the ID
+    int value = preferences_get_index(PREF_SUBSENC, 0);
     int len = COUNT_OF(subtitles_text_encoding_menu);
     Evas_Object *popup = settings_popup_add(subtitles_text_encoding_menu, len, settings_simple_save_toggle, ctx, p_view_sys, parent);
     settings_toggle_set_one_by_index(subtitles_text_encoding_menu, len, value, true, true);
@@ -273,7 +274,7 @@ menu_vorientation_selected_cb(settings_menu_selected *selected, view_sys* p_view
     settings_menu_context *ctx = malloc(sizeof(*ctx));
     ctx->menu_id = SETTINGS_ID_VORIENTATION;
 
-    int value = settings_get_int("ORIENTATION", ORIENTATION_AUTOMATIC);
+    menu_id value = preferences_get_enum(PREF_ORIENTATION, ORIENTATION_AUTOMATIC);
     int len = COUNT_OF(video_orientation_menu);
     Evas_Object *popup = settings_popup_add(video_orientation_menu, len, settings_simple_save_toggle, ctx, p_view_sys, parent);
     settings_toggle_set_one_by_id(video_orientation_menu, len, value, true, true);
@@ -290,8 +291,8 @@ menu_performance_selected_cb(settings_menu_selected *selected, view_sys* p_view_
     int len = COUNT_OF(performance_menu);
     Evas_Object *popup = settings_popup_add(performance_menu, len, settings_simple_save_toggle, ctx, p_view_sys, parent);
 
-    bool frameskip = (bool)settings_get_int("FRAME_SKIP", 0);
-    bool stretch = (bool)settings_get_int("AUDIO_STRETCH", 0);
+    bool frameskip = preferences_get_bool(PREF_FRAME_SKIP, false);
+    bool stretch = preferences_get_bool(PREF_AUDIO_STRETCH, false);
 
     settings_toggle_set_one_by_id(performance_menu, len, PERFORMANCE_FRAME_SKIP, frameskip, false);
     settings_toggle_set_one_by_id(performance_menu, len, PERFORMANCE_STRETCH, stretch, false);
@@ -306,7 +307,7 @@ menu_deblocking_selected_cb(settings_menu_selected *selected, view_sys* p_view_s
     settings_menu_context *ctx = malloc(sizeof(*ctx));
     ctx->menu_id = SETTINGS_ID_DEBLOCKING;
 
-    int value = settings_get_int("DEBLOCKING", DEBLOCKING_AUTOMATIC);
+    int value = preferences_get_enum(PREF_DEBLOCKING, DEBLOCKING_AUTOMATIC);
     int len = COUNT_OF(deblocking_filter_settings_menu);
     Evas_Object *popup = settings_popup_add(deblocking_filter_settings_menu, len, settings_simple_save_toggle, ctx, p_view_sys, parent);
     settings_toggle_set_one_by_id(deblocking_filter_settings_menu, len, value, true, true);
