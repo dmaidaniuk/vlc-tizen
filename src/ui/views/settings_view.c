@@ -27,10 +27,11 @@
 #include "common.h"
 
 #include "settings_view.h"
-#include "ui/settings/settings.h"
 #include "preferences/preferences.h"
+#include "ui/settings/settings.h"
 #include "ui/interface.h"
 #include "ui/utils.h"
+#include "playback_service.h"
 
 #include <app_preference.h>
 
@@ -52,6 +53,7 @@ void
 menu_developer_selected_cb(settings_menu_selected *selected, view_sys* p_view_sys, void *data, Evas_Object *parent);
 
 struct view_sys {
+    interface* p_intf;
     Evas_Object *nav;
 };
 
@@ -350,8 +352,22 @@ menu_developer_selected_cb(settings_menu_selected *selected, view_sys* p_view_sy
 bool
 view_callback(view_sys *p_view_sys, interface_view_event event)
 {
-    elm_naviframe_item_pop(p_view_sys->nav);
-    return true;
+    Eina_List *list = elm_naviframe_items_get(p_view_sys->nav);
+    int count = eina_list_count(list);
+    eina_list_free(list);
+
+    if (count > 2) // 2: because we didn't pop yet
+    {
+        elm_naviframe_item_pop(p_view_sys->nav);
+        return true;
+    }
+    LOGD("Reloading emotion...");
+    //TODO reload only if settings impacting libvlc_new are changed
+
+    application *p_app = intf_get_application(p_view_sys->p_intf);
+    playback_service *p_ps = application_get_playback_service(p_app);
+    playback_service_restart_emotion(p_ps);
+    return false;
 }
 
 interface_view*
@@ -362,9 +378,11 @@ create_setting_view(interface *intf, Evas_Object *parent)
     view->p_view_sys = calloc(1, sizeof(*view->p_view_sys));
     view->p_view_sys->nav = intf_get_main_naviframe(intf);
     view->pf_event = view_callback;
+    view->p_view_sys->p_intf = intf;
 
     int len = COUNT_OF(settings_menu);
     view->view = settings_list_add(settings_menu, len, NULL, NULL, view->p_view_sys, view->p_view_sys->nav);
+    evas_object_event_callback_add(view->view, EVAS_CALLBACK_FREE, delete_context_cb, view->p_view_sys);
     evas_object_show(view->view);
 
     return view;
