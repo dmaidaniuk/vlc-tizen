@@ -68,16 +68,6 @@ settings_toggle_set_one_by_id(settings_item *menu, int menu_len, int id, bool va
     }
 }
 
-int
-settings_get_int(char *key, int default_value)
-{
-    int value;
-    if (preference_get_int(key, &value) != PREFERENCE_ERROR_NONE)
-            value = default_value;
-
-    return value;
-}
-
 static void
 gl_del_cb(void *data, Evas_Object *obj, void *event_info)
 {

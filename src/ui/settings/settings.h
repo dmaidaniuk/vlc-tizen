@@ -97,7 +97,4 @@ settings_toggle_set_one_by_index(settings_item *menu, int menu_len, int index, b
 void
 settings_toggle_set_one_by_id(settings_item *menu, int menu_len, int id, bool value, bool toggle_others);
 
-int
-settings_get_int(char *key, int default_value);
-
 #endif
