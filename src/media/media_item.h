@@ -66,6 +66,9 @@ typedef struct media_item {
 media_item *
 media_item_create(const char *psz_path, enum MEDIA_ITEM_TYPE i_type);
 
+media_item*
+media_item_copy(const media_item* p_item);
+
 void
 media_item_destroy(media_item *p_mi);
 

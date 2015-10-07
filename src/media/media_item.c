@@ -45,6 +45,25 @@ error:
     return NULL;
 }
 
+media_item*
+media_item_copy(const media_item* p_item)
+{
+    media_item* p_new = media_item_create(p_item->psz_path, p_item->i_type);
+    if (p_new == NULL)
+        return NULL;
+    p_new->i_duration = p_item->i_duration;
+    p_new->i_w = p_item->i_w;
+    p_new->i_h = p_item->i_h;
+    for (unsigned int i = 0; i < MEDIA_ITEM_META_COUNT; ++i)
+    {
+        if (p_item->psz_metas[i] != NULL)
+            p_new->psz_metas[i] = strdup( p_item->psz_metas[i]);
+    }
+    if (p_item->psz_snapshot != NULL)
+        p_new->psz_snapshot = strdup(p_item->psz_snapshot);
+    return p_new;
+}
+
 void
 media_item_destroy(media_item *p_mi)
 {
