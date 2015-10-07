@@ -61,6 +61,8 @@ struct playback_service
     Evas_Object *p_ev;  /* emotion video */
     Evas_Object *p_e;   /* emotion audio or video */
     Evas *p_ea_evas;
+    Evas *p_ev_evas;
+
     Eina_List *p_cbs_list;
 
     int i_current_lock;
@@ -278,6 +280,44 @@ playback_service_destroy(playback_service *p_ps)
 }
 
 int
+playback_service_restart_emotion(playback_service *p_ps)
+{
+    bool is_ea = p_ps->p_e == p_ps->p_ea;
+
+    playback_service_stop(p_ps);
+
+    p_ps->p_e = NULL;
+    if (p_ps->p_ea)
+    {
+        evas_object_del(p_ps->p_ea);
+        p_ps->p_ea = NULL;
+    }
+    if (p_ps->p_ev)
+    {
+        evas_object_del(p_ps->p_ev);
+        p_ps->p_ev = NULL;
+    }
+
+    p_ps->p_ea = ps_emotion_create(p_ps, p_ps->p_ea_evas, true);
+    if (!p_ps->p_ea)
+        return -1;
+
+    if (p_ps->p_ev_evas)
+    {
+        p_ps->p_ev = ps_emotion_create(p_ps, p_ps->p_ev_evas, false);
+        if (!p_ps->p_ev) {
+            evas_object_del(p_ps->p_ea);
+            p_ps->p_ea = NULL;
+            return -1;
+        }
+    }
+
+    p_ps->p_e = is_ea ? p_ps->p_ea : p_ps->p_ev;
+    return 0;
+}
+
+
+int
 playback_service_set_context(playback_service *p_ps, enum PLAYLIST_CONTEXT i_ctx)
 {
     if (i_ctx < PLAYLIST_CONTEXT_VIDEO || i_ctx > PLAYLIST_CONTEXT_OTHERS)
@@ -324,6 +364,7 @@ playback_service_set_evas_video(playback_service *p_ps, Evas *p_evas)
     {
         evas_object_del(p_ps->p_ev);
         p_ps->p_ev = NULL;
+        p_ps->p_ev_evas = NULL;
     }
     if (p_evas)
     {
@@ -331,6 +372,7 @@ playback_service_set_evas_video(playback_service *p_ps, Evas *p_evas)
         if (!p_ps->p_ev)
             return NULL;
         p_ps->p_e = p_ps->p_ev;
+        p_ps->p_ev_evas = p_evas;
 
         return p_ps->p_ev;
     }
@@ -369,6 +411,12 @@ playback_service_start(playback_service *p_ps, double i_time)
 {
     media_item *p_mi;
     power_lock_e i_new_lock;
+
+    if (!p_ps->p_e)
+    {
+        LOGE("no emotion object set");
+        return -1;
+    }
 
     p_mi = media_list_get_item(p_ps->p_ml);
     if (!p_mi || !p_mi->psz_path)

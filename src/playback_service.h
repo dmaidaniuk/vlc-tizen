@@ -56,6 +56,9 @@ void
 playback_service_destroy(playback_service *p_ps);
 
 int
+playback_service_restart_emotion(playback_service *p_ps);
+
+int
 playback_service_set_context(playback_service *p_ps, enum PLAYLIST_CONTEXT i_ctx);
 
 playback_service_cbs_id *
