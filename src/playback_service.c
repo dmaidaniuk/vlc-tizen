@@ -238,13 +238,12 @@ playback_service_create(application *p_app)
     p_ps->p_ml = p_ps->p_ml_list[PLAYLIST_CONTEXT_AUDIO];
 
     p_ps->p_ea_evas = evas_new();
-    if (!p_ps->p_ea_evas)
-        goto error;
-
-    p_ps->p_ea = ps_emotion_create(p_ps, p_ps->p_ea_evas, true);
-    if (!p_ps->p_ea)
-        goto error;
-    p_ps->p_e = p_ps->p_ea;
+    if (p_ps->p_ea_evas)
+    {
+        p_ps->p_ea = ps_emotion_create(p_ps, p_ps->p_ea_evas, true);
+        if (p_ps->p_ea)
+            p_ps->p_e = p_ps->p_ea;
+    }
 
     return p_ps;
 
