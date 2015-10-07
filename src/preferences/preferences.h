@@ -66,5 +66,7 @@ preferences_get_index(pref_index key, int default_value);
 bool
 preferences_get_bool(pref_bool key, bool default_value);
 
+char *
+preferences_get_libvlc_options();
 
 #endif

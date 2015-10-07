@@ -35,7 +35,7 @@
 
 #include "application.h"
 #include "ui/interface.h"
-
+#include "preferences/preferences.h"
 #include "system_storage.h"
 #include "playback_service.h"
 #include "media/library/media_library.hpp"
@@ -54,6 +54,19 @@ static bool
 app_create(void *data)
 {
     application *app = data;
+    char *options;
+
+    if ((options = preferences_get_libvlc_options()) != NULL)
+    {
+        if (setenv("libvlc-options", options, 0) != 0)
+            LOGE("Failed setting environment");
+        LOGD("libvlc options: %s", options);
+        free(options);
+    }
+    else
+    {
+        LOGE("Unable to allocate memory");
+    }
 
     eina_log_domain_level_set("emotion-libvlc", EINA_LOG_LEVELS);
     eina_init();

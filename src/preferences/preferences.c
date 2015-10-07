@@ -132,3 +132,51 @@ preferences_get_bool(pref_bool key, bool default_value)
 
     return value;
 }
+
+char *
+preferences_get_libvlc_options()
+{
+    char *buf = calloc(512, sizeof(char));
+    if (buf == NULL)
+        return NULL;
+
+    if (preferences_get_bool(PREF_AUDIO_STRETCH, false))
+        strcat(buf, "--audio-time-stretch ");
+    else
+        strcat(buf, "--no-audio-time-stretch ");
+
+
+    strcat(buf, "--avcodec-skiploopfilter ");
+    menu_id deblocking = preferences_get_enum(PREF_DEBLOCKING, DEBLOCKING_AUTOMATIC);
+    switch (deblocking)
+    {
+    case DEBLOCKING_FULL:
+        strcat(buf, "1 ");
+        break;
+    case DEBLOCKING_MEDIUM:
+        strcat(buf, "2 ");
+        break;
+    case DEBLOCKING_LOW:
+        strcat(buf, "3 ");
+        break;
+    case DEBLOCKING_NO:
+        strcat(buf, "4 ");
+        break;
+    case DEBLOCKING_AUTOMATIC:
+    default:
+        //TODO add auto-detection based on device performances
+        strcat(buf, "3 ");
+        break;
+    }
+
+    if (preferences_get_bool(PREF_FRAME_SKIP, false))
+        strcat(buf, "--avcodec-skip-frame 2 --avcodec-skip-idct 2 ");
+    else
+        strcat(buf, "--avcodec-skip-frame 0 --avcodec-skip-idct 0 ");
+
+    strcat(buf, "--subsdec-encoding system "); //TODO find a way to pass the value
+    strcat(buf, "--stats ");
+    strcat(buf, "-vv");
+
+    return buf;
+}
