@@ -133,6 +133,19 @@ win_back_key_cb(void *data, Evas_Object *obj, void *event_info)
             }
         }
 
+        // NOTE: When pop() is called a naviframe will free the content of the item
+        //       unless elm_naviframe_content_preserve_on_pop_set is set but this
+        //       function seems broken or underspecified (at least in Tizen 2.3 SDK).
+        //       To workaround this issue there's two options:
+        //
+        //       * Don't recycle view and instantiate a new one instead
+        //       * Remove the view from the item before calling pop()
+        //
+        //       The second option has one drawback though, once unset the part
+        //       will be flying and needs to be hidden until it's reattached.
+
+        evas_object_hide(elm_object_part_content_unset(intf->nf_content, "elm.swallow.content"));
+
         elm_object_part_content_unset(intf->nf_content, "title_left_btn");
         elm_object_part_content_unset(intf->nf_content, "title_right_btn");
 
@@ -154,6 +167,8 @@ win_back_key_cb(void *data, Evas_Object *obj, void *event_info)
             elm_object_part_content_set(intf->nf_content, "title_right_btn", intf->popup_toggle_btn);
         else
             evas_object_hide(intf->popup_toggle_btn);
+
+        evas_object_show(view->view);
     }
 }
 
@@ -238,6 +253,8 @@ intf_show_view(interface *intf, view_e view_type)
     /* Push the view in the naviframe with the corresponding header */
     Elm_Object_Item *nf_it = elm_naviframe_item_push(nf_content, interface_views[view_type].title, NULL, NULL, view->view, "basic");
     elm_object_item_data_set(nf_it, view);
+
+    evas_object_show(view->view);
 
     /* Create then set the panel toggle btn and add his callbacks */
     if(intf->sidebar_toggle_btn == NULL)
