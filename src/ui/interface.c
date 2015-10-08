@@ -152,6 +152,8 @@ win_back_key_cb(void *data, Evas_Object *obj, void *event_info)
         view = (interface_view *)elm_object_item_data_get(it);
         if (view && interface_views[view->type].b_overflow_menu == true)
             elm_object_part_content_set(intf->nf_content, "title_right_btn", intf->popup_toggle_btn);
+        else
+            evas_object_hide(intf->popup_toggle_btn);
     }
 }
 
