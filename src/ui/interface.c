@@ -207,7 +207,7 @@ create_button(Evas_Object *parent, char *style)
 }
 
 void
-intf_show_view(interface *intf, int view_type)
+intf_show_view(interface *intf, view_e view_type)
 {
     if(view_type == VIEW_AUTO)
         view_type = VIEW_VIDEO; /* Replace by the last saved tab */
