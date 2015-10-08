@@ -30,6 +30,7 @@
 #include "media_library_controller.h"
 #include "media_library_controller_private.h"
 #include "ui/views/video_view.h"
+#include "ui/views/audio_view.h"
 
 static bool
 video_controller_accept_item( const void* p_item )
@@ -38,8 +39,15 @@ video_controller_accept_item( const void* p_item )
     return p_media_item->i_type == MEDIA_ITEM_TYPE_VIDEO;
 }
 
-static media_library_controller*
-media_controller_create(application* p_app, view_sys* p_view)
+static bool
+audio_controller_accept_item( const void* p_item )
+{
+    const media_item* p_media_item = (const media_item*)p_item;
+    return p_media_item->i_type == MEDIA_ITEM_TYPE_AUDIO;
+}
+
+media_library_controller*
+video_controller_create(application* p_app, view_sys* p_view)
 {
     media_library_controller* p_ctrl = media_library_controller_create( p_app, p_view );
     if ( p_ctrl == NULL )
@@ -51,15 +59,23 @@ media_controller_create(application* p_app, view_sys* p_view)
     p_ctrl->pf_view_clear = (pf_view_clear_cb)&video_view_clear;
     p_ctrl->pf_item_duplicate = (pf_item_duplicate_cb)&media_item_copy;
     p_ctrl->pf_item_compare = (pf_item_compare_cb)&media_item_identical;
+    p_ctrl->pf_accept_item = &video_controller_accept_item;
     return p_ctrl;
 }
 
 media_library_controller*
-video_controller_create(application* p_app, view_sys* p_view)
+audio_controller_create(application* p_app, view_sys* p_view)
 {
-    media_library_controller* p_ctrl = media_controller_create( p_app, p_view );
+    media_library_controller* p_ctrl = media_library_controller_create( p_app, p_view );
     if ( p_ctrl == NULL )
         return NULL;
-    p_ctrl->pf_accept_item = &video_controller_accept_item;
+    p_ctrl->pf_view_append_media_item = (pf_view_append_media_item_cb)&audio_list_append_item;
+    p_ctrl->pf_get_media_item = (pf_get_media_item_cb)&audio_list_item_get_media_item;
+    p_ctrl->pf_set_media_item = (pf_set_media_item_cb)&audio_list_item_set_media_item;
+    p_ctrl->pf_media_library_get_content = (pf_media_library_get_content_cb)&media_library_get_audio_files;
+    p_ctrl->pf_view_clear = (pf_view_clear_cb)&audio_view_clear;
+    p_ctrl->pf_item_duplicate = (pf_item_duplicate_cb)&media_item_copy;
+    p_ctrl->pf_item_compare = (pf_item_compare_cb)&media_item_identical;
+    p_ctrl->pf_accept_item = &audio_controller_accept_item;
     return p_ctrl;
 }

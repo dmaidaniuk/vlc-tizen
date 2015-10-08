@@ -31,6 +31,22 @@
 
 #include "ui/audio_player.h"
 
+typedef struct audio_list_item audio_list_item;
+//FIXME: this typedef seems fishy
+typedef struct list_sys list_sys;
+
+const media_item*
+audio_list_item_get_media_item(audio_list_item* p_item);
+
+void
+audio_list_item_set_media_item(audio_list_item* p_item, media_item* p_media_item);
+
+audio_list_item*
+audio_list_append_item(list_sys *p_sys, media_item* p_item);
+
+void
+audio_view_clear(list_sys* videoview);
+
 interface_view *
 create_audio_view(interface *intf, Evas_Object *parent);
 

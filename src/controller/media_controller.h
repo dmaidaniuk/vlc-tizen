@@ -32,3 +32,7 @@
 
 media_library_controller*
 video_controller_create(application* p_app, view_sys* p_view);
+
+media_library_controller*
+audio_controller_create(application* p_app, view_sys* p_view);
+

@@ -27,6 +27,7 @@
 #include "common.h"
 #include "system_storage.h"
 
+#include "controller/media_controller.h"
 #include "ui/interface.h"
 #include "ui/views/audio_view.h"
 #include "ui/audio_player.h"
@@ -47,13 +48,25 @@ typedef enum audio_view_type
     AUDIO_VIEW_MAX,
 } audio_view_type;
 
+typedef struct list_sys list_sys;
+
 struct view_sys
 {
+    application* p_app;
     interface *p_intf;
 
     Evas_Object *nf_toolbar;
 
-    Evas_Object *audio_lists[AUDIO_VIEW_MAX];
+    list_sys* p_lists[AUDIO_VIEW_MAX];
+
+    Elm_Genlist_Item_Class *p_default_item_class;
+};
+
+struct list_sys
+{
+    Evas_Object *p_list;
+    media_library_controller* p_ctrl;
+    view_sys* p_audio_view;
 };
 
 typedef struct audio_list_item
@@ -63,34 +76,15 @@ typedef struct audio_list_item
     const Elm_Genlist_Item_Class *itc;
 
     media_item *p_media_item;
-} audio_list_item;
 
-static Evas_Object*
-create_audio_list(const view_sys *av);
+    Elm_Object_Item* p_object_item;
+} audio_list_item;
 
 static void
 genlist_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
     audio_list_item *ali = data;
-    struct stat sb;
-    stat(ali->p_media_item->psz_path, &sb);
-
-    if (S_ISREG(sb.st_mode))
-    {
-        /* Launch the media player */
-        intf_create_audio_player(ali->p_av->p_intf, ali->p_media_item->psz_path);
-        LOGI("VLC Player launch");
-    }
-
-    else if (S_ISDIR(sb.st_mode))
-    {
-        /* Continue to browse media folder */
-        create_audio_list(ali->p_av);
-    }
-    else
-    {
-        LOGI("This is not a file or a folder");
-    }
+    intf_create_audio_player(ali->p_av->p_intf, ali->p_media_item->psz_path);
 }
 
 static void
@@ -134,6 +128,19 @@ genlist_text_get_cb(void *data, Evas_Object *obj, const char *part)
     return NULL;
 }
 
+const media_item*
+audio_list_item_get_media_item(audio_list_item* p_item)
+{
+    return p_item->p_media_item;
+}
+
+void
+audio_list_item_set_media_item(audio_list_item* p_item, media_item* p_media_item)
+{
+    p_item->p_media_item = p_media_item;
+    ecore_main_loop_thread_safe_call_async((Ecore_Cb)elm_genlist_item_update, p_item->p_object_item);
+}
+
 static Evas_Object*
 genlist_content_get_cb(void *data, Evas_Object *obj, const char *part)
 {
@@ -155,127 +162,77 @@ genlist_content_get_cb(void *data, Evas_Object *obj, const char *part)
     return content;
 }
 
-static audio_list_item *
-genlist_audio_item_create(const view_sys *av, Evas_Object *parent_genlist, const char *psz_path, const char *psz_title, Elm_Genlist_Item_Class *itc)
+audio_list_item *
+audio_list_append_item(list_sys *p_sys, media_item* p_item)
 {
-    audio_list_item *ali = malloc(sizeof(*ali));
-    ali->p_av = av;
-    ali->itc = itc;
+    audio_list_item *ali = calloc(1, sizeof(*ali));
+    ali->p_av = p_sys->p_audio_view;
+    ali->itc = p_sys->p_audio_view->p_default_item_class;
 
-    ali->p_media_item = media_item_create(psz_path, MEDIA_ITEM_TYPE_AUDIO);
-    media_item_set_meta(ali->p_media_item, MEDIA_ITEM_META_TITLE, psz_title);
+    ali->p_media_item = p_item;
 
     /* Set and append new item in the genlist */
-    Elm_Object_Item *it = elm_genlist_item_append(parent_genlist,
-            itc,                            /* genlist item class               */
-            ali,                            /* genlist item class user data     */
-            NULL,                           /* genlist parent item              */
-            ELM_GENLIST_ITEM_NONE,          /* genlist item type                */
-            genlist_selected_cb,            /* genlist select smart callback    */
-            ali);                           /* genlist smart callback user data */
+    Elm_Object_Item *it = elm_genlist_item_append(p_sys->p_list,
+            p_sys->p_audio_view->p_default_item_class,  /* genlist item class               */
+            ali,                                        /* genlist item class user data     */
+            NULL,                                       /* genlist parent item              */
+            ELM_GENLIST_ITEM_NONE,                      /* genlist item type                */
+            genlist_selected_cb,                        /* genlist select smart callback    */
+            ali);                                       /* genlist smart callback user data */
 
     /* */
     elm_object_item_del_cb_set(it, free_list_item_data);
     return ali;
 }
 
-static Evas_Object*
-genlist_create(const view_sys *av, Elm_Genlist_Item_Class **itc )
+void
+audio_view_clear( list_sys* p_list )
 {
-     Evas_Object *genlist = elm_genlist_add(av->nf_toolbar);
-     /* Set the genlist scoller mode */
-     elm_scroller_single_direction_set(genlist, ELM_SCROLLER_SINGLE_DIRECTION_HARD);
-     /* Enable the genlist HOMOGENEOUS mode */
-     elm_genlist_homogeneous_set(genlist, EINA_TRUE);
-     /* Enable the genlist COMPRESS mode */
-     elm_genlist_mode_set(genlist, ELM_LIST_COMPRESS);
-
-     /* Item Class */
-     *itc = elm_genlist_item_class_new();
-     (*itc)->item_style = "2line.top.3";
-     (*itc)->func.text_get = genlist_text_get_cb;
-     (*itc)->func.content_get = genlist_content_get_cb;
-
-     return genlist;
+    elm_genlist_clear( p_list->p_list );
 }
 
 static Evas_Object*
-create_audio_list(const view_sys *av)
+genlist_create(const view_sys *av)
 {
-    Elm_Genlist_Item_Class *itc;
-    Evas_Object *genlist = genlist_create(av, &itc);
-
-    application *p_app = intf_get_application(av->p_intf);
-    const char *path = application_get_media_path(p_app, MEDIA_DIRECTORY_MUSIC);
-
-    if (path == NULL)
+    Evas_Object *genlist = elm_genlist_add(av->nf_toolbar);
+    if (genlist == NULL)
         return NULL;
+    /* Set the genlist scoller mode */
+    elm_scroller_single_direction_set(genlist, ELM_SCROLLER_SINGLE_DIRECTION_HARD);
+    /* Enable the genlist HOMOGENEOUS mode */
+    elm_genlist_homogeneous_set(genlist, EINA_TRUE);
+    /* Enable the genlist COMPRESS mode */
+    elm_genlist_mode_set(genlist, ELM_LIST_COMPRESS);
 
-    /* Make a realpath to use a clean path in the function */
-    char *buff = realpath(path, NULL);
-    path = buff;
-
-    LOGI("Audio View %s ", path);
-    if (path == NULL)
-    {
-        LOGI("No path");
-        return NULL ;
-    }
-
-    /* Open the path repository then put it as a dirent variable */
-    DIR* rep = opendir(path);
-    if  (rep == NULL)
-    {
-        char *error;
-        error = strerror(errno);
-        LOGI("Empty repository or Error due to %s", error);
-
-        return NULL ;
-    }
-
-    struct dirent* current_folder = NULL;
-    /* Stop when the readdir have red the all repository */
-    while ((current_folder = readdir(rep)) != NULL)
-    {
-        char *psz_path;
-        char *str = current_folder->d_name;
-
-        /* Avoid genlist item append for "." and ".." d_name */
-        if (str && (strcmp(str, ".")==0 || strcmp(str, "..")==0))
-        {
-            continue;
-        }
-
-        /* Concatenate the file path and the selected folder or file name */
-        asprintf(&psz_path, "%s/%s", path, str);
-
-        genlist_audio_item_create(av, genlist, psz_path, str, itc);
-        free(psz_path);
-    }
-    /* */
-    elm_genlist_item_class_free(itc);
     return genlist;
 }
 
-static Evas_Object*
+static list_sys*
 create_audio_list_type(view_sys *av, audio_view_type type )
 {
-    Evas_Object *genlist = av->audio_lists[type];
-    if(genlist == NULL)
+    list_sys *p_list = av->p_lists[type];
+    if(p_list == NULL)
     {
         LOGD("New View %i", type);
-        av->audio_lists[type] = genlist = create_audio_list(av);
+        p_list = calloc(1, sizeof(*p_list));
+        if (p_list == NULL)
+            return NULL;
+        p_list->p_audio_view = av;
+        p_list->p_list = genlist_create(av);
+        p_list->p_ctrl = audio_controller_create(av->p_app, p_list);
+        media_library_controller_refresh( p_list->p_ctrl );
+        av->p_lists[type] = p_list;
     }
     else
     {
         LOGD("Recycling View %i", type);
     }
 
-    Elm_Object_Item *it = elm_naviframe_item_push(av->nf_toolbar, "", NULL, NULL, genlist, NULL);
+    Elm_Object_Item *it = elm_naviframe_item_push(av->nf_toolbar, "", NULL, NULL, p_list->p_list, NULL);
     elm_naviframe_item_title_enabled_set(it, EINA_FALSE, EINA_FALSE);
 
-    evas_object_show(genlist);
-    return genlist;
+    evas_object_show( p_list->p_list );
+    return p_list;
 }
 
 static void
@@ -337,8 +294,13 @@ create_audio_view(interface *intf, Evas_Object *parent)
     /* Setup the audio_view */
     view_sys *audio_view_sys = calloc(1, sizeof(*audio_view_sys));
     audio_view_sys->p_intf = intf;
-    for(int i = 0; i < AUDIO_VIEW_MAX; i++)
-        audio_view_sys->audio_lists[i] = NULL;
+    audio_view_sys->p_app = intf_get_application(intf);
+
+    /* Item Class */
+    audio_view_sys->p_default_item_class = elm_genlist_item_class_new();
+    audio_view_sys->p_default_item_class->item_style = "2line.top.3";
+    audio_view_sys->p_default_item_class->func.text_get = genlist_text_get_cb;
+    audio_view_sys->p_default_item_class->func.content_get = genlist_content_get_cb;
 
     view->p_view_sys = audio_view_sys;
 

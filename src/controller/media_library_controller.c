@@ -120,6 +120,12 @@ media_library_controller_content_changed_cb(void* p_data)
     ctrl->pf_media_library_get_content(p_ml, &media_library_controller_content_update_cb, ctrl);
 }
 
+void
+media_library_controller_refresh(media_library_controller* p_ctrl)
+{
+    ecore_main_loop_thread_safe_call_async(&media_library_controller_content_changed_cb, p_ctrl);
+}
+
 media_library_controller*
 media_library_controller_create(application* p_app, view_sys* p_view )
 {

@@ -36,4 +36,7 @@ media_library_controller_create( application* p_app, view_sys* p_view );
 void
 media_library_controller_destroy(media_library_controller *);
 
+void
+media_library_controller_refresh( media_library_controller* p_ctrl );
+
 #endif /* VIDEO_CONTROLLER_H_ */
