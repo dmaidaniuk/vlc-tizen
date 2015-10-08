@@ -245,7 +245,7 @@ settings_list_add(settings_item *menu, int len, Settings_menu_callback global_me
                     sd);                           /* genlist smart callback user data */
 
             /* Put genlist item in the settings_internal_data struct for callbacks */
-            sd->parent = parent;
+            sd->parent = genlist;
             sd->item = sd->selected.item = it;
             elm_object_item_del_cb_set(it, gl_del_cb);
         }
