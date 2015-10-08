@@ -54,6 +54,7 @@ fileToMediaItem( FilePtr file )
         LOGE( "Failed to create media_item for file %s", file->mrl().c_str() );
         return nullptr;
     }
+    mi->i_id = file->id();
     media_item_set_meta(mi, MEDIA_ITEM_META_TITLE, file->name().c_str());
 
     mi->i_duration = file->duration();

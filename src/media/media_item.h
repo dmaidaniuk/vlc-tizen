@@ -61,6 +61,7 @@ typedef struct media_item {
     int i_w, i_h;                   /* in pixels */
 
     char* psz_snapshot;             /* Path to a snapshot file */
+    uint32_t i_id;                  /* Opaque file type specific ID, provided by the media library */
 } media_item;
 
 media_item *
@@ -71,6 +72,9 @@ media_item_copy(const media_item* p_item);
 
 void
 media_item_destroy(media_item *p_mi);
+
+bool
+media_item_identical(const media_item* p_left, const media_item* p_right);
 
 int
 media_item_set_meta(media_item *p_mi, enum MEDIA_ITEM_META i_meta, const char *psz_meta);

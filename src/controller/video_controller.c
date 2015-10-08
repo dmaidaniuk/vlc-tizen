@@ -82,7 +82,7 @@ video_controller_file_update( video_controller* ctrl, const media_item* p_media_
         {
             const media_item* p_media_item = ctrl->pf_get_media_item(p_item);
 
-            if (!strcmp( p_media_item->psz_path, p_new_media_item->psz_path))
+            if ( media_item_identical( p_media_item, p_new_media_item) )
             {
                 ctrl->pf_set_media_item(p_item, p_new_media_item);
                 return true;

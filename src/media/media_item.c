@@ -64,6 +64,14 @@ media_item_copy(const media_item* p_item)
     return p_new;
 }
 
+bool
+media_item_identical(const media_item* p_left, const media_item* p_right)
+{
+    if ( p_left->i_id != 0 && p_right->i_id != 0 )
+        return p_left->i_id == p_right->i_id && p_left->i_type == p_right->i_type;
+    return strcmp( p_left->psz_path, p_right->psz_path ) == 0;
+}
+
 void
 media_item_destroy(media_item *p_mi)
 {
