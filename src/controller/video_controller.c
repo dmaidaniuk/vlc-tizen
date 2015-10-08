@@ -36,10 +36,23 @@
 
 struct video_controller
 {
+    /**
+     * Content Management
+     */
     application*    p_app;
     view_sys*     p_view;
     // This is the content as a video_list_item list.
     Eina_List*      p_content;
+
+    /**
+     * Callbacks & settings
+     */
+    video_list_item*    (*pf_view_append_media_item)( view_sys* p_view, media_item* p_item );
+    void                (*pf_view_clear)( view_sys* videoview );
+    const media_item*   (*pf_get_media_item)( video_list_item* p_view );
+    void                (*pf_set_media_item)( video_list_item* p_view, const media_item* p_item );
+    void                (*pf_media_library_get_content)( media_library* p_ml, media_library_list_cb cb, void* p_user_data );
+
 };
 
 static void
@@ -48,7 +61,7 @@ video_controller_add_item(video_controller* ctrl, const media_item* p_item)
     media_item* p_new_item = media_item_copy( p_item );
     if (p_new_item == NULL)
         return;
-    video_list_item* p_view_item = video_view_append_item( ctrl->p_view, p_new_item );
+    video_list_item* p_view_item = ctrl->pf_view_append_media_item( ctrl->p_view, p_new_item );
     if (p_view_item == NULL)
     {
         media_item_destroy(p_new_item);
@@ -68,11 +81,11 @@ bool video_controller_file_update( video_controller* ctrl, const media_item* p_n
         video_list_item* p_item;
         EINA_LIST_FOREACH( ctrl->p_content, it, p_item )
         {
-            const media_item* p_media_item = video_list_item_get_media_item(p_item);
+            const media_item* p_media_item = ctrl->pf_get_media_item(p_item);
 
             if (!strcmp( p_media_item->psz_path, p_new_media_item->psz_path))
             {
-                video_list_item_set_media_item(p_item, p_new_media_item);
+                ctrl->pf_set_media_item(p_item, p_new_media_item);
                 return true;
             }
         }
@@ -120,11 +133,11 @@ video_controller_content_changed_cb(void* p_data)
     if (ctrl->p_content != NULL)
     {
         eina_list_free(ctrl->p_content);
-        video_view_clear(ctrl->p_view);
+        ctrl->pf_view_clear(ctrl->p_view);
         ctrl->p_content = NULL;
     }
     media_library* p_ml = (media_library*)application_get_media_library( ctrl->p_app );
-    media_library_get_video_files(p_ml, &video_controller_content_update_cb, ctrl);
+    ctrl->pf_media_library_get_content(p_ml, &video_controller_content_update_cb, ctrl);
 }
 
 video_controller*
@@ -135,6 +148,11 @@ video_controller_create(application* p_app, view_sys* p_view )
        return NULL;
    ctrl->p_app = p_app;
    ctrl->p_view = p_view;
+   ctrl->pf_view_append_media_item = &video_view_append_item;
+   ctrl->pf_get_media_item = &video_list_item_get_media_item;
+   ctrl->pf_set_media_item = &video_list_item_set_media_item;
+   ctrl->pf_media_library_get_content = &media_library_get_video_files;
+   ctrl->pf_view_clear = &video_view_clear;
 
    /* Populate it */
    media_library* p_ml = (media_library*)application_get_media_library(p_app);
