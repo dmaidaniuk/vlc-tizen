@@ -57,7 +57,6 @@ void
 media_library::sendFileUpdate( FilePtr file, bool added )
 {
     auto item = fileToMediaItem( file );
-    LOGI("Updated file %s %d", item->psz_path, item->i_duration);
     auto ctx = new FileUpdateCallbackCtx{this, item, added};
     ecore_main_loop_thread_safe_call_async([](void* data) {
         auto ctx = reinterpret_cast<FileUpdateCallbackCtx*>(data);

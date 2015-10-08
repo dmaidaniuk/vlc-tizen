@@ -57,6 +57,38 @@ video_controller_add_item(video_controller* ctrl, const media_item* p_item)
     ctrl->p_content = eina_list_append(ctrl->p_content, p_view_item);
 }
 
+bool video_controller_file_update( video_controller* ctrl, const media_item* p_new_media_item )
+{
+    if ( p_new_media_item->i_type != MEDIA_ITEM_TYPE_VIDEO )
+        return false;
+
+    if ( ctrl->p_content != NULL )
+    {
+        Eina_List* it;
+        video_list_item* p_item;
+        EINA_LIST_FOREACH( ctrl->p_content, it, p_item )
+        {
+            const media_item* p_media_item = video_list_item_get_media_item(p_item);
+
+            if (!strcmp( p_media_item->psz_path, p_new_media_item->psz_path))
+            {
+                video_list_item_set_media_item(p_item, p_new_media_item);
+                return true;
+            }
+        }
+    }
+    video_controller_add_item( ctrl, p_new_media_item );
+    return true;
+}
+
+static bool
+video_controller_file_updated_cb(void* p_data, const media_item* p_new_media_item, bool b_added )
+{
+    (void)b_added;
+    video_controller* ctrl = (video_controller*)p_data;
+    return video_controller_file_update(ctrl, p_new_media_item);
+}
+
 /* Called by the Media Library with updated video list
  * Guaranteed to be called from the main loop
  */
@@ -69,69 +101,30 @@ video_controller_content_update_cb(Eina_List* p_content, void* p_data)
     Eina_List* it;
     media_item* p_item;
 
-    assert( ctrl->p_content == NULL );
-    video_view_clear(ctrl->p_view);
     EINA_LIST_FOREACH( p_content, it, p_item )
     {
-        video_controller_add_item(ctrl, p_item);
+        video_controller_file_update(ctrl, p_item);
     }
-}
-
-/* Queries the media library for the updated video list */
-void
-video_controller_content_refresh(video_controller* ctrl)
-{
-    // Discard previous content if any, and ask ML for the new content
-    if (ctrl->p_content != NULL)
-    {
-        eina_list_free(ctrl->p_content);
-        ctrl->p_content = NULL;
-    }
-    // otherwise, update from media library
-    media_library* p_ml = (media_library*)application_get_media_library( ctrl->p_app );
-    media_library_get_video_files(p_ml, &video_controller_content_update_cb, ctrl);
 }
 
 /*
- * Called when media library signals a content change
+ * Called when media library signals a content change (currently, only after reload)
  * Guaranteed to be called from the main loop
  */
 void
 video_controller_content_changed_cb(void* p_data)
 {
-    LOGI("Media Library content changed");
     video_controller* ctrl = (video_controller*)p_data;
-    video_controller_content_refresh(ctrl);
-}
 
-static bool
-video_controller_file_updated_cb( void* p_data, const media_item* p_new_media_item, bool b_added )
-{
-    if ( p_new_media_item->i_type != MEDIA_ITEM_TYPE_VIDEO )
-        return false;
-    video_controller* ctrl = (video_controller*)p_data;
-    if ( b_added )
+    // Discard previous content if any, and ask ML for the new content
+    if (ctrl->p_content != NULL)
     {
-        video_controller_add_item(ctrl, p_new_media_item);
-        return true;
+        eina_list_free(ctrl->p_content);
+        video_view_clear(ctrl->p_view);
+        ctrl->p_content = NULL;
     }
-
-    if ( ctrl->p_content == NULL )
-        return false;
-
-    Eina_List* it;
-    video_list_item* p_item;
-    EINA_LIST_FOREACH( ctrl->p_content, it, p_item )
-    {
-        const media_item* p_media_item = video_list_item_get_media_item(p_item);
-
-        if (!strcmp( p_media_item->psz_path, p_new_media_item->psz_path))
-        {
-            video_list_item_set_media_item(p_item, p_new_media_item);
-            return true;
-        }
-    }
-    return false;
+    media_library* p_ml = (media_library*)application_get_media_library( ctrl->p_app );
+    media_library_get_video_files(p_ml, &video_controller_content_update_cb, ctrl);
 }
 
 video_controller*
