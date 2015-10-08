@@ -121,14 +121,13 @@ win_back_key_cb(void *data, Evas_Object *obj, void *event_info)
         assert(it!=NULL); // Else we should have quit before
 
         interface_view *view = (interface_view *)elm_object_item_data_get(it);
-        if(view){
-            if(view->pf_event != NULL &&
-               view->pf_event(view->p_view_sys, INTERFACE_VIEW_EVENT_BACK) == true ) {
+        if (view) {
+            if (view->pf_event != NULL &&
+                view->pf_event(view->p_view_sys, INTERFACE_VIEW_EVENT_BACK) == true) {
                 /* View has accepted the event */
                 return;
             }
-            else if(view->pf_stop != NULL)
-            {
+            else if(view->pf_stop != NULL) {
                 view->pf_stop(view->p_view_sys);
             }
         }
@@ -155,8 +154,7 @@ win_back_key_cb(void *data, Evas_Object *obj, void *event_info)
 
         /* If nothing left, exit */
         it = elm_naviframe_top_item_get(intf->nf_content);
-        if (it == NULL)
-        {
+        if (it == NULL) {
             ui_app_exit();
             return;
         }
