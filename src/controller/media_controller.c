@@ -52,7 +52,7 @@ struct media_controller
     const media_item*   (*pf_get_media_item)( video_list_item* p_view );
     void                (*pf_set_media_item)( video_list_item* p_view, media_item* p_item );
     void                (*pf_media_library_get_content)( media_library* p_ml, media_library_list_cb cb, void* p_user_data );
-
+    enum MEDIA_ITEM_TYPE i_type;
 };
 
 static void
@@ -67,7 +67,7 @@ media_controller_add_item(media_controller* ctrl, media_item* p_item)
 bool
 media_controller_file_update( media_controller* ctrl, const media_item* p_media_item )
 {
-    if ( p_media_item->i_type != MEDIA_ITEM_TYPE_VIDEO )
+    if ( p_media_item->i_type != ctrl->i_type )
         return false;
 
     media_item* p_new_media_item = media_item_copy( p_media_item );
@@ -152,6 +152,7 @@ video_controller_create(application* p_app, view_sys* p_view )
    ctrl->pf_set_media_item = &video_list_item_set_media_item;
    ctrl->pf_media_library_get_content = &media_library_get_video_files;
    ctrl->pf_view_clear = &video_view_clear;
+   ctrl->i_type = MEDIA_ITEM_TYPE_VIDEO;
 
    /* Populate it */
    media_library* p_ml = (media_library*)application_get_media_library(p_app);
