@@ -149,7 +149,7 @@ win_back_key_cb(void *data, Evas_Object *obj, void *event_info)
         elm_object_part_content_unset(intf->nf_content, "title_left_btn");
         elm_object_part_content_unset(intf->nf_content, "title_right_btn");
 
-        /* Unpop the top view */
+        /* Pop the top view */
         elm_naviframe_item_pop(intf->nf_content);
         elm_win_indicator_mode_set(intf->win, ELM_WIN_INDICATOR_SHOW);
 
