@@ -134,16 +134,24 @@ win_back_key_cb(void *data, Evas_Object *obj, void *event_info)
         }
 
         elm_object_part_content_unset(intf->nf_content, "title_left_btn");
+        elm_object_part_content_unset(intf->nf_content, "title_right_btn");
 
         /* Unpop the top view */
         elm_naviframe_item_pop(intf->nf_content);
         elm_win_indicator_mode_set(intf->win, ELM_WIN_INDICATOR_SHOW);
 
-        elm_object_part_content_set(intf->nf_content, "title_left_btn", intf->sidebar_toggle_btn);
-
         /* If nothing left, exit */
-        if (elm_naviframe_top_item_get(intf->nf_content) == NULL)
+        it = elm_naviframe_top_item_get(intf->nf_content);
+        if (it == NULL)
+        {
             ui_app_exit();
+            return;
+        }
+
+        elm_object_part_content_set(intf->nf_content, "title_left_btn", intf->sidebar_toggle_btn);
+        view = (interface_view *)elm_object_item_data_get(it);
+        if (view && interface_views[view->type].b_overflow_menu == true)
+            elm_object_part_content_set(intf->nf_content, "title_right_btn", intf->popup_toggle_btn);
     }
 }
 
@@ -220,6 +228,7 @@ intf_show_view(interface *intf, view_e view_type)
     {
         LOGD("New interface view %i", view_type);
         intf->nf_views[view_type] = view = interface_views[view_type].pf_create(intf, nf_content);
+        view->type = view_type;
     }
     else
         LOGD("Recycling interface view %i", view_type);

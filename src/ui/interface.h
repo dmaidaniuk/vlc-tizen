@@ -53,14 +53,6 @@ typedef enum interface_view_event {
     INTERFACE_VIEW_EVENT_BACK,
     INTERFACE_VIEW_EVENT_MENU,
 }interface_view_event;
-typedef struct interface_view {
-    Evas_Object *view;                /* The Evas View prepared to be stacked */
-    view_sys *p_view_sys;                   /* The view private data */
-
-    void (*pf_start)(view_sys *p_view_sys); /* CB when the view is started/resumed */
-    void (*pf_stop) (view_sys *p_view_sys); /* CB when the view is stoped/paused */
-    bool (*pf_event)(view_sys *p_view_sys, interface_view_event event); /* */
-} interface_view;
 
 typedef enum view_e {
     VIEW_AUTO = -1,
@@ -71,6 +63,17 @@ typedef enum view_e {
     VIEW_ABOUT,
     VIEW_MAX,
 } view_e;
+
+typedef struct interface_view {
+    Evas_Object *view;                /* The Evas View prepared to be stacked */
+    view_sys *p_view_sys;                   /* The view private data */
+    view_e type;
+
+    void (*pf_start)(view_sys *p_view_sys); /* CB when the view is started/resumed */
+    void (*pf_stop) (view_sys *p_view_sys); /* CB when the view is stoped/paused */
+    bool (*pf_event)(view_sys *p_view_sys, interface_view_event event); /* */
+} interface_view;
+
 
 void
 intf_show_view(interface *, view_e);
