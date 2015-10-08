@@ -50,30 +50,29 @@ struct video_controller
     video_list_item*    (*pf_view_append_media_item)( view_sys* p_view, media_item* p_item );
     void                (*pf_view_clear)( view_sys* videoview );
     const media_item*   (*pf_get_media_item)( video_list_item* p_view );
-    void                (*pf_set_media_item)( video_list_item* p_view, const media_item* p_item );
+    void                (*pf_set_media_item)( video_list_item* p_view, media_item* p_item );
     void                (*pf_media_library_get_content)( media_library* p_ml, media_library_list_cb cb, void* p_user_data );
 
 };
 
 static void
-video_controller_add_item(video_controller* ctrl, const media_item* p_item)
+video_controller_add_item(video_controller* ctrl, media_item* p_item)
 {
-    media_item* p_new_item = media_item_copy( p_item );
-    if (p_new_item == NULL)
-        return;
-    video_list_item* p_view_item = ctrl->pf_view_append_media_item( ctrl->p_view, p_new_item );
+    video_list_item* p_view_item = ctrl->pf_view_append_media_item( ctrl->p_view, p_item );
     if (p_view_item == NULL)
-    {
-        media_item_destroy(p_new_item);
         return;
-    }
     ctrl->p_content = eina_list_append(ctrl->p_content, p_view_item);
 }
 
-bool video_controller_file_update( video_controller* ctrl, const media_item* p_new_media_item )
+bool
+video_controller_file_update( video_controller* ctrl, const media_item* p_media_item )
 {
-    if ( p_new_media_item->i_type != MEDIA_ITEM_TYPE_VIDEO )
+    if ( p_media_item->i_type != MEDIA_ITEM_TYPE_VIDEO )
         return false;
+
+    media_item* p_new_media_item = media_item_copy( p_media_item );
+    if (p_new_media_item == NULL)
+        return true;
 
     if ( ctrl->p_content != NULL )
     {

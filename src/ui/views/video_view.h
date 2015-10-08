@@ -53,6 +53,6 @@ const media_item*
 video_list_item_get_media_item(video_list_item* p_item);
 
 void
-video_list_item_set_media_item(video_list_item* p_item, const media_item* p_media_item);
+video_list_item_set_media_item(video_list_item* p_item, media_item* p_media_item);
 
 #endif /* VIDEO_VIEW_H_ */

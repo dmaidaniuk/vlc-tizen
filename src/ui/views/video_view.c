@@ -113,12 +113,9 @@ video_list_item_get_media_item(video_list_item* p_item)
 }
 
 void
-video_list_item_set_media_item(video_list_item* p_item, const media_item* p_media_item)
+video_list_item_set_media_item(video_list_item* p_item, media_item* p_media_item)
 {
-    media_item* p_new = media_item_copy(p_media_item);
-    if (p_new == NULL)
-        return;
-    p_item->p_media_item = p_new;
+    p_item->p_media_item = p_media_item;
     ecore_main_loop_thread_safe_call_async((Ecore_Cb)elm_genlist_item_update, p_item->p_object_item);
 }
 
