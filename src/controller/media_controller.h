@@ -24,16 +24,11 @@
  * compatibility with the Store
  *****************************************************************************/
 
-#ifndef VIDEO_CONTROLLER_H_
-#define VIDEO_CONTROLLER_H_
-
 #include "application.h"
 #include "ui/interface.h"
 
-media_controller*
-video_controller_create( application* p_app, view_sys* p_view );
+// Allow one file to include "media_controller.h" and still get public media_library_controller API
+#include "media_library_controller.h"
 
-void
-media_controller_destroy(media_controller *);
-
-#endif /* VIDEO_CONTROLLER_H_ */
+media_library_controller*
+video_controller_create(application* p_app, view_sys* p_view);

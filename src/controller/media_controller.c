@@ -25,148 +25,41 @@
  *****************************************************************************/
 
 #include "common.h"
+
 #include "media_controller.h"
-
-#include "application.h"
-#include "media/library/media_library.hpp"
+#include "media_library_controller.h"
+#include "media_library_controller_private.h"
 #include "ui/views/video_view.h"
-#include "ui/interface.h"
-
-#include <assert.h>
-
-struct media_controller
-{
-    /**
-     * Content Management
-     */
-    application*    p_app;
-    view_sys*     p_view;
-    // This is the content as a video_list_item list.
-    Eina_List*      p_content;
-
-    /**
-     * Callbacks & settings
-     */
-    video_list_item*    (*pf_view_append_media_item)( view_sys* p_view, media_item* p_item );
-    void                (*pf_view_clear)( view_sys* videoview );
-    const media_item*   (*pf_get_media_item)( video_list_item* p_view );
-    void                (*pf_set_media_item)( video_list_item* p_view, media_item* p_item );
-    void                (*pf_media_library_get_content)( media_library* p_ml, media_library_list_cb cb, void* p_user_data );
-    enum MEDIA_ITEM_TYPE i_type;
-};
-
-static void
-media_controller_add_item(media_controller* ctrl, media_item* p_item)
-{
-    video_list_item* p_view_item = ctrl->pf_view_append_media_item( ctrl->p_view, p_item );
-    if (p_view_item == NULL)
-        return;
-    ctrl->p_content = eina_list_append(ctrl->p_content, p_view_item);
-}
-
-bool
-media_controller_file_update( media_controller* ctrl, const media_item* p_media_item )
-{
-    if ( p_media_item->i_type != ctrl->i_type )
-        return false;
-
-    media_item* p_new_media_item = media_item_copy( p_media_item );
-    if (p_new_media_item == NULL)
-        return true;
-
-    if ( ctrl->p_content != NULL )
-    {
-        Eina_List* it;
-        video_list_item* p_item;
-        EINA_LIST_FOREACH( ctrl->p_content, it, p_item )
-        {
-            const media_item* p_media_item = ctrl->pf_get_media_item(p_item);
-
-            if ( media_item_identical( p_media_item, p_new_media_item) )
-            {
-                ctrl->pf_set_media_item(p_item, p_new_media_item);
-                return true;
-            }
-        }
-    }
-    media_controller_add_item( ctrl, p_new_media_item );
-    return true;
-}
 
 static bool
-media_controller_file_updated_cb(void* p_data, const media_item* p_new_media_item, bool b_added )
+video_controller_accept_item( const void* p_item )
 {
-    (void)b_added;
-    media_controller* ctrl = (media_controller*)p_data;
-    return media_controller_file_update(ctrl, p_new_media_item);
+    const media_item* p_media_item = (const media_item*)p_item;
+    return p_media_item->i_type == MEDIA_ITEM_TYPE_VIDEO;
 }
 
-/* Called by the Media Library with updated video list
- * Guaranteed to be called from the main loop
- */
-void
-media_controller_content_update_cb(Eina_List* p_content, void* p_data)
+static media_library_controller*
+media_controller_create(application* p_app, view_sys* p_view)
 {
-    if (p_content == NULL)
-        return;
-    media_controller* ctrl = (media_controller*)p_data;
-    Eina_List* it;
-    media_item* p_item;
-
-    EINA_LIST_FOREACH( p_content, it, p_item )
-    {
-        media_controller_file_update(ctrl, p_item);
-    }
+    media_library_controller* p_ctrl = media_library_controller_create( p_app, p_view );
+    if ( p_ctrl == NULL )
+        return NULL;
+    p_ctrl->pf_view_append_media_item = (pf_view_append_media_item_cb)&video_view_append_item;
+    p_ctrl->pf_get_media_item = (pf_get_media_item_cb)&video_list_item_get_media_item;
+    p_ctrl->pf_set_media_item = (pf_set_media_item_cb)&video_list_item_set_media_item;
+    p_ctrl->pf_media_library_get_content = (pf_media_library_get_content_cb)&media_library_get_video_files;
+    p_ctrl->pf_view_clear = (pf_view_clear_cb)&video_view_clear;
+    p_ctrl->pf_item_duplicate = (pf_item_duplicate_cb)&media_item_copy;
+    p_ctrl->pf_item_compare = (pf_item_compare_cb)&media_item_identical;
+    return p_ctrl;
 }
 
-/*
- * Called when media library signals a content change (currently, only after reload)
- * Guaranteed to be called from the main loop
- */
-void
-media_controller_content_changed_cb(void* p_data)
+media_library_controller*
+video_controller_create(application* p_app, view_sys* p_view)
 {
-    media_controller* ctrl = (media_controller*)p_data;
-
-    // Discard previous content if any, and ask ML for the new content
-    if (ctrl->p_content != NULL)
-    {
-        eina_list_free(ctrl->p_content);
-        ctrl->pf_view_clear(ctrl->p_view);
-        ctrl->p_content = NULL;
-    }
-    media_library* p_ml = (media_library*)application_get_media_library( ctrl->p_app );
-    ctrl->pf_media_library_get_content(p_ml, &media_controller_content_update_cb, ctrl);
-}
-
-media_controller*
-video_controller_create(application* p_app, view_sys* p_view )
-{
-   media_controller* ctrl = calloc(1, sizeof(*ctrl));
-   if ( ctrl == NULL )
-       return NULL;
-   ctrl->p_app = p_app;
-   ctrl->p_view = p_view;
-   ctrl->pf_view_append_media_item = &video_view_append_item;
-   ctrl->pf_get_media_item = &video_list_item_get_media_item;
-   ctrl->pf_set_media_item = &video_list_item_set_media_item;
-   ctrl->pf_media_library_get_content = &media_library_get_video_files;
-   ctrl->pf_view_clear = &video_view_clear;
-   ctrl->i_type = MEDIA_ITEM_TYPE_VIDEO;
-
-   /* Populate it */
-   media_library* p_ml = (media_library*)application_get_media_library(p_app);
-   media_library_register_on_change(p_ml, media_controller_content_changed_cb, ctrl);
-   media_library_register_item_updated(p_ml, media_controller_file_updated_cb, ctrl);
-   return ctrl;
-}
-
-void
-media_controller_destroy(media_controller *ctrl)
-{
-    eina_list_free(ctrl->p_content);
-    media_library* p_ml = (media_library*)application_get_media_library(ctrl->p_app);
-    media_library_unregister_on_change(p_ml, &media_controller_content_changed_cb, ctrl);
-    media_library_unregister_item_updated(p_ml, &media_controller_file_updated_cb, ctrl);
-    free(ctrl);
+    media_library_controller* p_ctrl = media_controller_create( p_app, p_view );
+    if ( p_ctrl == NULL )
+        return NULL;
+    p_ctrl->pf_accept_item = &video_controller_accept_item;
+    return p_ctrl;
 }
