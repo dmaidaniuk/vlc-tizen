@@ -26,7 +26,7 @@
 
 #include "common.h"
 
-#include "controller/video_controller.h"
+#include "controller/media_controller.h"
 #include "ui/interface.h"
 #include "video_view.h"
 #include "video_player.h"
@@ -41,7 +41,7 @@ struct view_sys
 {
     interface *p_intf;
 
-    video_controller* p_controller;
+    media_controller* p_controller;
 
     Evas_Object *p_video_list;
     Elm_Genlist_Item_Class* p_default_item_class;
@@ -246,7 +246,7 @@ void
 destroy_video_view(interface_view *view)
 {
     elm_genlist_item_class_free(view->p_view_sys->p_default_item_class);
-    video_controller_destroy(view->p_view_sys->p_controller);
+    media_controller_destroy(view->p_view_sys->p_controller);
     free(view->p_view_sys);
     free(view);
 }

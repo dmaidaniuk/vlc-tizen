@@ -38,7 +38,7 @@ typedef struct playback_service playback_service;
 typedef struct media_storage media_storage;
 typedef struct media_item media_item;
 typedef struct media_list media_list;
-typedef struct video_controller video_controller;
+typedef struct media_controller media_controller;
 
 #include "system_storage.h"
 

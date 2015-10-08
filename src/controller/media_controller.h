@@ -30,10 +30,10 @@
 #include "application.h"
 #include "ui/interface.h"
 
-video_controller*
+media_controller*
 video_controller_create( application* p_app, view_sys* p_view );
 
 void
-video_controller_destroy(video_controller *);
+media_controller_destroy(media_controller *);
 
 #endif /* VIDEO_CONTROLLER_H_ */

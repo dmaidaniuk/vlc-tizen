@@ -25,7 +25,7 @@
  *****************************************************************************/
 
 #include "common.h"
-#include "video_controller.h"
+#include "media_controller.h"
 
 #include "application.h"
 #include "media/library/media_library.hpp"
@@ -34,7 +34,7 @@
 
 #include <assert.h>
 
-struct video_controller
+struct media_controller
 {
     /**
      * Content Management
@@ -56,7 +56,7 @@ struct video_controller
 };
 
 static void
-video_controller_add_item(video_controller* ctrl, media_item* p_item)
+media_controller_add_item(media_controller* ctrl, media_item* p_item)
 {
     video_list_item* p_view_item = ctrl->pf_view_append_media_item( ctrl->p_view, p_item );
     if (p_view_item == NULL)
@@ -65,7 +65,7 @@ video_controller_add_item(video_controller* ctrl, media_item* p_item)
 }
 
 bool
-video_controller_file_update( video_controller* ctrl, const media_item* p_media_item )
+media_controller_file_update( media_controller* ctrl, const media_item* p_media_item )
 {
     if ( p_media_item->i_type != MEDIA_ITEM_TYPE_VIDEO )
         return false;
@@ -89,33 +89,33 @@ video_controller_file_update( video_controller* ctrl, const media_item* p_media_
             }
         }
     }
-    video_controller_add_item( ctrl, p_new_media_item );
+    media_controller_add_item( ctrl, p_new_media_item );
     return true;
 }
 
 static bool
-video_controller_file_updated_cb(void* p_data, const media_item* p_new_media_item, bool b_added )
+media_controller_file_updated_cb(void* p_data, const media_item* p_new_media_item, bool b_added )
 {
     (void)b_added;
-    video_controller* ctrl = (video_controller*)p_data;
-    return video_controller_file_update(ctrl, p_new_media_item);
+    media_controller* ctrl = (media_controller*)p_data;
+    return media_controller_file_update(ctrl, p_new_media_item);
 }
 
 /* Called by the Media Library with updated video list
  * Guaranteed to be called from the main loop
  */
 void
-video_controller_content_update_cb(Eina_List* p_content, void* p_data)
+media_controller_content_update_cb(Eina_List* p_content, void* p_data)
 {
     if (p_content == NULL)
         return;
-    video_controller* ctrl = (video_controller*)p_data;
+    media_controller* ctrl = (media_controller*)p_data;
     Eina_List* it;
     media_item* p_item;
 
     EINA_LIST_FOREACH( p_content, it, p_item )
     {
-        video_controller_file_update(ctrl, p_item);
+        media_controller_file_update(ctrl, p_item);
     }
 }
 
@@ -124,9 +124,9 @@ video_controller_content_update_cb(Eina_List* p_content, void* p_data)
  * Guaranteed to be called from the main loop
  */
 void
-video_controller_content_changed_cb(void* p_data)
+media_controller_content_changed_cb(void* p_data)
 {
-    video_controller* ctrl = (video_controller*)p_data;
+    media_controller* ctrl = (media_controller*)p_data;
 
     // Discard previous content if any, and ask ML for the new content
     if (ctrl->p_content != NULL)
@@ -136,13 +136,13 @@ video_controller_content_changed_cb(void* p_data)
         ctrl->p_content = NULL;
     }
     media_library* p_ml = (media_library*)application_get_media_library( ctrl->p_app );
-    ctrl->pf_media_library_get_content(p_ml, &video_controller_content_update_cb, ctrl);
+    ctrl->pf_media_library_get_content(p_ml, &media_controller_content_update_cb, ctrl);
 }
 
-video_controller*
+media_controller*
 video_controller_create(application* p_app, view_sys* p_view )
 {
-   video_controller* ctrl = calloc(1, sizeof(*ctrl));
+   media_controller* ctrl = calloc(1, sizeof(*ctrl));
    if ( ctrl == NULL )
        return NULL;
    ctrl->p_app = p_app;
@@ -155,17 +155,17 @@ video_controller_create(application* p_app, view_sys* p_view )
 
    /* Populate it */
    media_library* p_ml = (media_library*)application_get_media_library(p_app);
-   media_library_register_on_change(p_ml, video_controller_content_changed_cb, ctrl);
-   media_library_register_item_updated(p_ml, video_controller_file_updated_cb, ctrl);
+   media_library_register_on_change(p_ml, media_controller_content_changed_cb, ctrl);
+   media_library_register_item_updated(p_ml, media_controller_file_updated_cb, ctrl);
    return ctrl;
 }
 
 void
-video_controller_destroy(video_controller *ctrl)
+media_controller_destroy(media_controller *ctrl)
 {
     eina_list_free(ctrl->p_content);
     media_library* p_ml = (media_library*)application_get_media_library(ctrl->p_app);
-    media_library_unregister_on_change(p_ml, &video_controller_content_changed_cb, ctrl);
-    media_library_unregister_item_updated(p_ml, &video_controller_file_updated_cb, ctrl);
+    media_library_unregister_on_change(p_ml, &media_controller_content_changed_cb, ctrl);
+    media_library_unregister_item_updated(p_ml, &media_controller_file_updated_cb, ctrl);
     free(ctrl);
 }
