@@ -38,6 +38,7 @@
 struct view_sys {
     Evas_Object *p_parent;
     interface *p_intf;
+    char current_path[PATH_MAX];
 };
 
 typedef struct directory_data {
@@ -124,6 +125,8 @@ browse(view_sys *dv, const char* path)
         LOGE("Given path exceeds the maximum length of %d", PATH_MAX);
         return NULL;
     }
+
+    strcpy(dv->current_path, cpath);
 
     /* Open the path repository then put it as a dirent variable */
     rep = opendir(cpath);
@@ -238,8 +241,15 @@ static bool
 directory_event(view_sys *p_view_sys, interface_view_event event)
 {
     LOGE("Received event");
-    if(event == INTERFACE_VIEW_EVENT_BACK)
+    if(event == INTERFACE_VIEW_EVENT_BACK && strcmp(p_view_sys->current_path, "/") != 0)
+    {
+        char *parent_dir;
+        if (asprintf(&parent_dir, "%s/..", p_view_sys->current_path) == -1)
+            return false;
+        browse(p_view_sys, parent_dir);
+        free(parent_dir);
         return true;
+    }
     return false;
 }
 
