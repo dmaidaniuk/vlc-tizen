@@ -160,13 +160,13 @@ browse(view_sys *dv, const char* path)
     evas_object_show(box);
 
     /* Create the current directory label */
-    Evas_Object *directory =  elm_label_add(dv->p_parent);
+    Evas_Object *directory =  elm_label_add(box);
     elm_object_text_set(directory, cpath);
     elm_box_pack_end(box, directory);
     evas_object_show(directory);
 
     /* Create the list */
-    file_list = elm_list_add(dv->p_parent);
+    file_list = elm_list_add(box);
 
     /* Browse the current directory */
     while ((current_folder = readdir(rep)) != NULL)
