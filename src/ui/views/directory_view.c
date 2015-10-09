@@ -236,7 +236,6 @@ browse(view_sys *dv, const char* path)
 static bool
 directory_event(view_sys *p_view_sys, interface_view_event event)
 {
-    LOGE("Received event");
     if(event == INTERFACE_VIEW_EVENT_BACK && strcmp(p_view_sys->current_path, "/") != 0)
     {
         char *parent_dir;
