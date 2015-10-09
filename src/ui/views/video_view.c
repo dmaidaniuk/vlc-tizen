@@ -137,7 +137,7 @@ genlist_content_get_cb(void *data, Evas_Object *obj, const char *part)
             if (vli->p_media_item->psz_snapshot != NULL)
                 icon = create_image(layout, vli->p_media_item->psz_snapshot);
             else
-                icon = create_image(layout, ICON_DIR "background_cone.png");
+                icon = create_icon(layout, "background_cone.png");
             elm_layout_content_set(layout, "elm.swallow.content", icon);
         }
     }
