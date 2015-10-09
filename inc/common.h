@@ -69,7 +69,8 @@
 #define VIDEOPLAYEREDJ get_resource_path( EDJPATH "/video_player.edj")
 #define AUDIOPLAYERMINIEDJ get_resource_path( EDJPATH "/audio_player_mini.edj")
 
-#define ICON_DIR "/opt/usr/apps/" PACKAGE "/res/images/"
+#define RES_DIR "/opt/usr/apps/" PACKAGE "/res/"
+#define ICON_DIR RES_DIR "/images/"
 
 #include <Evas.h>
 
