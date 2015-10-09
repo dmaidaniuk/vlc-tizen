@@ -115,8 +115,14 @@ browse(view_sys *dv, const char* path)
 
     if (cpath == NULL)
     {
-        LOGI("No path");
-        return NULL ;
+        LOGE("realpath failed");
+        return NULL;
+    }
+    else if (MAX(strlen(path), strlen(cpath)) + 1 > PATH_MAX - 1)
+    {
+        free(cpath);
+        LOGE("Given path exceeds the maximum length of %d", PATH_MAX);
+        return NULL;
     }
 
     /* Open the path repository then put it as a dirent variable */
@@ -138,6 +144,8 @@ browse(view_sys *dv, const char* path)
         free(cpath);
 
         /* Try to open the parent directory */
+        if (strlen(path) + 1 + 3 > PATH_MAX - 1)
+            return NULL;
         sprintf(tmppath, "%s/..", path);
         return browse(dv, tmppath);
     }
@@ -169,23 +177,31 @@ browse(view_sys *dv, const char* path)
             continue;
         }
 
-        /* Concatenate the file path and the selected folder or file name */
-        sprintf(tmppath, "%s/%s", cpath, current_folder->d_name);
+	    char *file_path;
 
-        if (stat(tmppath, &st) != 0)
+        /* Concatenate the file path and the selected folder or file name */
+        asprintf(&file_path, "%s/%s", cpath, current_folder->d_name);
+
+        if (stat(file_path, &st) != 0)
+        {
+            free(file_path);
             continue;
+        }
 
         if (S_ISREG(st.st_mode))
             is_file = true;
         else if (S_ISDIR(st.st_mode))
             is_file = false;
         else
+        {
+            free(file_path);
             continue;
+        }
 
         dd = malloc(sizeof(*dd));
         dd->dv = dv;
         dd->is_file = is_file;
-        dd->file_path = strdup(tmppath);
+        dd->file_path = file_path;
 
         /* Set and append new item in the list */
         item = elm_list_item_sorted_insert(file_list, current_folder->d_name, NULL, NULL, list_selected_cb, dd, compare_sort_items);
