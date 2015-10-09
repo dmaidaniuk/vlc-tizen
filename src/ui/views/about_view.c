@@ -30,6 +30,7 @@
 #include "ui/views/about_view.h"
 
 #include <Elementary.h>
+#include <EWebKit.h>
 
 static Evas_Object*
 create_about_section(Evas_Object *parent)
@@ -54,21 +55,14 @@ create_about_section(Evas_Object *parent)
 static Evas_Object*
 create_licence_section(Evas_Object *parent)
 {
-    /* Add set set the box in the toolbar naviframe */
-    Evas_Object *box = elm_box_add(parent);
-    elm_box_horizontal_set(box, EINA_FALSE);
-    evas_object_size_hint_align_set(box, EVAS_HINT_FILL, EVAS_HINT_FILL);
+    Evas *e_webview = evas_object_evas_get(parent);
+    Evas_Object *browser = ewk_view_add(e_webview);
+    evas_object_layer_set(browser, EVAS_LAYER_MIN);
 
-    /* Add and set the label in the box */
-    Evas_Object *lbl_license_title = elm_label_add(box);
-    evas_object_size_hint_align_set(lbl_license_title, EVAS_HINT_FILL, 0.5);
-    elm_object_text_set(lbl_license_title, "<align=center><b>VLC License for Tizen</b></align>");
-    elm_box_pack_end(box, lbl_license_title);  //Add the label in the box
-    evas_object_show(lbl_license_title);
+    ewk_view_url_set(browser, "file://"RES_DIR"/license.html");
 
-    /* */
-    evas_object_show(box);
-    return box;
+    evas_object_show(browser);
+    return browser;
 }
 
 static void
