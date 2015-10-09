@@ -95,12 +95,6 @@ free_list_item_data(void *data, Evas_Object *obj, void *event_info)
     free(ali);
 }
 
-static Evas_Object*
-create_icon_unknown(Evas_Object *parent)
-{
-    return create_icon(parent, "background_cone.png" );
-}
-
 static char *
 genlist_text_get_cb(void *data, Evas_Object *obj, const char *part)
 {
@@ -116,13 +110,13 @@ genlist_text_get_cb(void *data, Evas_Object *obj, const char *part)
             return buf;
         }
         else if (!strcmp(part, "elm.text.sub.left.bottom")) {
-            return strdup("Artist");
+            const char* psz_artist = media_item_artist(ali->p_media_item);
+            if (psz_artist == NULL)
+                psz_artist = "Unknown Artist";
+            return strdup(psz_artist);
         }
         else if (!strcmp(part, "elm.text.sub.right.bottom")) {
-            int m = 4;
-            int s = 56;
-            asprintf(&buf,"%d m %d s", m, s);
-            return buf;
+            return media_timetostr( ali->p_media_item->i_duration / 1000 );
         }
     }
     return NULL;
@@ -146,20 +140,24 @@ genlist_content_get_cb(void *data, Evas_Object *obj, const char *part)
 {
     audio_list_item *ali = data;
     const Elm_Genlist_Item_Class *itc = ali->itc;
-    Evas_Object *content = NULL;
+    Evas_Object *layout = NULL;
 
     /* Check the item class style and add the object needed in the item class*/
     /* Here, puts the icon in the item class to add it to genlist items */
     if (itc->item_style && !strcmp(itc->item_style, "2line.top.3")) {
         if (part && !strcmp(part, "elm.icon.1")) {
-            content = elm_layout_add(obj);
-            elm_layout_theme_set(content, "layout", "list/B/type.1", "default");
-            Evas_Object *icon = create_icon_unknown(content);
-            elm_layout_content_set(content, "elm.swallow.content", icon);
+            layout = elm_layout_add(obj);
+            elm_layout_theme_set(layout, "layout", "list/B/type.1", "default");
+            Evas_Object *icon;
+            if (ali->p_media_item->psz_snapshot != NULL)
+                icon = create_image(layout, ali->p_media_item->psz_snapshot);
+            else
+                icon = create_icon(layout, "background_cone.png");
+            elm_layout_content_set(layout, "elm.swallow.content", icon);
         }
     }
 
-    return content;
+    return layout;
 }
 
 audio_list_item *
