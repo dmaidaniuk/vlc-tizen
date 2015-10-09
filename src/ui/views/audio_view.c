@@ -234,6 +234,15 @@ create_audio_list_type(view_sys *av, audio_view_type type )
 }
 
 static void
+audio_list_destroy( list_sys* p_list )
+{
+    if (p_list == NULL)
+        return;
+    media_library_controller_destroy(p_list->p_ctrl);
+    free(p_list);
+}
+
+static void
 tabbar_item_cb(void *data, Evas_Object *obj, void *event_info)
 {
     view_sys *av = data;
@@ -332,4 +341,12 @@ create_audio_view(interface *intf, Evas_Object *parent)
 void
 destroy_audio_view(interface_view *view)
 {
+    view_sys* p_sys = view->p_view_sys;
+    for ( unsigned int i = 0; i < AUDIO_VIEW_MAX; ++i )
+    {
+        audio_list_destroy( p_sys->p_lists[i]);
+    }
+    elm_genlist_item_class_free(p_sys->p_default_item_class);
+    free(p_sys);
+    free(view);
 }
