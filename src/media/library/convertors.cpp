@@ -26,8 +26,13 @@
 
 #include "common.h"
 
+#include <ctime>
+
 #include "media_library_private.hpp"
 #include "IVideoTrack.h"
+#include "IAlbum.h"
+#include "IAlbumTrack.h"
+#include "IArtist.h"
 
 media_item*
 fileToMediaItem( FilePtr file )
@@ -74,7 +79,44 @@ fileToMediaItem( FilePtr file )
     }
     else if ( file->type() == IFile::Type::AudioType )
     {
-        // So far, nothing to do here.
+        auto albumTrack = file->albumTrack();
+        if (albumTrack != nullptr)
+        {
+            auto artists = albumTrack->artists();
+            if (artists.size() > 0)
+            {
+                std::string artistStr;
+                for ( auto& a : artists )
+                {
+                    artistStr += a->name() + ", ";
+                }
+                artistStr.erase( artistStr.length() - 2, 2 );
+                media_item_set_meta(mi, MEDIA_ITEM_META_ARTIST, artistStr.c_str());
+            }
+            else
+            {
+                media_item_set_meta(mi, MEDIA_ITEM_META_ARTIST, "Unknown Artist");
+            }
+            auto album = albumTrack->album();
+            if (album != nullptr)
+            {
+                media_item_set_meta(mi, MEDIA_ITEM_META_ALBUM, album->title().c_str());
+                auto date = album->releaseDate();
+                if (date != 0)
+                {
+                    auto t = tm{};
+                    if (gmtime_r(&date, &t) != NULL)
+                    {
+                        media_item_set_meta(mi, MEDIA_ITEM_META_YEAR, std::to_string(t.tm_year).c_str());
+                    }
+                }
+                auto artwork = album->artworkUrl();
+                if ( artwork.size() > 0 && artwork.compare( 0, strlen("file://"), "file://" ) == 0 )
+                {
+                    mi->psz_snapshot = strdup( artwork.c_str() + strlen( "file://" ) );
+                }
+            }
+        }
     }
     return mi;
 }
