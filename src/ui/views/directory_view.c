@@ -36,7 +36,7 @@
 #include "ui/utils.h"
 
 struct view_sys {
-    Evas_Object *p_parent;
+    Evas_Object *p_box;
     interface *p_intf;
     char current_path[PATH_MAX];
 };
@@ -47,7 +47,7 @@ typedef struct directory_data {
     bool is_file;
 } directory_data;
 
-Evas_Object*
+bool
 browse(view_sys *dv, const char* path);
 
 void
@@ -98,7 +98,7 @@ static int compare_sort_items(const void *data1, const void *data2)
 	return strcasecmp(label1, label2);
 }
 
-Evas_Object*
+bool
 browse(view_sys *dv, const char* path)
 {
     Elm_Object_Item *item;
@@ -117,13 +117,13 @@ browse(view_sys *dv, const char* path)
     if (cpath == NULL)
     {
         LOGE("realpath failed");
-        return NULL;
+        return false;
     }
     else if (MAX(strlen(path), strlen(cpath)) + 1 > PATH_MAX - 1)
     {
         free(cpath);
         LOGE("Given path exceeds the maximum length of %d", PATH_MAX);
-        return NULL;
+        return false;
     }
 
     strcpy(dv->current_path, cpath);
@@ -141,32 +141,29 @@ browse(view_sys *dv, const char* path)
         {
             /* We're already on the root directory don't open the parent directory */
             free(cpath);
-            return NULL;
+            return false;
         }
 
         free(cpath);
 
         /* Try to open the parent directory */
         if (strlen(path) + 1 + 3 > PATH_MAX - 1)
-            return NULL;
+            return false;
         sprintf(tmppath, "%s/..", path);
         return browse(dv, tmppath);
     }
 
-    /* Create the box container */
-    Evas_Object *box = elm_box_add(dv->p_parent);
-    evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-    evas_object_size_hint_align_set(box, EVAS_HINT_FILL, EVAS_HINT_FILL);
-    evas_object_show(box);
+    /* Clear the layout */
+    elm_box_clear(dv->p_box);
 
     /* Create the current directory label */
-    Evas_Object *directory =  elm_label_add(box);
+    Evas_Object *directory =  elm_label_add(dv->p_box);
     elm_object_text_set(directory, cpath);
-    elm_box_pack_end(box, directory);
+    elm_box_pack_end(dv->p_box, directory);
     evas_object_show(directory);
 
     /* Create the list */
-    file_list = elm_list_add(box);
+    file_list = elm_list_add(dv->p_box);
 
     /* Browse the current directory */
     while ((current_folder = readdir(rep)) != NULL)
@@ -224,17 +221,16 @@ browse(view_sys *dv, const char* path)
 
     elm_list_go(file_list);
 
-    elm_box_pack_end(box, file_list);
+    elm_box_pack_end(dv->p_box, file_list);
     evas_object_size_hint_weight_set(file_list, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
     /* The next line is required or the list won't show up */
     evas_object_size_hint_align_set(file_list, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
     evas_object_show(file_list);
 
-    elm_object_content_set(dv->p_parent, box);
     free(cpath);
 
-    return box;
+    return true;
 }
 
 static bool
@@ -260,13 +256,19 @@ create_directory_view(interface *intf, Evas_Object *parent)
 
     view_sys *dv = malloc(sizeof(*dv));
     dv->p_intf = intf;
-    dv->p_parent = parent;
-
     view->p_view_sys = dv;
     view->pf_event = directory_event;
 
+    /* Create the box container */
+    Evas_Object *box = elm_box_add(parent);
+    evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+    evas_object_size_hint_align_set(box, EVAS_HINT_FILL, EVAS_HINT_FILL);
+    evas_object_show(box);
+
+    view->view = dv->p_box = box;
+
     const char *psz_path = application_get_media_path(intf_get_application(intf), MEDIA_DIRECTORY);
-    view->view = browse(dv, psz_path);
+    browse(dv, psz_path);
     return view;
 }
 
