@@ -65,6 +65,8 @@ media_timetostr(int64_t time)
     long long sec;
     char *str;
 
+    if ( time <= 0 )
+        return strdup( "" );
     d = lldiv(time, 60);
     sec = d.rem;
     d = lldiv(d.quot, 60);
