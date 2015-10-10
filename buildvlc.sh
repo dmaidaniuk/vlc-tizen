@@ -9,10 +9,8 @@ source ${PROJECTPATH}/buildcommon
 # atomics are broken for x86 on 2.3, dirty hacks since it's used only from emulator
 if [ ${TIZEN_SDK_VERSION} = "2.3.1" -a "${TIZEN_ABI}" = "x86" ];then
 VLC_INCLUDE_HACKS=" -I${PROJECTPATH}/hacks/vlc/2.3-x86-include"
-VLC_TAGLIB="--disable-taglib"
 else
 VLC_INCLUDE_HACKS=""
-VLC_TAGLIB="--enable-taglib"
 fi
 
 #####################
@@ -89,7 +87,7 @@ VLC_CONFIGURE_ARGS="\
     --enable-opus \
     --enable-opensles \
     --enable-mkv \
-    ${VLC_TAGLIB} \
+    --enable-taglib \
     --enable-dvbpsi \
     --disable-vlc \
     --disable-shared \
