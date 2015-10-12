@@ -28,7 +28,6 @@
 #define VIDEO_VIEW_H_
 
 #include "ui/interface.h"
-#include <Elementary.h>
 
 /* */
 interface_view*
