@@ -232,6 +232,16 @@ create_button(Evas_Object *parent, char *style)
     return button;
 }
 
+static void
+intf_push_view(interface *intf, interface_view *view, char *title)
+{
+    /* Push the view in the naviframe with the corresponding header */
+    Elm_Object_Item *nf_it = elm_naviframe_item_push(intf->nf_content, title, NULL, NULL, view->view, "basic");
+    elm_object_item_data_set(nf_it, view);
+
+    evas_object_show(view->view);
+}
+
 void
 intf_show_view(interface *intf, view_e view_type)
 {
@@ -251,11 +261,7 @@ intf_show_view(interface *intf, view_e view_type)
     else
         LOGD("Recycling interface view %i", view_type);
 
-    /* Push the view in the naviframe with the corresponding header */
-    Elm_Object_Item *nf_it = elm_naviframe_item_push(nf_content, interface_views[view_type].title, NULL, NULL, view->view, "basic");
-    elm_object_item_data_set(nf_it, view);
-
-    evas_object_show(view->view);
+    intf_push_view(intf, view, interface_views[view_type].title);
 
     /* Create then set the panel toggle btn and add his callbacks */
     if(intf->sidebar_toggle_btn == NULL)
@@ -293,16 +299,9 @@ intf_video_player_play(interface *intf, const char *psz_path)
     if(intf->video_player == NULL)
         intf_video_player_create(intf);
 
-    Evas_Object *view = intf->video_player->view;
+    intf_push_view(intf, intf->video_player, NULL);
 
-    /* Push it on top of the view */
-    Elm_Object_Item *it = elm_naviframe_item_push(intf->nf_content, NULL, NULL, NULL, view, NULL);
-    elm_object_item_data_set(it, intf->video_player);
-    elm_naviframe_item_title_enabled_set(it, EINA_FALSE, EINA_FALSE);
-
-    /* */
-    evas_object_show(view);
-
+    /* So far, there is no start action */
     video_player_start(intf->video_player->p_view_sys, psz_path);
 
     /* We want fullscreen */
