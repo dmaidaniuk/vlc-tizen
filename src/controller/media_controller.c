@@ -32,6 +32,7 @@
 #include "ui/views/video_view.h"
 #include "ui/views/audio_view.h"
 #include "ui/views/audio_list_song_view.h"
+#include "ui/views/video_view_list.h"
 
 static bool
 video_controller_accept_item( const void* p_item )

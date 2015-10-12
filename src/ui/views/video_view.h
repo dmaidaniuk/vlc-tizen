@@ -40,16 +40,5 @@ void
 destroy_video_view(interface_view *);
 
 /* Controller / View */
-video_list_item *
-video_view_append_item(view_sys *videoview, media_item* p_item);
-
-void
-video_view_clear(view_sys* videoview);
-
-const media_item*
-video_list_item_get_media_item(video_list_item* p_item);
-
-void
-video_list_item_set_media_item(video_list_item* p_item, media_item* p_media_item);
 
 #endif /* VIDEO_VIEW_H_ */

@@ -2,7 +2,7 @@
  * Copyright © 2015 VideoLAN, VideoLabs SAS
  *****************************************************************************
  *
- * Authors: Nicolas Rechatin [nicolas@videolabs.io]
+ * Authors: Hugo Beauzée-Luyssen <hugo@beauzee.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,46 +24,27 @@
  * compatibility with the Store
  *****************************************************************************/
 
-#include "common.h"
+#ifndef VIDEO_VIEW_LIST_H_
+# define VIDEO_VIEW_LIST_H_
 
+#include "media/media_item.h"
 #include "ui/interface.h"
-#include "video_view.h"
-#include "video_view_list.h"
 
+typedef struct video_list_item video_list_item;
 
-#include <Elementary.h>
-
-struct view_sys
-{
-    list_view* p_list;
-};
-
-interface_view*
-create_video_view(interface *intf, Evas_Object *parent)
-{
-    interface_view *view = calloc(1, sizeof(*view));
-    view_sys *p_sys = view->p_view_sys = malloc(sizeof(*p_sys));
-
-    /* Box container */
-    Evas_Object *box = elm_box_add(parent);
-    evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-    evas_object_size_hint_align_set(box, EVAS_HINT_FILL, EVAS_HINT_FILL);
-    evas_object_show(box);
-
-    p_sys->p_list = video_view_list_create(intf, box);
-
-    view->view = box;
-
-    /* */
-    return view;
-}
+const media_item*
+video_list_item_get_media_item(video_list_item* p_item);
 
 void
-destroy_video_view(interface_view *view)
-{
-    list_view* p_list_view = view->p_view_sys->p_list;
-    p_list_view->pf_del(p_list_view);
-    free(p_list_view);
-    free(view->p_view_sys);
-    free(view);
-}
+video_list_item_set_media_item(video_list_item* p_item, media_item* p_media_item);
+
+video_list_item *
+video_view_append_item(list_sys *videoview, media_item* p_item);
+
+void
+video_view_clear(list_sys* videoview);
+
+list_view*
+video_view_list_create(interface *intf, Evas_Object *p_genlist);
+
+#endif
