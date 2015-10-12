@@ -240,6 +240,9 @@ intf_push_view(interface *intf, interface_view *view, char *title)
     elm_object_item_data_set(nf_it, view);
 
     evas_object_show(view->view);
+
+    if (view->pf_start != NULL)
+        view->pf_start(view->p_view_sys);
 }
 
 void
