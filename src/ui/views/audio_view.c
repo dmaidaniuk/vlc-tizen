@@ -53,7 +53,6 @@ typedef enum audio_view_type
 
 struct view_sys
 {
-    application*            p_app;
     interface*              p_intf;
     Evas_Object*            nf_toolbar;
     Evas_Object*            p_parent;
@@ -64,6 +63,7 @@ struct view_sys
 static list_view*
 create_audio_list_type(view_sys *av, audio_view_type type )
 {
+    application* p_app = intf_get_application(av->p_intf);
     list_view* p_view = av->p_lists[type];
     if(p_view == NULL)
     {
@@ -71,10 +71,10 @@ create_audio_list_type(view_sys *av, audio_view_type type )
         {
         case AUDIO_VIEW_SONG:
         default:
-            p_view = audio_list_song_view_create(av->p_app, av->p_intf, av->nf_toolbar);
+            p_view = audio_list_song_view_create(p_app, av->p_intf, av->nf_toolbar);
             break;
         case AUDIO_VIEW_ARTIST:
-            p_view = audio_list_artist_view_create(av->p_app, av->p_intf, av->nf_toolbar);
+            p_view = audio_list_artist_view_create(p_app, av->p_intf, av->nf_toolbar);
             break;
         }
         av->p_lists[type] = p_view;
@@ -147,7 +147,8 @@ audio_view_refresh_cb(void *data, Evas_Object *obj, void *event_info)
     if (!p_sys)
         return;
 
-    media_library* p_ml = (media_library*)application_get_media_library(p_sys->p_app);
+    application* p_app = intf_get_application(p_sys->p_intf);
+    media_library* p_ml = (media_library*)application_get_media_library(p_app);
     if (p_ml != NULL)
         media_library_reload(p_ml);
 
@@ -200,7 +201,6 @@ create_audio_view(interface *intf, Evas_Object *parent)
     /* Setup the audio_view */
     view_sys *audio_view_sys = calloc(1, sizeof(*audio_view_sys));
     audio_view_sys->p_intf = intf;
-    audio_view_sys->p_app = intf_get_application(intf);
     audio_view_sys->p_parent = parent;
 
     view->pf_event = audio_view_callback;

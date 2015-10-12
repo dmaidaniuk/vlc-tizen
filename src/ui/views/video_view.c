@@ -38,7 +38,7 @@
 
 struct view_sys
 {
-    application *p_app;
+    interface* p_intf;
     Evas_Object *p_parent;
     list_view* p_list;
 
@@ -53,7 +53,8 @@ video_view_refresh_cb(void *data, Evas_Object *obj, void *event_info)
     if (!p_sys)
         return;
 
-    media_library* p_ml = (media_library*)application_get_media_library(p_sys->p_app);
+    application* p_app = intf_get_application(p_sys->p_intf);
+    media_library* p_ml = (media_library*)application_get_media_library(p_app);
     if (p_ml != NULL)
         media_library_reload(p_ml);
 
@@ -104,7 +105,7 @@ create_video_view(interface *intf, Evas_Object *parent)
     interface_view *view = calloc(1, sizeof(*view));
 
     view_sys *p_sys = view->p_view_sys = malloc(sizeof(*p_sys));
-    p_sys->p_app = intf_get_application(intf);
+    p_sys->p_intf = intf;
     p_sys->p_parent = parent;
     p_sys->p_overflow_menu = NULL;
 
