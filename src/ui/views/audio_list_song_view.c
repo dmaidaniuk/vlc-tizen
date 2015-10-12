@@ -40,6 +40,7 @@ struct list_sys
     media_library_controller*   p_ctrl;
     interface*                  p_intf;
     Elm_Genlist_Item_Class*     p_default_item_class;
+    view_sys_cb*                p_view_cb;
 };
 
 struct list_view_item
@@ -199,7 +200,7 @@ audio_list_song_view_destroy(list_sys* p_list)
 }
 
 list_view*
-audio_list_song_view_create(application* p_app, interface* p_intf, Evas_Object* p_parent)
+audio_list_song_view_create(application* p_app, interface* p_intf, Evas_Object* p_parent, view_sys_cb* p_view_cb)
 {
     list_view* p_view = calloc(1, sizeof(*p_view));
     if (p_view == NULL)
@@ -234,6 +235,7 @@ audio_list_song_view_create(application* p_app, interface* p_intf, Evas_Object* 
     p_sys->p_default_item_class->func.content_get = genlist_content_get_cb;
 
     p_sys->p_intf = p_intf;
+    p_sys->p_view_cb = p_view_cb;
 
     p_view->pf_show = &audio_list_song_view_show;
     p_view->pf_del = &audio_list_song_view_destroy;

@@ -53,6 +53,7 @@ struct list_sys
     interface*                      p_intf;
     Evas_Object*                    p_box;
     Evas_Object*                    p_empty_label;
+    view_sys_cb*                    p_view_cb;
 };
 
 static void
@@ -236,7 +237,7 @@ video_view_list_destroy(list_sys* p_list)
 }
 
 list_view*
-video_view_list_create(interface *p_intf, Evas_Object *p_parent)
+video_view_list_create(interface *p_intf, Evas_Object *p_parent, view_sys_cb* p_view_cb)
 {
     list_view* p_view = calloc(1, sizeof(*p_view));
     if (p_view == NULL)
@@ -277,6 +278,7 @@ video_view_list_create(interface *p_intf, Evas_Object *p_parent)
     evas_object_smart_callback_add(p_genlist, "contracted", genlist_contracted_cb, NULL);
 
     p_sys->p_intf = p_intf;
+    p_sys->p_view_cb = p_view_cb;
 
     p_view->pf_del = &video_view_list_destroy;
 

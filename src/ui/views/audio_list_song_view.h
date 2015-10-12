@@ -31,6 +31,6 @@
 #include "ui/interface.h"
 
 list_view*
-audio_list_song_view_create(application* p_app, interface* p_intf, Evas_Object* p_parent);
+audio_list_song_view_create(application* p_app, interface* p_intf, Evas_Object* p_parent, view_sys_cb* p_view_cb);
 
 #endif // AUDIO_LIST_SONG_ITEM_H_

@@ -48,6 +48,11 @@ intf_destroy(interface *);
 /* Views */
 typedef struct view_sys view_sys;
 
+typedef struct view_sys_cb {
+    view_sys* p_sys;
+    void (*pf_updated)( view_sys* p_sys );
+} view_sys_cb;
+
 typedef enum interface_view_event {
     INTERFACE_VIEW_EVENT_NONE,
     INTERFACE_VIEW_EVENT_BACK,
@@ -75,7 +80,6 @@ typedef struct interface_view {
     bool (*pf_event)(view_sys *p_view_sys, interface_view_event event); /* */
 
 } interface_view;
-
 
 void
 intf_show_view(interface *, view_e);
