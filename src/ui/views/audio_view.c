@@ -185,6 +185,11 @@ audio_view_callback(view_sys *p_view_sys, interface_view_event event)
     return false;
 }
 
+bool
+audio_view_has_menu(view_sys *p_view_sys)
+{
+    return true;
+}
 
 interface_view *
 create_audio_view(interface *intf, Evas_Object *parent)
@@ -199,6 +204,7 @@ create_audio_view(interface *intf, Evas_Object *parent)
 
     view->pf_event = audio_view_callback;
     view->p_view_sys = audio_view_sys;
+    view->pf_has_menu = audio_view_has_menu;
 
     /* Content box */
     Evas_Object *audio_box = elm_box_add(parent);

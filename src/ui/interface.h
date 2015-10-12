@@ -65,13 +65,16 @@ typedef enum view_e {
 } view_e;
 
 typedef struct interface_view {
-    Evas_Object *view;                /* The Evas View prepared to be stacked */
+    Evas_Object *view;                      /* The Evas View prepared to be stacked */
     view_sys *p_view_sys;                   /* The view private data */
     view_e type;
 
-    void (*pf_start)(view_sys *p_view_sys); /* CB when the view is started/resumed */
-    void (*pf_stop) (view_sys *p_view_sys); /* CB when the view is stoped/paused */
+    void (*pf_start)(view_sys *p_view_sys);    /* CB when the view is started/resumed */
+    void (*pf_stop) (view_sys *p_view_sys);    /* CB when the view is stoped/paused */
+
+    bool (*pf_has_menu)(view_sys *p_view_sys); /* Does the view needs an overflow menu? */
     bool (*pf_event)(view_sys *p_view_sys, interface_view_event event); /* */
+
 } interface_view;
 
 

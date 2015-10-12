@@ -91,16 +91,25 @@ video_view_callback(view_sys *p_view_sys, interface_view_event event)
     return false;
 }
 
+bool
+video_view_has_menu(view_sys *p_view_sys)
+{
+    return true;
+}
+
 interface_view*
 create_video_view(interface *intf, Evas_Object *parent)
 {
     interface_view *view = calloc(1, sizeof(*view));
-    view_sys *p_sys = view->p_view_sys = malloc(sizeof(*p_sys));
 
-    view->pf_event = video_view_callback;
+    view_sys *p_sys = view->p_view_sys = malloc(sizeof(*p_sys));
     p_sys->p_app = intf_get_application(intf);
     p_sys->p_parent = parent;
     p_sys->p_overflow_menu = NULL;
+
+    view->pf_event = video_view_callback;
+    view->pf_has_menu = video_view_has_menu;
+
 
     /* Box container */
     Evas_Object *box = elm_box_add(parent);
