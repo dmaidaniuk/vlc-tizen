@@ -30,8 +30,6 @@
 #include "ui/interface.h"
 #include <Elementary.h>
 
-typedef struct video_list_item video_list_item;
-
 /* */
 interface_view*
 create_video_view(interface *intf, Evas_Object *parent);
