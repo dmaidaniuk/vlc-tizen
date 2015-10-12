@@ -64,8 +64,8 @@ video_view_refresh_cb(void *data, Evas_Object *obj, void *event_info)
 
 static popup_menu video_view_popup_menu[] =
 {
-        {"Refresh", NULL, video_view_refresh_cb},
-        {0}
+    {"Refresh", NULL, video_view_refresh_cb},
+    {0}
 };
 
 static bool
