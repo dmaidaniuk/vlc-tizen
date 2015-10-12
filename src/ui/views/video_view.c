@@ -227,6 +227,7 @@ void
 video_view_clear(view_sys* videoview)
 {
     elm_genlist_clear(videoview->p_video_list);
+    genlist_update_empty_view(videoview);
 }
 
 interface_view*
