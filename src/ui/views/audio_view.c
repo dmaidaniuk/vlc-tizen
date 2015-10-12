@@ -31,10 +31,12 @@
 #include "ui/views/audio_view.h"
 #include "ui/views/audio_list_song_view.h"
 #include "ui/audio_player.h"
+#include "ui/menu/popup_menu.h"
 
 #include "ui/utils.h"
 
 #include "media/media_item.h"
+#include "media/library/media_library.hpp"
 
 #include <Elementary.h>
 
@@ -53,6 +55,8 @@ struct view_sys
     application*            p_app;
     interface*              p_intf;
     Evas_Object*            nf_toolbar;
+    Evas_Object*            p_parent;
+    Evas_Object*            p_overflow_menu;
     list_view*              p_lists[AUDIO_VIEW_MAX];
 };
 
@@ -130,6 +134,53 @@ create_toolbar(view_sys *av, Evas_Object *parent)
     return tabbar;
 }
 
+void audio_view_refresh_cb(void *data, Evas_Object *obj, void *event_info)
+{
+    view_sys *p_sys = data;
+
+    if (!p_sys)
+        return;
+
+    media_library* p_ml = (media_library*)application_get_media_library(p_sys->p_app);
+    if (p_ml != NULL)
+        media_library_reload(p_ml);
+
+    /* */
+    evas_object_del(obj);
+    p_sys->p_overflow_menu = NULL;
+}
+
+popup_menu audio_view_popup_menu[] =
+{
+        {"Refresh", NULL, audio_view_refresh_cb},
+        {0}
+};
+
+bool
+audio_view_callback(view_sys *p_view_sys, interface_view_event event)
+{
+    switch (event) {
+    case INTERFACE_VIEW_EVENT_MENU:
+    {
+        p_view_sys->p_overflow_menu = popup_menu_add(audio_view_popup_menu, p_view_sys, p_view_sys->p_parent);
+        evas_object_show(p_view_sys->p_overflow_menu);
+        return true;
+    }
+    case INTERFACE_VIEW_EVENT_BACK:
+        if (p_view_sys->p_overflow_menu) {
+            evas_object_del(p_view_sys->p_overflow_menu);
+            p_view_sys->p_overflow_menu = NULL;
+            return true;
+        }
+        return false;
+    default:
+        break;
+    }
+
+    return false;
+}
+
+
 interface_view *
 create_audio_view(interface *intf, Evas_Object *parent)
 {
@@ -139,7 +190,9 @@ create_audio_view(interface *intf, Evas_Object *parent)
     view_sys *audio_view_sys = calloc(1, sizeof(*audio_view_sys));
     audio_view_sys->p_intf = intf;
     audio_view_sys->p_app = intf_get_application(intf);
+    audio_view_sys->p_parent = parent;
 
+    view->pf_event = audio_view_callback;
     view->p_view_sys = audio_view_sys;
 
     /* Content box */
