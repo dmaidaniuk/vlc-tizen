@@ -34,6 +34,8 @@
 
 struct list_sys
 {
+    Evas_Object*                p_box;
+    Evas_Object*                p_empty_label;
     Evas_Object*                p_list;
     media_library_controller*   p_ctrl;
     interface*                  p_intf;
@@ -47,6 +49,24 @@ struct list_view_item
     media_item*                     p_media_item;
     Elm_Object_Item*                p_object_item;
 };
+
+void
+audio_list_song_check_empty(list_sys *p_sys)
+{
+    //TODO improve me
+    unsigned int count = elm_genlist_items_count(p_sys->p_list);
+    if (count == 0) {
+        elm_box_unpack_all(p_sys->p_box);
+        elm_box_pack_end(p_sys->p_box, p_sys->p_empty_label);
+        evas_object_show(p_sys->p_empty_label);
+        evas_object_hide(p_sys->p_list);
+    } else {
+        elm_box_unpack_all(p_sys->p_box);
+        elm_box_pack_end(p_sys->p_box, p_sys->p_list);
+        evas_object_hide(p_sys->p_empty_label);
+        evas_object_show(p_sys->p_list);
+    }
+}
 
 static void
 free_list_item_data(void *data, Evas_Object *obj, void *event_info)
@@ -151,6 +171,7 @@ audio_list_song_view_append_item(list_sys *p_sys, void* p_data)
 
     /* */
     elm_object_item_del_cb_set(it, free_list_item_data);
+    audio_list_song_check_empty(p_sys);
     return ali;
 }
 
@@ -158,14 +179,15 @@ static void
 audio_list_song_view_clear(list_sys* p_list)
 {
     elm_genlist_clear(p_list->p_list);
+    audio_list_song_check_empty(p_list);
 }
 
 static void
 audio_list_song_view_show(list_sys* p_sys, Evas_Object* p_parent)
 {
-    Elm_Object_Item *it = elm_naviframe_item_push(p_parent, "", NULL, NULL, p_sys->p_list, NULL);
+    Elm_Object_Item *it = elm_naviframe_item_push(p_parent, "", NULL, NULL, p_sys->p_box, NULL);
     elm_naviframe_item_title_enabled_set(it, EINA_FALSE, EINA_FALSE);
-    evas_object_show(p_sys->p_list);
+    evas_object_show(p_sys->p_box);
 }
 
 static void
@@ -177,7 +199,7 @@ audio_list_song_view_destroy(list_sys* p_list)
 }
 
 list_view*
-audio_list_song_view_create(application* p_app, interface* p_intf, Evas_Object* p_genlist)
+audio_list_song_view_create(application* p_app, interface* p_intf, Evas_Object* p_parent)
 {
     list_view* p_view = calloc(1, sizeof(*p_view));
     if (p_view == NULL)
@@ -185,7 +207,26 @@ audio_list_song_view_create(application* p_app, interface* p_intf, Evas_Object* 
     list_sys* p_sys = p_view->p_sys = calloc(1, sizeof(*p_sys));
     if (p_sys == NULL)
         return NULL;
-    p_sys->p_list = p_genlist;
+
+    /* Box container */
+    p_sys->p_box = elm_box_add(p_parent);
+    evas_object_size_hint_weight_set(p_sys->p_box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+    evas_object_size_hint_align_set(p_sys->p_box, EVAS_HINT_FILL, EVAS_HINT_FILL);
+    evas_object_show(p_sys->p_box);
+
+    /* Empty list label */
+    p_sys->p_empty_label = elm_label_add(p_sys->p_box);
+    elm_object_text_set(p_sys->p_empty_label, "No audio content to show");
+
+    /* Create genlist */
+    p_sys->p_list = elm_genlist_add(p_sys->p_box);
+    elm_scroller_single_direction_set(p_sys->p_list, ELM_SCROLLER_SINGLE_DIRECTION_HARD);
+    elm_genlist_homogeneous_set(p_sys->p_list, EINA_TRUE);
+    elm_genlist_mode_set(p_sys->p_list, ELM_LIST_COMPRESS);
+
+    evas_object_size_hint_weight_set(p_sys->p_list, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+    evas_object_size_hint_align_set(p_sys->p_list, EVAS_HINT_FILL, EVAS_HINT_FILL);
+
     /* Item Class */
     p_sys->p_default_item_class = elm_genlist_item_class_new();
     p_sys->p_default_item_class->item_style = "2line.top.3";
@@ -203,6 +244,7 @@ audio_list_song_view_create(application* p_app, interface* p_intf, Evas_Object* 
 
     p_sys->p_ctrl = audio_controller_create(p_app, p_view);
     media_library_controller_refresh( p_sys->p_ctrl );
+    audio_list_song_check_empty(p_sys);
     return p_view;
 }
 

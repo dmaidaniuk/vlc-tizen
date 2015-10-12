@@ -56,38 +56,17 @@ struct view_sys
     list_view*              p_lists[AUDIO_VIEW_MAX];
 };
 
-static Evas_Object*
-genlist_create(const view_sys *av)
-{
-    Evas_Object *genlist = elm_genlist_add(av->nf_toolbar);
-    if (genlist == NULL)
-        return NULL;
-    /* Set the genlist scoller mode */
-    elm_scroller_single_direction_set(genlist, ELM_SCROLLER_SINGLE_DIRECTION_HARD);
-    /* Enable the genlist HOMOGENEOUS mode */
-    elm_genlist_homogeneous_set(genlist, EINA_TRUE);
-    /* Enable the genlist COMPRESS mode */
-    elm_genlist_mode_set(genlist, ELM_LIST_COMPRESS);
-
-    return genlist;
-}
-
 static list_view*
 create_audio_list_type(view_sys *av, audio_view_type type )
 {
     list_view* p_view = av->p_lists[type];
     if(p_view == NULL)
     {
-        Evas_Object* p_genlist = genlist_create(av);
-        if (p_genlist == NULL)
-            return NULL;
         switch (type)
         {
         case AUDIO_VIEW_SONG:
         default:
-            p_view = audio_list_song_view_create(av->p_app, av->p_intf, p_genlist);
-//        default:
-//            p_list = NULL;
+            p_view = audio_list_song_view_create(av->p_app, av->p_intf, av->nf_toolbar);
         }
         av->p_lists[type] = p_view;
     }
