@@ -37,7 +37,6 @@
 #include "interface.h"
 #include "sidebar.h"
 #include "audio_player.h"
-#include "menu/main_popup_list.h"
 
 #include "views/audio_view.h"
 #include "views/video_view.h"
@@ -63,7 +62,6 @@ struct interface {
     Evas_Object *sidebar_toggle_btn;
 
     /* Context popup-menu */
-    Evas_Object *popup;
     Evas_Object *popup_toggle_btn;
 
     /* Miniplayer */
@@ -100,10 +98,6 @@ win_back_key_cb(void *data, Evas_Object *obj, void *event_info)
     /* Hide the sidebar first */
     if (!elm_object_disabled_get(intf->sidebar) && !elm_panel_hidden_get(intf->sidebar)) {
         elm_panel_hidden_set(intf->sidebar, EINA_TRUE);
-    }
-    /* Hide the popup menu then */
-    else if (evas_object_visible_get(intf->popup)) {
-        evas_object_del(intf->popup); //since elm_popup_dismiss doesn't work
     }
     /* And then the mini player (if playing) */ // FIXME
     else if (intf_mini_player_visible_get(intf) == true) {
@@ -198,7 +192,6 @@ right_panel_button_clicked_cb(void *data, Evas_Object * obj, void *event_info)
             return;
         }
     }
-    intf->popup = create_popup(intf->main_box, intf);
 }
 
 void
