@@ -203,6 +203,57 @@ intf_show_view(interface *intf, view_e view_type)
     elm_object_part_content_set(nf_content, "title_left_btn", intf->sidebar_toggle_btn);
 }
 
+static void
+intf_pop_view(interface *intf)
+{
+    /* Get the top of the NaviFrame Stack */
+    Elm_Object_Item *it = elm_naviframe_top_item_get(intf->nf_content);
+    interface_view *view = (interface_view *)elm_object_item_data_get(it);
+    if (view) {
+        if(view->pf_stop != NULL) {
+            view->pf_stop(view->p_view_sys);
+        }
+    }
+
+    // NOTE: When pop() is called a naviframe will free the content of the item
+    //       unless elm_naviframe_content_preserve_on_pop_set is set but this
+    //       function seems broken or underspecified (at least in Tizen 2.3 SDK).
+    //       To workaround this issue there's two options:
+    //
+    //       * Don't recycle view and instantiate a new one instead
+    //       * Remove the view from the item before calling pop()
+    //
+    //       The second option has one drawback though, once unset the part
+    //       will be flying and needs to be hidden until it's reattached.
+
+    evas_object_hide(elm_object_part_content_unset(intf->nf_content, "elm.swallow.content"));
+
+    elm_object_part_content_unset(intf->nf_content, "title_left_btn");
+    elm_object_part_content_unset(intf->nf_content, "title_right_btn");
+
+    /* Pop the top view */
+    elm_naviframe_item_pop(intf->nf_content);
+    elm_win_indicator_mode_set(intf->win, ELM_WIN_INDICATOR_SHOW);
+
+    /* If nothing left, exit */
+    it = elm_naviframe_top_item_get(intf->nf_content);
+    if (it == NULL) {
+        ui_app_exit();
+        return;
+    }
+
+    elm_object_part_content_set(intf->nf_content, "title_left_btn", intf->sidebar_toggle_btn);
+    view = (interface_view *)elm_object_item_data_get(it);
+    if (view && view->pf_has_menu && view->pf_has_menu(view->p_view_sys) == true)
+    {
+        elm_object_part_content_set(intf->nf_content, "title_right_btn", intf->popup_toggle_btn);
+        evas_object_show(intf->popup_toggle_btn);
+    }
+    else
+        evas_object_hide(intf->popup_toggle_btn);
+
+    evas_object_show(view->view);
+}
 
 static void
 win_back_key_cb(void *data, Evas_Object *obj, void *event_info)
@@ -225,8 +276,6 @@ win_back_key_cb(void *data, Evas_Object *obj, void *event_info)
     else {
         /* Get the top of the NaviFrame Stack */
         Elm_Object_Item *it = elm_naviframe_top_item_get(intf->nf_content);
-        assert(it!=NULL); // Else we should have quit before
-
         interface_view *view = (interface_view *)elm_object_item_data_get(it);
         if (view) {
             if (view->pf_event != NULL &&
@@ -234,49 +283,8 @@ win_back_key_cb(void *data, Evas_Object *obj, void *event_info)
                 /* View has accepted the event */
                 return;
             }
-            else if(view->pf_stop != NULL) {
-                view->pf_stop(view->p_view_sys);
-            }
         }
-
-        // NOTE: When pop() is called a naviframe will free the content of the item
-        //       unless elm_naviframe_content_preserve_on_pop_set is set but this
-        //       function seems broken or underspecified (at least in Tizen 2.3 SDK).
-        //       To workaround this issue there's two options:
-        //
-        //       * Don't recycle view and instantiate a new one instead
-        //       * Remove the view from the item before calling pop()
-        //
-        //       The second option has one drawback though, once unset the part
-        //       will be flying and needs to be hidden until it's reattached.
-
-        evas_object_hide(elm_object_part_content_unset(intf->nf_content, "elm.swallow.content"));
-
-        elm_object_part_content_unset(intf->nf_content, "title_left_btn");
-        elm_object_part_content_unset(intf->nf_content, "title_right_btn");
-
-        /* Pop the top view */
-        elm_naviframe_item_pop(intf->nf_content);
-        elm_win_indicator_mode_set(intf->win, ELM_WIN_INDICATOR_SHOW);
-
-        /* If nothing left, exit */
-        it = elm_naviframe_top_item_get(intf->nf_content);
-        if (it == NULL) {
-            ui_app_exit();
-            return;
-        }
-
-        elm_object_part_content_set(intf->nf_content, "title_left_btn", intf->sidebar_toggle_btn);
-        view = (interface_view *)elm_object_item_data_get(it);
-        if (view && view->pf_has_menu && view->pf_has_menu(view->p_view_sys) == true)
-        {
-            elm_object_part_content_set(intf->nf_content, "title_right_btn", intf->popup_toggle_btn);
-            evas_object_show(intf->popup_toggle_btn);
-        }
-        else
-            evas_object_hide(intf->popup_toggle_btn);
-
-        evas_object_show(view->view);
+        intf_pop_view(intf);
     }
 }
 /* Video Player */
