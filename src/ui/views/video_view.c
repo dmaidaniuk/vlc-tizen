@@ -45,7 +45,8 @@ struct view_sys
     Evas_Object *p_overflow_menu;
 };
 
-void video_view_refresh_cb(void *data, Evas_Object *obj, void *event_info)
+static void
+video_view_refresh_cb(void *data, Evas_Object *obj, void *event_info)
 {
     view_sys *p_sys = data;
 
@@ -61,13 +62,13 @@ void video_view_refresh_cb(void *data, Evas_Object *obj, void *event_info)
     p_sys->p_overflow_menu = NULL;
 }
 
-popup_menu video_view_popup_menu[] =
+static popup_menu video_view_popup_menu[] =
 {
         {"Refresh", NULL, video_view_refresh_cb},
         {0}
 };
 
-bool
+static bool
 video_view_callback(view_sys *p_view_sys, interface_view_event event)
 {
     switch (event) {
@@ -91,7 +92,7 @@ video_view_callback(view_sys *p_view_sys, interface_view_event event)
     return false;
 }
 
-bool
+static bool
 video_view_has_menu(view_sys *p_view_sys)
 {
     return true;
