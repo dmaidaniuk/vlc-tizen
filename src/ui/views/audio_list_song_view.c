@@ -173,6 +173,7 @@ audio_list_song_view_append_item(list_sys *p_sys, void* p_data)
     /* */
     elm_object_item_del_cb_set(it, free_list_item_data);
     audio_list_song_check_empty(p_sys);
+    p_sys->p_view_cb->pf_updated(p_sys->p_view_cb->p_sys, false);
     return ali;
 }
 

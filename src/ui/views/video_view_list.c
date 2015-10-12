@@ -218,6 +218,7 @@ video_view_append_item(list_sys *p_list, void* p_data)
     /* */
     elm_object_item_del_cb_set(vli->p_object_item, free_list_item);
     genlist_update_empty_view(p_list);
+    p_list->p_view_cb->pf_updated(p_list->p_view_cb->p_sys, false);
     return vli;
 }
 

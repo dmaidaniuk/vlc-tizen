@@ -100,7 +100,7 @@ video_view_has_menu(view_sys *p_view_sys)
 }
 
 static void
-video_video_content_updated_cb(view_sys* p_view_sys)
+video_video_content_updated_cb(view_sys* p_view_sys, bool b_empty)
 {
 }
 

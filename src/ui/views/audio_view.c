@@ -213,7 +213,7 @@ audio_view_has_menu(view_sys *p_view_sys)
 }
 
 static void
-audio_view_content_changed_cb(view_sys* p_view_sys)
+audio_view_content_changed_cb(view_sys* p_view_sys, bool b_empty)
 {
 
 }
