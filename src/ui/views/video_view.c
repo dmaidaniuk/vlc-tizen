@@ -62,7 +62,7 @@ typedef struct video_list_item
 } video_list_item;
 
 void
-genlist_check_empty(view_sys *p_sys)
+genlist_update_empty_view(view_sys *p_sys)
 {
     //TODO improve me
     unsigned int count = elm_genlist_items_count(p_sys->p_video_list);
@@ -219,7 +219,7 @@ video_view_append_item(view_sys *videoview, media_item* p_item)
     }
     /* */
     elm_object_item_del_cb_set(vli->p_object_item, free_list_item);
-    genlist_check_empty(videoview);
+    genlist_update_empty_view(videoview);
     return vli;
 }
 
@@ -270,7 +270,7 @@ create_video_view(interface *intf, Evas_Object *parent)
     evas_object_smart_callback_add(genlist, "longpressed", genlist_longpressed_cb, NULL);
     evas_object_smart_callback_add(genlist, "contracted", genlist_contracted_cb, NULL);
 
-    genlist_check_empty(p_sys);
+    genlist_update_empty_view(p_sys);
 
     view->view = box;
 
