@@ -31,8 +31,6 @@
 
 #include "ui/audio_player.h"
 
-typedef struct audio_list_item audio_list_item;
-
 interface_view *
 create_audio_view(interface *intf, Evas_Object *parent);
 
