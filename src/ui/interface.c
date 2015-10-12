@@ -297,6 +297,7 @@ intf_video_player_play(interface *intf, const char *psz_path)
 
     /* Push it on top of the view */
     Elm_Object_Item *it = elm_naviframe_item_push(intf->nf_content, NULL, NULL, NULL, view, NULL);
+    elm_object_item_data_set(it, intf->video_player);
     elm_naviframe_item_title_enabled_set(it, EINA_FALSE, EINA_FALSE);
 
     /* */
