@@ -40,9 +40,6 @@ void
 destroy_video_view(interface_view *);
 
 /* Controller / View */
-void
-video_view_update(view_sys* vv, Eina_List* p_content);
-
 video_list_item *
 video_view_append_item(view_sys *videoview, media_item* p_item);
 
