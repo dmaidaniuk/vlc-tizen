@@ -26,23 +26,71 @@
 
 #include "common.h"
 
+#include "application.h"
 #include "ui/interface.h"
 #include "video_view.h"
 #include "video_view_list.h"
+#include "ui/menu/popup_menu.h"
+#include "media/library/media_library.hpp"
 
 
 #include <Elementary.h>
 
 struct view_sys
 {
+    application *p_app;
+    Evas_Object *p_parent;
     list_view* p_list;
 };
+
+void video_view_refresh_cb(void *data, Evas_Object *obj, void *event_info)
+{
+    view_sys *p_sys = data;
+
+    if (!p_sys)
+        return;
+
+    media_library* p_ml = (media_library*)application_get_media_library(p_sys->p_app);
+    if (p_ml != NULL)
+        media_library_reload(p_ml);
+
+    /* */
+    evas_object_del(obj);
+}
+
+popup_menu video_view_popup_menu[] =
+{
+        {"Refresh", NULL, video_view_refresh_cb},
+        {0}
+};
+
+bool
+video_view_callback(view_sys *p_view_sys, interface_view_event event)
+{
+    switch (event) {
+    case INTERFACE_VIEW_EVENT_MENU:
+    {
+        Evas_Object *menu = popup_menu_add(video_view_popup_menu, p_view_sys, p_view_sys->p_parent);
+        evas_object_show(menu);
+        return true;
+    }
+    case INTERFACE_VIEW_EVENT_BACK:
+    default:
+        break;
+    }
+
+    return false;
+}
 
 interface_view*
 create_video_view(interface *intf, Evas_Object *parent)
 {
     interface_view *view = calloc(1, sizeof(*view));
     view_sys *p_sys = view->p_view_sys = malloc(sizeof(*p_sys));
+
+    view->pf_event = video_view_callback;
+    p_sys->p_app = intf_get_application(intf);
+    p_sys->p_parent = parent;
 
     /* Box container */
     Evas_Object *box = elm_box_add(parent);
