@@ -299,3 +299,9 @@ media_library_unregister_item_updated(media_library* ml, media_library_item_upda
 {
     ml->unregisterOnItemUpdated(cb, p_data);
 }
+
+void
+media_library_reload(media_library* ml)
+{
+    ml->ml->reload();
+}

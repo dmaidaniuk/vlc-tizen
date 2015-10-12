@@ -79,6 +79,9 @@ media_library_register_item_updated(media_library* ml, media_library_item_update
 void
 media_library_unregister_item_updated(media_library* ml, media_library_item_updated_cb cb, void* p_data );
 
+void
+media_library_reload(media_library* ml);
+
 #ifdef __cplusplus
 }
 #endif
