@@ -50,3 +50,15 @@ artist_item_destroy(artist_item* p_item)
     free(p_item->psz_name);
     free(p_item);
 }
+
+artist_item*
+artist_item_copy(const artist_item* p_item )
+{
+    return artist_item_create( p_item->psz_name );
+}
+
+bool
+artist_item_identical(const artist_item* p_left, const artist_item* p_right)
+{
+    return strcmp( p_left->psz_name, p_right->psz_name ) == 0;
+}

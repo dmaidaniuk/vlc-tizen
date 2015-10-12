@@ -31,7 +31,8 @@
 extern "C" {
 #endif
 
-typedef struct artist_item {
+typedef struct artist_item
+{
     char* psz_name;
 } artist_item;
 
@@ -40,6 +41,12 @@ artist_item_create(const char* psz_name);
 
 void
 artist_item_destroy(artist_item* p_item);
+
+artist_item*
+artist_item_copy(const artist_item* p_item );
+
+bool
+artist_item_identical(const artist_item* p_left, const artist_item* p_right);
 
 #ifdef __cplusplus
 } // extern "C"
