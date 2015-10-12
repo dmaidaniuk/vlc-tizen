@@ -196,6 +196,7 @@ create_sidebar(interface *intf, Evas_Object *layout)
 
     /* */
     elm_object_content_set(sidebar, sidebar_list);
+    elm_genlist_item_selected_set(elm_genlist_first_item_get(sidebar), EINA_TRUE);
 
     return sidebar;
 }
