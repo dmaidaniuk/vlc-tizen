@@ -270,9 +270,6 @@ create_video_view(interface *intf, Evas_Object *parent)
     evas_object_smart_callback_add(genlist, "longpressed", genlist_longpressed_cb, NULL);
     evas_object_smart_callback_add(genlist, "contracted", genlist_contracted_cb, NULL);
 
-    elm_box_pack_end(p_sys->p_box, p_sys->p_empty_label);
-    elm_box_pack_end(p_sys->p_box, p_sys->p_video_list);
-
     genlist_check_empty(p_sys);
 
     view->view = box;
