@@ -41,6 +41,8 @@ struct view_sys
     application *p_app;
     Evas_Object *p_parent;
     list_view* p_list;
+
+    Evas_Object *p_overflow_menu;
 };
 
 void video_view_refresh_cb(void *data, Evas_Object *obj, void *event_info)
@@ -56,6 +58,7 @@ void video_view_refresh_cb(void *data, Evas_Object *obj, void *event_info)
 
     /* */
     evas_object_del(obj);
+    p_sys->p_overflow_menu = NULL;
 }
 
 popup_menu video_view_popup_menu[] =
@@ -70,11 +73,17 @@ video_view_callback(view_sys *p_view_sys, interface_view_event event)
     switch (event) {
     case INTERFACE_VIEW_EVENT_MENU:
     {
-        Evas_Object *menu = popup_menu_add(video_view_popup_menu, p_view_sys, p_view_sys->p_parent);
-        evas_object_show(menu);
+        p_view_sys->p_overflow_menu = popup_menu_add(video_view_popup_menu, p_view_sys, p_view_sys->p_parent);
+        evas_object_show(p_view_sys->p_overflow_menu);
         return true;
     }
     case INTERFACE_VIEW_EVENT_BACK:
+        if (p_view_sys->p_overflow_menu) {
+            evas_object_del(p_view_sys->p_overflow_menu);
+            p_view_sys->p_overflow_menu = NULL;
+            return true;
+        }
+        return false;
     default:
         break;
     }
@@ -91,6 +100,7 @@ create_video_view(interface *intf, Evas_Object *parent)
     view->pf_event = video_view_callback;
     p_sys->p_app = intf_get_application(intf);
     p_sys->p_parent = parent;
+    p_sys->p_overflow_menu = NULL;
 
     /* Box container */
     Evas_Object *box = elm_box_add(parent);
