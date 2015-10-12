@@ -352,21 +352,23 @@ menu_developer_selected_cb(settings_menu_selected *selected, view_sys* p_view_sy
 bool
 view_callback(view_sys *p_view_sys, interface_view_event event)
 {
-    Eina_List *list = elm_naviframe_items_get(p_view_sys->nav);
-    int count = eina_list_count(list);
-    eina_list_free(list);
+    if (event == INTERFACE_VIEW_EVENT_BACK) {
+        Eina_List *list = elm_naviframe_items_get(p_view_sys->nav);
+        int count = eina_list_count(list);
+        eina_list_free(list);
 
-    if (count > 2) // 2: because we didn't pop yet
-    {
-        elm_naviframe_item_pop(p_view_sys->nav);
-        return true;
+        if (count > 2) // 2: because we didn't pop yet
+        {
+            elm_naviframe_item_pop(p_view_sys->nav);
+            return true;
+        }
+        LOGD("Reloading emotion...");
+        //TODO reload only if settings impacting libvlc_new are changed
+
+        application *p_app = intf_get_application(p_view_sys->p_intf);
+        playback_service *p_ps = application_get_playback_service(p_app);
+        playback_service_restart_emotion(p_ps);
     }
-    LOGD("Reloading emotion...");
-    //TODO reload only if settings impacting libvlc_new are changed
-
-    application *p_app = intf_get_application(p_view_sys->p_intf);
-    playback_service *p_ps = application_get_playback_service(p_app);
-    playback_service_restart_emotion(p_ps);
     return false;
 }
 
