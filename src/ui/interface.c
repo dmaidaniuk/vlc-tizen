@@ -119,12 +119,6 @@ right_panel_button_clicked_cb(void *data, Evas_Object * obj, void *event_info)
     }
 }
 
-void
-intf_show_previous_view(interface *intf)
-{
-    elm_naviframe_item_pop(intf->nf_content);
-}
-
 /* GETTERS */
 application *
 intf_get_application(interface *p_intf)
@@ -253,6 +247,12 @@ intf_pop_view(interface *intf)
         evas_object_hide(intf->popup_toggle_btn);
 
     evas_object_show(view->view);
+}
+
+void
+intf_show_previous_view(interface *intf)
+{
+    intf_pop_view(intf);
 }
 
 static void
