@@ -225,7 +225,7 @@ create_button(Evas_Object *parent, char *style)
 }
 
 static void
-intf_push_view(interface *intf, interface_view *view, char *title)
+intf_push_view(interface *intf, interface_view *view, const char *title)
 {
     /* Push the view in the naviframe with the corresponding header */
     Elm_Object_Item *nf_it = elm_naviframe_item_push(intf->nf_content, title, NULL, NULL, view->view, "basic");
@@ -233,8 +233,20 @@ intf_push_view(interface *intf, interface_view *view, char *title)
 
     evas_object_show(view->view);
 
+    /* Start the view */
     if (view->pf_start != NULL)
         view->pf_start(view->p_view_sys);
+
+    /* Prepare the popup menu if needed */
+    if(view->pf_has_menu != NULL && view->pf_has_menu(view->p_view_sys) == true)
+    {
+        if(intf->popup_toggle_btn == NULL)
+        {
+            intf->popup_toggle_btn = create_button(intf->nf_content, "naviframe/drawers");
+            evas_object_smart_callback_add(intf->popup_toggle_btn, "clicked", right_panel_button_clicked_cb, intf);
+        }
+        elm_object_part_content_set(intf->nf_content, "title_right_btn", intf->popup_toggle_btn);
+    }
 }
 
 void
@@ -265,16 +277,7 @@ intf_show_view(interface *intf, view_e view_type)
     }
     elm_object_part_content_set(nf_content, "title_left_btn", intf->sidebar_toggle_btn);
 
-    /* */
-    if(view->pf_has_menu && view->pf_has_menu(view->p_view_sys) == true)
-    {
-        if(intf->popup_toggle_btn == NULL)
-        {
-            intf->popup_toggle_btn = create_button(nf_content, "naviframe/drawers");
-            evas_object_smart_callback_add(intf->popup_toggle_btn, "clicked", right_panel_button_clicked_cb, intf);
-        }
-        elm_object_part_content_set(nf_content, "title_right_btn", intf->popup_toggle_btn);
-    }
+
 }
 
 /* Video Player */
