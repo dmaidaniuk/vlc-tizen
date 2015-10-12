@@ -62,7 +62,7 @@ void
 destroy_video_view(interface_view *view)
 {
     list_view* p_list_view = view->p_view_sys->p_list;
-    p_list_view->pf_del(p_list_view);
+    p_list_view->pf_del(p_list_view->p_sys);
     free(p_list_view);
     free(view->p_view_sys);
     free(view);

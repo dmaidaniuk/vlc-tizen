@@ -31,7 +31,7 @@
 #include "ui/interface.h"
 
 media_library_controller*
-media_library_controller_create( application* p_app, view_sys* p_view );
+media_library_controller_create( application* p_app, list_view* p_list_view );
 
 void
 media_library_controller_destroy(media_library_controller *);

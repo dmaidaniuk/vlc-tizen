@@ -30,20 +30,6 @@
 #include "media/media_item.h"
 #include "ui/interface.h"
 
-typedef struct video_list_item video_list_item;
-
-const media_item*
-video_list_item_get_media_item(video_list_item* p_item);
-
-void
-video_list_item_set_media_item(video_list_item* p_item, media_item* p_media_item);
-
-video_list_item *
-video_view_append_item(list_sys *videoview, media_item* p_item);
-
-void
-video_view_clear(list_sys* videoview);
-
 list_view*
 video_view_list_create(interface *intf, Evas_Object *p_genlist);
 

@@ -35,7 +35,7 @@
 #include "video_player.h"
 
 
-typedef struct video_list_item
+struct list_view_item
 {
     list_sys*                       p_list;
     media_item*                     p_media_item;
@@ -43,7 +43,7 @@ typedef struct video_list_item
 
     //For refresh purposes.
     Elm_Object_Item*                p_object_item;
-} video_list_item;
+};
 
 struct list_sys
 {
@@ -76,7 +76,7 @@ genlist_update_empty_view(list_sys *p_sys)
 void
 genlist_item_selected_cb(void *data, Evas_Object *obj, void *event_info)
 {
-    video_list_item *vli = (video_list_item*)data;
+    list_view_item *vli = (list_view_item*)data;
 
     intf_video_player_play(vli->p_list->p_intf, vli->p_media_item->psz_path);
 }
@@ -84,7 +84,7 @@ genlist_item_selected_cb(void *data, Evas_Object *obj, void *event_info)
 static void
 free_list_item(void *data, Evas_Object *obj, void *event_info)
 {
-    video_list_item *vli = data;
+    list_view_item *vli = data;
     media_item_destroy(vli->p_media_item);
     free(vli);
 }
@@ -92,7 +92,7 @@ free_list_item(void *data, Evas_Object *obj, void *event_info)
 static char *
 genlist_text_get_cb(void *data, Evas_Object *obj, const char *part)
 {
-    video_list_item *vli = data;
+    list_view_item *vli = data;
     const Elm_Genlist_Item_Class *itc = vli->itc;
 
     /* Check the item class style and put the current folder or file name as a string */
@@ -120,15 +120,16 @@ genlist_text_get_cb(void *data, Evas_Object *obj, const char *part)
     return NULL;
 }
 
-const media_item*
-video_list_item_get_media_item(video_list_item* p_item)
+static const void*
+video_list_item_get_media_item(list_view_item* p_list_item)
 {
-    return p_item->p_media_item;
+    return p_list_item->p_media_item;
 }
 
-void
-video_list_item_set_media_item(video_list_item* p_item, media_item* p_media_item)
+static void
+video_list_item_set_media_item(list_view_item* p_item, void* p_data)
 {
+    media_item* p_media_item = (media_item*)p_data;
     p_item->p_media_item = p_media_item;
     ecore_main_loop_thread_safe_call_async((Ecore_Cb)elm_genlist_item_update, p_item->p_object_item);
 }
@@ -136,7 +137,7 @@ video_list_item_set_media_item(video_list_item* p_item, media_item* p_media_item
 static Evas_Object*
 genlist_content_get_cb(void *data, Evas_Object *obj, const char *part)
 {
-    video_list_item *vli = data;
+    list_view_item *vli = data;
     const Elm_Genlist_Item_Class *itc = vli->itc;
 
     Evas_Object *layout = NULL;
@@ -186,11 +187,13 @@ genlist_contracted_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
     elm_genlist_item_subitems_clear(it);
 }
 
-video_list_item *
-video_view_append_item(list_sys *p_list, media_item* p_item)
+static list_view_item*
+video_view_append_item(list_sys *p_list, void* p_data)
 {
+    media_item* p_item = (media_item*)p_data;
     /* */
-    video_list_item *vli = calloc(1, sizeof(*vli));
+    LOGE("Adding media item %s", p_item->psz_path);
+    list_view_item *vli = calloc(1, sizeof(*vli));
     if (vli == NULL)
         return NULL;
     vli->p_list = p_list;
@@ -217,7 +220,7 @@ video_view_append_item(list_sys *p_list, media_item* p_item)
     return vli;
 }
 
-void
+static void
 video_view_clear(list_sys* videoview)
 {
     elm_genlist_clear(videoview->p_video_list);
@@ -273,9 +276,15 @@ video_view_list_create(interface *p_intf, Evas_Object *p_parent)
     evas_object_smart_callback_add(p_genlist, "contracted", genlist_contracted_cb, NULL);
 
     p_sys->p_intf = p_intf;
-    p_sys->p_controller = video_controller_create(intf_get_application(p_intf), p_sys);
 
     p_view->pf_del = &video_view_list_destroy;
+
+    p_view->pf_append_item = &video_view_append_item;
+    p_view->pf_clear = &video_view_clear;
+    p_view->pf_get_item = &video_list_item_get_media_item;
+    p_view->pf_set_item = &video_list_item_set_media_item;
+
+    p_sys->p_controller = video_controller_create(intf_get_application(p_intf), p_view);
 
     genlist_update_empty_view(p_sys);
 

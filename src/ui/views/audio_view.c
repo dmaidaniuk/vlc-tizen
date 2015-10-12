@@ -78,9 +78,6 @@ create_audio_list_type(view_sys *av, audio_view_type type )
     list_view* p_view = av->p_lists[type];
     if(p_view == NULL)
     {
-        p_view = calloc(1, sizeof(*p_view));
-        if (p_view == NULL)
-            return NULL;
         Evas_Object* p_genlist = genlist_create(av);
         if (p_genlist == NULL)
             return NULL;
@@ -88,9 +85,7 @@ create_audio_list_type(view_sys *av, audio_view_type type )
         {
         case AUDIO_VIEW_SONG:
         default:
-            p_view->p_sys = audio_list_song_view_create(av->p_app, av->p_intf, p_genlist);
-            p_view->pf_show = &audio_list_song_view_show;
-            p_view->pf_del = &audio_list_song_view_destroy;
+            p_view = audio_list_song_view_create(av->p_app, av->p_intf, p_genlist);
 //        default:
 //            p_list = NULL;
         }

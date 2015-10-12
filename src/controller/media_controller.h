@@ -31,8 +31,8 @@
 #include "media_library_controller.h"
 
 media_library_controller*
-video_controller_create(application* p_app, view_sys* p_view);
+video_controller_create(application* p_app, list_view* p_list_view);
 
 media_library_controller*
-audio_controller_create(application* p_app, view_sys* p_view);
+audio_controller_create(application* p_app, list_view* p_list_view);
 

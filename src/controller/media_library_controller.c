@@ -39,7 +39,7 @@
 static void
 media_library_controller_add_item(media_library_controller* ctrl, media_item* p_item)
 {
-    void* p_view_item = ctrl->pf_view_append_media_item( ctrl->p_view, p_item );
+    void* p_view_item = ctrl->p_list_view->pf_append_item( ctrl->p_list_view->p_sys, p_item );
     if (p_view_item == NULL)
         return;
     ctrl->p_content = eina_list_append(ctrl->p_content, p_view_item);
@@ -61,11 +61,11 @@ media_library_controller_file_update( media_library_controller* ctrl, const void
         void* p_item;
         EINA_LIST_FOREACH( ctrl->p_content, it, p_item )
         {
-            const void* p_media_item = ctrl->pf_get_media_item(p_item);
+            const void* p_media_item = ctrl->p_list_view->pf_get_item(p_item);
 
             if ( ctrl->pf_item_compare( p_media_item, p_new_media_item) )
             {
-                ctrl->pf_set_media_item(p_item, p_new_media_item);
+                ctrl->p_list_view->pf_set_item(p_item, p_new_media_item);
                 return true;
             }
         }
@@ -113,7 +113,7 @@ media_library_controller_content_changed_cb(void* p_data)
     if (ctrl->p_content != NULL)
     {
         eina_list_free(ctrl->p_content);
-        ctrl->pf_view_clear(ctrl->p_view);
+        ctrl->p_list_view->pf_clear(ctrl->p_list_view->p_sys);
         ctrl->p_content = NULL;
     }
     media_library* p_ml = (media_library*)application_get_media_library( ctrl->p_app );
@@ -127,13 +127,13 @@ media_library_controller_refresh(media_library_controller* p_ctrl)
 }
 
 media_library_controller*
-media_library_controller_create(application* p_app, view_sys* p_view )
+media_library_controller_create(application* p_app, list_view* p_list_view )
 {
    media_library_controller* ctrl = calloc(1, sizeof(*ctrl));
    if ( ctrl == NULL )
        return NULL;
    ctrl->p_app = p_app;
-   ctrl->p_view = p_view;
+   ctrl->p_list_view = p_list_view;
 
    /* Populate it */
    media_library* p_ml = (media_library*)application_get_media_library(p_app);

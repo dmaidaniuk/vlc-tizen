@@ -29,10 +29,6 @@
 
 #include "application.h"
 
-typedef void*               (*pf_view_append_media_item_cb)( view_sys* p_view, media_item* p_item );
-typedef void                (*pf_view_clear_cb)( view_sys* view );
-typedef const media_item*   (*pf_get_media_item_cb)( void* p_item_view );
-typedef void                (*pf_set_media_item_cb)( void* p_item_view, media_item* p_item );
 typedef void                (*pf_media_library_get_content_cb)( media_library* p_ml, media_library_list_cb cb, void* p_user_data );
 typedef bool                (*pf_item_compare_cb)(const void* p_left, const void* p_right);
 typedef void*               (*pf_item_duplicate_cb)( const void* p_item );
@@ -44,16 +40,12 @@ struct media_library_controller
      * Content Management
      */
     application*    p_app;
-    view_sys*       p_view;
+    list_view*      p_list_view;
     Eina_List*      p_content;
 
     /**
      * Callbacks & settings
      */
-    pf_view_append_media_item_cb    pf_view_append_media_item;
-    pf_view_clear_cb                pf_view_clear;
-    pf_get_media_item_cb            pf_get_media_item;
-    pf_set_media_item_cb            pf_set_media_item;
     pf_media_library_get_content_cb pf_media_library_get_content;
     pf_item_compare_cb              pf_item_compare;
     pf_item_duplicate_cb            pf_item_duplicate;
