@@ -74,14 +74,13 @@ struct
     const char* title;
     interface_view* (*pf_create)(interface *, Evas_Object *);
     void (*pf_destroy)(interface_view *);
-    bool b_overflow_menu;
 } interface_views[VIEW_MAX] =
 {
-    { "Video",     create_video_view    , destroy_video_view,     true},
-    { "Audio",     create_audio_view    , destroy_audio_view,     true},
-    { "Directory", create_directory_view, destroy_directory_view, false},
-    { "Settings",  create_setting_view  , destroy_setting_view,   false},
-    { "About",     create_about_view    , destroy_about_view,     false},
+    { "Video",     create_video_view    , destroy_video_view},
+    { "Audio",     create_audio_view    , destroy_audio_view},
+    { "Directory", create_directory_view, destroy_directory_view},
+    { "Settings",  create_setting_view  , destroy_setting_view},
+    { "About",     create_about_view    , destroy_about_view},
 };
 
 /* CALLBACKS */
@@ -155,7 +154,7 @@ win_back_key_cb(void *data, Evas_Object *obj, void *event_info)
 
         elm_object_part_content_set(intf->nf_content, "title_left_btn", intf->sidebar_toggle_btn);
         view = (interface_view *)elm_object_item_data_get(it);
-        if (view && interface_views[view->type].b_overflow_menu == true)
+        if (view && view->pf_has_menu && view->pf_has_menu(view->p_view_sys) == true)
         {
             elm_object_part_content_set(intf->nf_content, "title_right_btn", intf->popup_toggle_btn);
             evas_object_show(intf->popup_toggle_btn);
@@ -252,7 +251,6 @@ intf_show_view(interface *intf, view_e view_type)
     {
         LOGD("New interface view %i", view_type);
         intf->nf_views[view_type] = view = interface_views[view_type].pf_create(intf, nf_content);
-        view->type = view_type;
     }
     else
         LOGD("Recycling interface view %i", view_type);
@@ -268,7 +266,7 @@ intf_show_view(interface *intf, view_e view_type)
     elm_object_part_content_set(nf_content, "title_left_btn", intf->sidebar_toggle_btn);
 
     /* */
-    if(interface_views[view_type].b_overflow_menu)
+    if(view->pf_has_menu && view->pf_has_menu(view->p_view_sys) == true)
     {
         if(intf->popup_toggle_btn == NULL)
         {
