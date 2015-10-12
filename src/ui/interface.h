@@ -112,4 +112,14 @@ intf_register_file_changed(interface *intf, view_e type,
 void
 intf_ml_file_changed( void* p_user_data );
 
+/* List view items */
+typedef struct list_sys list_sys;
+typedef struct list_view list_view;
+typedef struct list_view
+{
+    list_sys* p_sys;
+    void (*pf_del)(list_sys* p_sys);
+    void (*pf_show)(list_sys* p_sys, Evas_Object* p_parent);
+} list_view;
+
 #endif /* INTERFACE_H_ */
