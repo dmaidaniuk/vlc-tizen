@@ -277,6 +277,27 @@ media_library_get_albums(media_library* p_ml, media_library_list_cb cb, void* p_
 }
 
 void
+media_library_get_artists( media_library* p_ml, media_library_list_cb cb, void* p_user_data )
+{
+    auto ctx = new ml_callback_context( p_ml, cb, p_user_data );
+
+    ecore_thread_run( [](void* data, Ecore_Thread* ) {
+        auto ctx = reinterpret_cast<ml_callback_context*>( data );
+        auto artists = ctx->p_ml->ml->artists();
+        Eina_List *list = nullptr;
+        for ( auto& a : artists )
+        {
+            auto elem = artistToArtistItem( a );
+            if ( elem == nullptr )
+                continue;
+            list = eina_list_append( list, elem );
+        }
+        ctx->list = list;
+        ecore_main_loop_thread_safe_call_async( intermediate_list_callback, ctx );
+    }, nullptr, nullptr, ctx );
+}
+
+void
 media_library_register_on_change(media_library* ml, media_library_file_list_changed_cb cb, void* p_data)
 {
     ml->registerOnChange(cb, p_data);

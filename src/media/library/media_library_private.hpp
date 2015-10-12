@@ -32,9 +32,11 @@
 #include "media_library.hpp"
 #include "media/media_item.h"
 #include "media/album_item.h"
+#include "media/artist_item.h"
 
 media_item* fileToMediaItem( FilePtr file );
 album_item* albumToAlbumItem( AlbumPtr album );
+artist_item* artistToArtistItem( ArtistPtr album );
 
 class TizenLogger : public ILogger
 {

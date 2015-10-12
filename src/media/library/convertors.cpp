@@ -130,3 +130,13 @@ albumToAlbumItem( AlbumPtr album )
     p_item->i_release_date = album->releaseDate();
     return p_item;
 }
+
+
+artist_item*
+artistToArtistItem( ArtistPtr artist )
+{
+    auto p_item = artist_item_create(artist->name().c_str());
+    if (p_item == nullptr)
+        return nullptr;
+    return p_item;
+}

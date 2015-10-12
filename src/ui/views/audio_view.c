@@ -30,6 +30,7 @@
 #include "ui/interface.h"
 #include "ui/views/audio_view.h"
 #include "ui/views/audio_list_song_view.h"
+#include "ui/views/audio_list_artist_view.h"
 #include "ui/audio_player.h"
 #include "ui/menu/popup_menu.h"
 
@@ -71,6 +72,10 @@ create_audio_list_type(view_sys *av, audio_view_type type )
         case AUDIO_VIEW_SONG:
         default:
             p_view = audio_list_song_view_create(av->p_app, av->p_intf, av->nf_toolbar);
+            break;
+        case AUDIO_VIEW_ARTIST:
+            p_view = audio_list_artist_view_create(av->p_app, av->p_intf, av->nf_toolbar);
+            break;
         }
         av->p_lists[type] = p_view;
     }

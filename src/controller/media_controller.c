@@ -29,6 +29,7 @@
 #include "media_controller.h"
 #include "media_library_controller.h"
 #include "media_library_controller_private.h"
+#include "media/artist_item.h"
 #include "ui/views/video_view.h"
 #include "ui/views/audio_view.h"
 
@@ -44,6 +45,13 @@ audio_controller_accept_item( const void* p_item )
 {
     const media_item* p_media_item = (const media_item*)p_item;
     return p_media_item->i_type == MEDIA_ITEM_TYPE_AUDIO;
+}
+
+static bool
+artist_controller_accept_item( const void* p_item )
+{
+    (void)p_item;
+    return true;
 }
 
 media_library_controller*
@@ -69,5 +77,18 @@ audio_controller_create(application* p_app, list_view* p_list_view)
     p_ctrl->pf_item_duplicate = (pf_item_duplicate_cb)&media_item_copy;
     p_ctrl->pf_item_compare = (pf_item_compare_cb)&media_item_identical;
     p_ctrl->pf_accept_item = &audio_controller_accept_item;
+    return p_ctrl;
+}
+
+media_library_controller*
+artist_controller_create(application* p_app, list_view* p_list_view)
+{
+    media_library_controller* p_ctrl = media_library_controller_create( p_app, p_list_view );
+    if ( p_ctrl == NULL )
+        return NULL;
+    p_ctrl->pf_media_library_get_content = (pf_media_library_get_content_cb)&media_library_get_artists;
+    p_ctrl->pf_item_duplicate = (pf_item_duplicate_cb)&artist_item_copy;
+    p_ctrl->pf_item_compare = (pf_item_compare_cb)&artist_item_identical;
+    p_ctrl->pf_accept_item = &artist_controller_accept_item;
     return p_ctrl;
 }
