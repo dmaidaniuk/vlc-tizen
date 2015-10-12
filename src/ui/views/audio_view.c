@@ -139,7 +139,8 @@ create_toolbar(view_sys *av, Evas_Object *parent)
     return tabbar;
 }
 
-void audio_view_refresh_cb(void *data, Evas_Object *obj, void *event_info)
+static void
+audio_view_refresh_cb(void *data, Evas_Object *obj, void *event_info)
 {
     view_sys *p_sys = data;
 
@@ -155,13 +156,13 @@ void audio_view_refresh_cb(void *data, Evas_Object *obj, void *event_info)
     p_sys->p_overflow_menu = NULL;
 }
 
-popup_menu audio_view_popup_menu[] =
+static popup_menu audio_view_popup_menu[] =
 {
         {"Refresh", NULL, audio_view_refresh_cb},
         {0}
 };
 
-bool
+static bool
 audio_view_callback(view_sys *p_view_sys, interface_view_event event)
 {
     switch (event) {
@@ -185,7 +186,7 @@ audio_view_callback(view_sys *p_view_sys, interface_view_event event)
     return false;
 }
 
-bool
+static bool
 audio_view_has_menu(view_sys *p_view_sys)
 {
     return true;
