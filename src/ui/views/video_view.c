@@ -43,7 +43,9 @@ struct view_sys
 
     media_library_controller* p_controller;
 
+    Evas_Object *p_box;
     Evas_Object *p_video_list;
+    Evas_Object *p_empty_label;
     Elm_Genlist_Item_Class* p_default_item_class;
 };
 
@@ -58,6 +60,24 @@ typedef struct video_list_item
     //For refresh purposes.
     Elm_Object_Item* p_object_item;
 } video_list_item;
+
+void
+genlist_check_empty(view_sys *p_sys)
+{
+    //TODO improve me
+    unsigned int count = elm_genlist_items_count(p_sys->p_video_list);
+    if (count == 0) {
+        elm_box_unpack_all(p_sys->p_box);
+        elm_box_pack_end(p_sys->p_box, p_sys->p_empty_label);
+        evas_object_show(p_sys->p_empty_label);
+        evas_object_hide(p_sys->p_video_list);
+    } else {
+        elm_box_unpack_all(p_sys->p_box);
+        elm_box_pack_end(p_sys->p_box, p_sys->p_video_list);
+        evas_object_hide(p_sys->p_empty_label);
+        evas_object_show(p_sys->p_video_list);
+    }
+}
 
 void
 genlist_item_selected_cb(void *data, Evas_Object *obj, void *event_info)
@@ -199,6 +219,7 @@ video_view_append_item(view_sys *videoview, media_item* p_item)
     }
     /* */
     elm_object_item_del_cb_set(vli->p_object_item, free_list_item);
+    genlist_check_empty(videoview);
     return vli;
 }
 
@@ -216,6 +237,16 @@ create_video_view(interface *intf, Evas_Object *parent)
     p_sys->p_intf = intf;
     p_sys->p_controller = video_controller_create(intf_get_application(intf), p_sys);
 
+    /* Box container */
+    Evas_Object *box = p_sys->p_box = elm_box_add(parent);
+    evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+    evas_object_size_hint_align_set(box, EVAS_HINT_FILL, EVAS_HINT_FILL);
+    evas_object_show(box);
+
+    /* Empty list label */
+    p_sys->p_empty_label = elm_label_add(box);
+    elm_object_text_set(p_sys->p_empty_label, "No video content to show");
+
     /* Genlist class */
     p_sys->p_default_item_class = elm_genlist_item_class_new();
     p_sys->p_default_item_class->item_style = "2line.top.3";
@@ -223,12 +254,15 @@ create_video_view(interface *intf, Evas_Object *parent)
     p_sys->p_default_item_class->func.content_get = genlist_content_get_cb;
 
     /* Create the Video Genlist */
-    Evas_Object *genlist = p_sys->p_video_list = elm_genlist_add(parent);
+    Evas_Object *genlist = p_sys->p_video_list = elm_genlist_add(box);
 
     /* Set the genlist modes */
     elm_scroller_single_direction_set(genlist, ELM_SCROLLER_SINGLE_DIRECTION_HARD);
     elm_genlist_homogeneous_set(genlist, EINA_TRUE);
     elm_genlist_mode_set(genlist, ELM_LIST_COMPRESS);
+
+    evas_object_size_hint_weight_set(genlist, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+    evas_object_size_hint_align_set(genlist, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
     /* Set smart Callbacks on the list */
     evas_object_smart_callback_add(genlist, "realized", genlist_realized_cb, NULL);
@@ -236,7 +270,12 @@ create_video_view(interface *intf, Evas_Object *parent)
     evas_object_smart_callback_add(genlist, "longpressed", genlist_longpressed_cb, NULL);
     evas_object_smart_callback_add(genlist, "contracted", genlist_contracted_cb, NULL);
 
-    view->view = genlist;
+    elm_box_pack_end(p_sys->p_box, p_sys->p_empty_label);
+    elm_box_pack_end(p_sys->p_box, p_sys->p_video_list);
+
+    genlist_check_empty(p_sys);
+
+    view->view = box;
 
     /* */
     return view;
