@@ -24,8 +24,8 @@
  * compatibility with the Store
  *****************************************************************************/
 
-#ifndef VIDEO_CONTROLLER_H_
-#define VIDEO_CONTROLLER_H_
+#ifndef MEDIA_LIBRARY_CONTROLLER_H_
+# define MEDIA_LIBRARY_CONTROLLER_H_
 
 #include "application.h"
 #include "ui/interface.h"
@@ -39,4 +39,4 @@ media_library_controller_destroy(media_library_controller *);
 void
 media_library_controller_refresh( media_library_controller* p_ctrl );
 
-#endif /* VIDEO_CONTROLLER_H_ */
+#endif /* MEDIA_LIBRARY_CONTROLLER_H_ */

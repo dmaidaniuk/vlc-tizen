@@ -24,8 +24,8 @@
  * compatibility with the Store
  *****************************************************************************/
 
-#ifndef MEDIA_LIBRARY_H_
-#define MEDIA_LIBRARY_H_
+#ifndef SYSTEM_STORAGE_H_
+#define SYSTEM_STORAGE_H_
 
 typedef enum
 {
@@ -50,4 +50,4 @@ media_storage_get_path(media_storage *p_ms, media_directory_e type);
 char*
 system_storage_appdata_get();
 
-#endif /* MEDIA_LIBRARY_H_ */
+#endif /* SYSTEM_STORAGE_H_ */

@@ -24,6 +24,9 @@
  * compatibility with the Store
  *****************************************************************************/
 
+#ifndef MEDIA_CONTROLLER_H_
+# define MEDIA_CONTROLLER_H_
+
 #include "application.h"
 #include "ui/interface.h"
 
@@ -36,3 +39,7 @@ video_controller_create(application* p_app, list_view* p_list_view);
 media_library_controller*
 audio_controller_create(application* p_app, list_view* p_list_view);
 
+media_library_controller*
+artist_controller_create(application* p_app, list_view* p_list_view);
+
+#endif // MEDIA_CONTROLLER_H_
