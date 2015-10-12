@@ -256,28 +256,25 @@ intf_show_view(interface *intf, view_e view_type)
         view_type = VIEW_VIDEO; /* Replace by the last saved tab */
 
     Evas_Object *nf_content = intf->nf_content;
-    interface_view *view = intf->nf_views[view_type];
 
     /* Create the correct view and store it */
-    if(view == NULL)
+    if(intf->nf_views[view_type] == NULL)
     {
         LOGD("New interface view %i", view_type);
-        intf->nf_views[view_type] = view = interface_views[view_type].pf_create(intf, nf_content);
+        intf->nf_views[view_type] = interface_views[view_type].pf_create(intf, nf_content);
     }
     else
         LOGD("Recycling interface view %i", view_type);
 
-    intf_push_view(intf, view, interface_views[view_type].title);
+    intf_push_view(intf, intf->nf_views[view_type], interface_views[view_type].title);
 
-    /* Create then set the panel toggle btn and add his callbacks */
+    /* Create then set the panel toggle btn and add its callbacks */
     if(intf->sidebar_toggle_btn == NULL)
     {
         intf->sidebar_toggle_btn = create_button(nf_content, "naviframe/drawers");
         evas_object_smart_callback_add(intf->sidebar_toggle_btn, "clicked", left_panel_button_clicked_cb, intf);
     }
     elm_object_part_content_set(nf_content, "title_left_btn", intf->sidebar_toggle_btn);
-
-
 }
 
 /* Video Player */
