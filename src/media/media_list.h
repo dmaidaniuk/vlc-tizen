@@ -35,7 +35,7 @@ struct media_list_callbacks
 {
     void (*pf_on_media_added)(media_list *p_ml, void *p_user_data, unsigned int i_pos, media_item *p_mi);
     void (*pf_on_media_removed)(media_list *p_ml, void *p_user_data, unsigned int i_pos, media_item *p_mi);
-    void (*pf_on_media_selected)(media_list *p_ml, void *p_user_data, unsigned int i_pos, media_item *p_mi);
+    void (*pf_on_media_selected)(media_list *p_ml, void *p_user_data, int i_pos, media_item *p_mi);
     void *p_user_data;
 };
 
@@ -66,16 +66,16 @@ media_list_clear(media_list *p_ml);
 unsigned int
 media_list_get_count(media_list *p_ml);
 
-unsigned int
+int
 media_list_get_pos(media_list *p_ml);
 
-void
-media_list_set_pos(media_list *p_ml, unsigned int i_index);
+bool
+media_list_set_pos(media_list *p_ml, int i_index);
 
-void
+bool
 media_list_set_next(media_list *p_ml);
 
-void
+bool
 media_list_set_prev(media_list *p_ml);
 
 media_item *

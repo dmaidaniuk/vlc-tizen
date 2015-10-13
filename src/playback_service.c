@@ -161,7 +161,7 @@ ml_on_media_removed_cb(media_list *p_ml, void *p_user_data, unsigned int i_pos,
 }
 
 static void
-ml_on_media_selected_cb(media_list *p_ml, void *p_user_data, unsigned int i_pos,
+ml_on_media_selected_cb(media_list *p_ml, void *p_user_data, int i_pos,
                         media_item *p_mi)
 {
     playback_service *p_ps = p_user_data;
@@ -170,10 +170,10 @@ ml_on_media_selected_cb(media_list *p_ml, void *p_user_data, unsigned int i_pos,
 
     if (p_ps->b_started)
     {
-        if (i_pos >= 0)
-            playback_service_start(p_ps, 0);
-        else
-            playback_service_stop(p_ps);
+        LOGD("ml_on_media_selected_cb: %d", i_pos);
+
+        if (i_pos < 0 || playback_service_start(p_ps, 0) != 0)
+            playback_service_stop_notify(p_ps, true);
     }
     PS_SEND_CALLBACK(pf_on_media_selected, i_pos, p_mi);
 }
