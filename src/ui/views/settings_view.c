@@ -362,19 +362,16 @@ settings_last_view_pop(void *data, Elm_Object_Item *it)
     return EINA_TRUE;
 }
 
-bool
-view_callback(view_sys *p_view_sys, interface_view_event event)
+void
+setting_view_start(view_sys *p_view_sys)
 {
-    if (event == INTERFACE_VIEW_EVENT_NAV_PUSHED) {
-        // The settings has been pushed to top
-        Elm_Object_Item *it = elm_naviframe_top_item_get(p_view_sys->nav);
-        if (it == NULL)
-            return false;
+    // The settings has been pushed to top
+    Elm_Object_Item *it = elm_naviframe_top_item_get(p_view_sys->nav);
+    if (it == NULL)
+        return;
 
-        // Attach a callback for reloading the settings
-        elm_naviframe_item_pop_cb_set(it, settings_last_view_pop, p_view_sys);
-    }
-    return false;
+    // Attach a callback for reloading the settings
+    elm_naviframe_item_pop_cb_set(it, settings_last_view_pop, p_view_sys);
 }
 
 interface_view*
@@ -384,7 +381,7 @@ create_setting_view(interface *intf, Evas_Object *parent)
 
     view->p_view_sys = calloc(1, sizeof(*view->p_view_sys));
     view->p_view_sys->nav = intf_get_main_naviframe(intf);
-    view->pf_event = view_callback;
+    view->pf_start = setting_view_start;
     view->p_view_sys->p_intf = intf;
 
     int len = COUNT_OF(settings_menu);
