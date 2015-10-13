@@ -349,25 +349,30 @@ menu_developer_selected_cb(settings_menu_selected *selected, view_sys* p_view_sy
     evas_object_event_callback_add(genlist, EVAS_CALLBACK_FREE, delete_context_cb, ctx);
 }
 
+Eina_Bool
+settings_last_view_pop(void *data, Elm_Object_Item *it)
+{
+    view_sys *p_view_sys = data;
+
+    LOGD("Reloading emotion...");
+    application *p_app = intf_get_application(p_view_sys->p_intf);
+    playback_service *p_ps = application_get_playback_service(p_app);
+    playback_service_restart_emotion(p_ps);
+
+    return EINA_TRUE;
+}
+
 bool
 view_callback(view_sys *p_view_sys, interface_view_event event)
 {
-    if (event == INTERFACE_VIEW_EVENT_BACK) {
-        Eina_List *list = elm_naviframe_items_get(p_view_sys->nav);
-        int count = eina_list_count(list);
-        eina_list_free(list);
+    if (event == INTERFACE_VIEW_EVENT_NAV_PUSHED) {
+        // The settings has been pushed to top
+        Elm_Object_Item *it = elm_naviframe_top_item_get(p_view_sys->nav);
+        if (it == NULL)
+            return false;
 
-        if (count > 2) // 2: because we didn't pop yet
-        {
-            elm_naviframe_item_pop(p_view_sys->nav);
-            return true;
-        }
-        LOGD("Reloading emotion...");
-        //TODO reload only if settings impacting libvlc_new are changed
-
-        application *p_app = intf_get_application(p_view_sys->p_intf);
-        playback_service *p_ps = application_get_playback_service(p_app);
-        playback_service_restart_emotion(p_ps);
+        // Attach a callback for reloading the settings
+        elm_naviframe_item_pop_cb_set(it, settings_last_view_pop, p_view_sys);
     }
     return false;
 }
