@@ -38,9 +38,9 @@ typedef struct settings_menu_context {
 
 /* Declarations */
 interface_view*
-create_setting_view(interface *intf, Evas_Object *parent);
+create_settings_view(interface *intf, Evas_Object *parent);
 
 void
-destroy_setting_view(interface_view *);
+destroy_settings_view(interface_view *);
 
 #endif /* SETTINGS_VIEW_H_ */
