@@ -151,9 +151,6 @@ intf_push_view(interface *intf, interface_view *view, const char *title)
     Elm_Object_Item *nf_it = elm_naviframe_item_push(intf->nf_content, title, NULL, NULL, view->view, "basic");
     elm_object_item_data_set(nf_it, view);
 
-    if (view->pf_event != NULL)
-        view->pf_event(view->p_view_sys, INTERFACE_VIEW_EVENT_NAV_PUSHED);
-
     evas_object_show(view->view);
 
     /* Start the view */
