@@ -136,10 +136,11 @@ ps_emotion_play_finished_cb(void *data, Evas_Object *obj, void *event)
 {
     playback_service *p_ps = data;
 
-    PS_SEND_CALLBACK(pf_on_stopped, media_list_get_item(p_ps->p_ml));
+    LOGD("ps_emotion_play_finished_cb");
 
-    /* play next file */
-    media_list_set_next(p_ps->p_ml);
+    /* play next file or stop */
+    if (!media_list_set_next(p_ps->p_ml))
+        playback_service_stop_notify(p_ps, true);
 }
 
 static void
