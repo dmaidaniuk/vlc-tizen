@@ -52,6 +52,7 @@ typedef enum interface_view_event {
     INTERFACE_VIEW_EVENT_NONE,
     INTERFACE_VIEW_EVENT_BACK,
     INTERFACE_VIEW_EVENT_MENU,
+    INTERFACE_VIEW_EVENT_NAV_PUSHED,
 }interface_view_event;
 
 typedef enum view_e {
