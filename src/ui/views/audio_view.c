@@ -58,8 +58,13 @@ struct view_sys
     Evas_Object*            p_parent;
     Evas_Object*            p_overflow_menu;
     list_view*              p_lists[AUDIO_VIEW_MAX];
-    char*                   p_current_tab;
+    audio_view_type         p_current_tab;
 };
+
+typedef struct toolbar_item {
+    audio_view_type type;
+    void *data;
+} toolbar_item;
 
 static list_view*
 create_audio_list_type(view_sys *av, audio_view_type type )
@@ -92,32 +97,36 @@ create_audio_list_type(view_sys *av, audio_view_type type )
 static void
 tabbar_item_cb(void *data, Evas_Object *obj, void *event_info)
 {
-    view_sys *av = data;
+    toolbar_item *item = data;
+    view_sys *av = item->data;
 
-    /* Get the item selected in the toolbar */
-    const char *str = elm_object_item_text_get((Elm_Object_Item *)event_info);
-
-    if (!str)
+    if (av->p_current_tab == item->type)
         return;
 
-    if (av->p_current_tab) {
-        if (strcmp(av->p_current_tab, str) == 0)
-            return;
-        free(av->p_current_tab);
-    }
+    av->p_current_tab = item->type;
 
-    av->p_current_tab = strdup(str);
+    create_audio_list_type(av, item->type);
+}
 
-    /* Create the view depending on the item selected in the toolbar */
-    if (!strcmp(str, "Songs")) {
-        create_audio_list_type(av, AUDIO_VIEW_SONG);
-    } else if (!strcmp(str, "Artists")) {
-        create_audio_list_type(av, AUDIO_VIEW_ARTIST);
-    } else if (!strcmp(str, "Albums")) {
-        create_audio_list_type(av, AUDIO_VIEW_ALBUM);
-    } else {
-        create_audio_list_type(av, AUDIO_VIEW_GENRE);
-    }
+void
+tabbar_item_del(void *data, Evas_Object *obj, void *event_info)
+{
+    toolbar_item *item = data;
+    free(item);
+}
+
+static Elm_Object_Item*
+toolbar_item_append(Evas_Object *obj, audio_view_type type, const char *label, Evas_Smart_Cb func, void *data)
+{
+    Elm_Object_Item* it;
+    toolbar_item *it_data = malloc(sizeof(*it_data));
+    it_data->type = type;
+    it_data->data = data;
+
+    it = elm_toolbar_item_append(obj, NULL, label, func, it_data);
+    elm_object_item_del_cb_set(it, tabbar_item_del);
+
+    return it;
 }
 
 static Evas_Object*
@@ -140,10 +149,10 @@ create_toolbar(view_sys *av, Evas_Object *parent)
     evas_object_size_hint_max_set(tabbar, 450, 400);
 
     /* Append new entry in the toolbar with the Icon & Label wanted */
-    elm_toolbar_item_append(tabbar, NULL, "Artists",  tabbar_item_cb, av);
-    elm_toolbar_item_append(tabbar, NULL, "Albums",   tabbar_item_cb, av);
-    elm_toolbar_item_append(tabbar, NULL, "Songs",    tabbar_item_cb, av);
-    elm_toolbar_item_append(tabbar, NULL, "Genre",    tabbar_item_cb, av);
+    toolbar_item_append(tabbar, AUDIO_VIEW_ARTIST,  "Artists",  tabbar_item_cb, av);
+    toolbar_item_append(tabbar, AUDIO_VIEW_ALBUM,   "Albums",   tabbar_item_cb, av);
+    toolbar_item_append(tabbar, AUDIO_VIEW_SONG,    "Songs",    tabbar_item_cb, av);
+    toolbar_item_append(tabbar, AUDIO_VIEW_GENRE,   "Genre",    tabbar_item_cb, av);
 
     return tabbar;
 }
