@@ -213,6 +213,20 @@ ps_emotion_create(playback_service *p_ps, Evas *p_evas, bool b_mute_video)
     return p_e;
 }
 
+static void
+ps_emotion_destroy(playback_service *p_ps, Evas_Object *p_e)
+{
+    evas_object_smart_callback_del(p_e, "position_update",
+                                   ps_emotion_position_update_cb);
+    evas_object_smart_callback_del(p_e, "length_change",
+                                   ps_emotion_length_change_cb);
+    evas_object_smart_callback_del(p_e, "playback_started",
+                                   ps_emotion_play_started_cb);
+    evas_object_smart_callback_del(p_e, "playback_finished",
+                                   ps_emotion_play_finished_cb);
+    evas_object_del(p_e);
+}
+
 playback_service *
 playback_service_create(application *p_app)
 {
@@ -273,9 +287,9 @@ playback_service_destroy(playback_service *p_ps)
     p_ps->p_cbs_list = NULL;
 
     if (p_ps->p_ea)
-        evas_object_del(p_ps->p_ea);
+        ps_emotion_destroy(p_ps, p_ps->p_ea);
     if (p_ps->p_ev)
-        evas_object_del(p_ps->p_ev);
+        ps_emotion_destroy(p_ps, p_ps->p_ev);
 
     free(p_ps);
 }
