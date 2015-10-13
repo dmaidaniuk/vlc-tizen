@@ -58,6 +58,7 @@ struct view_sys
     Evas_Object*            p_parent;
     Evas_Object*            p_overflow_menu;
     list_view*              p_lists[AUDIO_VIEW_MAX];
+    char*                   p_current_tab;
 };
 
 static list_view*
@@ -96,17 +97,25 @@ tabbar_item_cb(void *data, Evas_Object *obj, void *event_info)
     /* Get the item selected in the toolbar */
     const char *str = elm_object_item_text_get((Elm_Object_Item *)event_info);
 
+    if (!str)
+        return;
+
+    if (av->p_current_tab) {
+        if (strcmp(av->p_current_tab, str) == 0)
+            return;
+        free(av->p_current_tab);
+    }
+
+    av->p_current_tab = strdup(str);
+
     /* Create the view depending on the item selected in the toolbar */
-    if (str && !strcmp(str, "Songs")) {
+    if (!strcmp(str, "Songs")) {
         create_audio_list_type(av, AUDIO_VIEW_SONG);
-    }
-    else if (str && !strcmp(str, "Artists")) {
+    } else if (!strcmp(str, "Artists")) {
         create_audio_list_type(av, AUDIO_VIEW_ARTIST);
-    }
-    else if (str && !strcmp(str, "Albums")) {
+    } else if (!strcmp(str, "Albums")) {
         create_audio_list_type(av, AUDIO_VIEW_ALBUM);
-    }
-    else {
+    } else {
         create_audio_list_type(av, AUDIO_VIEW_GENRE);
     }
 }
