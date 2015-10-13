@@ -122,7 +122,7 @@ create_toolbar(view_sys *av, Evas_Object *parent)
     /* Expand the content to fill the toolbar */
     elm_toolbar_transverse_expanded_set(tabbar, EINA_TRUE);
     /* Items will only call their selection func and callback when first becoming selected*/
-    elm_toolbar_select_mode_set(tabbar, ELM_OBJECT_SELECT_MODE_DEFAULT);
+    elm_toolbar_select_mode_set(tabbar, ELM_OBJECT_SELECT_MODE_ALWAYS);
 
     evas_object_size_hint_weight_set(tabbar, EVAS_HINT_EXPAND, 0.0);
     evas_object_size_hint_align_set(tabbar, EVAS_HINT_FILL, EVAS_HINT_FILL);
