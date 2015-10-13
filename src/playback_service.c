@@ -72,19 +72,25 @@ struct playback_service
 };
 
 #define PS_SEND_CALLBACK(pf_cb, ...) do { \
-    Eina_List *p_el; \
-    playback_service_callbacks *p_cbs; \
-    EINA_LIST_FOREACH(p_ps->p_cbs_list, p_el, p_cbs) \
-        if (p_cbs->pf_cb) \
-            p_cbs->pf_cb(p_ps, p_cbs->p_user_data, __VA_ARGS__); \
+    if (p_ps->p_cbs_list) { \
+        Eina_List *p_el, *p_el_next; \
+        playback_service_callbacks *p_cbs; \
+        EINA_LIST_FOREACH_SAFE(p_ps->p_cbs_list, p_el_next, p_el, p_cbs) { \
+            if (p_cbs->pf_cb) \
+                p_cbs->pf_cb(p_ps, p_cbs->p_user_data, __VA_ARGS__); \
+        } \
+    } \
 } while(0)
 
 #define PS_SEND_VOID_CALLBACK(pf_cb) do { \
-    Eina_List *p_el; \
-    playback_service_callbacks *p_cbs; \
-    EINA_LIST_FOREACH(p_ps->p_cbs_list, p_el, p_cbs) \
-        if (p_cbs->pf_cb) \
-            p_cbs->pf_cb(p_ps, p_cbs->p_user_data); \
+    if (p_ps->p_cbs_list) { \
+        Eina_List *p_el, *p_el_next; \
+        playback_service_callbacks *p_cbs; \
+        EINA_LIST_FOREACH_SAFE(p_ps->p_cbs_list, p_el_next, p_el, p_cbs) { \
+            if (p_cbs->pf_cb) \
+                p_cbs->pf_cb(p_ps, p_cbs->p_user_data); \
+        } \
+    } \
 } while(0)
 
 static int playback_service_stop_notify(playback_service *, bool);
