@@ -126,7 +126,6 @@ typedef struct list_view
 {
     list_sys* p_sys;
     void            (*pf_del)(list_sys* p_sys);
-    void            (*pf_show)(list_sys* p_sys, Evas_Object* p_parent);
     list_view_item* (*pf_append_item)(list_sys* p_sys, void* p_item);
     void            (*pf_clear)(list_sys* p_sys);
     const void*     (*pf_get_item)(list_view_item* p_list_item);

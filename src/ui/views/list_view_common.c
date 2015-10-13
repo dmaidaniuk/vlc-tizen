@@ -41,15 +41,6 @@ list_view_clear(list_sys* p_list)
 }
 
 static void
-list_view_show(list_sys* p_list, Evas_Object* p_parent)
-{
-    //FIXME: This is wrong and makes assumptions about the parent widget
-    Elm_Object_Item *it = elm_naviframe_item_push(p_parent, "", NULL, NULL, p_list->p_list, NULL);
-    elm_naviframe_item_title_enabled_set(it, EINA_FALSE, EINA_FALSE);
-    evas_object_show(p_list->p_list);
-}
-
-static void
 list_view_destroy(list_sys* p_list)
 {
     media_library_controller_destroy(p_list->p_ctrl);
@@ -80,7 +71,6 @@ list_view_common_setup(list_view* p_view, list_sys* p_list, interface* p_intf, v
     p_list->p_default_item_class->item_style = "2line.top.3";
 
     /* Setup common callbacks */
-    p_view->pf_show = &list_view_show;
     p_view->pf_del = &list_view_destroy;
     p_view->pf_clear = &list_view_clear;
     p_view->pf_get_list = &list_view_get_genlist;
