@@ -916,7 +916,7 @@ ps_on_started_cb(playback_service *p_ps, void *p_user_data, media_item *p_mi)
 }
 
 static void
-ps_on_stopped_cb(playback_service *p_ps, void *p_user_data, media_item *p_mi)
+ps_on_stopped_cb(playback_service *p_ps, void *p_user_data)
 {
     mini_player_stop(p_user_data);
 }
