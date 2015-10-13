@@ -91,7 +91,7 @@ create_audio_list_type(view_sys *av, audio_view_type type )
         LOGD("Recycling View %i", type);
     }
 
-    Evas_Object* p_list = p_view->pf_get_list(p_view->p_sys);
+    Evas_Object* p_list = p_view->pf_get_widget(p_view->p_sys);
     Elm_Object_Item *it = elm_naviframe_item_push(av->nf_toolbar, "", NULL, NULL, p_list, NULL);
     elm_naviframe_item_title_enabled_set(it, EINA_FALSE, EINA_FALSE);
     evas_object_show(p_list);

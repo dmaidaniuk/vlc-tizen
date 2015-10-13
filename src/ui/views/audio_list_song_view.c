@@ -36,8 +36,6 @@
 struct list_sys
 {
     LIST_VIEW_COMMON
-    Evas_Object*                p_box;
-    Evas_Object*                p_empty_label;
 };
 
 struct list_view_item
@@ -47,24 +45,6 @@ struct list_view_item
     media_item*                     p_media_item;
     Elm_Object_Item*                p_object_item;
 };
-
-void
-audio_list_song_check_empty(list_sys *p_sys)
-{
-    //TODO improve me
-    unsigned int count = elm_genlist_items_count(p_sys->p_list);
-    if (count == 0) {
-        elm_box_unpack_all(p_sys->p_box);
-        elm_box_pack_end(p_sys->p_box, p_sys->p_empty_label);
-        evas_object_show(p_sys->p_empty_label);
-        evas_object_hide(p_sys->p_list);
-    } else {
-        elm_box_unpack_all(p_sys->p_box);
-        elm_box_pack_end(p_sys->p_box, p_sys->p_list);
-        evas_object_hide(p_sys->p_empty_label);
-        evas_object_show(p_sys->p_list);
-    }
-}
 
 static void
 free_list_item_data(void *data, Evas_Object *obj, void *event_info)
@@ -169,8 +149,7 @@ audio_list_song_view_append_item(list_sys *p_sys, void* p_data)
 
     /* */
     elm_object_item_del_cb_set(it, free_list_item_data);
-    audio_list_song_check_empty(p_sys);
-    p_sys->p_view_cb->pf_updated(p_sys->p_view_cb->p_sys, false);
+    list_view_toggle_empty(p_sys, false);
     return ali;
 }
 
@@ -184,18 +163,8 @@ audio_list_song_view_create(application* p_app, interface* p_intf, Evas_Object* 
     if (p_sys == NULL)
         return NULL;
 
-    /* Box container */
-    p_sys->p_box = elm_box_add(p_parent);
-    evas_object_size_hint_weight_set(p_sys->p_box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-    evas_object_size_hint_align_set(p_sys->p_box, EVAS_HINT_FILL, EVAS_HINT_FILL);
-    evas_object_show(p_sys->p_box);
-
-    /* Empty list label */
-    p_sys->p_empty_label = elm_label_add(p_sys->p_box);
-    elm_object_text_set(p_sys->p_empty_label, "No audio content to show");
-
     /* Setup common parts */
-    list_view_common_setup(p_view, p_sys, p_intf, p_view_cb, p_sys->p_box);
+    list_view_common_setup(p_view, p_sys, p_intf, p_view_cb, p_parent);
 
     /* Connect genlist callbacks */
     p_sys->p_default_item_class->func.text_get = genlist_text_get_cb;
@@ -211,7 +180,6 @@ audio_list_song_view_create(application* p_app, interface* p_intf, Evas_Object* 
     p_sys->p_ctrl = audio_controller_create(p_app, p_view);
 
     media_library_controller_refresh(p_sys->p_ctrl);
-    audio_list_song_check_empty(p_sys);
     return p_view;
 }
 

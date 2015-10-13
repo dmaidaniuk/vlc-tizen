@@ -49,27 +49,7 @@ struct list_view_item
 struct list_sys
 {
     LIST_VIEW_COMMON
-    Evas_Object*                    p_box;
-    Evas_Object*                    p_empty_label;
 };
-
-static void
-genlist_update_empty_view(list_sys *p_sys)
-{
-    //TODO improve me
-    unsigned int count = elm_genlist_items_count(p_sys->p_list);
-    if (count == 0) {
-        elm_box_unpack_all(p_sys->p_box);
-        elm_box_pack_end(p_sys->p_box, p_sys->p_empty_label);
-        evas_object_show(p_sys->p_empty_label);
-        evas_object_hide(p_sys->p_list);
-    } else {
-        elm_box_unpack_all(p_sys->p_box);
-        elm_box_pack_end(p_sys->p_box, p_sys->p_list);
-        evas_object_hide(p_sys->p_empty_label);
-        evas_object_show(p_sys->p_list);
-    }
-}
 
 void
 genlist_item_selected_cb(void *data, Evas_Object *obj, void *event_info)
@@ -214,8 +194,7 @@ video_view_append_item(list_sys *p_list, void* p_data)
     }
     /* */
     elm_object_item_del_cb_set(vli->p_object_item, free_list_item);
-    genlist_update_empty_view(p_list);
-    p_list->p_view_cb->pf_updated(p_list->p_view_cb->p_sys, false);
+    list_view_toggle_empty(p_list, false);
     return vli;
 }
 
@@ -230,13 +209,8 @@ video_view_list_create(interface *p_intf, Evas_Object *p_parent, view_sys_cb* p_
     if (p_sys == NULL)
         return NULL;
 
-    p_sys->p_box = p_parent;
 
-    /* Empty list label */
-    p_sys->p_empty_label = elm_label_add(p_sys->p_box);
-    elm_object_text_set(p_sys->p_empty_label, "No video content to show");
-
-    list_view_common_setup(p_view, p_sys, p_intf, p_view_cb, p_sys->p_box);
+    list_view_common_setup(p_view, p_sys, p_intf, p_view_cb, p_parent);
 
     /* Genlist class */
     p_sys->p_default_item_class->func.text_get = genlist_text_get_cb;
@@ -256,8 +230,6 @@ video_view_list_create(interface *p_intf, Evas_Object *p_parent, view_sys_cb* p_
     p_view->pf_set_item = &video_list_item_set_media_item;
 
     p_sys->p_ctrl = video_controller_create(intf_get_application(p_intf), p_view);
-
-    genlist_update_empty_view(p_sys);
 
     return p_view;
 }

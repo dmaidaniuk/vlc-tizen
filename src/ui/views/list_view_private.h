@@ -34,9 +34,15 @@
     media_library_controller*   p_ctrl;                 \
     interface*                  p_intf;                 \
     Elm_Genlist_Item_Class*     p_default_item_class;   \
-    view_sys_cb*                p_view_cb;
+    view_sys_cb*                p_view_cb;              \
+    Evas_Object*                p_container;            \
+    Evas_Object*                p_empty_label;          \
+    bool                        b_empty;
 
 void
 list_view_common_setup(list_view* p_view, list_sys* p_list, interface* p_intf, view_sys_cb* p_view_cb, Evas_Object* p_parent);
+
+void
+list_view_toggle_empty(list_sys* p_view, bool b_empty);
 
 #endif // LIST_VIEW_PRIVATE_H_

@@ -102,6 +102,7 @@ video_view_has_menu(view_sys *p_view_sys)
 static void
 video_video_content_updated_cb(view_sys* p_view_sys, bool b_empty)
 {
+
 }
 
 interface_view*
@@ -120,16 +121,9 @@ create_video_view(interface *intf, Evas_Object *parent)
     view->pf_event = video_view_callback;
     view->pf_has_menu = video_view_has_menu;
 
+    p_sys->p_list = video_view_list_create(intf, parent, p_sys->p_view_cb);
 
-    /* Box container */
-    Evas_Object *box = elm_box_add(parent);
-    evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-    evas_object_size_hint_align_set(box, EVAS_HINT_FILL, EVAS_HINT_FILL);
-    evas_object_show(box);
-
-    p_sys->p_list = video_view_list_create(intf, box, p_sys->p_view_cb);
-
-    view->view = box;
+    view->view = p_sys->p_list->pf_get_widget(p_sys->p_list->p_sys);
 
     /* */
     return view;

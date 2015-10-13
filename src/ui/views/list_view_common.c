@@ -38,6 +38,7 @@ static void
 list_view_clear(list_sys* p_list)
 {
     elm_genlist_clear(p_list->p_list);
+    list_view_toggle_empty(p_list, true);
 }
 
 static void
@@ -49,9 +50,32 @@ list_view_destroy(list_sys* p_list)
 }
 
 static Evas_Object*
-list_view_get_genlist(list_sys* p_list)
+list_view_get_widget(list_sys* p_list)
 {
-    return p_list->p_list;
+    return p_list->p_container;
+}
+
+void
+list_view_toggle_empty(list_sys* p_list_sys, bool b_empty)
+{
+    if (p_list_sys->b_empty == b_empty)
+        return;
+    p_list_sys->b_empty = b_empty;
+    Evas_Object* p_list = p_list_sys->p_list;
+    if (b_empty)
+    {
+        elm_box_unpack_all(p_list_sys->p_container);
+        elm_box_pack_end(p_list_sys->p_container, p_list_sys->p_empty_label);
+        evas_object_show(p_list_sys->p_empty_label);
+        evas_object_hide(p_list);
+    }
+    else
+    {
+        elm_box_unpack_all(p_list_sys->p_container);
+        elm_box_pack_end(p_list_sys->p_container, p_list);
+        evas_object_show(p_list);
+        evas_object_hide(p_list_sys->p_empty_label);
+    }
 }
 
 void
@@ -60,8 +84,15 @@ list_view_common_setup(list_view* p_view, list_sys* p_list, interface* p_intf, v
     p_list->p_intf = p_intf;
     p_list->p_view_cb = p_view_cb;
 
+    /* Container box */
+    p_list->p_container = elm_box_add(p_parent);
+
+    /* Empty list label */
+    p_list->p_empty_label = elm_label_add(p_list->p_container);
+    elm_object_text_set(p_list->p_empty_label, "No content to display");
+
     /* Create genlist */
-    p_list->p_list = elm_genlist_add(p_parent);
+    p_list->p_list = elm_genlist_add(p_list->p_container);
     elm_scroller_single_direction_set(p_list->p_list, ELM_SCROLLER_SINGLE_DIRECTION_HARD);
     elm_genlist_homogeneous_set(p_list->p_list, EINA_TRUE);
     elm_genlist_mode_set(p_list->p_list, ELM_LIST_COMPRESS);
@@ -73,5 +104,8 @@ list_view_common_setup(list_view* p_view, list_sys* p_list, interface* p_intf, v
     /* Setup common callbacks */
     p_view->pf_del = &list_view_destroy;
     p_view->pf_clear = &list_view_clear;
-    p_view->pf_get_list = &list_view_get_genlist;
+    p_view->pf_get_widget = &list_view_get_widget;
+
+    /* Ensure the initial update takes place (keep in mind that b_empty is 0 initialized) */
+    list_view_toggle_empty(p_list, true);
 }
