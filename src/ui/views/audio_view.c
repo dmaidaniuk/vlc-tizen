@@ -61,10 +61,10 @@ struct view_sys
     audio_view_type         p_current_tab;
 };
 
-typedef struct toolbar_item {
+typedef struct toolbar_tab {
     audio_view_type type;
     void *data;
-} toolbar_item;
+} toolbar_tab;
 
 static list_view*
 create_audio_list_type(view_sys *av, audio_view_type type )
@@ -97,7 +97,7 @@ create_audio_list_type(view_sys *av, audio_view_type type )
 static void
 tabbar_item_cb(void *data, Evas_Object *obj, void *event_info)
 {
-    toolbar_item *item = data;
+    toolbar_tab *item = data;
     view_sys *av = item->data;
 
     if (av->p_current_tab == item->type)
@@ -111,7 +111,7 @@ tabbar_item_cb(void *data, Evas_Object *obj, void *event_info)
 void
 tabbar_item_del(void *data, Evas_Object *obj, void *event_info)
 {
-    toolbar_item *item = data;
+    toolbar_tab *item = data;
     free(item);
 }
 
@@ -119,7 +119,7 @@ static Elm_Object_Item*
 toolbar_item_append(Evas_Object *obj, audio_view_type type, const char *label, Evas_Smart_Cb func, void *data)
 {
     Elm_Object_Item* it;
-    toolbar_item *it_data = malloc(sizeof(*it_data));
+    toolbar_tab *it_data = malloc(sizeof(*it_data));
     it_data->type = type;
     it_data->data = data;
 
