@@ -131,6 +131,7 @@ typedef struct list_view
     void            (*pf_clear)(list_sys* p_sys);
     const void*     (*pf_get_item)(list_view_item* p_list_item);
     void            (*pf_set_item)(list_view_item* p_list_item, void* p_item);
+    Evas_Object*    (*pf_get_list)(list_sys* p_sys);
 } list_view;
 
 #endif /* INTERFACE_H_ */

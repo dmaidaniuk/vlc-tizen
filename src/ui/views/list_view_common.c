@@ -57,6 +57,12 @@ list_view_destroy(list_sys* p_list)
     free(p_list);
 }
 
+static Evas_Object*
+list_view_get_genlist(list_sys* p_list)
+{
+    return p_list->p_list;
+}
+
 void
 list_view_common_setup(list_view* p_view, list_sys* p_list, interface* p_intf, view_sys_cb* p_view_cb, Evas_Object* p_parent)
 {
@@ -77,4 +83,5 @@ list_view_common_setup(list_view* p_view, list_sys* p_list, interface* p_intf, v
     p_view->pf_show = &list_view_show;
     p_view->pf_del = &list_view_destroy;
     p_view->pf_clear = &list_view_clear;
+    p_view->pf_get_list = &list_view_get_genlist;
 }
