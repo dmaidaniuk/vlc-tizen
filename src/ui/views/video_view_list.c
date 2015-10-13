@@ -29,8 +29,9 @@
 #include "video_view_list.h"
 
 #include "controller/media_controller.h"
-#include "ui/interface.h"
+#include "list_view_private.h"
 #include "media/media_item.h"
+#include "ui/interface.h"
 #include "ui/utils.h"
 #include "video_player.h"
 
@@ -47,30 +48,26 @@ struct list_view_item
 
 struct list_sys
 {
-    media_library_controller*       p_controller;
-    Evas_Object*                    p_video_list;
-    Elm_Genlist_Item_Class*         p_default_item_class;
-    interface*                      p_intf;
+    LIST_VIEW_COMMON
     Evas_Object*                    p_box;
     Evas_Object*                    p_empty_label;
-    view_sys_cb*                    p_view_cb;
 };
 
 static void
 genlist_update_empty_view(list_sys *p_sys)
 {
     //TODO improve me
-    unsigned int count = elm_genlist_items_count(p_sys->p_video_list);
+    unsigned int count = elm_genlist_items_count(p_sys->p_list);
     if (count == 0) {
         elm_box_unpack_all(p_sys->p_box);
         elm_box_pack_end(p_sys->p_box, p_sys->p_empty_label);
         evas_object_show(p_sys->p_empty_label);
-        evas_object_hide(p_sys->p_video_list);
+        evas_object_hide(p_sys->p_list);
     } else {
         elm_box_unpack_all(p_sys->p_box);
-        elm_box_pack_end(p_sys->p_box, p_sys->p_video_list);
+        elm_box_pack_end(p_sys->p_box, p_sys->p_list);
         evas_object_hide(p_sys->p_empty_label);
-        evas_object_show(p_sys->p_video_list);
+        evas_object_show(p_sys->p_list);
     }
 }
 
@@ -203,7 +200,7 @@ video_view_append_item(list_sys *p_list, void* p_data)
     /* Item instantiation */
     vli->p_media_item = p_item;
     /* Set and append new item in the genlist */
-    vli->p_object_item = elm_genlist_item_append(p_list->p_video_list,
+    vli->p_object_item = elm_genlist_item_append(p_list->p_list,
             vli->itc,                       /* genlist item class               */
             vli,                            /* genlist item class user data     */
             NULL,                           /* genlist parent item for trees    */
@@ -220,21 +217,6 @@ video_view_append_item(list_sys *p_list, void* p_data)
     genlist_update_empty_view(p_list);
     p_list->p_view_cb->pf_updated(p_list->p_view_cb->p_sys, false);
     return vli;
-}
-
-static void
-video_view_clear(list_sys* videoview)
-{
-    elm_genlist_clear(videoview->p_video_list);
-    genlist_update_empty_view(videoview);
-}
-
-static void
-video_view_list_destroy(list_sys* p_list)
-{
-    elm_genlist_item_class_free(p_list->p_default_item_class);
-    media_library_controller_destroy(p_list->p_controller);
-    free(p_list);
 }
 
 list_view*
@@ -254,41 +236,26 @@ video_view_list_create(interface *p_intf, Evas_Object *p_parent, view_sys_cb* p_
     p_sys->p_empty_label = elm_label_add(p_sys->p_box);
     elm_object_text_set(p_sys->p_empty_label, "No video content to show");
 
-    /* Create the Video Genlist */
-    Evas_Object *p_genlist = elm_genlist_add(p_sys->p_box);
+    list_view_common_setup(p_view, p_sys, p_intf, p_view_cb, p_sys->p_box);
 
-    p_sys->p_video_list = p_genlist;
     /* Genlist class */
-    p_sys->p_default_item_class = elm_genlist_item_class_new();
-    p_sys->p_default_item_class->item_style = "2line.top.3";
     p_sys->p_default_item_class->func.text_get = genlist_text_get_cb;
     p_sys->p_default_item_class->func.content_get = genlist_content_get_cb;
 
-    /* Set the genlist modes */
-    elm_scroller_single_direction_set(p_genlist, ELM_SCROLLER_SINGLE_DIRECTION_HARD);
-    elm_genlist_homogeneous_set(p_genlist, EINA_TRUE);
-    elm_genlist_mode_set(p_genlist, ELM_LIST_COMPRESS);
-
-    evas_object_size_hint_weight_set(p_genlist, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-    evas_object_size_hint_align_set(p_genlist, EVAS_HINT_FILL, EVAS_HINT_FILL);
+    evas_object_size_hint_weight_set(p_sys->p_list, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+    evas_object_size_hint_align_set(p_sys->p_list, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
     /* Set smart Callbacks on the list */
-    evas_object_smart_callback_add(p_genlist, "realized", genlist_realized_cb, NULL);
-    evas_object_smart_callback_add(p_genlist, "loaded", genlist_loaded_cb, NULL);
-    evas_object_smart_callback_add(p_genlist, "longpressed", genlist_longpressed_cb, NULL);
-    evas_object_smart_callback_add(p_genlist, "contracted", genlist_contracted_cb, NULL);
-
-    p_sys->p_intf = p_intf;
-    p_sys->p_view_cb = p_view_cb;
-
-    p_view->pf_del = &video_view_list_destroy;
+    evas_object_smart_callback_add(p_sys->p_list, "realized", genlist_realized_cb, NULL);
+    evas_object_smart_callback_add(p_sys->p_list, "loaded", genlist_loaded_cb, NULL);
+    evas_object_smart_callback_add(p_sys->p_list, "longpressed", genlist_longpressed_cb, NULL);
+    evas_object_smart_callback_add(p_sys->p_list, "contracted", genlist_contracted_cb, NULL);
 
     p_view->pf_append_item = &video_view_append_item;
-    p_view->pf_clear = &video_view_clear;
     p_view->pf_get_item = &video_list_item_get_media_item;
     p_view->pf_set_item = &video_list_item_set_media_item;
 
-    p_sys->p_controller = video_controller_create(intf_get_application(p_intf), p_view);
+    p_sys->p_ctrl = video_controller_create(intf_get_application(p_intf), p_view);
 
     genlist_update_empty_view(p_sys);
 

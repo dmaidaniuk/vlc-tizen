@@ -25,16 +25,13 @@
  *****************************************************************************/
 
 #include "audio_list_artist_view.h"
+#include "list_view_private.h"
 #include "media/artist_item.h"
 #include "controller/media_controller.h"
 
 struct list_sys
 {
-    Evas_Object*                p_list;
-    media_library_controller*   p_ctrl;
-    interface*                  p_intf;
-    Elm_Genlist_Item_Class*     p_default_item_class;
-    view_sys_cb*                p_view_cb;
+    LIST_VIEW_COMMON
 };
 
 struct list_view_item
@@ -108,29 +105,6 @@ audio_list_artist_view_append_item(list_sys *p_sys, void* p_data)
     return ali;
 }
 
-
-static void
-audio_list_artist_view_clear(list_sys* p_list)
-{
-    elm_genlist_clear(p_list->p_list);
-}
-
-static void
-audio_list_artist_view_show(list_sys* p_sys, Evas_Object* p_parent)
-{
-    Elm_Object_Item *it = elm_naviframe_item_push(p_parent, "", NULL, NULL, p_sys->p_list, NULL);
-    elm_naviframe_item_title_enabled_set(it, EINA_FALSE, EINA_FALSE);
-    evas_object_show(p_sys->p_list);
-}
-
-static void
-audio_list_artist_view_destroy(list_sys* p_list)
-{
-    media_library_controller_destroy(p_list->p_ctrl);
-    elm_genlist_item_class_free(p_list->p_default_item_class);
-    free(p_list);
-}
-
 list_view*
 audio_list_artist_view_create(application* p_app, interface* p_intf, Evas_Object* p_parent, view_sys_cb* p_view_cb)
 {
@@ -141,27 +115,15 @@ audio_list_artist_view_create(application* p_app, interface* p_intf, Evas_Object
     if (p_sys == NULL)
         return NULL;
 
-    /* Create genlist */
-    p_sys->p_list = elm_genlist_add(p_parent);
-    elm_scroller_single_direction_set(p_sys->p_list, ELM_SCROLLER_SINGLE_DIRECTION_HARD);
-    elm_genlist_homogeneous_set(p_sys->p_list, EINA_TRUE);
-    elm_genlist_mode_set(p_sys->p_list, ELM_LIST_COMPRESS);
+    list_view_common_setup(p_view, p_sys, p_intf, p_view_cb, p_parent);
 
     evas_object_size_hint_weight_set(p_sys->p_list, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
     evas_object_size_hint_align_set(p_sys->p_list, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
     /* Item Class */
-    p_sys->p_default_item_class = elm_genlist_item_class_new();
-    p_sys->p_default_item_class->item_style = "2line.top.3";
     p_sys->p_default_item_class->func.text_get = genlist_text_get_cb;
 
-    p_sys->p_intf = p_intf;
-    p_sys->p_view_cb = p_view_cb;
-
-    p_view->pf_show = &audio_list_artist_view_show;
-    p_view->pf_del = &audio_list_artist_view_destroy;
     p_view->pf_append_item = &audio_list_artist_view_append_item;
-    p_view->pf_clear = &audio_list_artist_view_clear;
     p_view->pf_get_item = &audio_list_artist_item_get_media_item;
     p_view->pf_set_item = &audio_list_artist_item_set_media_item;
 
