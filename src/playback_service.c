@@ -87,6 +87,8 @@ struct playback_service
             p_cbs->pf_cb(p_ps, p_cbs->p_user_data); \
 } while(0)
 
+static int playback_service_stop_notify(playback_service *, bool);
+
 static void
 ps_emotion_length_change_cb(void *data, Evas_Object *obj, void *event)
 {
@@ -283,7 +285,7 @@ playback_service_restart_emotion(playback_service *p_ps)
 {
     bool is_ea = p_ps->p_e == p_ps->p_ea;
 
-    playback_service_stop(p_ps);
+    playback_service_stop_notify(p_ps, true);
 
     p_ps->p_e = NULL;
     if (p_ps->p_ea)
@@ -324,7 +326,7 @@ playback_service_set_context(playback_service *p_ps, enum PLAYLIST_CONTEXT i_ctx
     if (p_ps->p_ml_list[i_ctx] == p_ps->p_ml)
         return -1;
 
-    playback_service_stop(p_ps);
+    playback_service_stop_notify(p_ps, true);
     p_ps->p_ml = p_ps->p_ml_list[i_ctx];
     return 0;
 }
@@ -445,8 +447,8 @@ playback_service_start(playback_service *p_ps, double i_time)
     return playback_service_play(p_ps);
 }
 
-int
-playback_service_stop(playback_service *p_ps)
+static int
+playback_service_stop_notify(playback_service *p_ps, bool b_notify)
 {
     if (!p_ps->b_started)
         return -1;
@@ -455,7 +457,16 @@ playback_service_stop(playback_service *p_ps)
     emotion_object_file_set(p_ps->p_e, NULL);
     p_ps->b_started = false;
     ps_release_lock(p_ps);
+
+    if (b_notify)
+        PS_SEND_VOID_CALLBACK(pf_on_stopped);
     return 0;
+}
+
+int
+playback_service_stop(playback_service *p_ps)
+{
+    return playback_service_stop_notify(p_ps, false);
 }
 
 bool

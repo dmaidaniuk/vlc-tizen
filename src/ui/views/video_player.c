@@ -135,7 +135,7 @@ layout_touch_up_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED
 }
 
 static void
-ps_on_stop_cb(playback_service *p_ps, void *p_user_data, media_item *p_mi)
+ps_on_stop_cb(playback_service *p_ps, void *p_user_data)
 {
     view_sys *p_sys = p_user_data;
     intf_show_previous_view(p_sys->intf);
