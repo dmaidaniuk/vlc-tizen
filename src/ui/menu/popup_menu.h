@@ -33,8 +33,8 @@
 
 typedef struct popup_menu
 {
-    const char* title;
-    const char* icon;
+    char* title;
+    char* icon;
 
     Evas_Smart_Cb cb;
 } popup_menu;
