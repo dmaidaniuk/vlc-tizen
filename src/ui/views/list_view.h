@@ -45,4 +45,7 @@ audio_list_song_view_create(interface* p_intf, Evas_Object* p_parent, list_view_
 list_view*
 video_view_list_create(interface *intf, Evas_Object *p_parent, list_view_create_option opts );
 
+list_view*
+audio_list_album_view_create(interface* p_intf, Evas_Object* p_parent, list_view_create_option opts);
+
 #endif // LIST_VIEW_H_
