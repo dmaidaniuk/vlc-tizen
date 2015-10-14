@@ -113,11 +113,19 @@ popup_menu_close_cb(void *data, Evas_Object *obj, void *event_info)
 Evas_Object *
 popup_menu_add(popup_menu *menu, void *data, Evas_Object *parent)
 {
+    return popup_menu_orient_add(menu, ELM_POPUP_ORIENT_BOTTOM, data, parent);
+}
+
+Evas_Object *
+popup_menu_orient_add(popup_menu *menu, Elm_Popup_Orient orient, void *data, Evas_Object *parent)
+{
     Evas_Object *popup = elm_popup_add(parent);
     Evas_Object *box = elm_box_add(popup);
     Elm_Object_Item *it, *hit = NULL;
     Evas_Object *genlist;
     int index;
+
+    elm_popup_orient_set(popup, orient);
 
     /* */
     Elm_Genlist_Item_Class *itc = elm_genlist_item_class_new();

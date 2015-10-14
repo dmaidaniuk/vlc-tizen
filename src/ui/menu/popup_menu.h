@@ -42,4 +42,7 @@ typedef struct popup_menu
 Evas_Object *
 popup_menu_add(popup_menu *menu, void *data, Evas_Object *parent);
 
+Evas_Object *
+popup_menu_orient_add(popup_menu *menu, Elm_Popup_Orient orient, void *data, Evas_Object *parent);
+
 #endif
