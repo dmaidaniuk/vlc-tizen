@@ -58,7 +58,7 @@ struct view_sys
     Evas_Object*            p_parent;
     Evas_Object*            p_overflow_menu;
     list_view*              p_lists[AUDIO_VIEW_MAX];
-    audio_view_type         p_current_tab;
+    audio_view_type         i_current_tab;
 };
 
 typedef struct toolbar_tab {
@@ -104,10 +104,10 @@ tabbar_item_cb(void *data, Evas_Object *obj, void *event_info)
     toolbar_tab *item = data;
     view_sys *av = item->data;
 
-    if (av->p_current_tab == item->type)
+    if (av->i_current_tab == item->type)
         return;
 
-    av->p_current_tab = item->type;
+    av->i_current_tab = item->type;
 
     create_audio_list_type(av, item->type);
 }
