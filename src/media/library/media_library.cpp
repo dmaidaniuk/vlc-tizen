@@ -64,7 +64,7 @@ media_library::sendFileUpdate( FilePtr file, bool added )
         auto item_ptr = std::unique_ptr<media_item, void(*)(media_item*)> ( ctx->item, &media_item_destroy );
         for ( auto& p : ctx->ml->m_onItemUpdatedCb )
         {
-            if ( p.first( p.second, ctx->item, ctx->added ) == true )
+            if ( p.first( p.second, reinterpret_cast<library_item*>(ctx->item), ctx->added ) == true )
                 break;
         }
         delete ctx;

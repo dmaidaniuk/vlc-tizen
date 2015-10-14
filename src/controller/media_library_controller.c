@@ -46,7 +46,7 @@ media_library_controller_add_item(media_library_controller* ctrl, media_item* p_
 }
 
 bool
-media_library_controller_file_update( media_library_controller* ctrl, const void* p_media_item )
+media_library_controller_file_update( media_library_controller* ctrl, const library_item* p_media_item )
 {
     if ( ctrl->pf_accept_item( p_media_item ) == false )
         return false;
@@ -75,7 +75,7 @@ media_library_controller_file_update( media_library_controller* ctrl, const void
 }
 
 static bool
-media_library_controller_file_updated_cb(void* p_data, const media_item* p_new_media_item, bool b_added )
+media_library_controller_file_updated_cb(void* p_data, const library_item* p_new_media_item, bool b_added )
 {
     (void)b_added;
     media_library_controller* ctrl = (media_library_controller*)p_data;

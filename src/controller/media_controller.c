@@ -34,32 +34,37 @@
 #include "ui/views/video_view.h"
 #include "ui/views/audio_view.h"
 
+struct library_item
+{
+    LIBRARY_ITEM_COMMON
+};
+
 static bool
-video_controller_accept_item( const void* p_item )
+video_controller_accept_item( const library_item* p_item )
 {
     const media_item* p_media_item = (const media_item*)p_item;
-    return p_media_item->i_type == MEDIA_ITEM_TYPE_VIDEO;
+    return p_item->i_library_item_type == LIBRARY_ITEM_MEDIA &&
+            p_media_item->i_type == MEDIA_ITEM_TYPE_VIDEO;
 }
 
 static bool
-audio_controller_accept_item( const void* p_item )
+audio_controller_accept_item( const library_item* p_item )
 {
     const media_item* p_media_item = (const media_item*)p_item;
-    return p_media_item->i_type == MEDIA_ITEM_TYPE_AUDIO;
+    return p_item->i_library_item_type == LIBRARY_ITEM_MEDIA &&
+            p_media_item->i_type == MEDIA_ITEM_TYPE_AUDIO;
 }
 
 static bool
-artist_controller_accept_item( const void* p_item )
+artist_controller_accept_item( const library_item* p_item )
 {
-    (void)p_item;
-    return true;
+    return p_item->i_library_item_type == LIBRARY_ITEM_ARTIST;
 }
 
 static bool
-album_controller_accept_item( const void* p_item )
+album_controller_accept_item( const library_item* p_item )
 {
-    (void)p_item;
-    return true;
+    return p_item->i_library_item_type == LIBRARY_ITEM_ALBUM;
 }
 
 media_library_controller*

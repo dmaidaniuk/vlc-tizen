@@ -33,6 +33,7 @@ artist_item_create(const char* psz_name)
     artist_item* p_item = calloc(1, sizeof(*p_item));
     if (p_item == NULL)
         return NULL;
+    p_item->i_library_item_type = LIBRARY_ITEM_ARTIST;
     p_item->psz_name = strdup(psz_name);
     if (p_item->psz_name == NULL)
     {

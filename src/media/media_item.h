@@ -25,6 +25,8 @@
 #ifndef MEDIA_ITEM_H_
 #define MEDIA_ITEM_H_
 
+#include "media/library/library_item.h"
+
 #ifdef __cplusplus
 extern "C"
 {
@@ -51,6 +53,8 @@ enum MEDIA_ITEM_META {
 };
 
 typedef struct media_item {
+    LIBRARY_ITEM_COMMON
+
     char *psz_path;                 /* Normalized path on the device */
     enum MEDIA_ITEM_TYPE i_type;    /* Video, Audio, Subs, etc... */
 

@@ -32,6 +32,7 @@ media_item_create(const char *psz_path, enum MEDIA_ITEM_TYPE i_type)
     if (!p_mi)
         return NULL;
 
+    p_mi->i_library_item_type = LIBRARY_ITEM_MEDIA;
     p_mi->psz_path = strdup(psz_path);
     if (!p_mi->psz_path)
         goto error;

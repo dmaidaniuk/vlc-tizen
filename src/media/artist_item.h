@@ -27,12 +27,16 @@
 #ifndef ARTIST_ITEM_H_
 # define ARTIST_ITEM_H_
 
+#include "media/library/library_item.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 typedef struct artist_item
 {
+    LIBRARY_ITEM_COMMON
+
     char* psz_name;
 } artist_item;
 

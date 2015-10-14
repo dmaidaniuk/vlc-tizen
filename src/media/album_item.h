@@ -27,11 +27,15 @@
 #ifndef ALBUM_ITEM_H_
 # define ALBUM_ITEM_H_
 
+#include "media/library/library_item.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 typedef struct album_item {
+    LIBRARY_ITEM_COMMON
+
     char* psz_name;
     char* psz_summary;
     time_t i_release_date;

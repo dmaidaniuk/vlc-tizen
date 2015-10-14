@@ -24,34 +24,29 @@
  * compatibility with the Store
  *****************************************************************************/
 
-#ifndef MEDIA_LIBRARY_CONTROLLER_PRIVATE_H_
-# define MEDIA_LIBRARY_CONTROLLER_PRIVATE_H_
+ #ifndef LIBRARY_ITEM_H_
+ # define LIBRARY_ITEM_H_
 
-#include "application.h"
-#include "media/library/library_item.h"
-
-typedef void                (*pf_media_library_get_content_cb)( media_library* p_ml, media_library_list_cb cb, void* p_user_data );
-typedef bool                (*pf_item_compare_cb)(const void* p_left, const void* p_right);
-typedef void*               (*pf_item_duplicate_cb)( const void* p_item );
-typedef bool                (*pf_accept_item_cb)( const library_item* p_item );
-
-struct media_library_controller
+#ifdef __cplusplus
+extern "C"
 {
-    /**
-     * Content Management
-     */
-    application*    p_app;
-    list_view*      p_list_view;
-    Eina_List*      p_content;
-    void*           p_user_data;
+#endif
 
-    /**
-     * Callbacks & settings
-     */
-    pf_media_library_get_content_cb pf_media_library_get_content;
-    pf_item_compare_cb              pf_item_compare;
-    pf_item_duplicate_cb            pf_item_duplicate;
-    pf_accept_item_cb               pf_accept_item;
-};
+typedef struct library_item library_item;
 
-#endif //MEDIA_LIBRARY_CONTROLLER_PRIVATE_H_
+typedef enum library_item_type
+{
+    LIBRARY_ITEM_MEDIA = 1,
+    LIBRARY_ITEM_ALBUM,
+    LIBRARY_ITEM_ARTIST,
+    LIBRARY_ITEM_GENRE
+} library_item_type;
+
+#define LIBRARY_ITEM_COMMON \
+    library_item_type i_library_item_type;
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif // LIBRARY_ITEM_H_
