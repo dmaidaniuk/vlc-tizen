@@ -29,7 +29,7 @@
 #include "application.h"
 #include "ui/interface.h"
 #include "video_view.h"
-#include "video_list_view.h"
+#include "list_view.h"
 #include "ui/menu/popup_menu.h"
 #include "media/library/media_library.hpp"
 

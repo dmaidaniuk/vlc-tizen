@@ -29,8 +29,7 @@
 
 #include "ui/interface.h"
 #include "ui/views/audio_view.h"
-#include "ui/views/audio_list_song_view.h"
-#include "ui/views/audio_list_artist_view.h"
+#include "ui/views/list_view.h"
 #include "ui/audio_player.h"
 #include "ui/menu/popup_menu.h"
 

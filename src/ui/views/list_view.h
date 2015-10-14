@@ -24,12 +24,18 @@
  * compatibility with the Store
  *****************************************************************************/
 
-#ifndef AUDIO_LIST_ARTIST_VIEW_H_
-# define AUDIO_LIST_ARTIST_VIEW_H_
+#ifndef LIST_VIEW_H_
+# define LIST_VIEW_H_
 
 #include "ui/interface.h"
 
 list_view*
 audio_list_artist_view_create(interface* p_intf, Evas_Object* p_parent);
 
-#endif // AUDIO_LIST_ARTIST_VIEW_H_
+list_view*
+audio_list_song_view_create(interface* p_intf, Evas_Object* p_parent);
+
+list_view*
+video_view_list_create(interface *intf, Evas_Object *p_parent);
+
+#endif // LIST_VIEW_H_

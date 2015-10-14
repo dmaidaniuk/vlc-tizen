@@ -26,7 +26,7 @@
 
 #include "common.h"
 
-#include "video_list_view.h"
+#include "list_view.h"
 
 #include "controller/media_controller.h"
 #include "list_view_private.h"

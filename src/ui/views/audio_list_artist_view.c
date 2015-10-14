@@ -24,7 +24,7 @@
  * compatibility with the Store
  *****************************************************************************/
 
-#include "audio_list_artist_view.h"
+#include "list_view.h"
 #include "list_view_private.h"
 #include "media/artist_item.h"
 #include "controller/media_controller.h"
