@@ -75,6 +75,7 @@ void
 list_view_common_setup(list_view* p_view, list_sys* p_list, interface* p_intf, Evas_Object* p_parent)
 {
     p_list->p_intf = p_intf;
+    p_list->p_parent = p_parent;
 
     /* Container box */
     p_list->p_container = elm_box_add(p_parent);

@@ -30,9 +30,10 @@
 #include "ui/interface.h"
 
 #define LIST_VIEW_COMMON                                \
+    interface*                  p_intf;                 \
+    Evas_Object*                p_parent;               \
     Evas_Object*                p_list;                 \
     media_library_controller*   p_ctrl;                 \
-    interface*                  p_intf;                 \
     Elm_Genlist_Item_Class*     p_default_item_class;   \
     Evas_Object*                p_container;            \
     Evas_Object*                p_empty_label;          \
