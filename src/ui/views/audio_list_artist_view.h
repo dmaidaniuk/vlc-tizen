@@ -30,6 +30,6 @@
 #include "ui/interface.h"
 
 list_view*
-audio_list_artist_view_create(application* p_app, interface* p_intf, Evas_Object* p_parent);
+audio_list_artist_view_create(interface* p_intf, Evas_Object* p_parent);
 
 #endif // AUDIO_LIST_ARTIST_VIEW_H_

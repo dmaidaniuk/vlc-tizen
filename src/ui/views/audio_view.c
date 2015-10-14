@@ -70,7 +70,6 @@ typedef struct toolbar_tab {
 static list_view*
 create_audio_list_type(view_sys *av, audio_view_type type )
 {
-    application* p_app = intf_get_application(av->p_intf);
     list_view* p_view = av->p_lists[type];
     if(p_view == NULL)
     {
@@ -78,10 +77,10 @@ create_audio_list_type(view_sys *av, audio_view_type type )
         {
         case AUDIO_VIEW_SONG:
         default:
-            p_view = audio_list_song_view_create(p_app, av->p_intf, av->nf_toolbar);
+            p_view = audio_list_song_view_create(av->p_intf, av->nf_toolbar);
             break;
         case AUDIO_VIEW_ARTIST:
-            p_view = audio_list_artist_view_create(p_app, av->p_intf, av->nf_toolbar);
+            p_view = audio_list_artist_view_create(av->p_intf, av->nf_toolbar);
             break;
         }
         av->p_lists[type] = p_view;

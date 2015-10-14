@@ -106,7 +106,7 @@ audio_list_artist_view_append_item(list_sys *p_sys, void* p_data)
 }
 
 list_view*
-audio_list_artist_view_create(application* p_app, interface* p_intf, Evas_Object* p_parent)
+audio_list_artist_view_create(interface* p_intf, Evas_Object* p_parent)
 {
     list_view* p_view = calloc(1, sizeof(*p_view));
     if (p_view == NULL)
@@ -127,6 +127,7 @@ audio_list_artist_view_create(application* p_app, interface* p_intf, Evas_Object
     p_view->pf_get_item = &audio_list_artist_item_get_media_item;
     p_view->pf_set_item = &audio_list_artist_item_set_media_item;
 
+    application* p_app = intf_get_application( p_intf );
     p_sys->p_ctrl = artist_controller_create(p_app, p_view);
     media_library_controller_refresh( p_sys->p_ctrl );
 
