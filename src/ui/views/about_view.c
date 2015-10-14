@@ -25,6 +25,7 @@
  ******************************************************************************/
 
 #include "common.h"
+#include "version.h"
 
 #include "ui/interface.h"
 #include "ui/views/about_view.h"
@@ -38,14 +39,39 @@ create_about_section(Evas_Object *parent)
     /* */
     Evas_Object *box = elm_box_add(parent);
     elm_box_horizontal_set(box, EINA_FALSE);
-    evas_object_size_hint_align_set(box, EVAS_HINT_FILL, EVAS_HINT_FILL);
+    evas_object_size_hint_align_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+    //evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 
     /* Add and set the label in the box */
     Evas_Object *lbl_about_title = elm_label_add(box);
-    evas_object_size_hint_align_set(lbl_about_title, EVAS_HINT_FILL, 0.5);
-    elm_object_text_set(lbl_about_title, "<align=center><b>Building VLC for Tizen</b></align>");
+    evas_object_size_hint_align_set(lbl_about_title, EVAS_HINT_FILL, 0);
+    elm_object_text_set(lbl_about_title, "<font_size=32><align=center><b>VLC for Tizen™</b></align>");
     elm_box_pack_end(box, lbl_about_title);
     evas_object_show(lbl_about_title);
+
+    Evas_Object *cone = elm_image_add(box);
+    evas_object_size_hint_align_set(cone, EVAS_HINT_FILL, EVAS_HINT_FILL);
+    evas_object_size_hint_weight_set(cone, EVAS_HINT_FILL, EVAS_HINT_EXPAND);
+    elm_image_file_set(cone, ICON_DIR"cone.png", NULL);
+    elm_box_pack_end(box, cone);
+    evas_object_show(cone);
+
+    Evas_Object *lbl_description = elm_label_add(box);
+    evas_object_size_hint_align_set(lbl_description, EVAS_HINT_FILL, 0);
+    evas_object_size_hint_weight_set(lbl_description, EVAS_HINT_FILL, EVAS_HINT_EXPAND);
+    elm_label_line_wrap_set(lbl_description, ELM_WRAP_MIXED);
+    elm_object_text_set(lbl_description, "<font_size=18><align=center>VLC for Tizen™ is a port of VLC media player, the popular open-source media player."
+            "<br><br>Copyleft © 1996-2015 by VideoLAN</align>");
+    elm_box_pack_end(box, lbl_description);
+    evas_object_show(lbl_description);
+
+    Evas_Object *lbl_version = elm_label_add(box);
+    evas_object_size_hint_align_set(lbl_version, EVAS_HINT_FILL, 0);
+    evas_object_size_hint_weight_set(lbl_version, EVAS_HINT_FILL, EVAS_HINT_EXPAND);
+    elm_label_line_wrap_set(lbl_version, ELM_WRAP_MIXED);
+    elm_object_text_set(lbl_version, "<font_size=18><align=center>Revision " REVISION "</align>");
+    elm_box_pack_end(box, lbl_version);
+    evas_object_show(lbl_version);
 
     /* */
     evas_object_show(box);
