@@ -55,7 +55,6 @@ struct view_sys
 {
     interface*              p_intf;
     Evas_Object*            nf_toolbar;
-    Evas_Object*            p_parent;
     Evas_Object*            p_overflow_menu;
     list_view*              p_lists[AUDIO_VIEW_MAX];
     audio_view_type         i_current_tab;
@@ -191,7 +190,7 @@ audio_view_callback(view_sys *p_view_sys, interface_view_event event)
     switch (event) {
     case INTERFACE_VIEW_EVENT_MENU:
     {
-        p_view_sys->p_overflow_menu = popup_menu_add(audio_view_popup_menu, p_view_sys, p_view_sys->p_parent);
+        p_view_sys->p_overflow_menu = popup_menu_add(audio_view_popup_menu, p_view_sys, p_view_sys->nf_toolbar);
         evas_object_show(p_view_sys->p_overflow_menu);
         return true;
     }
@@ -223,7 +222,6 @@ create_audio_view(interface *intf, Evas_Object *parent)
     /* Setup the audio_view */
     view_sys *audio_view_sys = calloc(1, sizeof(*audio_view_sys));
     audio_view_sys->p_intf = intf;
-    audio_view_sys->p_parent = parent;
     audio_view_sys->i_current_tab = AUDIO_VIEW_NONE;
 
     view->pf_event = audio_view_callback;
