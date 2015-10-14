@@ -144,8 +144,6 @@ create_toolbar(view_sys *av, Evas_Object *parent)
     elm_toolbar_shrink_mode_set(tabbar, ELM_TOOLBAR_SHRINK_SCROLL);
     /* Expand the content to fill the toolbar */
     elm_toolbar_transverse_expanded_set(tabbar, EINA_TRUE);
-    /* Items will only call their selection func and callback when first becoming selected*/
-    elm_toolbar_select_mode_set(tabbar, ELM_OBJECT_SELECT_MODE_ALWAYS);
 
     evas_object_size_hint_weight_set(tabbar, EVAS_HINT_EXPAND, 0.0);
     evas_object_size_hint_align_set(tabbar, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -247,6 +245,13 @@ create_audio_view(interface *intf, Evas_Object *parent)
     evas_object_size_hint_align_set(audio_view_sys->nf_toolbar, EVAS_HINT_FILL, EVAS_HINT_FILL);
     elm_box_pack_end(audio_box, audio_view_sys->nf_toolbar );
     evas_object_show(audio_view_sys->nf_toolbar);
+
+    /*
+     * Items will only call their selection func and callback when first becoming selected
+     * Doing it before creating the naviframe would cause the first tab selection to fail
+     * since the selection callback requires a non NULL nf_toolbar.
+     */
+    elm_toolbar_select_mode_set(tabbar, ELM_OBJECT_SELECT_MODE_ALWAYS);
 
     /* Set the first item in the toolbar */
     elm_toolbar_item_selected_set(elm_toolbar_first_item_get(tabbar), EINA_TRUE);
