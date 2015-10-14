@@ -31,6 +31,7 @@
 
 #include "ui/interface.h"
 #include "ui/utils.h"
+#include "ui/menu/popup_menu.h"
 #include "video_player.h"
 #include "playback_service.h"
 
@@ -96,11 +97,71 @@ clicked_lock(void *data, Evas_Object *obj, void *event_info)
 	LOGD("lock button");
 }
 
+void
+spu_selected(void *data, Evas_Object *obj, void *event_info)
+{
+    Elm_Object_Item *it_parent = (Elm_Object_Item*) event_info;
+    view_sys *p_sys = data;
+
+    // elm_genlist_item_index_get starts counting at 1 (not 0)
+    int index = elm_genlist_item_index_get(it_parent);
+
+    // Disable subtitles is -1, first is 0 so index -2.
+    playback_service_spu_set(p_sys->p_ps, index - 2);
+    evas_object_del(obj);
+}
+
+void spu_free_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+    popup_menu *menu = data;
+
+    for(int i = 0; menu[i].title != NULL ; i++)
+        free(menu[i].title);
+    free(menu);
+}
+
 static void
 clicked_more(void *data, Evas_Object *obj, void *event_info)
 {
     /* TODO more action */
 	LOGD("more button");
+
+	Eina_List *spu_list, *p_it = NULL;
+	view_sys *p_sys = data;
+	char *spu_title;
+	popup_menu *menu;
+
+	// Get the list of spu
+	spu_list = playback_service_spu_get_list(p_sys->p_ps);
+
+	// Prepend the "disable subtitles"
+	spu_list = eina_list_prepend(spu_list, "Disable subtitles");
+
+	// Allocate the memory for the menu + 1 (menu + NULL terminating item)
+	menu = malloc(sizeof(*menu) * (eina_list_count(spu_list) + 1));
+
+	int i = 0;
+	EINA_LIST_FOREACH(spu_list, p_it, spu_title)
+	{
+	    if (spu_title)
+	        menu[i].title = strdup(spu_title);
+	    else
+	        asprintf(&menu[i].title, "Subtitle track #%d", i);
+	    menu[i].icon = NULL;
+	    menu[i].cb = spu_selected;
+	    i++;
+	}
+
+	// NULL terminating item
+	menu[i].title = NULL;
+
+	Evas_Object *popup = popup_menu_add(menu, p_sys, p_sys->p_evas_video);
+	evas_object_show(popup);
+
+	// Register a callback to free the memory allocated for the menu
+	evas_object_event_callback_add(popup, EVAS_CALLBACK_FREE, spu_free_cb, menu);
+
+	eina_list_free(spu_list);
 }
 
 static void

@@ -256,7 +256,7 @@ collections
                 type: SWALLOW;
                 clip_to: "hub_background";
                 description {
-                    visible: 0;
+                    visible: 1;
                     rel1 {
                         relative: 0.8 0.0;
                         to: "hub_button";
