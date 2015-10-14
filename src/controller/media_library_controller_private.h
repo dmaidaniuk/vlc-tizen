@@ -30,6 +30,11 @@
 #include "application.h"
 #include "media/library/library_item.h"
 
+struct library_item
+{
+    LIBRARY_ITEM_COMMON
+};
+
 typedef void                (*pf_media_library_get_content_cb)( media_library* p_ml, media_library_list_cb cb, void* p_user_data );
 typedef bool                (*pf_item_compare_cb)(const void* p_left, const void* p_right);
 typedef void*               (*pf_item_duplicate_cb)( const void* p_item );

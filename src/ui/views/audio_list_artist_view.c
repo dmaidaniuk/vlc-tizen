@@ -40,6 +40,8 @@ struct list_view_item
     const Elm_Genlist_Item_Class*   itc;
     artist_item*                    p_artist_item;
     Elm_Object_Item*                p_object_item;
+    // members used when spawning a new view out of an item
+    media_library_controller*       p_albums_controller;
 };
 
 static void
@@ -64,6 +66,36 @@ genlist_text_get_cb(void *data, Evas_Object *obj, const char *part)
         }
     }
     return NULL;
+}
+
+/* This adds a layer to plumb the proper parameters in the media_controller call */
+static void
+audio_list_artist_item_get_album_cb(media_library* p_ml, media_library_list_cb cb, void* p_user_data )
+{
+    list_view_item* p_item = (list_view_item*)p_user_data;
+    media_library_get_artist_albums(p_ml, p_item->p_artist_item->psz_name, cb, p_item->p_albums_controller);
+}
+
+static void
+audio_list_artist_item_selected(void *data, Evas_Object *obj /*EINA_UNUSED*/, void *event_info)
+{
+    list_view_item *p_item = (list_view_item*)data;
+
+    list_view* p_album_view = audio_list_album_view_create(p_item->p_list->p_intf, p_item->p_list->p_parent,
+            LIST_CREATE_ALL & ~LIST_CREATE_MEDIA_CONTROLLER);
+
+    /* Create a controller that will feed the new view */
+    application* p_app = intf_get_application(p_item->p_list->p_intf);
+    p_album_view->p_sys->p_ctrl = p_item->p_albums_controller = album_controller_create(p_app, p_album_view);
+
+    /* Tweak the video controller to list the songs of a specific artist only */
+    media_library_controller_set_content_callback(p_item->p_albums_controller,
+            audio_list_artist_item_get_album_cb, p_item);
+    media_library_controller_refresh(p_item->p_albums_controller);
+
+    Evas_Object* p_new_list = p_album_view->pf_get_widget(p_album_view->p_sys);
+    Elm_Object_Item *it = elm_naviframe_item_push(p_item->p_list->p_parent, "", NULL, NULL, p_new_list, NULL);
+    elm_naviframe_item_title_enabled_set(it, EINA_FALSE, EINA_FALSE);
 }
 
 static const void*
@@ -96,7 +128,7 @@ audio_list_artist_view_append_item(list_sys *p_sys, void* p_data)
             ali,                                        /* genlist item class user data     */
             NULL,                                       /* genlist parent item              */
             ELM_GENLIST_ITEM_NONE,                      /* genlist item type                */
-            NULL,                                       /* genlist select smart callback    */
+            audio_list_artist_item_selected,            /* genlist select smart callback    */
             ali);                                       /* genlist smart callback user data */
 
     /* */

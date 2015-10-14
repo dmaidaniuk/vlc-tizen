@@ -34,11 +34,6 @@
 #include "ui/views/video_view.h"
 #include "ui/views/audio_view.h"
 
-struct library_item
-{
-    LIBRARY_ITEM_COMMON
-};
-
 static bool
 video_controller_accept_item( const library_item* p_item )
 {
