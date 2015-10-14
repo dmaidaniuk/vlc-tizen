@@ -30,6 +30,7 @@
 
 #include "IMediaLibrary.h"
 #include "IVideoTrack.h"
+#include "IArtist.h"
 #include "media_library_private.hpp"
 #include "system_storage.h"
 
@@ -267,6 +268,20 @@ media_library_get_artists( media_library* p_ml, media_library_list_cb cb, void* 
     media_library_common_getter(cb, p_user_data,
                 std::bind(&IMediaLibrary::artists, p_ml->ml),
                 artistToArtistItem);
+}
+
+void
+media_library_get_artist_albums( media_library* p_ml, const char* psz_artistName, media_library_list_cb cb, void* p_user_data )
+{
+    auto artist = p_ml->ml->artist(psz_artistName);
+    if (artist == nullptr)
+    {
+        LOGE("Can't find artist %s", psz_artistName);
+        return;
+    }
+    media_library_common_getter(cb, p_user_data,
+                std::bind(&IArtist::albums, artist),
+                &albumToAlbumItem);
 }
 
 void

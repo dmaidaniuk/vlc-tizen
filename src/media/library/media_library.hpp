@@ -65,6 +65,9 @@ void
 media_library_get_audio_files( media_library* p_ml, media_library_list_cb cb, void* p_user_data );
 
 void
+media_library_get_artist_albums( media_library* p_ml, const char* psz_artistName, media_library_list_cb cb, void* p_user_data );
+
+void
 media_library_get_albums( media_library* p_ml, media_library_list_cb cb, void* p_user_data );
 
 void
