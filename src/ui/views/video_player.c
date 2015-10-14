@@ -50,6 +50,7 @@ struct view_sys
     Evas_Object *play_pause_button, *progress_slider;
     Evas_Object *backward_button, *forward_button;
     Evas_Object *lock_button, *more_button;
+    Evas_Object *p_current_popup;
 
 };
 
@@ -120,6 +121,12 @@ void spu_free_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
     free(menu);
 }
 
+void clear_popup_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+    view_sys *p_sys = data;
+    p_sys->p_current_popup = NULL;
+}
+
 static void
 clicked_more(void *data, Evas_Object *obj, void *event_info)
 {
@@ -155,11 +162,12 @@ clicked_more(void *data, Evas_Object *obj, void *event_info)
 	// NULL terminating item
 	menu[i].title = NULL;
 
-	Evas_Object *popup = popup_menu_add(menu, p_sys, p_sys->p_evas_video);
+	Evas_Object *popup = p_sys->p_current_popup = popup_menu_add(menu, p_sys, p_sys->p_evas_video);
 	evas_object_show(popup);
 
 	// Register a callback to free the memory allocated for the menu
 	evas_object_event_callback_add(popup, EVAS_CALLBACK_FREE, spu_free_cb, menu);
+	evas_object_event_callback_add(popup, EVAS_CALLBACK_FREE, clear_popup_cb, p_sys);
 
 	eina_list_free(spu_list);
 }
@@ -287,6 +295,12 @@ video_player_callback(view_sys *p_view_sys, interface_view_event event)
         layout_touch_up_cb(p_view_sys, NULL, NULL, NULL);
         return true;
     }
+    case INTERFACE_VIEW_EVENT_BACK:
+        if (p_view_sys->p_current_popup) {
+            evas_object_del(p_view_sys->p_current_popup);
+            return true;
+        }
+        return false;
     default:
         break;
     }
