@@ -194,107 +194,79 @@ media_library_discover( media_library* p_ml, const char* psz_location )
     p_ml->ml->discover( psz_location );
 }
 
-
+template <typename SourceFunc, typename ConvertorFunc>
 struct ml_callback_context
 {
-    ml_callback_context( media_library* ml, media_library_list_cb c, void* p_user_data )
-        : p_ml( ml ), cb( c ), list(nullptr), p_data( p_user_data ) {}
-    media_library* p_ml;
+    ml_callback_context( media_library_list_cb c, void* p_user_data, SourceFunc s, ConvertorFunc conv )
+        : cb(c), list(nullptr), p_data(p_user_data)
+          , source(s), convertor(conv){}
     media_library_list_cb cb;
     Eina_List* list;
     void* p_data;
+    SourceFunc source;
+    ConvertorFunc convertor;
 };
 
+template <typename SourceFunc, typename ConvertorFunc>
 void
 intermediate_list_callback( void* p_data )
 {
-    auto ctx = reinterpret_cast<ml_callback_context*>( p_data );
+    auto ctx = reinterpret_cast<ml_callback_context<SourceFunc, ConvertorFunc>*>( p_data );
     ctx->cb( ctx->list, ctx->p_data );
     delete ctx;
+}
+
+template <typename SourceFunc, typename ConvertorFunc>
+static void media_library_common_getter(media_library_list_cb cb, void* p_user_data, SourceFunc source, ConvertorFunc conv)
+{
+    auto ctx = new ml_callback_context<SourceFunc, ConvertorFunc>( cb, p_user_data, source, conv );
+
+    ecore_thread_run( [](void* data, Ecore_Thread* ) {
+        auto ctx = reinterpret_cast<ml_callback_context<SourceFunc, ConvertorFunc>*>( data );
+        auto items = ctx->source();
+        Eina_List *list = nullptr;
+        for ( auto& f : items )
+        {
+            auto elem = ctx->convertor( f );
+            if ( elem == nullptr )
+                continue;
+            list = eina_list_append( list, elem );
+        }
+        ctx->list = list;
+        ecore_main_loop_thread_safe_call_async( intermediate_list_callback<SourceFunc, ConvertorFunc>, ctx );
+    }, nullptr, nullptr, ctx );
 }
 
 void
 media_library_get_audio_files( media_library* p_ml, media_library_list_cb cb, void* p_user_data )
 {
-    auto ctx = new ml_callback_context( p_ml, cb, p_user_data );
-
-    ecore_thread_run( [](void* data, Ecore_Thread* ) {
-        auto ctx = reinterpret_cast<ml_callback_context*>( data );
-        auto files = ctx->p_ml->ml->audioFiles();
-        Eina_List *list = nullptr;
-        for ( auto& f : files )
-        {
-            auto elem = fileToMediaItem( f );
-            if ( elem == nullptr )
-                continue;
-            list = eina_list_append( list, elem );
-        }
-        ctx->list = list;
-        ecore_main_loop_thread_safe_call_async( intermediate_list_callback, ctx );
-    }, nullptr, nullptr, ctx );
+    media_library_common_getter(cb, p_user_data,
+            std::bind(&IMediaLibrary::audioFiles, p_ml->ml),
+            fileToMediaItem);
 }
 
 void
 media_library_get_video_files( media_library* p_ml, media_library_list_cb cb, void* p_user_data )
 {
-    auto ctx = new ml_callback_context( p_ml, cb, p_user_data );
-
-    ecore_thread_run( [](void* data, Ecore_Thread* ) {
-        auto ctx = reinterpret_cast<ml_callback_context*>( data );
-        auto files = ctx->p_ml->ml->videoFiles();
-        Eina_List *list = nullptr;
-        for ( auto& f : files )
-        {
-            auto elem = fileToMediaItem( f );
-            if ( elem == nullptr )
-                continue;
-            list = eina_list_append( list, elem );
-        }
-        ctx->list = list;
-        ecore_main_loop_thread_safe_call_async( intermediate_list_callback, ctx );
-    }, nullptr, nullptr, ctx );
+    media_library_common_getter(cb, p_user_data,
+            std::bind(&IMediaLibrary::videoFiles, p_ml->ml),
+            fileToMediaItem);
 }
 
 void
 media_library_get_albums(media_library* p_ml, media_library_list_cb cb, void* p_user_data)
 {
-    auto ctx = new ml_callback_context( p_ml, cb, p_user_data );
-
-    ecore_thread_run( [](void* data, Ecore_Thread* ) {
-        auto ctx = reinterpret_cast<ml_callback_context*>( data );
-        auto albums = ctx->p_ml->ml->albums();
-        Eina_List *list = nullptr;
-        for ( auto& a : albums )
-        {
-            auto elem = albumToAlbumItem( a );
-            if ( elem == nullptr )
-                continue;
-            list = eina_list_append( list, elem );
-        }
-        ctx->list = list;
-        ecore_main_loop_thread_safe_call_async( intermediate_list_callback, ctx );
-    }, nullptr, nullptr, ctx );
+    media_library_common_getter(cb, p_user_data,
+            std::bind(&IMediaLibrary::albums, p_ml->ml),
+            albumToAlbumItem);
 }
 
 void
 media_library_get_artists( media_library* p_ml, media_library_list_cb cb, void* p_user_data )
 {
-    auto ctx = new ml_callback_context( p_ml, cb, p_user_data );
-
-    ecore_thread_run( [](void* data, Ecore_Thread* ) {
-        auto ctx = reinterpret_cast<ml_callback_context*>( data );
-        auto artists = ctx->p_ml->ml->artists();
-        Eina_List *list = nullptr;
-        for ( auto& a : artists )
-        {
-            auto elem = artistToArtistItem( a );
-            if ( elem == nullptr )
-                continue;
-            list = eina_list_append( list, elem );
-        }
-        ctx->list = list;
-        ecore_main_loop_thread_safe_call_async( intermediate_list_callback, ctx );
-    }, nullptr, nullptr, ctx );
+    media_library_common_getter(cb, p_user_data,
+                std::bind(&IMediaLibrary::artists, p_ml->ml),
+                artistToArtistItem);
 }
 
 void

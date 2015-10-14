@@ -83,7 +83,7 @@ public:
     // yes, it sucks, but unique_ptr is too restrictive, and shared_ptr is overkill.
     // I'll make up my mind someday, I promise.
     std::unique_ptr<TizenLogger> logger;
-    std::unique_ptr<IMediaLibrary> ml;
+    std::shared_ptr<IMediaLibrary> ml;
 
 private:
     void sendFileUpdate( FilePtr item, bool added );
