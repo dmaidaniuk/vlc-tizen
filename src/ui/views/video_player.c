@@ -127,49 +127,65 @@ void clear_popup_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
     p_sys->p_current_popup = NULL;
 }
 
+void
+clicked_spu(void *data, Evas_Object *obj, void *event_info)
+{
+    Eina_List *spu_list, *p_it = NULL;
+    view_sys *p_sys = data;
+    char *spu_title;
+    popup_menu *menu;
+
+    if (p_sys->p_current_popup)
+        evas_object_del(p_sys->p_current_popup);
+
+    // Get the list of spu
+    spu_list = playback_service_spu_get_list(p_sys->p_ps);
+
+    // Prepend the "disable subtitles"
+    spu_list = eina_list_prepend(spu_list, "Disable subtitles");
+
+    // Allocate the memory for the menu + 1 (menu + NULL terminating item)
+    menu = malloc(sizeof(*menu) * (eina_list_count(spu_list) + 1));
+
+    int i = 0;
+    EINA_LIST_FOREACH(spu_list, p_it, spu_title)
+    {
+        if (spu_title)
+            menu[i].title = strdup(spu_title);
+        else
+            asprintf(&menu[i].title, "Subtitle track #%d", i);
+        menu[i].icon = NULL;
+        menu[i].cb = spu_selected;
+        i++;
+    }
+
+    // NULL terminating item
+    menu[i].title = NULL;
+
+    Evas_Object *popup = p_sys->p_current_popup = popup_menu_add(menu, p_sys, p_sys->p_evas_video);
+    evas_object_show(popup);
+
+    // Register a callback to free the memory allocated for the menu
+    evas_object_event_callback_add(popup, EVAS_CALLBACK_FREE, spu_free_cb, menu);
+    evas_object_event_callback_add(popup, EVAS_CALLBACK_FREE, clear_popup_cb, p_sys);
+
+    eina_list_free(spu_list);
+}
+
+static popup_menu menu_more[] =
+{
+        {"Subtitles", NULL, clicked_spu},
+        {0}
+};
+
 static void
 clicked_more(void *data, Evas_Object *obj, void *event_info)
 {
-    /* TODO more action */
-	LOGD("more button");
+    view_sys *p_sys = data;
 
-	Eina_List *spu_list, *p_it = NULL;
-	view_sys *p_sys = data;
-	char *spu_title;
-	popup_menu *menu;
-
-	// Get the list of spu
-	spu_list = playback_service_spu_get_list(p_sys->p_ps);
-
-	// Prepend the "disable subtitles"
-	spu_list = eina_list_prepend(spu_list, "Disable subtitles");
-
-	// Allocate the memory for the menu + 1 (menu + NULL terminating item)
-	menu = malloc(sizeof(*menu) * (eina_list_count(spu_list) + 1));
-
-	int i = 0;
-	EINA_LIST_FOREACH(spu_list, p_it, spu_title)
-	{
-	    if (spu_title)
-	        menu[i].title = strdup(spu_title);
-	    else
-	        asprintf(&menu[i].title, "Subtitle track #%d", i);
-	    menu[i].icon = NULL;
-	    menu[i].cb = spu_selected;
-	    i++;
-	}
-
-	// NULL terminating item
-	menu[i].title = NULL;
-
-	Evas_Object *popup = p_sys->p_current_popup = popup_menu_add(menu, p_sys, p_sys->p_evas_video);
-	evas_object_show(popup);
-
-	// Register a callback to free the memory allocated for the menu
-	evas_object_event_callback_add(popup, EVAS_CALLBACK_FREE, spu_free_cb, menu);
-	evas_object_event_callback_add(popup, EVAS_CALLBACK_FREE, clear_popup_cb, p_sys);
-
-	eina_list_free(spu_list);
+    Evas_Object *popup = p_sys->p_current_popup = popup_menu_orient_add(menu_more, ELM_POPUP_ORIENT_CENTER, p_sys, p_sys->p_evas_video);
+    evas_object_show(popup);
+    evas_object_event_callback_add(popup, EVAS_CALLBACK_FREE, clear_popup_cb, p_sys);
 }
 
 static void
