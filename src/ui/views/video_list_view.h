@@ -31,6 +31,6 @@
 #include "ui/interface.h"
 
 list_view*
-video_view_list_create(interface *intf, Evas_Object *p_genlist, view_sys_cb* p_view_cb);
+video_view_list_create(interface *intf, Evas_Object *p_genlist);
 
 #endif

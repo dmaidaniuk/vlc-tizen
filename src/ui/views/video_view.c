@@ -41,7 +41,6 @@ struct view_sys
     interface* p_intf;
     Evas_Object *p_parent;
     list_view* p_list;
-    view_sys_cb* p_view_cb;
     Evas_Object *p_overflow_menu;
 };
 
@@ -99,12 +98,6 @@ video_view_has_menu(view_sys *p_view_sys)
     return true;
 }
 
-static void
-video_video_content_updated_cb(view_sys* p_view_sys, bool b_empty)
-{
-
-}
-
 interface_view*
 create_video_view(interface *intf, Evas_Object *parent)
 {
@@ -114,14 +107,11 @@ create_video_view(interface *intf, Evas_Object *parent)
     p_sys->p_intf = intf;
     p_sys->p_parent = parent;
     p_sys->p_overflow_menu = NULL;
-    view_sys_cb* p_view_cb = p_sys->p_view_cb = calloc(1, sizeof(*p_view_cb));
-    p_view_cb->pf_updated = &video_video_content_updated_cb;
-    p_view_cb->p_sys = p_sys;
 
     view->pf_event = video_view_callback;
     view->pf_has_menu = video_view_has_menu;
 
-    p_sys->p_list = video_view_list_create(intf, parent, p_sys->p_view_cb);
+    p_sys->p_list = video_view_list_create(intf, parent);
 
     view->view = p_sys->p_list->pf_get_widget(p_sys->p_list->p_sys);
 
@@ -135,7 +125,6 @@ destroy_video_view(interface_view *view)
     list_view* p_list_view = view->p_view_sys->p_list;
     p_list_view->pf_del(p_list_view->p_sys);
     free(p_list_view);
-    free(view->p_view_sys->p_view_cb);
     free(view->p_view_sys);
     free(view);
 }

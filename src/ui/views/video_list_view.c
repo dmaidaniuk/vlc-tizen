@@ -199,7 +199,7 @@ video_view_append_item(list_sys *p_list, void* p_data)
 }
 
 list_view*
-video_view_list_create(interface *p_intf, Evas_Object *p_parent, view_sys_cb* p_view_cb)
+video_view_list_create(interface *p_intf, Evas_Object *p_parent)
 {
     list_view* p_view = calloc(1, sizeof(*p_view));
     if (p_view == NULL)
@@ -210,7 +210,7 @@ video_view_list_create(interface *p_intf, Evas_Object *p_parent, view_sys_cb* p_
         return NULL;
 
 
-    list_view_common_setup(p_view, p_sys, p_intf, p_view_cb, p_parent);
+    list_view_common_setup(p_view, p_sys, p_intf, p_parent);
 
     /* Genlist class */
     p_sys->p_default_item_class->func.text_get = genlist_text_get_cb;

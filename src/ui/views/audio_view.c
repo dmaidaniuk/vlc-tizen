@@ -59,7 +59,6 @@ struct view_sys
     Evas_Object*            p_overflow_menu;
     list_view*              p_lists[AUDIO_VIEW_MAX];
     audio_view_type         p_current_tab;
-    view_sys_cb*            p_view_cb;
 };
 
 typedef struct toolbar_tab {
@@ -78,10 +77,10 @@ create_audio_list_type(view_sys *av, audio_view_type type )
         {
         case AUDIO_VIEW_SONG:
         default:
-            p_view = audio_list_song_view_create(p_app, av->p_intf, av->nf_toolbar, av->p_view_cb);
+            p_view = audio_list_song_view_create(p_app, av->p_intf, av->nf_toolbar);
             break;
         case AUDIO_VIEW_ARTIST:
-            p_view = audio_list_artist_view_create(p_app, av->p_intf, av->nf_toolbar, av->p_view_cb);
+            p_view = audio_list_artist_view_create(p_app, av->p_intf, av->nf_toolbar);
             break;
         }
         av->p_lists[type] = p_view;
@@ -216,12 +215,6 @@ audio_view_has_menu(view_sys *p_view_sys)
     return true;
 }
 
-static void
-audio_view_content_changed_cb(view_sys* p_view_sys, bool b_empty)
-{
-
-}
-
 interface_view *
 create_audio_view(interface *intf, Evas_Object *parent)
 {
@@ -231,9 +224,6 @@ create_audio_view(interface *intf, Evas_Object *parent)
     view_sys *audio_view_sys = calloc(1, sizeof(*audio_view_sys));
     audio_view_sys->p_intf = intf;
     audio_view_sys->p_parent = parent;
-    view_sys_cb* p_view_cb = audio_view_sys->p_view_cb = calloc(1, sizeof(*p_view_cb));
-    p_view_cb->pf_updated = &audio_view_content_changed_cb;
-    p_view_cb->p_sys = audio_view_sys;
 
     view->pf_event = audio_view_callback;
     view->p_view_sys = audio_view_sys;
@@ -278,7 +268,6 @@ destroy_audio_view(interface_view *view)
             free(p_sys->p_lists[i]);
         }
     }
-    free(p_sys->p_view_cb);
     free(p_sys);
     free(view);
 }
