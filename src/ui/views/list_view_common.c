@@ -35,24 +35,24 @@ struct list_sys
 };
 
 static void
-list_view_clear(list_sys* p_list)
+list_view_clear(list_sys* p_list_sys)
 {
-    elm_genlist_clear(p_list->p_list);
-    list_view_toggle_empty(p_list, true);
+    elm_genlist_clear(p_list_sys->p_list);
+    list_view_toggle_empty(p_list_sys, true);
 }
 
 static void
-list_view_destroy(list_sys* p_list)
+list_view_destroy(list_sys* p_list_sys)
 {
-    media_library_controller_destroy(p_list->p_ctrl);
-    elm_genlist_item_class_free(p_list->p_default_item_class);
-    free(p_list);
+    media_library_controller_destroy(p_list_sys->p_ctrl);
+    elm_genlist_item_class_free(p_list_sys->p_default_item_class);
+    free(p_list_sys);
 }
 
 static Evas_Object*
-list_view_get_widget(list_sys* p_list)
+list_view_get_widget(list_sys* p_list_sys)
 {
-    return p_list->p_container;
+    return p_list_sys->p_container;
 }
 
 void
@@ -72,33 +72,33 @@ list_view_toggle_empty(list_sys* p_list_sys, bool b_empty)
 }
 
 void
-list_view_common_setup(list_view* p_view, list_sys* p_list, interface* p_intf, Evas_Object* p_parent)
+list_view_common_setup(list_view* p_list_view, list_sys* p_list_sys, interface* p_intf, Evas_Object* p_parent)
 {
-    p_list->p_intf = p_intf;
-    p_list->p_parent = p_parent;
+    p_list_sys->p_intf = p_intf;
+    p_list_sys->p_parent = p_parent;
 
     /* Container box */
-    p_list->p_container = elm_box_add(p_parent);
+    p_list_sys->p_container = elm_box_add(p_parent);
 
     /* Empty list label */
-    p_list->p_empty_label = elm_label_add(p_list->p_container);
-    elm_object_text_set(p_list->p_empty_label, "No content to display");
+    p_list_sys->p_empty_label = elm_label_add(p_list_sys->p_container);
+    elm_object_text_set(p_list_sys->p_empty_label, "No content to display");
 
     /* Create genlist */
-    p_list->p_list = elm_genlist_add(p_list->p_container);
-    elm_scroller_single_direction_set(p_list->p_list, ELM_SCROLLER_SINGLE_DIRECTION_HARD);
-    elm_genlist_homogeneous_set(p_list->p_list, EINA_TRUE);
-    elm_genlist_mode_set(p_list->p_list, ELM_LIST_COMPRESS);
+    p_list_sys->p_list = elm_genlist_add(p_list_sys->p_container);
+    elm_scroller_single_direction_set(p_list_sys->p_list, ELM_SCROLLER_SINGLE_DIRECTION_HARD);
+    elm_genlist_homogeneous_set(p_list_sys->p_list, EINA_TRUE);
+    elm_genlist_mode_set(p_list_sys->p_list, ELM_LIST_COMPRESS);
 
     /* Item Class */
-    p_list->p_default_item_class = elm_genlist_item_class_new();
-    p_list->p_default_item_class->item_style = "2line.top.3";
+    p_list_sys->p_default_item_class = elm_genlist_item_class_new();
+    p_list_sys->p_default_item_class->item_style = "2line.top.3";
 
     /* Setup common callbacks */
-    p_view->pf_del = &list_view_destroy;
-    p_view->pf_clear = &list_view_clear;
-    p_view->pf_get_widget = &list_view_get_widget;
+    p_list_view->pf_del = &list_view_destroy;
+    p_list_view->pf_clear = &list_view_clear;
+    p_list_view->pf_get_widget = &list_view_get_widget;
 
     /* Ensure the initial update takes place (keep in mind that b_empty is 0 initialized) */
-    list_view_toggle_empty(p_list, true);
+    list_view_toggle_empty(p_list_sys, true);
 }
