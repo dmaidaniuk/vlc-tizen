@@ -156,7 +156,6 @@ static void
 audio_view_refresh_cb(void *data, Evas_Object *obj, void *event_info)
 {
     view_sys *p_sys = data;
-
     if (!p_sys)
         return;
 

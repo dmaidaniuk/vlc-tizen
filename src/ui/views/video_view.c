@@ -37,8 +37,8 @@ struct view_sys
 {
     interface* p_intf;
     Evas_Object *p_parent;
-    list_view* p_list;
     Evas_Object *p_overflow_menu;
+    list_view* p_list;
 };
 
 static void

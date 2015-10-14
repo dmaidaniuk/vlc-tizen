@@ -36,8 +36,8 @@
 #include "ui/utils.h"
 
 struct view_sys {
-    Evas_Object *p_box;
     interface *p_intf;
+    Evas_Object *p_box;
     char current_path[PATH_MAX];
 };
 
