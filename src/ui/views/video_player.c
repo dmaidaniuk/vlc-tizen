@@ -278,6 +278,22 @@ video_player_stop(view_sys *p_sys)
     }
 }
 
+static bool
+video_player_callback(view_sys *p_view_sys, interface_view_event event)
+{
+    switch (event) {
+    case INTERFACE_VIEW_EVENT_MENU:
+    {
+        layout_touch_up_cb(p_view_sys, NULL, NULL, NULL);
+        return true;
+    }
+    default:
+        break;
+    }
+
+    return false;
+}
+
 interface_view*
 create_video_player(interface *intf, playback_service *p_ps, Evas_Object *parent)
 {
@@ -337,6 +353,7 @@ create_video_player(interface *intf, playback_service *p_ps, Evas_Object *parent
     elm_object_part_content_set(layout, "swallow.progress", p_sys->progress_slider);
 
     view->view = layout;
+    view->pf_event = video_player_callback;
 
     view->pf_stop = video_player_stop;
     return view;
