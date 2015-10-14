@@ -160,4 +160,10 @@ playback_service_spu_get_list(playback_service *p_ps);
 void
 playback_service_spu_set(playback_service *p_ps, int spu);
 
+Eina_List*
+playback_service_audio_channel_get_list(playback_service *p_ps);
+
+void
+playback_service_audio_channel_set(playback_service *p_ps, int channel);
+
 #endif /* PLAYBACK_SERVICE_H */

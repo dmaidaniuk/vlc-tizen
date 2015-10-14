@@ -700,3 +700,21 @@ playback_service_spu_set(playback_service *p_ps, int spu)
 {
     emotion_object_spu_channel_set(p_ps->p_e, spu);
 }
+
+Eina_List*
+playback_service_audio_channel_get_list(playback_service *p_ps)
+{
+    Eina_List *list = NULL;
+    int count = emotion_object_audio_channel_count(p_ps->p_e);
+
+    for (int i = 0; i < count; i++)
+        list = eina_list_append(list, emotion_object_spu_channel_name_get(p_ps->p_e, i));
+
+    return list;
+}
+
+void
+playback_service_audio_channel_set(playback_service *p_ps, int channel)
+{
+    emotion_object_audio_channel_set(p_ps->p_e, channel);
+}
