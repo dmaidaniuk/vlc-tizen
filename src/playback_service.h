@@ -154,4 +154,10 @@ playback_service_list_get_item(playback_service *p_ps);
 media_item *
 playback_service_list_get_item_at(playback_service *p_ps,  unsigned int i_index);
 
+Eina_List*
+playback_service_spu_get_list(playback_service *p_ps);
+
+void
+playback_service_spu_set(playback_service *p_ps, int spu);
+
 #endif /* PLAYBACK_SERVICE_H */

@@ -680,3 +680,23 @@ playback_service_list_get_item_at(playback_service *p_ps,  unsigned int i_index)
 {
     return media_list_get_item_at(p_ps->p_ml, i_index);
 }
+
+Eina_List*
+playback_service_spu_get_list(playback_service *p_ps)
+{
+    Eina_List *list = NULL;
+    int count = emotion_object_spu_channel_count(p_ps->p_e);
+
+    for (int i = 0; i < count; i++)
+    {
+        list = eina_list_append(list, emotion_object_spu_channel_name_get(p_ps->p_e, i));
+    }
+
+    return list;
+}
+
+void
+playback_service_spu_set(playback_service *p_ps, int spu)
+{
+    emotion_object_spu_channel_set(p_ps->p_e, spu);
+}
