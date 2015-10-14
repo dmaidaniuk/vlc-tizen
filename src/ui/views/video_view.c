@@ -33,9 +33,6 @@
 #include "ui/menu/popup_menu.h"
 #include "media/library/media_library.hpp"
 
-
-#include <Elementary.h>
-
 struct view_sys
 {
     interface* p_intf;
