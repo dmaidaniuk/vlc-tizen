@@ -56,29 +56,29 @@ struct view_sys
 
 typedef struct toolbar_tab {
     audio_view_type type;
-    void *data;
+    view_sys *p_view_sys;
 } toolbar_tab;
 
 static list_view*
-create_audio_list_type(view_sys *av, audio_view_type type )
+create_audio_list_type(view_sys *p_view_sys, audio_view_type type )
 {
-    list_view* p_view = av->p_lists[type];
+    list_view* p_view = p_view_sys->p_lists[type];
     if(p_view == NULL)
     {
         switch (type)
         {
         case AUDIO_VIEW_SONG:
         default:
-            p_view = audio_list_song_view_create(av->p_intf, av->nf_toolbar, LIST_CREATE_ALL);
+            p_view = audio_list_song_view_create(p_view_sys->p_intf, p_view_sys->nf_toolbar, LIST_CREATE_ALL);
             break;
         case AUDIO_VIEW_ARTIST:
-            p_view = audio_list_artist_view_create(av->p_intf, av->nf_toolbar, LIST_CREATE_ALL);
+            p_view = audio_list_artist_view_create(p_view_sys->p_intf, p_view_sys->nf_toolbar, LIST_CREATE_ALL);
             break;
         case AUDIO_VIEW_ALBUM:
-            p_view = audio_list_album_view_create(av->p_intf, av->nf_toolbar, LIST_CREATE_ALL);
+            p_view = audio_list_album_view_create(p_view_sys->p_intf, p_view_sys->nf_toolbar, LIST_CREATE_ALL);
             break;
         }
-        av->p_lists[type] = p_view;
+        p_view_sys->p_lists[type] = p_view;
     }
     else
     {
@@ -86,7 +86,7 @@ create_audio_list_type(view_sys *av, audio_view_type type )
     }
 
     Evas_Object* p_list = p_view->pf_get_widget(p_view->p_sys);
-    Elm_Object_Item *it = elm_naviframe_item_push(av->nf_toolbar, "", NULL, NULL, p_list, NULL);
+    Elm_Object_Item *it = elm_naviframe_item_push(p_view_sys->nf_toolbar, "", NULL, NULL, p_list, NULL);
     elm_naviframe_item_title_enabled_set(it, EINA_FALSE, EINA_FALSE);
     evas_object_show(p_list);
 
@@ -97,14 +97,12 @@ static void
 tabbar_item_cb(void *data, Evas_Object *obj, void *event_info)
 {
     toolbar_tab *item = data;
-    view_sys *av = item->data;
-
-    if (av->i_current_tab == item->type)
+    if (item->p_view_sys->i_current_tab == item->type)
         return;
 
-    av->i_current_tab = item->type;
+    item->p_view_sys->i_current_tab = item->type;
 
-    create_audio_list_type(av, item->type);
+    create_audio_list_type(item->p_view_sys, item->type);
 }
 
 static void
@@ -120,7 +118,7 @@ toolbar_item_append(Evas_Object *obj, audio_view_type type, const char *label, E
     Elm_Object_Item* it;
     toolbar_tab *it_data = malloc(sizeof(*it_data));
     it_data->type = type;
-    it_data->data = data;
+    it_data->p_view_sys = (view_sys *)data;
 
     it = elm_toolbar_item_append(obj, NULL, label, func, it_data);
     elm_object_item_del_cb_set(it, tabbar_item_del);
@@ -129,7 +127,7 @@ toolbar_item_append(Evas_Object *obj, audio_view_type type, const char *label, E
 }
 
 static Evas_Object*
-create_toolbar(view_sys *av, Evas_Object *parent)
+create_toolbar(view_sys *p_view_sys, Evas_Object *parent)
 {
     /* Create and set the toolbar */
     Evas_Object *tabbar = elm_toolbar_add(parent);
@@ -146,10 +144,10 @@ create_toolbar(view_sys *av, Evas_Object *parent)
     evas_object_size_hint_max_set(tabbar, 450, 400);
 
     /* Append new entry in the toolbar with the Icon & Label wanted */
-    toolbar_item_append(tabbar, AUDIO_VIEW_ARTIST,  "Artists",  tabbar_item_cb, av);
-    toolbar_item_append(tabbar, AUDIO_VIEW_ALBUM,   "Albums",   tabbar_item_cb, av);
-    toolbar_item_append(tabbar, AUDIO_VIEW_SONG,    "Songs",    tabbar_item_cb, av);
-    //toolbar_item_append(tabbar, AUDIO_VIEW_GENRE,   "Genre",    tabbar_item_cb, av);
+    toolbar_item_append(tabbar, AUDIO_VIEW_ARTIST,  "Artists",  tabbar_item_cb, p_view_sys);
+    toolbar_item_append(tabbar, AUDIO_VIEW_ALBUM,   "Albums",   tabbar_item_cb, p_view_sys);
+    toolbar_item_append(tabbar, AUDIO_VIEW_SONG,    "Songs",    tabbar_item_cb, p_view_sys);
+    //toolbar_item_append(tabbar, AUDIO_VIEW_GENRE,   "Genre",    tabbar_item_cb, p_view_sys);
 
     return tabbar;
 }
