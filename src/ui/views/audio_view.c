@@ -155,7 +155,7 @@ create_toolbar(view_sys *av, Evas_Object *parent)
     toolbar_item_append(tabbar, AUDIO_VIEW_ARTIST,  "Artists",  tabbar_item_cb, av);
     toolbar_item_append(tabbar, AUDIO_VIEW_ALBUM,   "Albums",   tabbar_item_cb, av);
     toolbar_item_append(tabbar, AUDIO_VIEW_SONG,    "Songs",    tabbar_item_cb, av);
-    toolbar_item_append(tabbar, AUDIO_VIEW_GENRE,   "Genre",    tabbar_item_cb, av);
+    //toolbar_item_append(tabbar, AUDIO_VIEW_GENRE,   "Genre",    tabbar_item_cb, av);
 
     return tabbar;
 }
