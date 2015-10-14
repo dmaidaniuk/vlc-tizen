@@ -42,4 +42,7 @@ audio_controller_create(application* p_app, list_view* p_list_view);
 media_library_controller*
 artist_controller_create(application* p_app, list_view* p_list_view);
 
+media_library_controller*
+album_controller_create(application* p_app, list_view* p_list_view);
+
 #endif // MEDIA_CONTROLLER_H_
