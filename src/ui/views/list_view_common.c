@@ -62,20 +62,13 @@ list_view_toggle_empty(list_sys* p_list_sys, bool b_empty)
         return;
     p_list_sys->b_empty = b_empty;
     Evas_Object* p_list = p_list_sys->p_list;
-    if (b_empty)
-    {
-        elm_box_unpack_all(p_list_sys->p_container);
-        elm_box_pack_end(p_list_sys->p_container, p_list_sys->p_empty_label);
-        evas_object_show(p_list_sys->p_empty_label);
-        evas_object_hide(p_list);
-    }
-    else
-    {
-        elm_box_unpack_all(p_list_sys->p_container);
-        elm_box_pack_end(p_list_sys->p_container, p_list);
-        evas_object_show(p_list);
-        evas_object_hide(p_list_sys->p_empty_label);
-    }
+    Evas_Object* p_show = b_empty ? p_list_sys->p_empty_label : p_list;
+    Evas_Object* p_hide = b_empty ? p_list : p_list_sys->p_empty_label;
+
+    elm_box_unpack_all(p_list_sys->p_container);
+    elm_box_pack_end(p_list_sys->p_container, p_show);
+    evas_object_show(p_show);
+    evas_object_hide(p_hide);
 }
 
 void
