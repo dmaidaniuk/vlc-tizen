@@ -42,6 +42,7 @@ struct media_library_controller
     application*    p_app;
     list_view*      p_list_view;
     Eina_List*      p_content;
+    void*           p_user_data;
 
     /**
      * Callbacks & settings

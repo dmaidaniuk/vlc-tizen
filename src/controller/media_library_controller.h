@@ -39,4 +39,7 @@ media_library_controller_destroy(media_library_controller *);
 void
 media_library_controller_refresh( media_library_controller* p_ctrl );
 
+void
+media_library_controller_set_content_callback(media_library_controller* p_ctrl, void(*cb)(media_library* p_ml, media_library_list_cb cb, void* p_user_data), void* p_user_data);
+
 #endif /* MEDIA_LIBRARY_CONTROLLER_H_ */

@@ -117,13 +117,20 @@ media_library_controller_content_changed_cb(void* p_data)
         ctrl->p_content = NULL;
     }
     media_library* p_ml = (media_library*)application_get_media_library( ctrl->p_app );
-    ctrl->pf_media_library_get_content(p_ml, &media_library_controller_content_update_cb, ctrl);
+    ctrl->pf_media_library_get_content(p_ml, &media_library_controller_content_update_cb, ctrl->p_user_data);
 }
 
 void
 media_library_controller_refresh(media_library_controller* p_ctrl)
 {
     ecore_main_loop_thread_safe_call_async(&media_library_controller_content_changed_cb, p_ctrl);
+}
+
+void
+media_library_controller_set_content_callback(media_library_controller* p_ctrl, pf_media_library_get_content_cb cb, void* p_user_data)
+{
+    p_ctrl->pf_media_library_get_content = cb;
+    p_ctrl->p_user_data = p_user_data;
 }
 
 media_library_controller*
@@ -134,6 +141,8 @@ media_library_controller_create(application* p_app, list_view* p_list_view )
        return NULL;
    ctrl->p_app = p_app;
    ctrl->p_list_view = p_list_view;
+   /* Default the user data to ourselves. This is when the callbacks are our defaults ones */
+   ctrl->p_user_data = ctrl;
 
    /* Populate it */
    media_library* p_ml = (media_library*)application_get_media_library(p_app);
