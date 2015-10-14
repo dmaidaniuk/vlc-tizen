@@ -41,6 +41,12 @@ typedef struct album_item {
 album_item*
 album_item_create(const char* psz_name);
 
+album_item*
+album_item_copy(const album_item* p_item);
+
+bool
+album_item_identical(const album_item* p_left, const album_item* p_right);
+
 void
 album_item_destroy(album_item* p_item);
 
