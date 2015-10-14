@@ -253,9 +253,6 @@ create_audio_view(interface *intf, Evas_Object *parent)
      */
     elm_toolbar_select_mode_set(tabbar, ELM_OBJECT_SELECT_MODE_ALWAYS);
 
-    /* Set the first item in the toolbar */
-    elm_toolbar_item_selected_set(elm_toolbar_first_item_get(tabbar), EINA_TRUE);
-
     /*  */
     evas_object_show(audio_box);
     view->view = audio_box;
