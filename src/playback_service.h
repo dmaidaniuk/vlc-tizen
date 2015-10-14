@@ -155,10 +155,10 @@ media_item *
 playback_service_list_get_item_at(playback_service *p_ps,  unsigned int i_index);
 
 Eina_List*
-playback_service_spu_get_list(playback_service *p_ps);
+playback_service_spu_channel_get_list(playback_service *p_ps);
 
 void
-playback_service_spu_set(playback_service *p_ps, int spu);
+playback_service_spu_channel_set(playback_service *p_ps, int spu);
 
 Eina_List*
 playback_service_audio_channel_get_list(playback_service *p_ps);

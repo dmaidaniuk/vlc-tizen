@@ -682,7 +682,7 @@ playback_service_list_get_item_at(playback_service *p_ps,  unsigned int i_index)
 }
 
 Eina_List*
-playback_service_spu_get_list(playback_service *p_ps)
+playback_service_spu_channel_get_list(playback_service *p_ps)
 {
     Eina_List *list = NULL;
     int count = emotion_object_spu_channel_count(p_ps->p_e);
@@ -696,7 +696,7 @@ playback_service_spu_get_list(playback_service *p_ps)
 }
 
 void
-playback_service_spu_set(playback_service *p_ps, int spu)
+playback_service_spu_channel_set(playback_service *p_ps, int spu)
 {
     emotion_object_spu_channel_set(p_ps->p_e, spu);
 }

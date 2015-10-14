@@ -108,7 +108,7 @@ spu_selected(void *data, Evas_Object *obj, void *event_info)
     int index = elm_genlist_item_index_get(it_parent);
 
     // Disable subtitles is -1, first is 0 so index -2.
-    playback_service_spu_set(p_sys->p_ps, index - 2);
+    playback_service_spu_channel_set(p_sys->p_ps, index - 2);
     evas_object_del(obj);
 }
 
@@ -139,7 +139,7 @@ clicked_spu(void *data, Evas_Object *obj, void *event_info)
         evas_object_del(p_sys->p_current_popup);
 
     // Get the list of spu
-    spu_list = playback_service_spu_get_list(p_sys->p_ps);
+    spu_list = playback_service_spu_channel_get_list(p_sys->p_ps);
 
     // Prepend the "disable subtitles"
     spu_list = eina_list_prepend(spu_list, "Disable subtitles");
