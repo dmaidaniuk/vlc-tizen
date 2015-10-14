@@ -98,6 +98,76 @@ clicked_lock(void *data, Evas_Object *obj, void *event_info)
 	LOGD("lock button");
 }
 
+void clear_popup_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+    view_sys *p_sys = data;
+    p_sys->p_current_popup = NULL;
+}
+
+void channel_menu_free_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+    popup_menu *menu = data;
+
+    for(int i = 0; menu[i].title != NULL ; i++)
+        free(menu[i].title);
+    free(menu);
+}
+
+void
+audio_channel_selected(void *data, Evas_Object *obj, void *event_info)
+{
+    Elm_Object_Item *it_parent = (Elm_Object_Item*) event_info;
+    view_sys *p_sys = data;
+
+    // elm_genlist_item_index_get starts counting at 1 (not 0)
+    int index = elm_genlist_item_index_get(it_parent);
+
+    playback_service_audio_channel_set(p_sys->p_ps, index - 1);
+    evas_object_del(obj);
+}
+
+void
+clicked_audio_tracks(void *data, Evas_Object *obj, void *event_info)
+{
+    Eina_List *channel_list, *p_it = NULL;
+    view_sys *p_sys = data;
+    char *channel_title;
+    popup_menu *menu;
+
+    if (p_sys->p_current_popup)
+        evas_object_del(p_sys->p_current_popup);
+
+    // Get the list of channels
+    channel_list = playback_service_spu_channel_get_list(p_sys->p_ps);
+
+    // Allocate the memory for the menu + 1 (menu + NULL terminating item)
+    menu = malloc(sizeof(*menu) * (eina_list_count(channel_list) + 1));
+
+    int i = 0;
+    EINA_LIST_FOREACH(channel_list, p_it, channel_title)
+    {
+        if (channel_title)
+            menu[i].title = strdup(channel_title);
+        else
+            asprintf(&menu[i].title, "Audio channel #%d", i);
+        menu[i].icon = NULL;
+        menu[i].cb = audio_channel_selected;
+        i++;
+    }
+
+    // NULL terminating item
+    menu[i].title = NULL;
+
+    Evas_Object *popup = p_sys->p_current_popup = popup_menu_add(menu, p_sys, p_sys->p_evas_video);
+    evas_object_show(popup);
+
+    // Register a callback to free the memory allocated for the menu
+    evas_object_event_callback_add(popup, EVAS_CALLBACK_FREE, channel_menu_free_cb, menu);
+    evas_object_event_callback_add(popup, EVAS_CALLBACK_FREE, clear_popup_cb, p_sys);
+
+    eina_list_free(channel_list);
+}
+
 void
 spu_selected(void *data, Evas_Object *obj, void *event_info)
 {
@@ -110,21 +180,6 @@ spu_selected(void *data, Evas_Object *obj, void *event_info)
     // Disable subtitles is -1, first is 0 so index -2.
     playback_service_spu_channel_set(p_sys->p_ps, index - 2);
     evas_object_del(obj);
-}
-
-void spu_free_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
-{
-    popup_menu *menu = data;
-
-    for(int i = 0; menu[i].title != NULL ; i++)
-        free(menu[i].title);
-    free(menu);
-}
-
-void clear_popup_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
-{
-    view_sys *p_sys = data;
-    p_sys->p_current_popup = NULL;
 }
 
 void
@@ -166,7 +221,7 @@ clicked_spu(void *data, Evas_Object *obj, void *event_info)
     evas_object_show(popup);
 
     // Register a callback to free the memory allocated for the menu
-    evas_object_event_callback_add(popup, EVAS_CALLBACK_FREE, spu_free_cb, menu);
+    evas_object_event_callback_add(popup, EVAS_CALLBACK_FREE, channel_menu_free_cb, menu);
     evas_object_event_callback_add(popup, EVAS_CALLBACK_FREE, clear_popup_cb, p_sys);
 
     eina_list_free(spu_list);
@@ -174,7 +229,8 @@ clicked_spu(void *data, Evas_Object *obj, void *event_info)
 
 static popup_menu menu_more[] =
 {
-        {"Subtitles", NULL, clicked_spu},
+        {"Subtitles",       NULL, clicked_spu},
+        {"Audio Tracks",    NULL, clicked_audio_tracks},
         {0}
 };
 
