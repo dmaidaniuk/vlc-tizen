@@ -29,8 +29,6 @@
 
 #include "ui/interface.h"
 
-#include "ui/audio_player.h"
-
 interface_view *
 create_audio_view(interface *intf, Evas_Object *parent);
 

@@ -30,13 +30,7 @@
 #include "ui/interface.h"
 #include "ui/views/audio_view.h"
 #include "ui/views/list_view.h"
-#include "ui/audio_player.h"
 #include "ui/menu/popup_menu.h"
-
-#include "ui/utils.h"
-
-#include "media/media_item.h"
-#include "media/library/media_library.hpp"
 
 #include <Elementary.h>
 
@@ -113,7 +107,7 @@ tabbar_item_cb(void *data, Evas_Object *obj, void *event_info)
     create_audio_list_type(av, item->type);
 }
 
-void
+static void
 tabbar_item_del(void *data, Evas_Object *obj, void *event_info)
 {
     toolbar_tab *item = data;
