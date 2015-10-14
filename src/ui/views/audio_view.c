@@ -43,6 +43,7 @@
 
 typedef enum audio_view_type
 {
+    AUDIO_VIEW_NONE = -1,
     AUDIO_VIEW_ARTIST,
     AUDIO_VIEW_ALBUM,
     AUDIO_VIEW_SONG,
@@ -224,6 +225,7 @@ create_audio_view(interface *intf, Evas_Object *parent)
     view_sys *audio_view_sys = calloc(1, sizeof(*audio_view_sys));
     audio_view_sys->p_intf = intf;
     audio_view_sys->p_parent = parent;
+    audio_view_sys->i_current_tab = AUDIO_VIEW_NONE;
 
     view->pf_event = audio_view_callback;
     view->p_view_sys = audio_view_sys;
