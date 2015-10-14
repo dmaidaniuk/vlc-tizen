@@ -72,7 +72,7 @@ list_view_toggle_empty(list_sys* p_list_sys, bool b_empty)
 }
 
 void
-list_view_common_setup(list_view* p_list_view, list_sys* p_list_sys, interface* p_intf, Evas_Object* p_parent)
+list_view_common_setup(list_view* p_list_view, list_sys* p_list_sys, interface* p_intf, Evas_Object* p_parent, list_view_create_option opts )
 {
     p_list_sys->p_intf = p_intf;
     p_list_sys->p_parent = p_parent;
@@ -84,15 +84,18 @@ list_view_common_setup(list_view* p_list_view, list_sys* p_list_sys, interface* 
     p_list_sys->p_empty_label = elm_label_add(p_list_sys->p_container);
     elm_object_text_set(p_list_sys->p_empty_label, "No content to display");
 
-    /* Create genlist */
-    p_list_sys->p_list = elm_genlist_add(p_list_sys->p_container);
-    elm_scroller_single_direction_set(p_list_sys->p_list, ELM_SCROLLER_SINGLE_DIRECTION_HARD);
-    elm_genlist_homogeneous_set(p_list_sys->p_list, EINA_TRUE);
-    elm_genlist_mode_set(p_list_sys->p_list, ELM_LIST_COMPRESS);
+    /* Create genlist (if required) */
+    if (opts & LIST_CREATE_LIST)
+    {
+        p_list_sys->p_list = elm_genlist_add(p_list_sys->p_container);
+        elm_scroller_single_direction_set(p_list_sys->p_list, ELM_SCROLLER_SINGLE_DIRECTION_HARD);
+        elm_genlist_homogeneous_set(p_list_sys->p_list, EINA_TRUE);
+        elm_genlist_mode_set(p_list_sys->p_list, ELM_LIST_COMPRESS);
 
-    /* Item Class */
-    p_list_sys->p_default_item_class = elm_genlist_item_class_new();
-    p_list_sys->p_default_item_class->item_style = "2line.top.3";
+        /* Item Class */
+        p_list_sys->p_default_item_class = elm_genlist_item_class_new();
+        p_list_sys->p_default_item_class->item_style = "2line.top.3";
+    }
 
     /* Setup common callbacks */
     p_list_view->pf_del = &list_view_destroy;

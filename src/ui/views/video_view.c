@@ -108,7 +108,7 @@ create_video_view(interface *intf, Evas_Object *parent)
     view->pf_event = video_view_callback;
     view->pf_has_menu = video_view_has_menu;
 
-    p_sys->p_list = video_view_list_create(intf, parent);
+    p_sys->p_list = video_view_list_create(intf, parent, LIST_CREATE_ALL);
 
     view->view = p_sys->p_list->pf_get_widget(p_sys->p_list->p_sys);
 

@@ -106,7 +106,7 @@ audio_list_artist_view_append_item(list_sys *p_sys, void* p_data)
 }
 
 list_view*
-audio_list_artist_view_create(interface* p_intf, Evas_Object* p_parent)
+audio_list_artist_view_create(interface* p_intf, Evas_Object* p_parent, list_view_create_option opts)
 {
     list_view* p_view = calloc(1, sizeof(*p_view));
     if (p_view == NULL)
@@ -115,7 +115,7 @@ audio_list_artist_view_create(interface* p_intf, Evas_Object* p_parent)
     if (p_sys == NULL)
         return NULL;
 
-    list_view_common_setup(p_view, p_sys, p_intf, p_parent);
+    list_view_common_setup(p_view, p_sys, p_intf, p_parent, opts);
 
     evas_object_size_hint_weight_set(p_sys->p_list, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
     evas_object_size_hint_align_set(p_sys->p_list, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -127,9 +127,12 @@ audio_list_artist_view_create(interface* p_intf, Evas_Object* p_parent)
     p_view->pf_get_item = &audio_list_artist_item_get_media_item;
     p_view->pf_set_item = &audio_list_artist_item_set_media_item;
 
-    application* p_app = intf_get_application( p_intf );
-    p_sys->p_ctrl = artist_controller_create(p_app, p_view);
-    media_library_controller_refresh( p_sys->p_ctrl );
+    if (opts & LIST_CREATE_MEDIA_CONTROLLER)
+    {
+        application* p_app = intf_get_application( p_intf );
+        p_sys->p_ctrl = artist_controller_create(p_app, p_view);
+        media_library_controller_refresh( p_sys->p_ctrl );
+    }
 
     return p_view;
 }

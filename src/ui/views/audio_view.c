@@ -76,10 +76,10 @@ create_audio_list_type(view_sys *av, audio_view_type type )
         {
         case AUDIO_VIEW_SONG:
         default:
-            p_view = audio_list_song_view_create(av->p_intf, av->nf_toolbar);
+            p_view = audio_list_song_view_create(av->p_intf, av->nf_toolbar, LIST_CREATE_ALL);
             break;
         case AUDIO_VIEW_ARTIST:
-            p_view = audio_list_artist_view_create(av->p_intf, av->nf_toolbar);
+            p_view = audio_list_artist_view_create(av->p_intf, av->nf_toolbar, LIST_CREATE_ALL);
             break;
         }
         av->p_lists[type] = p_view;

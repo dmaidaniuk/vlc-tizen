@@ -28,6 +28,7 @@
 # define LIST_VIEW_PRIVATE_H_
 
 #include "ui/interface.h"
+#include "list_view.h"
 
 #define LIST_VIEW_COMMON                                \
     interface*                  p_intf;                 \
@@ -40,7 +41,7 @@
     bool                        b_empty;
 
 void
-list_view_common_setup(list_view* p_view, list_sys* p_list, interface* p_intf, Evas_Object* p_parent);
+list_view_common_setup(list_view* p_view, list_sys* p_list, interface* p_intf, Evas_Object* p_parent, list_view_create_option opts);
 
 void
 list_view_toggle_empty(list_sys* p_view, bool b_empty);

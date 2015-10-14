@@ -29,13 +29,20 @@
 
 #include "ui/interface.h"
 
-list_view*
-audio_list_artist_view_create(interface* p_intf, Evas_Object* p_parent);
+typedef enum list_view_create_option
+{
+    LIST_CREATE_MEDIA_CONTROLLER = 1,
+    LIST_CREATE_LIST             = 1 << 1,
+    LIST_CREATE_ALL              = ~0
+} list_view_create_option;
 
 list_view*
-audio_list_song_view_create(interface* p_intf, Evas_Object* p_parent);
+audio_list_artist_view_create(interface* p_intf, Evas_Object* p_parent, list_view_create_option opts );
 
 list_view*
-video_view_list_create(interface *intf, Evas_Object *p_parent);
+audio_list_song_view_create(interface* p_intf, Evas_Object* p_parent, list_view_create_option opts );
+
+list_view*
+video_view_list_create(interface *intf, Evas_Object *p_parent, list_view_create_option opts );
 
 #endif // LIST_VIEW_H_

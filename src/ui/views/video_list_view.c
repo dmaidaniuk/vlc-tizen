@@ -199,7 +199,7 @@ video_view_append_item(list_sys *p_list, void* p_data)
 }
 
 list_view*
-video_view_list_create(interface *p_intf, Evas_Object *p_parent)
+video_view_list_create(interface *p_intf, Evas_Object *p_parent, list_view_create_option opts)
 {
     list_view* p_view = calloc(1, sizeof(*p_view));
     if (p_view == NULL)
@@ -210,7 +210,7 @@ video_view_list_create(interface *p_intf, Evas_Object *p_parent)
         return NULL;
 
 
-    list_view_common_setup(p_view, p_sys, p_intf, p_parent);
+    list_view_common_setup(p_view, p_sys, p_intf, p_parent, opts);
 
     /* Genlist class */
     p_sys->p_default_item_class->func.text_get = genlist_text_get_cb;
@@ -229,7 +229,12 @@ video_view_list_create(interface *p_intf, Evas_Object *p_parent)
     p_view->pf_get_item = &video_list_item_get_media_item;
     p_view->pf_set_item = &video_list_item_set_media_item;
 
-    p_sys->p_ctrl = video_controller_create(intf_get_application(p_intf), p_view);
+    if (opts & LIST_CREATE_MEDIA_CONTROLLER)
+    {
+        // So far we don't manually refresh the list because it's going to happen once we
+        // start the media library. This seems like a weird asymmetry with the audio views though.
+        p_sys->p_ctrl = video_controller_create(intf_get_application(p_intf), p_view);
+    }
 
     return p_view;
 }
