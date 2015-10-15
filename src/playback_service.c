@@ -103,10 +103,18 @@ static int playback_service_stop_notify(playback_service *, bool);
 static void
 ps_notification_create(playback_service *p_ps)
 {
+    notification_h previous = notification_load_by_tag("vlc_ps");
+    if (previous)
+    {
+        notification_delete(previous);
+        notification_free(previous);
+    }
+
     if ((p_ps->p_notification = notification_create(NOTIFICATION_TYPE_ONGOING)) == NULL)
         LOGE("Failed to create the notification");
 
     // Note: notification_* are noop if p_notification is NULL
+    notification_set_tag(p_ps->p_notification, "vlc_ps");
     notification_set_display_applist(p_ps->p_notification, NOTIFICATION_DISPLAY_APP_ALL);
     notification_set_image(p_ps->p_notification, NOTIFICATION_IMAGE_TYPE_THUMBNAIL, ICON_DIR"cone.png");
 
