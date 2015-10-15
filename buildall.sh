@@ -21,4 +21,6 @@ fi
 
 cp ${PROJECTPATH}/.cproject-${TIZEN_ABI} ${PROJECTPATH}/.cproject
 
+hacks/version.sh
+
 echo -e "\e[1m\e[32mDone! You can now build the Tizen application.\e[0m"
