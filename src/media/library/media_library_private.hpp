@@ -37,6 +37,7 @@
 media_item* fileToMediaItem( FilePtr file );
 album_item* albumToAlbumItem( AlbumPtr album );
 artist_item* artistToArtistItem( ArtistPtr album );
+media_item* albumTrackToItem( AlbumTrackPtr track );
 
 class TizenLogger : public ILogger
 {

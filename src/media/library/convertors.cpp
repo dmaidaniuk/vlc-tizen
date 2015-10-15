@@ -140,3 +140,18 @@ artistToArtistItem( ArtistPtr artist )
         return nullptr;
     return p_item;
 }
+
+media_item*
+albumTrackToItem( AlbumTrackPtr track )
+{
+    auto files = track->files();
+    if (files.size() == 0)
+    {
+        LOGE("No file associated with audiotrack %s", track->title().c_str());
+        return nullptr;
+    }
+    if (files.size() > 1)
+        LOGW("More than a single file for this track, ignoring all but first one");
+    auto file = files[0];
+    return fileToMediaItem(file);
+}

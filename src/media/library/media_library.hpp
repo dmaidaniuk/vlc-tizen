@@ -74,6 +74,9 @@ void
 media_library_get_artists( media_library* p_ml, media_library_list_cb cb, void* p_user_data );
 
 void
+media_library_get_album_songs(media_library* p_ml, const char* psz_albumName, media_library_list_cb cb, void* p_user_data);
+
+void
 media_library_register_on_change(media_library* ml, media_library_file_list_changed_cb cb, void* p_data);
 
 void

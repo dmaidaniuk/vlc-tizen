@@ -44,29 +44,9 @@ struct list_view_item
     media_library_controller*       p_albums_controller;
 };
 
-static void
-free_list_item_data(void *data, Evas_Object *obj, void *event_info)
-{
-    list_view_item *p_view_item = data;
-    artist_item_destroy(p_view_item->p_artist_item);
-    free(p_view_item);
-}
-
-static char *
-genlist_text_get_cb(void *data, Evas_Object *obj, const char *part)
-{
-    list_view_item *p_view_item = data;
-    const Elm_Genlist_Item_Class *itc = p_view_item->itc;
-    char *buf;
-
-    if (itc->item_style && !strcmp(itc->item_style, "2line.top.3")) {
-        if (part && !strcmp(part, "elm.text.main.left.top")) {
-            asprintf(&buf, "<b>%s</b>", p_view_item->p_artist_item->psz_name);
-            return buf;
-        }
-    }
-    return NULL;
-}
+/*
+ * List albums when an artist is clicked
+ */
 
 /* This adds a layer to plumb the proper parameters in the media_controller call */
 static void
@@ -96,6 +76,30 @@ audio_list_artist_item_selected(void *data, Evas_Object *obj /*EINA_UNUSED*/, vo
     Evas_Object* p_new_list = p_album_view->pf_get_widget(p_album_view->p_sys);
     Elm_Object_Item *it = elm_naviframe_item_push(p_view_item->p_list_sys->p_parent, "", NULL, NULL, p_new_list, NULL);
     elm_naviframe_item_title_enabled_set(it, EINA_FALSE, EINA_FALSE);
+}
+
+static void
+free_list_item_data(void *data, Evas_Object *obj, void *event_info)
+{
+    list_view_item *p_view_item = data;
+    artist_item_destroy(p_view_item->p_artist_item);
+    free(p_view_item);
+}
+
+static char *
+genlist_text_get_cb(void *data, Evas_Object *obj, const char *part)
+{
+    list_view_item *p_view_item = data;
+    const Elm_Genlist_Item_Class *itc = p_view_item->itc;
+    char *buf;
+
+    if (itc->item_style && !strcmp(itc->item_style, "2line.top.3")) {
+        if (part && !strcmp(part, "elm.text.main.left.top")) {
+            asprintf(&buf, "<b>%s</b>", p_view_item->p_artist_item->psz_name);
+            return buf;
+        }
+    }
+    return NULL;
 }
 
 static const void*

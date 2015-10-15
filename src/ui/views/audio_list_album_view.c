@@ -40,7 +40,39 @@ struct list_view_item
     const Elm_Genlist_Item_Class*   itc;
     album_item*                     p_album_item;
     Elm_Object_Item*                p_object_item;
+    // members used when spawning a new view out of an item
+    media_library_controller*       p_songs_controller;
 };
+
+/* List songs when an album is clicked */
+static void
+audio_list_album_item_get_songs_cb(media_library* p_ml, media_library_list_cb cb, void* p_user_data )
+{
+    list_view_item* p_view_item = (list_view_item*)p_user_data;
+    media_library_get_album_songs(p_ml, p_view_item->p_album_item->psz_name, cb, p_view_item->p_songs_controller);
+}
+
+static void
+audio_list_artist_item_selected(void *data, Evas_Object *obj /*EINA_UNUSED*/, void *event_info)
+{
+    list_view_item *p_view_item = (list_view_item*)data;
+
+    list_view* p_songs_view = audio_list_song_view_create(p_view_item->p_list_sys->p_intf, p_view_item->p_list_sys->p_parent,
+            LIST_CREATE_ALL & ~LIST_CREATE_MEDIA_CONTROLLER);
+
+    /* Create a controller that will feed the new view */
+    application* p_app = intf_get_application(p_view_item->p_list_sys->p_intf);
+    p_songs_view->p_sys->p_ctrl = p_view_item->p_songs_controller = audio_controller_create(p_app, p_songs_view);
+
+    /* Tweak the video controller to list the songs of a specific artist only */
+    media_library_controller_set_content_callback(p_view_item->p_songs_controller,
+            audio_list_album_item_get_songs_cb, p_view_item);
+    media_library_controller_refresh(p_view_item->p_songs_controller);
+
+    Evas_Object* p_new_list = p_songs_view->pf_get_widget(p_songs_view->p_sys);
+    Elm_Object_Item *it = elm_naviframe_item_push(p_view_item->p_list_sys->p_parent, "", NULL, NULL, p_new_list, NULL);
+    elm_naviframe_item_title_enabled_set(it, EINA_FALSE, EINA_FALSE);
+}
 
 static void
 free_list_item_data(void *data, Evas_Object *obj, void *event_info)
@@ -96,7 +128,7 @@ audio_list_album_view_append_item(list_sys *p_list_sys, void* p_data)
             p_view_item,                                /* genlist item class user data     */
             NULL,                                       /* genlist parent item              */
             ELM_GENLIST_ITEM_NONE,                      /* genlist item type                */
-            NULL,                                       /* genlist select smart callback    */
+            audio_list_artist_item_selected,            /* genlist select smart callback    */
             p_view_item);                               /* genlist smart callback user data */
 
     /* */
