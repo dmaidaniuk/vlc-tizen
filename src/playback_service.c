@@ -104,20 +104,17 @@ ps_notification_update_meta(playback_service *p_ps, media_item *p_mi)
     const char *psz_meta_title = media_item_title(p_mi);
     const char *psz_meta_artist = media_item_artist(p_mi);
 
-    char *buf;
+    if (psz_meta_title)
+        notification_set_text(p_ps->p_notification, NOTIFICATION_TEXT_TYPE_TITLE, psz_meta_title, NULL, NOTIFICATION_VARIABLE_TYPE_NONE);
+    else if (psz_meta_artist)
+        notification_set_text(p_ps->p_notification, NOTIFICATION_TEXT_TYPE_TITLE, psz_meta_artist, NULL, NOTIFICATION_VARIABLE_TYPE_NONE);
+    else
+        notification_set_text(p_ps->p_notification, NOTIFICATION_TEXT_TYPE_TITLE, "Unknown media", NULL, NOTIFICATION_VARIABLE_TYPE_NONE);
 
     if (psz_meta_title && psz_meta_artist)
-        asprintf(&buf, "%s (%s)", psz_meta_title, psz_meta_artist);
-    else if (psz_meta_title)
-        asprintf(&buf, "%s", psz_meta_title);
-    else if (psz_meta_artist)
-        asprintf(&buf, "%s", psz_meta_artist);
-    else
-        asprintf(&buf, "Unknown media");
+        notification_set_text(p_ps->p_notification, NOTIFICATION_TEXT_TYPE_CONTENT, psz_meta_artist, NULL, NOTIFICATION_VARIABLE_TYPE_NONE);
 
-    notification_set_text(p_ps->p_notification, NOTIFICATION_TEXT_TYPE_TITLE, buf, NULL, NOTIFICATION_VARIABLE_TYPE_NONE);
     notification_post(p_ps->p_notification);
-    free(buf);
 }
 
 static void
