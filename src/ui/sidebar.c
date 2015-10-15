@@ -140,6 +140,8 @@ create_panel_genlist(interface *intf, Evas_Object *sidebar)
     elm_genlist_homogeneous_set(genlist, EINA_TRUE);
     /* Enable the genlist COMPRESS mode */
     elm_genlist_mode_set(genlist, ELM_LIST_COMPRESS);
+    /* Avoid the weird unselect when clicking on the same item twice */
+    elm_genlist_select_mode_set(genlist, ELM_OBJECT_SELECT_MODE_ALWAYS);
 
     /* */
     for (int index = 0; index < VIEW_MAX; index++) {
