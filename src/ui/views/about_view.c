@@ -33,6 +33,64 @@
 #include <Elementary.h>
 #include <EWebKit.h>
 
+typedef struct cone_animation {
+    Evas_Object *obj;
+    Evas_Object *container;
+    int initial_y;
+    int anim_begin_y;
+    int anim_end_y;
+    int container_height;
+} cone_animation;
+
+static Eina_Bool
+cone_do_drop(void *data, double pos)
+{
+   cone_animation *anim = data;
+   int x,y,w,h;
+   double frame = pos;
+   frame = ecore_animator_pos_map(pos, ECORE_POS_MAP_BOUNCE, 2, 4);
+
+   evas_object_geometry_get(anim->obj, &x, &y, &w, &h);
+   double posy = frame * (anim->anim_end_y - anim->anim_begin_y);
+   evas_object_move(anim->obj, x, anim->anim_begin_y + posy);
+
+   if (y + h > anim->container_height)
+   {
+       anim->anim_begin_y = 0;
+       anim->anim_end_y = anim->initial_y;
+       ecore_animator_timeline_add(1, cone_do_drop, anim);
+       return EINA_FALSE;
+   }
+
+   return EINA_TRUE;
+}
+
+static void
+cone_clicked_cb(void *data, Evas_Object *obj, void *event_info)
+{
+    cone_animation *anim = data;
+    int y, h;
+    evas_object_geometry_get(anim->obj, NULL, &y, NULL, &h);
+
+    if (anim->initial_y < 0)
+        anim->initial_y = y;
+
+    evas_object_geometry_get(anim->container, NULL, NULL, NULL, &anim->container_height);
+
+
+    anim->anim_begin_y = y;
+    anim->anim_end_y = anim->container_height + h;
+
+    ecore_animator_timeline_add(1, cone_do_drop, anim);
+}
+
+static void
+cone_delete_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+    cone_animation *anim = data;
+    free(anim);
+}
+
 static Evas_Object*
 create_about_section(Evas_Object *parent)
 {
@@ -72,6 +130,14 @@ create_about_section(Evas_Object *parent)
     elm_object_text_set(lbl_version, "<font_size=18><align=center>Revision " REVISION "</align>");
     elm_box_pack_end(box, lbl_version);
     evas_object_show(lbl_version);
+
+    cone_animation *anim = malloc(sizeof(*anim));
+    anim->initial_y = -1; // Initial position unknown
+    anim->obj = cone;
+    anim->container = box;
+    evas_object_smart_callback_add(cone, "clicked", cone_clicked_cb, anim);
+    evas_object_event_callback_add(box, EVAS_CALLBACK_FREE, cone_delete_cb, anim);
+
 
     /* */
     evas_object_show(box);
