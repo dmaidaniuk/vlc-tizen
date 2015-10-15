@@ -1,7 +1,7 @@
 #!/bin/sh
 
 BASEDIR=$(dirname $0)
-REVISION=`git rev-parse --short HEAD`
+REVISION=`git describe --always --dirty --tags`
 
 cat >${BASEDIR}/../inc/version.h <<EOL
 #ifndef VERSION_H_
