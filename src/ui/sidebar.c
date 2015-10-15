@@ -97,7 +97,6 @@ gl_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
     intf_update_mini_player(cd->intf);
 
     switch(cd->index){
-
     case VIEW_VIDEO:
         intf_show_view(cd->intf, VIEW_VIDEO);
         break;
@@ -117,9 +116,14 @@ gl_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
     case VIEW_ABOUT:
         intf_show_view(cd->intf, VIEW_ABOUT);
         break;
-
-        free(cd);
     }
+}
+
+static void
+gl_del_cb(void *data, Evas_Object *obj, void *event_info)
+{
+    menu_cb_data_s *cd = data;
+    free(cd);
 }
 
 static Evas_Object *
@@ -148,13 +152,15 @@ create_panel_genlist(interface *intf, Evas_Object *sidebar)
 
         menu_cb_data_s *cd = malloc(sizeof(*cd));
 
-        elm_genlist_item_append(genlist,
+        Elm_Object_Item *it = elm_genlist_item_append(genlist,
                 itc,                            /* item class               */
                 cd,                             /* item class user data     */
                 NULL,                           /* parent item              */
                 ELM_GENLIST_ITEM_NONE,          /* item type                */
                 gl_selected_cb,                 /* select smart callback    */
                 cd);                            /* smart callback user data */
+
+        elm_object_item_del_cb_set(it, gl_del_cb);
 
         /* Put the index and the gui_data in the cb_data struct for callbacks */
         cd->index = index;
