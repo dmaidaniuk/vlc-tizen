@@ -108,6 +108,7 @@ ps_notification_create(playback_service *p_ps)
 
     // Note: notification_* are noop if p_notification is NULL
     notification_set_display_applist(p_ps->p_notification, NOTIFICATION_DISPLAY_APP_ALL);
+    notification_set_image(p_ps->p_notification, NOTIFICATION_IMAGE_TYPE_THUMBNAIL, ICON_DIR"cone.png");
 
     app_control_create(&p_ps->p_app_control);
     app_control_set_app_id(p_ps->p_app_control, PACKAGE);
