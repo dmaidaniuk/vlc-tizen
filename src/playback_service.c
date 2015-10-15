@@ -27,6 +27,7 @@
 #include <Elementary.h>
 #include <Emotion.h>
 #include <notification.h>
+#include <app_control.h>
 
 #include <device/power.h>
 
@@ -71,7 +72,8 @@ struct playback_service
     bool b_started;
     bool b_seeking;
 
-    notification_h p_notification;
+    notification_h  p_notification;
+    app_control_h   p_app_control;
 };
 
 #define PS_SEND_CALLBACK(pf_cb, ...) do { \
@@ -97,6 +99,20 @@ struct playback_service
 } while(0)
 
 static int playback_service_stop_notify(playback_service *, bool);
+
+static void
+ps_notification_create(playback_service *p_ps)
+{
+    if ((p_ps->p_notification = notification_create(NOTIFICATION_TYPE_ONGOING)) == NULL)
+        LOGE("Failed to create the notification");
+
+    // Note: notification_* are noop if p_notification is NULL
+    notification_set_display_applist(p_ps->p_notification, NOTIFICATION_DISPLAY_APP_ALL);
+
+    app_control_create(&p_ps->p_app_control);
+    app_control_set_app_id(p_ps->p_app_control, PACKAGE);
+    notification_set_launch_option(p_ps->p_notification, NOTIFICATION_LAUNCH_OPTION_APP_CONTROL, (void *)p_ps->p_app_control);
+}
 
 static void
 ps_notification_update_meta(playback_service *p_ps, media_item *p_mi)
@@ -295,10 +311,7 @@ playback_service_create(application *p_app)
             p_ps->p_e = p_ps->p_ea;
     }
 
-    if ((p_ps->p_notification = notification_create(NOTIFICATION_TYPE_ONGOING)) == NULL)
-        LOGE("Failed to create the notification");
-    // Note: notification_* are noop if p_notification is NULL
-    notification_set_display_applist(p_ps->p_notification, NOTIFICATION_DISPLAY_APP_ALL);
+    ps_notification_create(p_ps);
 
     return p_ps;
 
@@ -330,6 +343,7 @@ playback_service_destroy(playback_service *p_ps)
     if (p_ps->p_ev)
         ps_emotion_destroy(p_ps, p_ps->p_ev);
 
+    app_control_destroy(p_ps->p_app_control);
     notification_free(p_ps->p_notification);
 
     free(p_ps);
