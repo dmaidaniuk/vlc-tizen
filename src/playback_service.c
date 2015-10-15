@@ -26,6 +26,7 @@
 
 #include <Elementary.h>
 #include <Emotion.h>
+#include <notification.h>
 
 #include <device/power.h>
 
@@ -69,6 +70,8 @@ struct playback_service
 
     bool b_started;
     bool b_seeking;
+
+    notification_h p_notification;
 };
 
 #define PS_SEND_CALLBACK(pf_cb, ...) do { \
@@ -96,6 +99,28 @@ struct playback_service
 static int playback_service_stop_notify(playback_service *, bool);
 
 static void
+ps_notification_update_meta(playback_service *p_ps, media_item *p_mi)
+{
+    const char *psz_meta_title = media_item_title(p_mi);
+    const char *psz_meta_artist = media_item_artist(p_mi);
+
+    char *buf;
+
+    if (psz_meta_title && psz_meta_artist)
+        asprintf(&buf, "%s (%s)", psz_meta_title, psz_meta_artist);
+    else if (psz_meta_title)
+        asprintf(&buf, "%s", psz_meta_title);
+    else if (psz_meta_artist)
+        asprintf(&buf, "%s", psz_meta_artist);
+    else
+        asprintf(&buf, "Unknown media");
+
+    notification_set_text(p_ps->p_notification, NOTIFICATION_TEXT_TYPE_TITLE, buf, NULL, NOTIFICATION_VARIABLE_TYPE_NONE);
+    notification_post(p_ps->p_notification);
+    free(buf);
+}
+
+static void
 ps_emotion_length_change_cb(void *data, Evas_Object *obj, void *event)
 {
     playback_service *p_ps = data;
@@ -120,6 +145,9 @@ ps_emotion_position_update_cb(void *data, Evas_Object *obj, void *event)
         double i_len = emotion_object_play_length_get(obj);
         double i_pos = (i_time > 0.0 && i_len > 0.0) ? i_time / i_len : 0.0;
 
+        notification_set_progress(p_ps->p_notification, i_pos);
+        notification_update(p_ps->p_notification);
+
         PS_SEND_CALLBACK(pf_on_new_time, i_time, i_pos);
     }
 }
@@ -135,6 +163,8 @@ ps_emotion_play_started_cb(void *data, Evas_Object *obj, void *event)
                             emotion_object_meta_info_get(obj, i));
 
     PS_SEND_CALLBACK(pf_on_started, media_list_get_item(p_ps->p_ml));
+
+    ps_notification_update_meta(p_ps, p_mi);
 }
 
 static void
@@ -268,6 +298,11 @@ playback_service_create(application *p_app)
             p_ps->p_e = p_ps->p_ea;
     }
 
+    if ((p_ps->p_notification = notification_create(NOTIFICATION_TYPE_ONGOING)) == NULL)
+        LOGE("Failed to create the notification");
+    // Note: notification_* are noop if p_notification is NULL
+    notification_set_display_applist(p_ps->p_notification, NOTIFICATION_DISPLAY_APP_ALL);
+
     return p_ps;
 
 error:
@@ -297,6 +332,8 @@ playback_service_destroy(playback_service *p_ps)
         ps_emotion_destroy(p_ps, p_ps->p_ea);
     if (p_ps->p_ev)
         ps_emotion_destroy(p_ps, p_ps->p_ev);
+
+    notification_free(p_ps->p_notification);
 
     free(p_ps);
 }
@@ -481,6 +518,9 @@ playback_service_stop_notify(playback_service *p_ps, bool b_notify)
 
     if (b_notify)
         PS_SEND_VOID_CALLBACK(pf_on_stopped);
+
+    notification_delete(p_ps->p_notification);
+
     return 0;
 }
 
