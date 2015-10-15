@@ -36,7 +36,7 @@ struct list_sys
 
 struct list_view_item
 {
-    const list_sys*                 p_list;
+    const list_sys*                 p_list_sys;
     const Elm_Genlist_Item_Class*   itc;
     artist_item*                    p_artist_item;
     Elm_Object_Item*                p_object_item;
@@ -72,29 +72,29 @@ genlist_text_get_cb(void *data, Evas_Object *obj, const char *part)
 static void
 audio_list_artist_item_get_album_cb(media_library* p_ml, media_library_list_cb cb, void* p_user_data )
 {
-    list_view_item* p_item = (list_view_item*)p_user_data;
-    media_library_get_artist_albums(p_ml, p_item->p_artist_item->psz_name, cb, p_item->p_albums_controller);
+    list_view_item* p_view_item = (list_view_item*)p_user_data;
+    media_library_get_artist_albums(p_ml, p_view_item->p_artist_item->psz_name, cb, p_view_item->p_albums_controller);
 }
 
 static void
 audio_list_artist_item_selected(void *data, Evas_Object *obj /*EINA_UNUSED*/, void *event_info)
 {
-    list_view_item *p_item = (list_view_item*)data;
+    list_view_item *p_view_item = (list_view_item*)data;
 
-    list_view* p_album_view = audio_list_album_view_create(p_item->p_list->p_intf, p_item->p_list->p_parent,
+    list_view* p_album_view = audio_list_album_view_create(p_view_item->p_list_sys->p_intf, p_view_item->p_list_sys->p_parent,
             LIST_CREATE_ALL & ~LIST_CREATE_MEDIA_CONTROLLER);
 
     /* Create a controller that will feed the new view */
-    application* p_app = intf_get_application(p_item->p_list->p_intf);
-    p_album_view->p_sys->p_ctrl = p_item->p_albums_controller = album_controller_create(p_app, p_album_view);
+    application* p_app = intf_get_application(p_view_item->p_list_sys->p_intf);
+    p_album_view->p_sys->p_ctrl = p_view_item->p_albums_controller = album_controller_create(p_app, p_album_view);
 
     /* Tweak the video controller to list the songs of a specific artist only */
-    media_library_controller_set_content_callback(p_item->p_albums_controller,
-            audio_list_artist_item_get_album_cb, p_item);
-    media_library_controller_refresh(p_item->p_albums_controller);
+    media_library_controller_set_content_callback(p_view_item->p_albums_controller,
+            audio_list_artist_item_get_album_cb, p_view_item);
+    media_library_controller_refresh(p_view_item->p_albums_controller);
 
     Evas_Object* p_new_list = p_album_view->pf_get_widget(p_album_view->p_sys);
-    Elm_Object_Item *it = elm_naviframe_item_push(p_item->p_list->p_parent, "", NULL, NULL, p_new_list, NULL);
+    Elm_Object_Item *it = elm_naviframe_item_push(p_view_item->p_list_sys->p_parent, "", NULL, NULL, p_new_list, NULL);
     elm_naviframe_item_title_enabled_set(it, EINA_FALSE, EINA_FALSE);
 }
 
@@ -105,66 +105,66 @@ audio_list_artist_item_get_media_item(list_view_item* p_item)
 }
 
 static void
-audio_list_artist_item_set_media_item(list_view_item* p_item, void* p_data)
+audio_list_artist_item_set_media_item(list_view_item* p_view_item, void* p_data)
 {
     artist_item* p_media_item = (artist_item*)p_data;
-    p_item->p_artist_item = p_media_item;
-    ecore_main_loop_thread_safe_call_async((Ecore_Cb)elm_genlist_item_update, p_item->p_object_item);
+    p_view_item->p_artist_item = p_media_item;
+    ecore_main_loop_thread_safe_call_async((Ecore_Cb)elm_genlist_item_update, p_view_item->p_object_item);
 }
 
 static list_view_item*
 audio_list_artist_view_append_item(list_sys *p_sys, void* p_data)
 {
     artist_item* p_artist_item = (artist_item*)p_data;
-    list_view_item *ali = calloc(1, sizeof(*ali));
-    ali->p_list = p_sys;
-    ali->itc = p_sys->p_default_item_class;
+    list_view_item *p_view_item = calloc(1, sizeof(*p_view_item));
+    p_view_item->p_list_sys = p_sys;
+    p_view_item->itc = p_sys->p_default_item_class;
 
-    ali->p_artist_item = p_artist_item;
+    p_view_item->p_artist_item = p_artist_item;
 
     /* Set and append new item in the genlist */
     Elm_Object_Item *it = elm_genlist_item_append(p_sys->p_list,
             p_sys->p_default_item_class,                /* genlist item class               */
-            ali,                                        /* genlist item class user data     */
+            p_view_item,                                /* genlist item class user data     */
             NULL,                                       /* genlist parent item              */
             ELM_GENLIST_ITEM_NONE,                      /* genlist item type                */
             audio_list_artist_item_selected,            /* genlist select smart callback    */
-            ali);                                       /* genlist smart callback user data */
+            p_view_item);                               /* genlist smart callback user data */
 
     /* */
     elm_object_item_del_cb_set(it, free_list_item_data);
     list_view_toggle_empty(p_sys, false);
-    return ali;
+    return p_view_item;
 }
 
 list_view*
 audio_list_artist_view_create(interface* p_intf, Evas_Object* p_parent, list_view_create_option opts)
 {
-    list_view* p_view = calloc(1, sizeof(*p_view));
-    if (p_view == NULL)
+    list_view* p_list_view = calloc(1, sizeof(*p_list_view));
+    if (p_list_view == NULL)
         return NULL;
-    list_sys* p_sys = p_view->p_sys = calloc(1, sizeof(*p_sys));
-    if (p_sys == NULL)
+    list_sys* p_list_sys = p_list_view->p_sys = calloc(1, sizeof(*p_list_sys));
+    if (p_list_sys == NULL)
         return NULL;
 
-    list_view_common_setup(p_view, p_sys, p_intf, p_parent, opts);
+    list_view_common_setup(p_list_view, p_list_sys, p_intf, p_parent, opts);
 
-    evas_object_size_hint_weight_set(p_sys->p_list, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-    evas_object_size_hint_align_set(p_sys->p_list, EVAS_HINT_FILL, EVAS_HINT_FILL);
+    evas_object_size_hint_weight_set(p_list_sys->p_list, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+    evas_object_size_hint_align_set(p_list_sys->p_list, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
     /* Item Class */
-    p_sys->p_default_item_class->func.text_get = genlist_text_get_cb;
+    p_list_sys->p_default_item_class->func.text_get = genlist_text_get_cb;
 
-    p_view->pf_append_item = &audio_list_artist_view_append_item;
-    p_view->pf_get_item = &audio_list_artist_item_get_media_item;
-    p_view->pf_set_item = &audio_list_artist_item_set_media_item;
+    p_list_view->pf_append_item = &audio_list_artist_view_append_item;
+    p_list_view->pf_get_item = &audio_list_artist_item_get_media_item;
+    p_list_view->pf_set_item = &audio_list_artist_item_set_media_item;
 
     if (opts & LIST_CREATE_MEDIA_CONTROLLER)
     {
         application* p_app = intf_get_application( p_intf );
-        p_sys->p_ctrl = artist_controller_create(p_app, p_view);
-        media_library_controller_refresh( p_sys->p_ctrl );
+        p_list_sys->p_ctrl = artist_controller_create(p_app, p_list_view);
+        media_library_controller_refresh( p_list_sys->p_ctrl );
     }
 
-    return p_view;
+    return p_list_view;
 }

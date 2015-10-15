@@ -38,7 +38,7 @@
 
 struct list_view_item
 {
-    list_sys*                       p_list;
+    list_sys*                       p_list_sys;
     media_item*                     p_media_item;
     const Elm_Genlist_Item_Class*   itc;
 
@@ -54,44 +54,44 @@ struct list_sys
 void
 genlist_item_selected_cb(void *data, Evas_Object *obj, void *event_info)
 {
-    list_view_item *vli = (list_view_item*)data;
+    list_view_item *p_view_item = (list_view_item*)data;
 
-    intf_video_player_play(vli->p_list->p_intf, vli->p_media_item->psz_path);
+    intf_video_player_play(p_view_item->p_list_sys->p_intf, p_view_item->p_media_item->psz_path);
 }
 
 static void
 free_list_item(void *data, Evas_Object *obj, void *event_info)
 {
-    list_view_item *vli = data;
-    media_item_destroy(vli->p_media_item);
-    free(vli);
+    list_view_item *p_view_item = data;
+    media_item_destroy(p_view_item->p_media_item);
+    free(p_view_item);
 }
 
 static char *
 genlist_text_get_cb(void *data, Evas_Object *obj, const char *part)
 {
-    list_view_item *vli = data;
-    const Elm_Genlist_Item_Class *itc = vli->itc;
+    list_view_item *p_view_item = data;
+    const Elm_Genlist_Item_Class *itc = p_view_item->itc;
 
     /* Check the item class style and put the current folder or file name as a string */
     /* Then put this string as the genlist item label */
     if (itc->item_style && !strcmp(itc->item_style, "2line.top.3")) {
         if (part && !strcmp(part, "elm.text.main.left.top")) {
             char *buff;
-            asprintf(&buff, "<b>%s</b>", media_item_title(vli->p_media_item));
+            asprintf(&buff, "<b>%s</b>", media_item_title(p_view_item->p_media_item));
             return buff;
         }
         else if (!strcmp(part, "elm.text.sub.left.bottom")) {
-            if(vli->p_media_item->i_duration < 0)
+            if(p_view_item->p_media_item->i_duration < 0)
                 return NULL;
             else
-                return media_timetostr(vli->p_media_item->i_duration/1000);
+                return media_timetostr(p_view_item->p_media_item->i_duration/1000);
         }
         else if (!strcmp(part, "elm.text.sub.right.bottom")) {
-            if (vli->p_media_item->i_w <= 0 || vli->p_media_item->i_h <= 0)
+            if (p_view_item->p_media_item->i_w <= 0 || p_view_item->p_media_item->i_h <= 0)
                 return NULL;
             char *str_resolution;
-            asprintf( &str_resolution, "%dx%d", vli->p_media_item->i_w, vli->p_media_item->i_h);
+            asprintf( &str_resolution, "%dx%d", p_view_item->p_media_item->i_w, p_view_item->p_media_item->i_h);
             return str_resolution;
         }
     }
@@ -99,24 +99,24 @@ genlist_text_get_cb(void *data, Evas_Object *obj, const char *part)
 }
 
 static const void*
-video_list_item_get_media_item(list_view_item* p_list_item)
+video_list_item_get_media_item(list_view_item* p_view_item)
 {
-    return p_list_item->p_media_item;
+    return p_view_item->p_media_item;
 }
 
 static void
-video_list_item_set_media_item(list_view_item* p_item, void* p_data)
+video_list_item_set_media_item(list_view_item* p_view_item, void* p_data)
 {
     media_item* p_media_item = (media_item*)p_data;
-    p_item->p_media_item = p_media_item;
-    ecore_main_loop_thread_safe_call_async((Ecore_Cb)elm_genlist_item_update, p_item->p_object_item);
+    p_view_item->p_media_item = p_media_item;
+    ecore_main_loop_thread_safe_call_async((Ecore_Cb)elm_genlist_item_update, p_view_item->p_object_item);
 }
 
 static Evas_Object*
 genlist_content_get_cb(void *data, Evas_Object *obj, const char *part)
 {
-    list_view_item *vli = data;
-    const Elm_Genlist_Item_Class *itc = vli->itc;
+    list_view_item *p_view_item = data;
+    const Elm_Genlist_Item_Class *itc = p_view_item->itc;
 
     Evas_Object *layout = NULL;
 
@@ -127,8 +127,8 @@ genlist_content_get_cb(void *data, Evas_Object *obj, const char *part)
             layout = elm_layout_add(obj);
             elm_layout_theme_set(layout, "layout", "list/B/type.1", "default");
             Evas_Object *icon;
-            if (vli->p_media_item->psz_snapshot != NULL)
-                icon = create_image(layout, vli->p_media_item->psz_snapshot);
+            if (p_view_item->p_media_item->psz_snapshot != NULL)
+                icon = create_image(layout, p_view_item->p_media_item->psz_snapshot);
             else
                 icon = create_icon(layout, "background_cone.png");
             elm_layout_content_set(layout, "elm.swallow.content", icon);
@@ -166,7 +166,7 @@ genlist_contracted_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
 }
 
 static list_view_item*
-video_view_append_item(list_sys *p_list, void* p_data)
+video_view_append_item(list_sys *p_list_sys, void* p_data)
 {
     media_item* p_item = (media_item*)p_data;
     /* */
@@ -174,13 +174,13 @@ video_view_append_item(list_sys *p_list, void* p_data)
     list_view_item *vli = calloc(1, sizeof(*vli));
     if (vli == NULL)
         return NULL;
-    vli->p_list = p_list;
-    vli->itc = p_list->p_default_item_class;
+    vli->p_list_sys = p_list_sys;
+    vli->itc = p_list_sys->p_default_item_class;
 
     /* Item instantiation */
     vli->p_media_item = p_item;
     /* Set and append new item in the genlist */
-    vli->p_object_item = elm_genlist_item_append(p_list->p_list,
+    vli->p_object_item = elm_genlist_item_append(p_list_sys->p_list,
             vli->itc,                       /* genlist item class               */
             vli,                            /* genlist item class user data     */
             NULL,                           /* genlist parent item for trees    */
@@ -194,48 +194,48 @@ video_view_append_item(list_sys *p_list, void* p_data)
     }
     /* */
     elm_object_item_del_cb_set(vli->p_object_item, free_list_item);
-    list_view_toggle_empty(p_list, false);
+    list_view_toggle_empty(p_list_sys, false);
     return vli;
 }
 
 list_view*
 video_view_list_create(interface *p_intf, Evas_Object *p_parent, list_view_create_option opts)
 {
-    list_view* p_view = calloc(1, sizeof(*p_view));
-    if (p_view == NULL)
+    list_view* p_list_view = calloc(1, sizeof(*p_list_view));
+    if (p_list_view == NULL)
         return NULL;
 
-    list_sys* p_sys = p_view->p_sys = calloc(1, sizeof(*p_sys));
-    if (p_sys == NULL)
+    list_sys* p_list_sys = p_list_view->p_sys = calloc(1, sizeof(*p_list_sys));
+    if (p_list_sys == NULL)
         return NULL;
 
 
-    list_view_common_setup(p_view, p_sys, p_intf, p_parent, opts);
+    list_view_common_setup(p_list_view, p_list_sys, p_intf, p_parent, opts);
 
     /* Genlist class */
-    p_sys->p_default_item_class->func.text_get = genlist_text_get_cb;
-    p_sys->p_default_item_class->func.content_get = genlist_content_get_cb;
+    p_list_sys->p_default_item_class->func.text_get = genlist_text_get_cb;
+    p_list_sys->p_default_item_class->func.content_get = genlist_content_get_cb;
 
-    evas_object_size_hint_weight_set(p_sys->p_list, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-    evas_object_size_hint_align_set(p_sys->p_list, EVAS_HINT_FILL, EVAS_HINT_FILL);
+    evas_object_size_hint_weight_set(p_list_sys->p_list, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+    evas_object_size_hint_align_set(p_list_sys->p_list, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
     /* Set smart Callbacks on the list */
-    evas_object_smart_callback_add(p_sys->p_list, "realized", genlist_realized_cb, NULL);
-    evas_object_smart_callback_add(p_sys->p_list, "loaded", genlist_loaded_cb, NULL);
-    evas_object_smart_callback_add(p_sys->p_list, "longpressed", genlist_longpressed_cb, NULL);
-    evas_object_smart_callback_add(p_sys->p_list, "contracted", genlist_contracted_cb, NULL);
+    evas_object_smart_callback_add(p_list_sys->p_list, "realized", genlist_realized_cb, NULL);
+    evas_object_smart_callback_add(p_list_sys->p_list, "loaded", genlist_loaded_cb, NULL);
+    evas_object_smart_callback_add(p_list_sys->p_list, "longpressed", genlist_longpressed_cb, NULL);
+    evas_object_smart_callback_add(p_list_sys->p_list, "contracted", genlist_contracted_cb, NULL);
 
-    p_view->pf_append_item = &video_view_append_item;
-    p_view->pf_get_item = &video_list_item_get_media_item;
-    p_view->pf_set_item = &video_list_item_set_media_item;
+    p_list_view->pf_append_item = &video_view_append_item;
+    p_list_view->pf_get_item = &video_list_item_get_media_item;
+    p_list_view->pf_set_item = &video_list_item_set_media_item;
 
     if (opts & LIST_CREATE_MEDIA_CONTROLLER)
     {
         // So far we don't manually refresh the list because it's going to happen once we
         // start the media library. This seems like a weird asymmetry with the audio views though.
-        p_sys->p_ctrl = video_controller_create(intf_get_application(p_intf), p_view);
+        p_list_sys->p_ctrl = video_controller_create(intf_get_application(p_intf), p_list_view);
     }
 
-    return p_view;
+    return p_list_view;
 }
 
