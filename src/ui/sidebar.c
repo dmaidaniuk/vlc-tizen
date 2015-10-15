@@ -55,7 +55,7 @@ static const menu_entry menu_entries[] = {
 };
 
 static char *
-gl_text_get_cb(void *data, Evas_Object *obj, const char *part)
+sidebar_text_get_cb(void *data, Evas_Object *obj, const char *part)
 {
     menu_cb_data_s *cd = data;
     /* Check the item class style and put the current folder or file name as a string */
@@ -69,7 +69,7 @@ gl_text_get_cb(void *data, Evas_Object *obj, const char *part)
 }
 
 static Evas_Object*
-gl_content_get_cb(void *data, Evas_Object *obj, const char *part)
+sidebar_content_get_cb(void *data, Evas_Object *obj, const char *part)
 {
     menu_cb_data_s *cd = data;
     Evas_Object *content = NULL;
@@ -89,7 +89,7 @@ gl_content_get_cb(void *data, Evas_Object *obj, const char *part)
 }
 
 void
-gl_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
+sidebar_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
     menu_cb_data_s *cd = data;
     /* Generate the view depending on which sidebar genlist item is selected */
@@ -120,20 +120,20 @@ gl_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 }
 
 static void
-gl_del_cb(void *data, Evas_Object *obj, void *event_info)
+sidebar_del_cb(void *data, Evas_Object *obj, void *event_info)
 {
     menu_cb_data_s *cd = data;
     free(cd);
 }
 
 static Evas_Object *
-create_panel_genlist(interface *intf, Evas_Object *sidebar)
+sidebar_create_panel_genlist(interface *intf, Evas_Object *sidebar)
 {
     /* Set then create the Genlist object */
     Elm_Genlist_Item_Class *itc = elm_genlist_item_class_new();
     itc->item_style = "1line";
-    itc->func.text_get = gl_text_get_cb;
-    itc->func.content_get = gl_content_get_cb;
+    itc->func.text_get = sidebar_text_get_cb;
+    itc->func.content_get = sidebar_content_get_cb;
 
     /* */
     Evas_Object *genlist = elm_genlist_add(sidebar);
@@ -157,10 +157,10 @@ create_panel_genlist(interface *intf, Evas_Object *sidebar)
                 cd,                             /* item class user data     */
                 NULL,                           /* parent item              */
                 ELM_GENLIST_ITEM_NONE,          /* item type                */
-                gl_selected_cb,                 /* select smart callback    */
+                sidebar_selected_cb,                 /* select smart callback    */
                 cd);                            /* smart callback user data */
 
-        elm_object_item_del_cb_set(it, gl_del_cb);
+        elm_object_item_del_cb_set(it, sidebar_del_cb);
 
         /* Put the index and the gui_data in the cb_data struct for callbacks */
         cd->index = index;
@@ -173,7 +173,7 @@ create_panel_genlist(interface *intf, Evas_Object *sidebar)
 }
 
 static void
-list_clicked_cb(void *data, Evas_Object *obj, void *event_info)
+sidebar_list_clicked_cb(void *data, Evas_Object *obj, void *event_info)
 {
     Evas_Object *sidebar = data;
     /* Disable the sidebar when one of the item list is selected */
@@ -194,13 +194,13 @@ create_sidebar(interface *intf, Evas_Object *layout)
     elm_panel_orient_set(sidebar, ELM_PANEL_ORIENT_LEFT);
 
     /* Add the sidebar genlist in the sidebar */
-    sidebar_list = create_panel_genlist(intf, sidebar);
+    sidebar_list = sidebar_create_panel_genlist(intf, sidebar);
     evas_object_show(sidebar_list);
     evas_object_size_hint_weight_set(sidebar_list, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
     evas_object_size_hint_align_set(sidebar_list, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
     /* */
-    evas_object_smart_callback_add(sidebar_list, "selected", list_clicked_cb, sidebar);
+    evas_object_smart_callback_add(sidebar_list, "selected", sidebar_list_clicked_cb, sidebar);
 
     /* */
     elm_object_content_set(sidebar, sidebar_list);
