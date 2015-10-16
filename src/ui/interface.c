@@ -37,6 +37,7 @@
 #include "interface.h"
 #include "sidebar.h"
 #include "audio_player.h"
+#include "playback_service.h"
 
 #include "views/audio_view.h"
 #include "views/video_view.h"
@@ -206,8 +207,17 @@ intf_pop_view(interface *intf)
 
     if (nf_items_count == 1)
     {
-        /* Lower the window (but keep the mainloop running) */
-        elm_win_lower(intf->win);
+        playback_service *p_ps = application_get_playback_service(intf->p_app);
+
+        if (playback_service_is_playing(p_ps))
+        {
+            /* Lower the window (but keep the mainloop running) */
+            elm_win_lower(intf->win);
+        }
+        else
+        {
+            ui_app_exit();
+        }
         return;
     }
 
