@@ -53,6 +53,7 @@ static void app_terminate(void *data);
 static bool
 app_create(void *data)
 {
+    LOGD("Lifecycle: app_create");
     application *app = data;
     char *options;
 
@@ -119,6 +120,7 @@ error:
 static void
 app_control(app_control_h app_control, void *data)
 {
+    LOGD("Lifecycle: app_control");
     /* Handle the launch request. */
     //    application *app = data;
 }
@@ -126,6 +128,7 @@ app_control(app_control_h app_control, void *data)
 static void
 app_pause(void *data)
 {
+    LOGD("Lifecycle: app_pause");
     /* Take necessary actions when application becomes invisible. */
     //    application *app = data;
 }
@@ -133,6 +136,7 @@ app_pause(void *data)
 static void
 app_resume(void *data)
 {
+    LOGD("Lifecycle: app_resume");
     /* Take necessary actions when application becomes visible. */
     //    application *app = data;
 }
@@ -140,6 +144,7 @@ app_resume(void *data)
 static void
 app_terminate(void *data)
 {
+    LOGD("Lifecycle: app_terminate");
     application *app = data;
 
     if (app->p_intf)
