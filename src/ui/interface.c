@@ -200,6 +200,17 @@ intf_show_view(interface *intf, view_e view_type)
 static void
 intf_pop_view(interface *intf)
 {
+    Eina_List* nf_items = elm_naviframe_items_get(intf->nf_content);
+    unsigned int nf_items_count = eina_list_count(nf_items);
+    eina_list_free(nf_items);
+
+    if (nf_items_count == 1)
+    {
+        /* Lower the window (but keep the mainloop running) */
+        elm_win_lower(intf->win);
+        return;
+    }
+
     /* Get the top of the NaviFrame Stack */
     Elm_Object_Item *it = elm_naviframe_top_item_get(intf->nf_content);
     interface_view *view = (interface_view *)elm_object_item_data_get(it);
@@ -229,15 +240,8 @@ intf_pop_view(interface *intf)
     elm_naviframe_item_pop(intf->nf_content);
     elm_win_indicator_mode_set(intf->win, ELM_WIN_INDICATOR_SHOW);
 
-    /* If nothing left, exit */
-    it = elm_naviframe_top_item_get(intf->nf_content);
-    if (it == NULL) {
-        ui_app_exit();
-        return;
-    }
-
     elm_object_part_content_set(intf->nf_content, "title_left_btn", intf->sidebar_toggle_btn);
-    view = (interface_view *)elm_object_item_data_get(it);
+    view = (interface_view *)elm_object_item_data_get(elm_naviframe_top_item_get(intf->nf_content));
     if (view && view->pf_has_menu && view->pf_has_menu(view->p_view_sys) == true)
     {
         elm_object_part_content_set(intf->nf_content, "title_right_btn", intf->popup_toggle_btn);
