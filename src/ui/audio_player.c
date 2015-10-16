@@ -951,6 +951,14 @@ create_base_player(mini_player *mpd, const char *file_path)
 
 }
 
+static void
+mini_player_free(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+    mini_player *mpd = data;
+
+    free(mpd);
+}
+
 mini_player*
 mini_player_create(interface *intf, playback_service *p_ps, Evas_Object *layout)
 {
@@ -968,6 +976,8 @@ mini_player_create(interface *intf, playback_service *p_ps, Evas_Object *layout)
 
     /* Put the mini player at the bottom of the content_box */
     evas_object_size_hint_align_set(layout, EVAS_HINT_FILL, 1.0);
+
+    evas_object_event_callback_add(layout, EVAS_CALLBACK_FREE, mini_player_free, mpd);
 
     update_player_display(mpd);
     return mpd;
