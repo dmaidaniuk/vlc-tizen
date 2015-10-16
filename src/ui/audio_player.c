@@ -136,7 +136,6 @@ popup_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 
         //TODO : Add a JumTo fcn to the current list
 
-        free(apd);
         break;
 
     case 1:
@@ -151,7 +150,6 @@ popup_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 
         //TODO : Add a Playback Speed fcn of the current list
 
-        free(apd);
         break;
 
     case 2:
@@ -165,9 +163,15 @@ popup_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
         apd->mpd->more_state = false;
 
         //TODO : Add a Sleep fcn of the current list
-        free(apd);
         break;
     }
+}
+
+static void
+mini_player_popup_free_cb(void *data, Evas_Object *obj, void *event_info)
+{
+    audio_popup_data_s *apd = data;
+    free(apd);
 }
 
 static Evas_Object *
@@ -213,6 +217,7 @@ create_audio_popup(mini_player *mpd)
                 apd);                       /* genlist smart callback user data */
 
         apd->item = it;
+        elm_object_item_del_cb_set(it, mini_player_popup_free_cb);
     }
 
     elm_box_pack_end(box, genlist);
