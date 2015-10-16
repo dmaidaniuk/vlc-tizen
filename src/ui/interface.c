@@ -267,11 +267,6 @@ win_back_key_cb(void *data, Evas_Object *obj, void *event_info)
     if (!elm_object_disabled_get(intf->sidebar) && !elm_panel_hidden_get(intf->sidebar)) {
         elm_panel_hidden_set(intf->sidebar, EINA_TRUE);
     }
-    /* And then the mini player (if playing) */ // FIXME
-    else if (intf_mini_player_visible_get(intf) == true) {
-        LOGD("mini player visible");
-        mini_player_stop(intf->p_mini_player);
-    }
     /* Hide the audio_player then */
     else if (mini_player_fs_state(intf->p_mini_player) == true) { //FIXME
         collapse_fullscreen_player(intf->p_mini_player);
