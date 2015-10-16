@@ -189,18 +189,12 @@ create_audio_popup(mini_player *mpd)
 
     genlist = elm_genlist_add(box);
 
-    audio_popup_data_s *apd = malloc(sizeof(*apd));
-    apd->box = box;
-    apd->genlist = genlist;
-
     /* Set the genlist scoller mode */
     elm_scroller_single_direction_set(genlist, ELM_SCROLLER_SINGLE_DIRECTION_HARD);
     /* Enable the genlist HOMOGENEOUS mode */
     elm_genlist_homogeneous_set(genlist, EINA_TRUE);
     /* Enable the genlist COMPRESS mode */
     elm_genlist_mode_set(genlist, ELM_LIST_COMPRESS);
-
-    free(apd);
 
     /* Stop when the panel list names is all used */
     for (int index = 0; index < 3; index++) {
