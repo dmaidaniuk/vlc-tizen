@@ -205,12 +205,12 @@ create_audio_popup(mini_player *mpd)
         apd->mpd = mpd;
 
         it = elm_genlist_item_append(genlist,
-                itc,                            /* genlist item class               */
-                apd,                            /* genlist item class user data     */
-                NULL,                            /* genlist parent item              */
-                ELM_GENLIST_ITEM_NONE,            /* genlist item type                */
-                popup_selected_cb,                /* genlist select smart callback    */
-                apd);                            /* genlist smart callback user data */
+                itc,                        /* genlist item class               */
+                apd,                        /* genlist item class user data     */
+                NULL,                       /* genlist parent item              */
+                ELM_GENLIST_ITEM_NONE,      /* genlist item type                */
+                popup_selected_cb,          /* genlist select smart callback    */
+                apd);                       /* genlist smart callback user data */
 
         apd->item = it;
     }
