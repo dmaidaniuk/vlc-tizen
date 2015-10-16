@@ -956,6 +956,7 @@ mini_player_free(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
     mini_player *mpd = data;
 
+    playback_service_unregister_callbacks(mpd->p_ps, mpd->p_ps_cbs_id);
     free(mpd);
 }
 
