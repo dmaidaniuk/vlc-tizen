@@ -165,8 +165,8 @@ popup_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
         apd->mpd->more_state = false;
 
         //TODO : Add a Sleep fcn of the current list
-
         free(apd);
+        break;
     }
 }
 
