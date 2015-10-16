@@ -71,24 +71,6 @@ media_list_on_media_removed(media_list *p_ml, unsigned int i_index, media_item *
 {
     ML_SEND_CALLBACK(pf_on_media_removed, i_index, p_mi);
 
-    if (eina_array_count(p_ml->p_item_array) == 0)
-    {
-        /* notify there if no more current media */
-        p_ml->i_pos = -1;
-        p_ml->p_mi = NULL;
-        media_list_on_new_pos(p_ml);
-    }
-    else if (p_ml->i_pos == i_index)
-    {
-        /* notify current media changed */
-        p_ml->p_mi = eina_array_data_get(p_ml->p_item_array, p_ml->i_pos);
-        media_list_on_new_pos(p_ml);
-    }
-    else if (i_index < p_ml->i_pos)
-    {
-        p_ml->i_pos--;
-    }
-
     if (p_ml->b_free_media)
         media_item_destroy(p_mi);
 }
@@ -205,6 +187,25 @@ media_list_remove_common(media_list *p_ml, unsigned int i_index, media_item *p_m
     assert(eina_array_count(p_ml->p_item_array) != i_prev_count);
 
     media_list_on_media_removed(p_ml, i_index, p_mi);
+
+    if (eina_array_count(p_ml->p_item_array) == 0)
+    {
+        /* notify there if no more current media */
+        p_ml->i_pos = -1;
+        p_ml->p_mi = NULL;
+        media_list_on_new_pos(p_ml);
+    }
+    else if (p_ml->i_pos == i_index)
+    {
+        /* notify current media changed */
+        p_ml->p_mi = eina_array_data_get(p_ml->p_item_array, p_ml->i_pos);
+        media_list_on_new_pos(p_ml);
+    }
+    else if (i_index < p_ml->i_pos)
+    {
+        p_ml->i_pos--;
+    }
+
     return 0;
 }
 
