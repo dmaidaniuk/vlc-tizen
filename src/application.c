@@ -241,7 +241,6 @@ main(int argc, char *argv[])
     ui_app_add_event_handler(&handlers[APP_EVENT_DEVICE_ORIENTATION_CHANGED], APP_EVENT_DEVICE_ORIENTATION_CHANGED, ui_app_orient_changed, app);
     ui_app_add_event_handler(&handlers[APP_EVENT_LANGUAGE_CHANGED], APP_EVENT_LANGUAGE_CHANGED, ui_app_lang_changed, app);
     ui_app_add_event_handler(&handlers[APP_EVENT_REGION_FORMAT_CHANGED], APP_EVENT_REGION_FORMAT_CHANGED, ui_app_region_changed, app);
-    ui_app_remove_event_handler(handlers[APP_EVENT_LOW_MEMORY]);
 
     int ret = ui_app_main(argc, argv, &event_callback, app);
     if (ret != APP_ERROR_NONE) {
