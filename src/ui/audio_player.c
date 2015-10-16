@@ -983,7 +983,6 @@ void
 mini_player_stop(mini_player *mpd)
 {
     /* Stop the player */
-    playback_service_unregister_callbacks(mpd->p_ps, mpd->p_ps_cbs_id);
     playback_service_stop(mpd->p_ps);
 
     mpd->fs_state = false;
