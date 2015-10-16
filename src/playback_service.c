@@ -27,6 +27,7 @@
 #include <Elementary.h>
 #include <Emotion.h>
 #include <notification.h>
+#include <app.h>
 #include <app_control.h>
 
 #include <device/power.h>
@@ -71,6 +72,8 @@ struct playback_service
 
     bool b_started;
     bool b_seeking;
+
+    bool b_auto_exit;
 
     notification_h  p_notification;
     app_control_h   p_app_control;
@@ -541,6 +544,9 @@ playback_service_stop_notify(playback_service *p_ps, bool b_notify)
 
     notification_delete(p_ps->p_notification);
 
+    if (p_ps->b_auto_exit)
+        ui_app_exit();
+
     return 0;
 }
 
@@ -777,4 +783,10 @@ void
 playback_service_audio_channel_set(playback_service *p_ps, int channel)
 {
     emotion_object_audio_channel_set(p_ps->p_e, channel);
+}
+
+void
+playback_service_set_auto_exit(playback_service *p_ps, bool value)
+{
+    p_ps->b_auto_exit = value;
 }

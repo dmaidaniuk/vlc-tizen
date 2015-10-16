@@ -166,4 +166,7 @@ playback_service_audio_channel_get_list(playback_service *p_ps);
 void
 playback_service_audio_channel_set(playback_service *p_ps, int channel);
 
+void
+playback_service_set_auto_exit(playback_service *p_ps, bool value);
+
 #endif /* PLAYBACK_SERVICE_H */
