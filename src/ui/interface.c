@@ -213,6 +213,7 @@ intf_pop_view(interface *intf)
         {
             /* Lower the window (but keep the mainloop running) */
             elm_win_lower(intf->win);
+            playback_service_set_auto_exit(p_ps, true);
         }
         else
         {

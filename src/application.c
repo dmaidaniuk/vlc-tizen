@@ -137,8 +137,11 @@ static void
 app_resume(void *data)
 {
     LOGD("Lifecycle: app_resume");
-    /* Take necessary actions when application becomes visible. */
-    //    application *app = data;
+
+    application *app = data;
+    playback_service *p_ps = application_get_playback_service(app);
+
+    playback_service_set_auto_exit(p_ps, false);
 }
 
 static void
