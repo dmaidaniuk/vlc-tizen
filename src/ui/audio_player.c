@@ -773,8 +773,8 @@ add_fullscreen_item_table(mini_player *mpd, Evas_Object *parent)
     player_update_sliders(mpd, i_pos);
 
     /* */
+    mpd->fs_play_pause_img = create_icon(mpd->fs_table, "ic_pause_circle_normal_o.png");
     update_player_play_pause(mpd);
-
     evas_object_size_hint_min_set(mpd->fs_play_pause_img, 200, 100);
     evas_object_size_hint_max_set(mpd->fs_play_pause_img, 200, 100);
     evas_object_size_hint_align_set(mpd->fs_play_pause_img, 0.5, 1.0);
