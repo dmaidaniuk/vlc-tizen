@@ -126,7 +126,7 @@ popup_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 
     case 0:
         /* */
-        elm_popup_timeout_set(apd->mpd->popup, 0.1);
+        evas_object_del(apd->mpd->popup);
         /* */
         elm_image_file_set(apd->mpd->fs_more_btn, ICON_DIR"ic_more_circle_normal_o.png", NULL);
         /* */
@@ -140,7 +140,7 @@ popup_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 
     case 1:
         /* */
-        elm_popup_timeout_set(apd->mpd->popup, 0.1);
+        evas_object_del(apd->mpd->popup);
         /* */
         elm_image_file_set(apd->mpd->fs_more_btn, ICON_DIR"ic_more_circle_normal_o.png", NULL);
         /* */
@@ -154,7 +154,7 @@ popup_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 
     case 2:
         /* */
-        elm_popup_timeout_set(apd->mpd->popup, 0.1);
+        evas_object_del(apd->mpd->popup);
         /* */
         elm_image_file_set(apd->mpd->fs_more_btn, ICON_DIR"ic_more_circle_normal_o.png", NULL);
         /* */
@@ -479,7 +479,7 @@ fs_more_player_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
     else
     {
         /* */
-        elm_popup_timeout_set(mpd->popup, 0.0);
+        evas_object_del(mpd->popup);
 
         /* Change the more button img */
         elm_image_file_set(mpd->fs_more_btn, ICON_DIR"ic_more_circle_normal_o.png", NULL);
