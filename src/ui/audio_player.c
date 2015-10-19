@@ -662,7 +662,6 @@ add_fullscreen_item_table(mini_player *mpd, Evas_Object *parent)
 
     /* */
     mpd->fs_title = elm_label_add(parent);
-    elm_object_text_set(mpd->fs_title, "<b>Title</b>");
     evas_object_show(mpd->fs_title);
     evas_object_size_hint_min_set(mpd->fs_title, 250, 25);
     evas_object_size_hint_max_set(mpd->fs_title, 250, 25);
@@ -672,7 +671,6 @@ add_fullscreen_item_table(mini_player *mpd, Evas_Object *parent)
 
     /* */
     mpd->fs_sub_title = elm_label_add(parent);
-    elm_object_text_set(mpd->fs_sub_title, "Subtitle");
     evas_object_show(mpd->fs_sub_title);
     evas_object_size_hint_min_set(mpd->fs_sub_title, 250, 25);
     evas_object_size_hint_max_set(mpd->fs_sub_title, 250, 25);
