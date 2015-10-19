@@ -326,6 +326,23 @@ mini_player_fs_state(mini_player *mp)
     return mp->fs_state;
 }
 
+bool
+audio_player_handle_back_key(mini_player *mp)
+{
+    if (mp->popup)
+    {
+        evas_object_del(mp->popup);
+        return true;
+    }
+    if (mini_player_fs_state(mp) == true)
+    {
+        collapse_fullscreen_player(mp);
+        return true;
+    }
+
+    return false;
+}
+
 static void
 update_player_play_pause(mini_player* mpd)
 {
@@ -455,6 +472,14 @@ audio_player_more_popup_close_cb(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
+audio_player_more_popup_free_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+    mini_player *mpd = data;
+
+    mpd->popup = NULL;
+}
+
+static void
 fs_more_player_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
     mini_player *mpd = data;
@@ -479,6 +504,7 @@ fs_more_player_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
         evas_object_show(mpd->popup);
 
         evas_object_smart_callback_add(mpd->popup, "block,clicked", audio_player_more_popup_close_cb, mpd);
+        evas_object_event_callback_add(mpd->popup, EVAS_CALLBACK_FREE, audio_player_more_popup_free_cb, mpd);
 
         /* Change the more button img */
         elm_image_file_set(mpd->fs_more_btn, ICON_DIR"ic_more_circle_pressed_o.png", NULL);

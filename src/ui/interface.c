@@ -279,8 +279,8 @@ win_back_key_cb(void *data, Evas_Object *obj, void *event_info)
         elm_panel_hidden_set(intf->sidebar, EINA_TRUE);
     }
     /* Hide the audio_player then */
-    else if (mini_player_fs_state(intf->p_mini_player) == true) { //FIXME
-        collapse_fullscreen_player(intf->p_mini_player);
+    else if (audio_player_handle_back_key(intf->p_mini_player) == true) { //FIXME
+        return;
     }
     /* Finally pop out the stack */
     else {

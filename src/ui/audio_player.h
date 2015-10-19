@@ -49,4 +49,7 @@ mini_player_fs_state(mini_player *);
 void
 collapse_fullscreen_player(mini_player *);
 
+bool
+audio_player_handle_back_key(mini_player *);
+
 #endif /* MINI_PLAYER_H_ */
