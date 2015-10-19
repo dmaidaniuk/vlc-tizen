@@ -445,6 +445,16 @@ fs_playlist_player_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info
 }
 
 static void
+audio_player_more_popup_close_cb(void *data, Evas_Object *obj, void *event_info)
+{
+    mini_player *mpd = data;
+
+    mpd->more_state = false;
+    elm_image_file_set(mpd->fs_more_btn, ICON_DIR"ic_more_circle_normal_o.png", NULL);
+    evas_object_del(obj);
+}
+
+static void
 fs_more_player_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
     mini_player *mpd = data;
@@ -467,6 +477,8 @@ fs_more_player_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
         evas_object_show(popup_list);
         /* */
         evas_object_show(mpd->popup);
+
+        evas_object_smart_callback_add(mpd->popup, "block,clicked", audio_player_more_popup_close_cb, mpd);
 
         /* Change the more button img */
         elm_image_file_set(mpd->fs_more_btn, ICON_DIR"ic_more_circle_pressed_o.png", NULL);
