@@ -35,15 +35,15 @@
 #include "IArtist.h"
 
 media_item*
-fileToMediaItem( FilePtr file )
+fileToMediaItem( MediaPtr file )
 {
     auto type = MEDIA_ITEM_TYPE_UNKNOWN;
     switch ( file->type() )
     {
-    case IFile::Type::VideoType:
+    case IMedia::Type::VideoType:
         type = MEDIA_ITEM_TYPE_VIDEO;
         break;
-    case IFile::Type::AudioType:
+    case IMedia::Type::AudioType:
         type = MEDIA_ITEM_TYPE_AUDIO;
         break;
     default:
@@ -60,10 +60,10 @@ fileToMediaItem( FilePtr file )
         return nullptr;
     }
     mi->i_id = file->id();
-    media_item_set_meta(mi, MEDIA_ITEM_META_TITLE, file->name().c_str());
+    media_item_set_meta(mi, MEDIA_ITEM_META_TITLE, file->title().c_str());
 
     mi->i_duration = file->duration();
-    if ( file->type() == IFile::Type::VideoType )
+    if ( file->type() == IMedia::Type::VideoType )
     {
         auto vtracks = file->videoTracks();
         if ( vtracks.size() != 0 )
@@ -77,26 +77,22 @@ fileToMediaItem( FilePtr file )
         if (file->snapshot().length() > 0)
             mi->psz_snapshot = strdup(file->snapshot().c_str());
     }
-    else if ( file->type() == IFile::Type::AudioType )
+    else if ( file->type() == IMedia::Type::AudioType )
     {
+        auto artists = file->artists();
+        if (artists.size() > 0)
+        {
+            std::string artistStr;
+            for ( auto& a : artists )
+            {
+                artistStr += a->name() + ", ";
+            }
+            artistStr.erase( artistStr.length() - 2, 2 );
+            media_item_set_meta(mi, MEDIA_ITEM_META_ARTIST, artistStr.c_str());
+        }
         auto albumTrack = file->albumTrack();
         if (albumTrack != nullptr)
         {
-            auto artists = albumTrack->artists();
-            if (artists.size() > 0)
-            {
-                std::string artistStr;
-                for ( auto& a : artists )
-                {
-                    artistStr += a->name() + ", ";
-                }
-                artistStr.erase( artistStr.length() - 2, 2 );
-                media_item_set_meta(mi, MEDIA_ITEM_META_ARTIST, artistStr.c_str());
-            }
-            else
-            {
-                media_item_set_meta(mi, MEDIA_ITEM_META_ARTIST, "Unknown Artist");
-            }
             auto album = albumTrack->album();
             if (album != nullptr)
             {
@@ -139,19 +135,4 @@ artistToArtistItem( ArtistPtr artist )
     if (p_item == nullptr)
         return nullptr;
     return p_item;
-}
-
-media_item*
-albumTrackToItem( AlbumTrackPtr track )
-{
-    auto files = track->files();
-    if (files.size() == 0)
-    {
-        LOGE("No file associated with audiotrack %s", track->title().c_str());
-        return nullptr;
-    }
-    if (files.size() > 1)
-        LOGW("More than a single file for this track, ignoring all but first one");
-    auto file = files[0];
-    return fileToMediaItem(file);
 }

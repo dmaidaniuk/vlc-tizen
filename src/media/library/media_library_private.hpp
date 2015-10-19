@@ -27,17 +27,16 @@
 #include <mutex>
 
 #include "IAlbum.h"
-#include "IFile.h"
+#include "IMedia.h"
 #include "ILogger.h"
 #include "media_library.hpp"
 #include "media/media_item.h"
 #include "media/album_item.h"
 #include "media/artist_item.h"
 
-media_item* fileToMediaItem( FilePtr file );
+media_item* fileToMediaItem( MediaPtr file );
 album_item* albumToAlbumItem( AlbumPtr album );
 artist_item* artistToArtistItem( ArtistPtr album );
-media_item* albumTrackToItem( AlbumTrackPtr track );
 
 class TizenLogger : public ILogger
 {
@@ -64,8 +63,8 @@ public:
     virtual ~media_library() = default;
 
     // IMediaLibraryCb
-    virtual void onFileAdded( FilePtr file ) override;
-    virtual void onFileUpdated( FilePtr file ) override;
+    virtual void onFileAdded( MediaPtr file ) override;
+    virtual void onFileUpdated( MediaPtr file ) override;
 
     virtual void onDiscoveryStarted( const std::string& entryPoint ) override;
     virtual void onDiscoveryCompleted( const std::string& entryPoint ) override;
@@ -87,7 +86,7 @@ public:
     std::shared_ptr<IMediaLibrary> ml;
 
 private:
-    void sendFileUpdate( FilePtr item, bool added );
+    void sendFileUpdate( MediaPtr item, bool added );
 
 private:
     struct FileUpdateCallbackCtx

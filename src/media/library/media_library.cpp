@@ -43,19 +43,19 @@ media_library::media_library()
 }
 
 void
-media_library::onFileAdded( FilePtr file )
+media_library::onFileAdded( MediaPtr file )
 {
     sendFileUpdate( file, true );
 }
 
 void
-media_library::onFileUpdated( FilePtr file )
+media_library::onFileUpdated( MediaPtr file )
 {
     sendFileUpdate( file, false );
 }
 
 void
-media_library::sendFileUpdate( FilePtr file, bool added )
+media_library::sendFileUpdate( MediaPtr file, bool added )
 {
     auto item = fileToMediaItem( file );
     auto ctx = new FileUpdateCallbackCtx{this, item, added};
@@ -295,7 +295,7 @@ media_library_get_album_songs(media_library* p_ml, const char* psz_albumName, me
     }
     media_library_common_getter(cb, p_user_data,
             std::bind(&IAlbum::tracks, album),
-            albumTrackToItem);
+            fileToMediaItem);
 }
 
 void
