@@ -39,6 +39,12 @@ struct media_list_callbacks
     void *p_user_data;
 };
 
+enum PLAYLIST_REPEAT {
+    REPEAT_NONE,
+    REPEAT_ONE,
+    REPEAT_ALL,
+};
+
 media_list *
 media_list_create(bool b_free_media);
 
@@ -84,6 +90,11 @@ media_list_get_item(media_list *p_ml);
 media_item *
 media_list_get_item_at(media_list *p_ml,  unsigned int i_index);
 
+void
+media_list_set_repeat_mode(media_list *p_ml, enum PLAYLIST_REPEAT i_repeat);
+
+enum PLAYLIST_REPEAT
+media_list_get_repeat_mode(media_list *p_ml);
 
 /*****************/
 /* static helpers */

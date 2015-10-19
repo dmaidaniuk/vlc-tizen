@@ -37,6 +37,8 @@ struct media_list
     media_item *p_mi;
     int i_pos;
     bool b_free_media;
+
+    enum PLAYLIST_REPEAT i_repeat;
 };
 
 #define ML_SEND_CALLBACK(pf_cb, ...) do { \
@@ -90,6 +92,7 @@ media_list_create(bool b_free_media)
 
     p_ml->b_free_media = b_free_media;
     p_ml->i_pos = -1;
+    p_ml->i_repeat = REPEAT_NONE;
     return p_ml;
 }
 
@@ -269,26 +272,48 @@ bool
 media_list_set_pos(media_list *p_ml, int i_index)
 {
     ML_CLIP_POS(i_index);
-    if (i_index != p_ml->i_pos)
+    if (i_index != p_ml->i_pos || p_ml->i_repeat == REPEAT_ONE)
     {
         p_ml->i_pos = i_index;
         p_ml->p_mi = p_ml->i_pos >= 0 ? eina_array_data_get(p_ml->p_item_array, p_ml->i_pos) : NULL;
         media_list_on_new_pos(p_ml);
         return true;
-    } else
+    } else {
+        if (p_ml->i_repeat == REPEAT_ALL)
+        {
+            p_ml->i_pos = 0;
+            p_ml->p_mi = eina_array_data_get(p_ml->p_item_array, p_ml->i_pos);
+            media_list_on_new_pos(p_ml);
+            return true;
+        }
         return false;
+    }
 }
 
 bool
 media_list_set_next(media_list *p_ml)
 {
-    return media_list_set_pos(p_ml, p_ml->i_pos + 1);
+    if (p_ml->i_repeat == REPEAT_ONE)
+    {
+        return media_list_set_pos(p_ml, p_ml->i_pos);
+    }
+    else
+    {
+        return media_list_set_pos(p_ml, p_ml->i_pos + 1);
+    }
 }
 
 bool
 media_list_set_prev(media_list *p_ml)
 {
-    return media_list_set_pos(p_ml, p_ml->i_pos - 1);
+    if (p_ml->i_repeat == REPEAT_ONE)
+    {
+        return media_list_set_pos(p_ml, p_ml->i_pos);
+    }
+    else
+    {
+        return media_list_set_pos(p_ml, p_ml->i_pos - 1);
+    }
 }
 
 media_item *
@@ -307,4 +332,16 @@ media_list_get_item_at(media_list *p_ml, unsigned int i_index)
     p_mi = eina_array_data_get(p_ml->p_item_array, i_index);
     assert(p_mi);
     return p_mi;
+}
+
+void
+media_list_set_repeat_mode(media_list *p_ml, enum PLAYLIST_REPEAT i_repeat)
+{
+    p_ml->i_repeat = i_repeat;
+}
+
+enum PLAYLIST_REPEAT
+media_list_get_repeat_mode(media_list *p_ml)
+{
+    return p_ml->i_repeat;
 }

@@ -27,6 +27,7 @@
 
 #include "application.h"
 #include "media/media_item.h"
+#include "media/media_list.h"
 
 enum PLAYLIST_CONTEXT {
     PLAYLIST_CONTEXT_AUDIO,
@@ -168,5 +169,11 @@ playback_service_audio_channel_set(playback_service *p_ps, int channel);
 
 void
 playback_service_set_auto_exit(playback_service *p_ps, bool value);
+
+void
+playback_service_set_repeat_mode(playback_service *p_ps, enum PLAYLIST_REPEAT i_repeat);
+
+enum PLAYLIST_REPEAT
+playback_service_get_repeat_mode(playback_service *p_ps);
 
 #endif /* PLAYBACK_SERVICE_H */

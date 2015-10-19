@@ -297,6 +297,7 @@ playback_service_create(application *p_app)
         return NULL;
 
     p_ps->i_current_lock = -1;
+    p_ps->b_auto_exit = false;
 
     for (unsigned int i = 0; i < PLAYLIST_CONTEXT_COUNT; ++i)
     {
@@ -507,6 +508,11 @@ playback_service_start(playback_service *p_ps, double i_time)
         return -1;
     }
     LOGD("playback_service_start: %s", p_mi->psz_path);
+
+    // Unset the current file. Because emotion_object_file_set returns EINA_FALSE
+    // when reloading the same file, we need to unset it first to allow the REPEAT_ONE
+    // function to work.
+    emotion_object_file_set(p_ps->p_e, NULL);
 
     if (!emotion_object_file_set(p_ps->p_e, p_mi->psz_path))
     {
@@ -789,4 +795,16 @@ void
 playback_service_set_auto_exit(playback_service *p_ps, bool value)
 {
     p_ps->b_auto_exit = value;
+}
+
+void
+playback_service_set_repeat_mode(playback_service *p_ps, enum PLAYLIST_REPEAT i_repeat)
+{
+    media_list_set_repeat_mode(p_ps->p_ml_list[PLAYLIST_CONTEXT_AUDIO], i_repeat);
+}
+
+enum PLAYLIST_REPEAT
+playback_service_get_repeat_mode(playback_service *p_ps)
+{
+    return media_list_get_repeat_mode(p_ps->p_ml_list[PLAYLIST_CONTEXT_AUDIO]);
 }
