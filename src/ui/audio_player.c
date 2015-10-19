@@ -312,7 +312,7 @@ more_state(mini_player *mpd)
 }
 
 enum PLAYLIST_REPEAT
-repeat_state(mini_player *mpd)
+repeat_mode(mini_player *mpd)
 {
     /* Return the current repeat state*/
     return playback_service_get_repeat_mode(mpd->p_ps);
@@ -532,7 +532,7 @@ fs_repeat_player_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
     mini_player *mpd = data;
 
-    if(repeat_state(mpd) == REPEAT_NONE)
+    if(repeat_mode(mpd) == REPEAT_NONE)
     {
         /* Change the repeat button img */
         elm_image_file_set(mpd->fs_repeat_btn, ICON_DIR"ic_repeat_pressed.png", NULL);
@@ -541,7 +541,7 @@ fs_repeat_player_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 
         playback_service_set_repeat_mode(mpd->p_ps, REPEAT_ALL);
     }
-    else if(repeat_state(mpd) == REPEAT_ALL)
+    else if(repeat_mode(mpd) == REPEAT_ALL)
     {
         /* Change the repeat button img */
         elm_image_file_set(mpd->fs_repeat_btn, ICON_DIR"ic_repeat_one_pressed.png", NULL);
@@ -834,11 +834,11 @@ add_fullscreen_item_table(mini_player *mpd, Evas_Object *parent)
     evas_object_show(mpd->fs_total_time);
 
     /* */
-    if (repeat_state(mpd) == REPEAT_NONE)
+    if (repeat_mode(mpd) == REPEAT_NONE)
     {
         mpd->fs_repeat_btn = create_icon(parent, "ic_repeat_normal.png");
     }
-    else if (repeat_state(mpd) == REPEAT_ALL)
+    else if (repeat_mode(mpd) == REPEAT_ALL)
     {
         mpd->fs_repeat_btn = create_icon(parent, "ic_repeat_pressed.png");
     }
