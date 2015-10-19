@@ -34,11 +34,14 @@ artist_item_create(const char* psz_name)
     if (p_item == NULL)
         return NULL;
     p_item->i_library_item_type = LIBRARY_ITEM_ARTIST;
-    p_item->psz_name = strdup(psz_name);
-    if (p_item->psz_name == NULL)
+    if (psz_name != NULL && *psz_name != 0)
     {
-        free(p_item);
-        return NULL;
+        p_item->psz_name = strdup(psz_name);
+        if (p_item->psz_name == NULL)
+        {
+            free(p_item);
+            return NULL;
+        }
     }
     return p_item;
 }
@@ -61,5 +64,7 @@ artist_item_copy(const artist_item* p_item )
 bool
 artist_item_identical(const artist_item* p_left, const artist_item* p_right)
 {
+    if (p_left->psz_name == NULL || p_right->psz_name == NULL)
+        return p_left->psz_name == p_right->psz_name;
     return strcmp( p_left->psz_name, p_right->psz_name ) == 0;
 }

@@ -41,7 +41,7 @@ struct list_view_item
     artist_item*                    p_artist_item;
     Elm_Object_Item*                p_object_item;
     // members used when spawning a new view out of an item
-    media_library_controller*       p_albums_controller;
+    media_library_controller*       p_controller;
 };
 
 /*
@@ -53,27 +53,45 @@ static void
 audio_list_artist_item_get_album_cb(media_library* p_ml, media_library_list_cb cb, void* p_user_data )
 {
     list_view_item* p_view_item = (list_view_item*)p_user_data;
-    media_library_get_artist_albums(p_ml, p_view_item->p_artist_item->psz_name, cb, p_view_item->p_albums_controller);
+    media_library_get_artist_albums(p_ml, p_view_item->p_artist_item->psz_name, cb, p_view_item->p_controller);
+}
+
+static void
+audio_list_artist_item_get_songs_cb(media_library* p_ml, media_library_list_cb cb, void* p_user_data )
+{
+    list_view_item* p_view_item = (list_view_item*)p_user_data;
+    media_library_get_artist_songs(p_ml, p_view_item->p_artist_item->psz_name, cb, p_view_item->p_controller);
 }
 
 static void
 audio_list_artist_item_selected(void *data, Evas_Object *obj /*EINA_UNUSED*/, void *event_info)
 {
     list_view_item *p_view_item = (list_view_item*)data;
-
-    list_view* p_album_view = audio_list_album_view_create(p_view_item->p_list_sys->p_intf, p_view_item->p_list_sys->p_parent,
-            LIST_CREATE_ALL & ~LIST_CREATE_MEDIA_CONTROLLER);
-
-    /* Create a controller that will feed the new view */
     application* p_app = intf_get_application(p_view_item->p_list_sys->p_intf);
-    p_album_view->p_sys->p_ctrl = p_view_item->p_albums_controller = album_controller_create(p_app, p_album_view);
+    list_view* p_view;
 
-    /* Tweak the video controller to list the songs of a specific artist only */
-    media_library_controller_set_content_callback(p_view_item->p_albums_controller,
-            audio_list_artist_item_get_album_cb, p_view_item);
-    media_library_controller_refresh(p_view_item->p_albums_controller);
+    if (p_view_item->p_artist_item->psz_name != NULL)
+    {
+        p_view = audio_list_album_view_create(p_view_item->p_list_sys->p_intf, p_view_item->p_list_sys->p_parent,
+                LIST_CREATE_ALL & ~LIST_CREATE_MEDIA_CONTROLLER);
+        /* Create a controller that will feed the new view */
+        p_view->p_sys->p_ctrl = p_view_item->p_controller = album_controller_create(p_app, p_view);
+        /* Tweak the video controller to list the songs of a specific artist only */
+        media_library_controller_set_content_callback(p_view_item->p_controller,
+                    audio_list_artist_item_get_album_cb, p_view_item);
+    }
+    else
+    {
+        p_view = audio_list_song_view_create(p_view_item->p_list_sys->p_intf, p_view_item->p_list_sys->p_parent,
+                LIST_CREATE_ALL & ~LIST_CREATE_MEDIA_CONTROLLER);
+        p_view->p_sys->p_ctrl = p_view_item->p_controller = audio_controller_create(p_app, p_view);
+        media_library_controller_set_content_callback(p_view_item->p_controller,
+                    audio_list_artist_item_get_songs_cb, p_view_item);
+    }
 
-    Evas_Object* p_new_list = p_album_view->pf_get_widget(p_album_view->p_sys);
+    media_library_controller_refresh(p_view_item->p_controller);
+
+    Evas_Object* p_new_list = p_view->pf_get_widget(p_view->p_sys);
     Elm_Object_Item *it = elm_naviframe_item_push(p_view_item->p_list_sys->p_parent, "", NULL, NULL, p_new_list, NULL);
     elm_naviframe_item_title_enabled_set(it, EINA_FALSE, EINA_FALSE);
 }
@@ -95,7 +113,8 @@ genlist_text_get_cb(void *data, Evas_Object *obj, const char *part)
 
     if (itc->item_style && !strcmp(itc->item_style, "2line.top.3")) {
         if (part && !strcmp(part, "elm.text.main.left.top")) {
-            asprintf(&buf, "<b>%s</b>", p_view_item->p_artist_item->psz_name);
+            asprintf(&buf, "<b>%s</b>", p_view_item->p_artist_item->psz_name ?
+                    p_view_item->p_artist_item->psz_name : "Unknown Artist");
             return buf;
         }
     }
