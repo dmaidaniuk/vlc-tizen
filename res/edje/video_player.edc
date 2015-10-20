@@ -59,6 +59,7 @@ collections
                 name: "hub_background";
                 type: RECT;
                 description{
+                    fixed: 1 1;
                     state: "default" 0.0;
                     color: 255 255 255 255; // transparent black
                     visible: 1;
@@ -71,6 +72,7 @@ collections
                     max: -1 120;
                 }
                 description{
+                    fixed: 1 1;
                     state: "hidden" 0.0;
                     color: 255 255 255 0; // invisible
                     visible: 0;
