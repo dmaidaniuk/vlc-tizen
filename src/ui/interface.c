@@ -368,7 +368,7 @@ intf_update_mini_player(interface *intf)
         intf_mini_player_visible_set(intf, true);
     }
 
-    if((audio_player_play_state(intf->p_mini_player) == false) && (mini_player_fs_state(intf->p_mini_player) == true))
+    if((audio_player_play_state(intf->p_mini_player) == false) && (audio_player_fs_state(intf->p_mini_player) == true))
     {
         audio_player_stop(intf->p_mini_player);
     }
