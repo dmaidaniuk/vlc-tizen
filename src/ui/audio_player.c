@@ -39,6 +39,8 @@ struct mini_player {
     playback_service_cbs_id *p_ps_cbs_id;
 
     bool save_state, shuffle_state, playlist_state, more_state, fs_state;
+    double slider_event_time;
+
 
     Evas_Object *fs_table, *popup;
     Evas_Object *fullscreen_box;
@@ -588,47 +590,35 @@ fs_shuffle_player_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
     }
 }
 
-
-static void
-slider_delay_changed_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
-{
-    mini_player *mpd = data;
-
-    playback_service_seek_pos(mpd->p_ps, elm_slider_value_get(obj));
-}
-
-#if 0
 static void
 slider_changed_cb(void *data, Evas_Object *obj, void *event_info)
 {
     mini_player *mpd = data;
-    double val = elm_slider_value_get(obj);
-}
 
-static void
-slider_drag_start_cb(void *data, Evas_Object *obj, void *event_info)
-{
-    mini_player *mpd = data;
-    double val = elm_slider_value_get(obj);
+    // The smart callback "delay,changed" only works properly when
+    // seeking without releasing the finger/mouse but fail, more often
+    // than not, on single tap/click.
+    // Let's fix it by filtering events ourselves.
+
+    if (ecore_time_get() - mpd->slider_event_time > 0.5)
+    {
+        playback_service_seek_pos(mpd->p_ps, elm_slider_value_get(obj));
+        mpd->slider_event_time = ecore_time_get();
+    }
 }
 
 static void
 slider_drag_stop_cb(void *data, Evas_Object *obj, void *event_info)
 {
     mini_player *mpd = data;
-    double val = elm_slider_value_get(obj);
+    playback_service_seek_pos(mpd->p_ps, elm_slider_value_get(obj));
 }
-#endif
 
 static void
 set_sliders_callbacks(mini_player *mpd, Evas_Object *slider)
 {
-    evas_object_smart_callback_add(slider, "delay,changed", slider_delay_changed_cb, mpd);
-#if 0
     evas_object_smart_callback_add(slider, "changed", slider_changed_cb, mpd);
-    evas_object_smart_callback_add(slider, "slider,drag,start", slider_drag_start_cb, mpd);
     evas_object_smart_callback_add(slider, "slider,drag,stop", slider_drag_stop_cb, mpd);
-#endif
 }
 
 static void
