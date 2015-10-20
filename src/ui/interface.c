@@ -522,8 +522,9 @@ intf_destroy(interface *intf)
     if(intf->video_player != NULL)
         destroy_video_player(intf->video_player);
 
+    /* Audio Player */
     if(intf->p_mini_player != NULL)
-        ;//FIXME
+        destroy_audio_player(intf->p_mini_player);
 
     /* The window is the parent of all the objects:
     win, layout, main_box, nf_content, sidebar, sidebar_toggle_btn,

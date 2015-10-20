@@ -973,11 +973,9 @@ audio_player_start(audio_player *mpd, Eina_Array *array, int pos)
     update_player_display(mpd);
 }
 
-static void
-audio_player_free(void *data, Evas *e, Evas_Object *obj, void *event_info)
+void
+destroy_audio_player(audio_player *mpd)
 {
-    audio_player *mpd = data;
-
     // Unregister from the playback service
     playback_service_unregister_callbacks(mpd->p_ps, mpd->p_ps_cbs_id);
 
@@ -1018,8 +1016,6 @@ audio_player_create(interface *intf, playback_service *p_ps, Evas_Object *layout
 
     /* Put the mini player at the bottom of the content_box */
     evas_object_size_hint_align_set(layout, EVAS_HINT_FILL, 1.0);
-
-    evas_object_event_callback_add(layout, EVAS_CALLBACK_FREE, audio_player_free, mpd);
 
     update_player_display(mpd);
     return mpd;

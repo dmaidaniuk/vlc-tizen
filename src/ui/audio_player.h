@@ -52,4 +52,7 @@ audio_player_collapse_fullscreen_player(audio_player *);
 bool
 audio_player_handle_back_key(audio_player *);
 
+void
+destroy_audio_player(audio_player *);
+
 #endif /* MINI_PLAYER_H_ */
