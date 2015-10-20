@@ -952,7 +952,7 @@ ps_on_stopped_cb(playback_service *p_ps, void *p_user_data)
 }
 
 void
-create_base_player(mini_player *mpd, const char *file_path)
+create_base_player(mini_player *mpd, Eina_Array *array, int pos)
 {
     mini_player_reset_states(mpd);
 
@@ -974,8 +974,21 @@ create_base_player(mini_player *mpd, const char *file_path)
     playback_service_set_context(mpd->p_ps, PLAYLIST_CONTEXT_AUDIO);
     playback_service_set_evas_video(mpd->p_ps, NULL);
     playback_service_list_clear(mpd->p_ps);
-    media_item *p_mi = media_item_create(file_path, MEDIA_ITEM_TYPE_AUDIO);
-    playback_service_list_append(mpd->p_ps, p_mi);
+
+    media_item *p_mi;
+    Eina_Array_Iterator iterator;
+    unsigned int i;
+
+    EINA_ARRAY_ITER_NEXT(array, i, p_mi, iterator)
+    {
+        playback_service_list_append(mpd->p_ps, p_mi);
+    }
+
+    eina_array_free(array);
+
+    //media_item *p_mi = media_item_create(file_path, MEDIA_ITEM_TYPE_AUDIO);
+    //playback_service_list_append(mpd->p_ps, p_mi);
+    playback_service_list_set_pos(mpd->p_ps, pos);
     playback_service_start(mpd->p_ps, 0);
 
     update_player_display(mpd);

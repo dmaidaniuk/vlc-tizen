@@ -124,7 +124,26 @@ static void
 genlist_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
     list_view_item *ali = data;
-    intf_create_audio_player(ali->p_list->p_intf, ali->p_media_item->psz_path);
+    int items = elm_genlist_items_count(ali->p_list->p_list);
+    Eina_Array *array = eina_array_new(items);
+    Elm_Object_Item *it;
+    int index = 0, pos = 0;
+
+    it = elm_genlist_first_item_get(ali->p_list->p_list);
+
+    do {
+        list_view_item *lvi = elm_object_item_data_get(it);
+        if (lvi == NULL)
+            continue;
+
+        if (media_item_identical(lvi->p_media_item, ali->p_media_item))
+            pos = index;
+
+        eina_array_push(array, media_item_copy(lvi->p_media_item));
+        index++;
+    } while ((it = elm_genlist_item_next_get(it)) != NULL);
+
+    intf_create_audio_player(ali->p_list->p_intf, array, pos);
 }
 
 

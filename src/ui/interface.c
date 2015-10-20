@@ -376,9 +376,9 @@ intf_update_mini_player(interface *intf)
 
 
 void
-intf_create_audio_player(interface *intf, const char *psz_path)
+intf_create_audio_player(interface *intf, Eina_Array *array, int pos)
 {
-    create_base_player(intf->p_mini_player, psz_path);
+    create_base_player(intf->p_mini_player, array, pos);
 }
 
 static Evas_Object*
