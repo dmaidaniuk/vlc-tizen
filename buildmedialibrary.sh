@@ -60,7 +60,6 @@ cmake \
     -DLIBVLCPP_DIR="${PROJECTPATH}/libvlcpp" \
     -DLIBVLC_INCLUDE_DIR="${PROJECTPATH}/vlc/include;${PROJECTPATH}/vlc/build-tizen-${TARGET_TUPLE}/include" \
     -DLIBVLC_LIBRARY="${PROJECTPATH}/lib/libvlc.so" \
-    -DLIBVLCCORE_LIBRARY="${PROJECTPATH}/libvlccore.so" \
     -DSQLITE3_INCLUDE_DIR="${TIZEN_INCLUDES}/" \
     -DSQLITE3_LIBRARY_DEBUG="${TIZEN_LIBS}/libsqlite3.so" \
     -DSQLITE3_LIBRARY_RELEASE="${TIZEN_LIBS}/libsqlite3.so" \
