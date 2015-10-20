@@ -33,7 +33,7 @@
 #include "audio_player.h"
 #include "ui/utils.h"
 
-struct mini_player {
+struct audio_player {
     interface *intf;
     playback_service *p_ps;
     playback_service_cbs_id *p_ps_cbs_id;
@@ -56,14 +56,14 @@ struct mini_player {
 };
 
 static Evas_Object *
-create_audio_popup(mini_player *mpd);
+create_audio_popup(audio_player *mpd);
 
 typedef struct audio_popup_data
 {
     int index;
     Evas_Object *box, *genlist;
     Elm_Object_Item *item;
-    mini_player *mpd;
+    audio_player *mpd;
 
 } audio_popup_data_s;
 
@@ -176,7 +176,7 @@ mini_player_popup_free_cb(void *data, Evas_Object *obj, void *event_info)
 }
 
 static Evas_Object *
-create_audio_popup(mini_player *mpd)
+create_audio_popup(audio_player *mpd)
 {
     Evas_Object *genlist;
     Elm_Object_Item *it;
@@ -260,7 +260,7 @@ evas_change_time(Evas_Object *obj, double time)
 
 
 static void
-player_update_sliders(mini_player *mpd, double i_pos)
+player_update_sliders(audio_player *mpd, double i_pos)
 {
     if (mpd->slider)
         elm_slider_value_set (mpd->slider, i_pos);
@@ -269,7 +269,7 @@ player_update_sliders(mini_player *mpd, double i_pos)
 }
 
 static void
-mini_player_reset_states(mini_player *mpd)
+mini_player_reset_states(audio_player *mpd)
 {
     mpd->fs_state = false;
     mpd->save_state = false;
@@ -279,55 +279,55 @@ mini_player_reset_states(mini_player *mpd)
 }
 
 bool
-mini_player_play_state(mini_player *mpd)
+mini_player_play_state(audio_player *mpd)
 {
     /* Return the current play/pause state*/
     return playback_service_is_playing(mpd->p_ps);
 }
 
 bool
-save_state(mini_player *mpd)
+save_state(audio_player *mpd)
 {
     /* Return the current save button state*/
     return mpd->save_state;
 }
 
 bool
-playlist_state(mini_player *mpd)
+playlist_state(audio_player *mpd)
 {
     /* Return the current playlist button state*/
     return mpd->playlist_state;
 }
 
 bool
-shuffle_state(mini_player *mpd)
+shuffle_state(audio_player *mpd)
 {
     /* Return the current shuffle state*/
     return mpd->shuffle_state;
 }
 
 bool
-more_state(mini_player *mpd)
+more_state(audio_player *mpd)
 {
     /* Return the current more button state*/
     return mpd->more_state;
 }
 
 enum PLAYLIST_REPEAT
-repeat_mode(mini_player *mpd)
+repeat_mode(audio_player *mpd)
 {
     /* Return the current repeat state*/
     return playback_service_get_repeat_mode(mpd->p_ps);
 }
 
 bool
-mini_player_fs_state(mini_player *mp)
+mini_player_fs_state(audio_player *mp)
 {
     return mp->fs_state;
 }
 
 bool
-audio_player_handle_back_key(mini_player *mp)
+audio_player_handle_back_key(audio_player *mp)
 {
     if (mp->popup)
     {
@@ -344,7 +344,7 @@ audio_player_handle_back_key(mini_player *mp)
 }
 
 static void
-update_player_play_pause(mini_player* mpd)
+update_player_play_pause(audio_player* mpd)
 {
     bool b_playing = playback_service_is_playing(mpd->p_ps);
     elm_image_file_set(mpd->play_pause_img, b_playing ? ICON_DIR "ic_pause_circle_normal_o.png" : ICON_DIR "ic_play_circle_normal_o.png", NULL);
@@ -353,7 +353,7 @@ update_player_play_pause(mini_player* mpd)
 }
 
 static void
-update_player_display(mini_player* mpd)
+update_player_display(audio_player* mpd)
 {
     media_item *p_mi = playback_service_list_get_item(mpd->p_ps);
 
@@ -380,7 +380,7 @@ update_player_display(mini_player* mpd)
 static void
 play_pause_mini_player_cb(void *data, Evas_Object *obstopj EINA_UNUSED, void *event_info)
 {
-    mini_player *mpd = data;
+    audio_player *mpd = data;
 
     playback_service_toggle_play_pause(mpd->p_ps);
 
@@ -390,7 +390,7 @@ play_pause_mini_player_cb(void *data, Evas_Object *obstopj EINA_UNUSED, void *ev
 static void
 play_pause_fs_player_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
-    mini_player *mpd = data;
+    audio_player *mpd = data;
 
     playback_service_toggle_play_pause(mpd->p_ps);
 
@@ -401,14 +401,14 @@ play_pause_fs_player_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_in
 static void
 stop_mini_player_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
-    mini_player *mpd = data;
+    audio_player *mpd = data;
     mini_player_stop(mpd);
 }
 
 static void
 fs_save_player_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
-    mini_player *mpd = data;
+    audio_player *mpd = data;
 
     if(save_state(mpd) == false)
     {
@@ -435,7 +435,7 @@ fs_save_player_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 static void
 fs_playlist_player_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
-    mini_player *mpd = data;
+    audio_player *mpd = data;
 
     if(playlist_state(mpd) == false)
     {
@@ -463,7 +463,7 @@ fs_playlist_player_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info
 static void
 audio_player_more_popup_close_cb(void *data, Evas_Object *obj, void *event_info)
 {
-    mini_player *mpd = data;
+    audio_player *mpd = data;
 
     mpd->more_state = false;
     elm_image_file_set(mpd->fs_more_btn, ICON_DIR"ic_more_circle_normal_o.png", NULL);
@@ -473,7 +473,7 @@ audio_player_more_popup_close_cb(void *data, Evas_Object *obj, void *event_info)
 static void
 audio_player_more_popup_free_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
-    mini_player *mpd = data;
+    audio_player *mpd = data;
 
     mpd->popup = NULL;
 }
@@ -481,7 +481,7 @@ audio_player_more_popup_free_cb(void *data, Evas *e, Evas_Object *obj, void *eve
 static void
 fs_more_player_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
-    mini_player *mpd = data;
+    audio_player *mpd = data;
 
     if(more_state(mpd) == false)
     {
@@ -531,7 +531,7 @@ fs_more_player_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 static void
 fs_repeat_player_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
-    mini_player *mpd = data;
+    audio_player *mpd = data;
 
     if(repeat_mode(mpd) == REPEAT_NONE)
     {
@@ -565,7 +565,7 @@ fs_repeat_player_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 static void
 fs_shuffle_player_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
-    mini_player *mpd = data;
+    audio_player *mpd = data;
 
     if(shuffle_state(mpd) == false)
     {
@@ -592,7 +592,7 @@ fs_shuffle_player_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 static void
 slider_changed_cb(void *data, Evas_Object *obj, void *event_info)
 {
-    mini_player *mpd = data;
+    audio_player *mpd = data;
 
     // The smart callback "delay,changed" only works properly when
     // seeking without releasing the finger/mouse but fail, more often
@@ -609,19 +609,19 @@ slider_changed_cb(void *data, Evas_Object *obj, void *event_info)
 static void
 slider_drag_stop_cb(void *data, Evas_Object *obj, void *event_info)
 {
-    mini_player *mpd = data;
+    audio_player *mpd = data;
     playback_service_seek_pos(mpd->p_ps, elm_slider_value_get(obj));
 }
 
 static void
-set_sliders_callbacks(mini_player *mpd, Evas_Object *slider)
+set_sliders_callbacks(audio_player *mpd, Evas_Object *slider)
 {
     evas_object_smart_callback_add(slider, "changed", slider_changed_cb, mpd);
     evas_object_smart_callback_add(slider, "slider,drag,stop", slider_drag_stop_cb, mpd);
 }
 
 static void
-swallow_mini_player(mini_player *mpd, Evas_Object *layout)
+swallow_mini_player(audio_player *mpd, Evas_Object *layout)
 {
     elm_layout_file_set(layout, AUDIOPLAYERMINIEDJ, "audio_player");
 
@@ -654,12 +654,12 @@ swallow_mini_player(mini_player *mpd, Evas_Object *layout)
 static void
 fullscreen_player_collapse_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
-    mini_player *mpd = data;
+    audio_player *mpd = data;
     collapse_fullscreen_player(mpd);
 }
 
 void
-collapse_fullscreen_player(mini_player *mpd){
+collapse_fullscreen_player(audio_player *mpd){
     /* Pop the previous view in the content naviframe */
     intf_show_previous_view(mpd->intf);
     /* Update the fullscreen state bool */
@@ -669,7 +669,7 @@ collapse_fullscreen_player(mini_player *mpd){
 }
 
 static Evas_Object*
-add_fullscreen_item_table(mini_player *mpd, Evas_Object *parent)
+add_fullscreen_item_table(audio_player *mpd, Evas_Object *parent)
 {
     Evas_Object *fs_slider, *fs_padding;
 
@@ -872,7 +872,7 @@ add_fullscreen_item_table(mini_player *mpd, Evas_Object *parent)
 
 
 static Evas_Object*
-create_fullscreen_player_view(mini_player *mpd, Evas_Object *parent)
+create_fullscreen_player_view(audio_player *mpd, Evas_Object *parent)
 {
     /* Add the box for the fullscreen player view */
     Evas_Object *fullscreen_box = elm_box_add(parent);
@@ -893,7 +893,7 @@ create_fullscreen_player_view(mini_player *mpd, Evas_Object *parent)
 static void
 mini_player_fullscreen_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
-    mini_player *mpd = data;
+    audio_player *mpd = data;
     Evas_Object *fs_view;
 
     /* */
@@ -913,7 +913,7 @@ mini_player_fullscreen_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_
 static void
 ps_on_new_time_cb(playback_service *p_ps, void *p_user_data, double i_time, double i_pos)
 {
-    mini_player *mpd = p_user_data;
+    audio_player *mpd = p_user_data;
 
     if (mpd->fs_time)
         evas_change_time(mpd->fs_time, i_time);
@@ -923,7 +923,7 @@ ps_on_new_time_cb(playback_service *p_ps, void *p_user_data, double i_time, doub
 static void
 ps_on_new_len_cb(playback_service *p_ps, void *p_user_data, double i_len)
 {
-    mini_player *mpd = p_user_data;
+    audio_player *mpd = p_user_data;
     if (mpd->fs_total_time)
         evas_change_time(mpd->fs_total_time, i_len);
 }
@@ -931,7 +931,7 @@ ps_on_new_len_cb(playback_service *p_ps, void *p_user_data, double i_len)
 static void
 ps_on_started_cb(playback_service *p_ps, void *p_user_data, media_item *p_mi)
 {
-    mini_player *mpd = p_user_data;
+    audio_player *mpd = p_user_data;
 
     update_player_display(mpd);
 
@@ -948,7 +948,7 @@ ps_on_stopped_cb(playback_service *p_ps, void *p_user_data)
 }
 
 void
-audio_player_start(mini_player *mpd, Eina_Array *array, int pos)
+audio_player_start(audio_player *mpd, Eina_Array *array, int pos)
 {
     mini_player_reset_states(mpd);
 
@@ -976,7 +976,7 @@ audio_player_start(mini_player *mpd, Eina_Array *array, int pos)
 static void
 mini_player_free(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
-    mini_player *mpd = data;
+    audio_player *mpd = data;
 
     // Unregister from the playback service
     playback_service_unregister_callbacks(mpd->p_ps, mpd->p_ps_cbs_id);
@@ -984,10 +984,10 @@ mini_player_free(void *data, Evas *e, Evas_Object *obj, void *event_info)
     free(mpd);
 }
 
-mini_player*
+audio_player*
 mini_player_create(interface *intf, playback_service *p_ps, Evas_Object *layout)
 {
-    mini_player *mpd = calloc(1, sizeof(*mpd));
+    audio_player *mpd = calloc(1, sizeof(*mpd));
     mpd->intf = intf;
     mpd->p_ps = p_ps;
 
@@ -1026,7 +1026,7 @@ mini_player_create(interface *intf, playback_service *p_ps, Evas_Object *layout)
 }
 
 void
-mini_player_stop(mini_player *mpd)
+mini_player_stop(audio_player *mpd)
 {
     /* Stop the player */
     playback_service_stop(mpd->p_ps);

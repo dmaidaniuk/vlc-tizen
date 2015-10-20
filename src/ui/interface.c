@@ -66,7 +66,7 @@ struct interface {
     Evas_Object *popup_toggle_btn;
 
     /* Miniplayer */
-    mini_player *p_mini_player;
+    audio_player *p_mini_player;
     Evas_Object *mini_player_layout;
 };
 
