@@ -324,7 +324,8 @@ playback_service_create(application *p_app)
             goto error;
     }
 
-    p_ps->p_ml = get_media_list(p_ps, PLAYLIST_CONTEXT_AUDIO);
+    p_ps->i_ctx = PLAYLIST_CONTEXT_AUDIO;
+    p_ps->p_ml = get_media_list(p_ps, p_ps->i_ctx);
 
     p_ps->p_ea_evas = evas_new();
     if (p_ps->p_ea_evas)
