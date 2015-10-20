@@ -53,7 +53,7 @@ audio_list_album_item_get_songs_cb(media_library* p_ml, media_library_list_cb cb
 }
 
 static void
-audio_list_artist_item_selected(void *data, Evas_Object *obj /*EINA_UNUSED*/, void *event_info)
+audio_list_album_item_selected(void *data, Evas_Object *obj /*EINA_UNUSED*/, void *event_info)
 {
     list_view_item *p_view_item = (list_view_item*)data;
 
@@ -64,7 +64,7 @@ audio_list_artist_item_selected(void *data, Evas_Object *obj /*EINA_UNUSED*/, vo
     application* p_app = intf_get_application(p_view_item->p_list_sys->p_intf);
     p_songs_view->p_sys->p_ctrl = p_view_item->p_songs_controller = audio_controller_create(p_app, p_songs_view);
 
-    /* Tweak the video controller to list the songs of a specific artist only */
+    /* Tweak the video controller to list the songs of a specific album only */
     media_library_controller_set_content_callback(p_view_item->p_songs_controller,
             audio_list_album_item_get_songs_cb, p_view_item);
     media_library_controller_refresh(p_view_item->p_songs_controller);
@@ -128,7 +128,7 @@ audio_list_album_view_append_item(list_sys *p_list_sys, void* p_data)
             p_view_item,                                /* genlist item class user data     */
             NULL,                                       /* genlist parent item              */
             ELM_GENLIST_ITEM_NONE,                      /* genlist item type                */
-            audio_list_artist_item_selected,            /* genlist select smart callback    */
+            audio_list_album_item_selected,             /* genlist select smart callback    */
             p_view_item);                               /* genlist smart callback user data */
 
     /* */
