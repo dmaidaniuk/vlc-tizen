@@ -312,6 +312,7 @@ video_player_start(view_sys *p_sys, const char* file_path)
         .pf_on_new_time = ps_on_new_time_cb,
         .pf_on_stopped = ps_on_stop_cb,
         .p_user_data = p_sys,
+        .i_ctx = PLAYLIST_CONTEXT_VIDEO,
     };
 
     p_sys->p_ps_cbs_id = playback_service_register_callbacks(p_sys->p_ps, &cbs);

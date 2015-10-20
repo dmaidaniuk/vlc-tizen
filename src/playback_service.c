@@ -24,6 +24,8 @@
 
 #include "common.h"
 
+#include <assert.h>
+
 #include <Elementary.h>
 #include <Emotion.h>
 #include <notification.h>
@@ -37,7 +39,7 @@
 
 #include "ui/interface.h"
 
-#define PLAYLIST_CONTEXT_COUNT (PLAYLIST_CONTEXT_OTHERS + 1)
+#define PLAYLIST_CONTEXT_COUNT (PLAYLIST_CONTEXT_OTHERS)
 
 static const int META_EMOTIOM_TO_MEDIA_ITEM[] = {
     MEDIA_ITEM_META_TITLE,
@@ -58,6 +60,7 @@ static const char *STR_POWER_LOCKS[] = {
 
 struct playback_service
 {
+    enum PLAYLIST_CONTEXT i_ctx;
     media_list *p_ml_list[PLAYLIST_CONTEXT_COUNT];
     media_list *p_ml;
     Evas_Object *p_ea;  /* emotion audio */
@@ -84,7 +87,7 @@ struct playback_service
         Eina_List *p_el, *p_el_next; \
         playback_service_callbacks *p_cbs; \
         EINA_LIST_FOREACH_SAFE(p_ps->p_cbs_list, p_el_next, p_el, p_cbs) { \
-            if (p_cbs->pf_cb) \
+            if (p_cbs->pf_cb && (p_cbs->i_ctx == p_ps->i_ctx || p_cbs->i_ctx == PLAYLIST_CONTEXT_NONE)) \
                 p_cbs->pf_cb(p_ps, p_cbs->p_user_data, __VA_ARGS__); \
         } \
     } \
@@ -95,7 +98,7 @@ struct playback_service
         Eina_List *p_el, *p_el_next; \
         playback_service_callbacks *p_cbs; \
         EINA_LIST_FOREACH_SAFE(p_ps->p_cbs_list, p_el_next, p_el, p_cbs) { \
-            if (p_cbs->pf_cb) \
+            if (p_cbs->pf_cb && (p_cbs->i_ctx == p_ps->i_ctx || p_cbs->i_ctx == PLAYLIST_CONTEXT_NONE)) \
                 p_cbs->pf_cb(p_ps, p_cbs->p_user_data); \
         } \
     } \
@@ -289,6 +292,13 @@ ps_emotion_destroy(playback_service *p_ps, Evas_Object *p_e)
     evas_object_del(p_e);
 }
 
+static media_list *
+get_media_list(playback_service *p_ps, enum PLAYLIST_CONTEXT i_ctx)
+{
+    assert(i_ctx > PLAYLIST_CONTEXT_NONE || i_ctx <= PLAYLIST_CONTEXT_OTHERS);
+    return p_ps->p_ml_list[i_ctx - 1];
+}
+
 playback_service *
 playback_service_create(application *p_app)
 {
@@ -314,7 +324,7 @@ playback_service_create(application *p_app)
             goto error;
     }
 
-    p_ps->p_ml = p_ps->p_ml_list[PLAYLIST_CONTEXT_AUDIO];
+    p_ps->p_ml = get_media_list(p_ps, PLAYLIST_CONTEXT_AUDIO);
 
     p_ps->p_ea_evas = evas_new();
     if (p_ps->p_ea_evas)
@@ -403,13 +413,14 @@ playback_service_restart_emotion(playback_service *p_ps)
 int
 playback_service_set_context(playback_service *p_ps, enum PLAYLIST_CONTEXT i_ctx)
 {
-    if (i_ctx < PLAYLIST_CONTEXT_VIDEO || i_ctx > PLAYLIST_CONTEXT_OTHERS)
+    if (i_ctx <= PLAYLIST_CONTEXT_NONE || i_ctx >  PLAYLIST_CONTEXT_OTHERS)
         return -1;
-    if (p_ps->p_ml_list[i_ctx] == p_ps->p_ml)
+    if (get_media_list(p_ps, i_ctx) == p_ps->p_ml)
         return -1;
 
     playback_service_stop_notify(p_ps, true);
-    p_ps->p_ml = p_ps->p_ml_list[i_ctx];
+    p_ps->i_ctx = i_ctx;
+    p_ps->p_ml = get_media_list(p_ps, i_ctx);
     return 0;
 }
 
@@ -800,11 +811,11 @@ playback_service_set_auto_exit(playback_service *p_ps, bool value)
 void
 playback_service_set_repeat_mode(playback_service *p_ps, enum PLAYLIST_REPEAT i_repeat)
 {
-    media_list_set_repeat_mode(p_ps->p_ml_list[PLAYLIST_CONTEXT_AUDIO], i_repeat);
+    media_list_set_repeat_mode(get_media_list(p_ps, PLAYLIST_CONTEXT_AUDIO), i_repeat);
 }
 
 enum PLAYLIST_REPEAT
 playback_service_get_repeat_mode(playback_service *p_ps)
 {
-    return media_list_get_repeat_mode(p_ps->p_ml_list[PLAYLIST_CONTEXT_AUDIO]);
+    return media_list_get_repeat_mode(get_media_list(p_ps, PLAYLIST_CONTEXT_AUDIO));
 }

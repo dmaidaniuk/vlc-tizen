@@ -958,6 +958,7 @@ create_base_player(mini_player *mpd, Eina_Array *array, int pos)
             .pf_on_new_time = ps_on_new_time_cb,
             .pf_on_seek_done = NULL,
             .p_user_data = mpd,
+            .i_ctx = PLAYLIST_CONTEXT_AUDIO,
         };
         mpd->p_ps_cbs_id = playback_service_register_callbacks(mpd->p_ps, &cbs);
     }

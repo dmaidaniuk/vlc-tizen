@@ -30,6 +30,7 @@
 #include "media/media_list.h"
 
 enum PLAYLIST_CONTEXT {
+    PLAYLIST_CONTEXT_NONE,
     PLAYLIST_CONTEXT_AUDIO,
     PLAYLIST_CONTEXT_VIDEO,
     PLAYLIST_CONTEXT_OTHERS,
@@ -48,6 +49,7 @@ struct playback_service_callbacks
     void (*pf_on_new_time)(playback_service *p_ps, void *p_user_data, double i_time, double i_pos);
     void (*pf_on_seek_done)(playback_service *p_ps, void *p_user_data);
     void *p_user_data;
+    enum PLAYLIST_CONTEXT i_ctx;
 };
 
 playback_service *
