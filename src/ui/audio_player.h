@@ -35,7 +35,7 @@ mini_player*
 mini_player_create(interface *intf, playback_service *p_ps, Evas_Object *layout);
 
 void
-create_base_player(mini_player *mpd, Eina_Array *array, int pos);
+audio_player_start(mini_player *mpd, Eina_Array *array, int pos);
 
 void
 mini_player_stop(mini_player *);

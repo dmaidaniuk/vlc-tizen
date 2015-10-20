@@ -402,7 +402,6 @@ static void
 stop_mini_player_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
     mini_player *mpd = data;
-
     mini_player_stop(mpd);
 }
 
@@ -932,7 +931,14 @@ ps_on_new_len_cb(playback_service *p_ps, void *p_user_data, double i_len)
 static void
 ps_on_started_cb(playback_service *p_ps, void *p_user_data, media_item *p_mi)
 {
-    update_player_display(p_user_data);
+    mini_player *mpd = p_user_data;
+
+    update_player_display(mpd);
+
+    /* Show the mini player only if it isn't already shown */
+    if (intf_mini_player_visible_get(mpd->intf) == false){
+        intf_mini_player_visible_set(mpd->intf, true);
+    }
 }
 
 static void
@@ -942,26 +948,10 @@ ps_on_stopped_cb(playback_service *p_ps, void *p_user_data)
 }
 
 void
-create_base_player(mini_player *mpd, Eina_Array *array, int pos)
+audio_player_start(mini_player *mpd, Eina_Array *array, int pos)
 {
     mini_player_reset_states(mpd);
 
-    if (!mpd->p_ps_cbs_id)
-    {
-        playback_service_callbacks cbs = {
-            .pf_on_media_added = NULL,
-            .pf_on_media_removed = NULL,
-            .pf_on_media_selected = NULL,
-            .pf_on_started = ps_on_started_cb,
-            .pf_on_stopped = ps_on_stopped_cb,
-            .pf_on_new_len = ps_on_new_len_cb,
-            .pf_on_new_time = ps_on_new_time_cb,
-            .pf_on_seek_done = NULL,
-            .p_user_data = mpd,
-            .i_ctx = PLAYLIST_CONTEXT_AUDIO,
-        };
-        mpd->p_ps_cbs_id = playback_service_register_callbacks(mpd->p_ps, &cbs);
-    }
     playback_service_set_context(mpd->p_ps, PLAYLIST_CONTEXT_AUDIO);
     playback_service_set_evas_video(mpd->p_ps, NULL);
     playback_service_list_clear(mpd->p_ps);
@@ -977,18 +967,10 @@ create_base_player(mini_player *mpd, Eina_Array *array, int pos)
 
     eina_array_free(array);
 
-    //media_item *p_mi = media_item_create(file_path, MEDIA_ITEM_TYPE_AUDIO);
-    //playback_service_list_append(mpd->p_ps, p_mi);
     playback_service_list_set_pos(mpd->p_ps, pos);
     playback_service_start(mpd->p_ps, 0);
 
     update_player_display(mpd);
-
-    /* Show the mini player only if it isn't already shown */
-    if (intf_mini_player_visible_get(mpd->intf) == false){
-        intf_mini_player_visible_set(mpd->intf, true);
-    }
-
 }
 
 static void
@@ -996,7 +978,9 @@ mini_player_free(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
     mini_player *mpd = data;
 
+    // Unregister from the playback service
     playback_service_unregister_callbacks(mpd->p_ps, mpd->p_ps_cbs_id);
+
     free(mpd);
 }
 
@@ -1006,6 +990,23 @@ mini_player_create(interface *intf, playback_service *p_ps, Evas_Object *layout)
     mini_player *mpd = calloc(1, sizeof(*mpd));
     mpd->intf = intf;
     mpd->p_ps = p_ps;
+
+    playback_service_callbacks cbs = {
+        .pf_on_media_added = NULL,
+        .pf_on_media_removed = NULL,
+        .pf_on_media_selected = NULL,
+        .pf_on_started = ps_on_started_cb,
+        .pf_on_stopped = ps_on_stopped_cb,
+        .pf_on_new_len = ps_on_new_len_cb,
+        .pf_on_new_time = ps_on_new_time_cb,
+        .pf_on_seek_done = NULL,
+        .p_user_data = mpd,
+        .i_ctx = PLAYLIST_CONTEXT_AUDIO,
+    };
+    mpd->p_ps_cbs_id = playback_service_register_callbacks(mpd->p_ps, &cbs);
+
+    if (mpd->p_ps_cbs_id == NULL)
+        LOGE("Unable to register the audio player");
 
     swallow_mini_player(mpd, layout);
 
@@ -1030,6 +1031,7 @@ mini_player_stop(mini_player *mpd)
     /* Stop the player */
     playback_service_stop(mpd->p_ps);
 
+    /* Reset the fullscreen state */
     mpd->fs_state = false;
 
     /* Hide the player */

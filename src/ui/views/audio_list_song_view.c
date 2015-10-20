@@ -143,7 +143,7 @@ genlist_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
         index++;
     } while ((it = elm_genlist_item_next_get(it)) != NULL);
 
-    intf_create_audio_player(ali->p_list->p_intf, array, pos);
+    intf_start_audio_player(ali->p_list->p_intf, array, pos);
 }
 
 
