@@ -56,7 +56,7 @@ struct audio_player {
 };
 
 static Evas_Object *
-create_audio_popup(audio_player *mpd);
+audio_player_create_popup(audio_player *mpd);
 
 typedef struct audio_popup_data
 {
@@ -169,14 +169,14 @@ popup_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 }
 
 static void
-mini_player_popup_free_cb(void *data, Evas_Object *obj, void *event_info)
+audio_player_popup_free_cb(void *data, Evas_Object *obj, void *event_info)
 {
     audio_popup_data_s *apd = data;
     free(apd);
 }
 
 static Evas_Object *
-create_audio_popup(audio_player *mpd)
+audio_player_create_popup(audio_player *mpd)
 {
     Evas_Object *genlist;
     Elm_Object_Item *it;
@@ -218,7 +218,7 @@ create_audio_popup(audio_player *mpd)
                 apd);                       /* genlist smart callback user data */
 
         apd->item = it;
-        elm_object_item_del_cb_set(it, mini_player_popup_free_cb);
+        elm_object_item_del_cb_set(it, audio_player_popup_free_cb);
     }
 
     elm_box_pack_end(box, genlist);
@@ -269,7 +269,7 @@ player_update_sliders(audio_player *mpd, double i_pos)
 }
 
 static void
-mini_player_reset_states(audio_player *mpd)
+audio_player_reset_states(audio_player *mpd)
 {
     mpd->fs_state = false;
     mpd->save_state = false;
@@ -279,35 +279,35 @@ mini_player_reset_states(audio_player *mpd)
 }
 
 bool
-mini_player_play_state(audio_player *mpd)
+audio_player_play_state(audio_player *mpd)
 {
     /* Return the current play/pause state*/
     return playback_service_is_playing(mpd->p_ps);
 }
 
 bool
-save_state(audio_player *mpd)
+audio_player_save_state(audio_player *mpd)
 {
     /* Return the current save button state*/
     return mpd->save_state;
 }
 
 bool
-playlist_state(audio_player *mpd)
+audio_player_playlist_state(audio_player *mpd)
 {
     /* Return the current playlist button state*/
     return mpd->playlist_state;
 }
 
 bool
-shuffle_state(audio_player *mpd)
+audio_player_shuffle_state(audio_player *mpd)
 {
     /* Return the current shuffle state*/
     return mpd->shuffle_state;
 }
 
 bool
-more_state(audio_player *mpd)
+audio_player_more_state(audio_player *mpd)
 {
     /* Return the current more button state*/
     return mpd->more_state;
@@ -321,7 +321,7 @@ repeat_mode(audio_player *mpd)
 }
 
 bool
-mini_player_fs_state(audio_player *mp)
+audio_player_fs_state(audio_player *mp)
 {
     return mp->fs_state;
 }
@@ -334,9 +334,9 @@ audio_player_handle_back_key(audio_player *mp)
         evas_object_del(mp->popup);
         return true;
     }
-    if (mini_player_fs_state(mp) == true)
+    if (audio_player_fs_state(mp) == true)
     {
-        collapse_fullscreen_player(mp);
+        audio_player_collapse_fullscreen_player(mp);
         return true;
     }
 
@@ -378,7 +378,7 @@ update_player_display(audio_player* mpd)
 }
 
 static void
-play_pause_mini_player_cb(void *data, Evas_Object *obstopj EINA_UNUSED, void *event_info)
+play_pause_audio_player_cb(void *data, Evas_Object *obstopj EINA_UNUSED, void *event_info)
 {
     audio_player *mpd = data;
 
@@ -399,10 +399,10 @@ play_pause_fs_player_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_in
 }
 
 static void
-stop_mini_player_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
+stop_audio_player_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
     audio_player *mpd = data;
-    mini_player_stop(mpd);
+    audio_player_stop(mpd);
 }
 
 static void
@@ -410,7 +410,7 @@ fs_save_player_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
     audio_player *mpd = data;
 
-    if(save_state(mpd) == false)
+    if(audio_player_save_state(mpd) == false)
     {
         /* Change the save button img */
         elm_image_file_set(mpd->fs_save_btn, ICON_DIR"ic_save_pressed.png", NULL);
@@ -437,7 +437,7 @@ fs_playlist_player_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info
 {
     audio_player *mpd = data;
 
-    if(playlist_state(mpd) == false)
+    if(audio_player_playlist_state(mpd) == false)
     {
         /* Change the playlist button img */
         elm_image_file_set(mpd->fs_playlist_btn, ICON_DIR"ic_playlist_pressed.png", NULL);
@@ -483,7 +483,7 @@ fs_more_player_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
     audio_player *mpd = data;
 
-    if(more_state(mpd) == false)
+    if(audio_player_more_state(mpd) == false)
     {
         /* Create the more popup list */
         Evas_Object *popup_list;
@@ -496,7 +496,7 @@ fs_more_player_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
         evas_object_size_hint_max_set(mpd->popup, 200, 200);
 
         /* Add the more list in the popup */
-        popup_list = create_audio_popup(mpd); //FIXME
+        popup_list = audio_player_create_popup(mpd); //FIXME
         elm_object_content_set(mpd->popup, popup_list);
         evas_object_show(popup_list);
         /* */
@@ -567,7 +567,7 @@ fs_shuffle_player_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
     audio_player *mpd = data;
 
-    if(shuffle_state(mpd) == false)
+    if(audio_player_shuffle_state(mpd) == false)
     {
         /* Change the shuffle button img */
         elm_image_file_set(mpd->fs_shuffle_btn, ICON_DIR"ic_shuffle_pressed.png", NULL);
@@ -655,11 +655,11 @@ static void
 fullscreen_player_collapse_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
     audio_player *mpd = data;
-    collapse_fullscreen_player(mpd);
+    audio_player_collapse_fullscreen_player(mpd);
 }
 
 void
-collapse_fullscreen_player(audio_player *mpd){
+audio_player_collapse_fullscreen_player(audio_player *mpd){
     /* Pop the previous view in the content naviframe */
     intf_show_previous_view(mpd->intf);
     /* Update the fullscreen state bool */
@@ -891,7 +891,7 @@ create_fullscreen_player_view(audio_player *mpd, Evas_Object *parent)
 }
 
 static void
-mini_player_fullscreen_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
+audio_player_fullscreen_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
     audio_player *mpd = data;
     Evas_Object *fs_view;
@@ -944,13 +944,13 @@ ps_on_started_cb(playback_service *p_ps, void *p_user_data, media_item *p_mi)
 static void
 ps_on_stopped_cb(playback_service *p_ps, void *p_user_data)
 {
-    mini_player_stop(p_user_data);
+    audio_player_stop(p_user_data);
 }
 
 void
 audio_player_start(audio_player *mpd, Eina_Array *array, int pos)
 {
-    mini_player_reset_states(mpd);
+    audio_player_reset_states(mpd);
 
     playback_service_set_context(mpd->p_ps, PLAYLIST_CONTEXT_AUDIO);
     playback_service_set_evas_video(mpd->p_ps, NULL);
@@ -974,7 +974,7 @@ audio_player_start(audio_player *mpd, Eina_Array *array, int pos)
 }
 
 static void
-mini_player_free(void *data, Evas *e, Evas_Object *obj, void *event_info)
+audio_player_free(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
     audio_player *mpd = data;
 
@@ -985,7 +985,7 @@ mini_player_free(void *data, Evas *e, Evas_Object *obj, void *event_info)
 }
 
 audio_player*
-mini_player_create(interface *intf, playback_service *p_ps, Evas_Object *layout)
+audio_player_create(interface *intf, playback_service *p_ps, Evas_Object *layout)
 {
     audio_player *mpd = calloc(1, sizeof(*mpd));
     mpd->intf = intf;
@@ -1011,22 +1011,22 @@ mini_player_create(interface *intf, playback_service *p_ps, Evas_Object *layout)
     swallow_mini_player(mpd, layout);
 
     /* Add button callbacks */
-    evas_object_smart_callback_add(mpd->play_pause_img, "clicked", play_pause_mini_player_cb, mpd);
-    evas_object_smart_callback_add(mpd->cover, "clicked", stop_mini_player_cb, mpd);
-    evas_object_smart_callback_add(mpd->title, "clicked", mini_player_fullscreen_cb, mpd);
-    evas_object_smart_callback_add(mpd->sub_title, "clicked", mini_player_fullscreen_cb, mpd);
+    evas_object_smart_callback_add(mpd->play_pause_img, "clicked", play_pause_audio_player_cb, mpd);
+    evas_object_smart_callback_add(mpd->cover, "clicked", stop_audio_player_cb, mpd);
+    evas_object_smart_callback_add(mpd->title, "clicked", audio_player_fullscreen_cb, mpd);
+    evas_object_smart_callback_add(mpd->sub_title, "clicked", audio_player_fullscreen_cb, mpd);
 
     /* Put the mini player at the bottom of the content_box */
     evas_object_size_hint_align_set(layout, EVAS_HINT_FILL, 1.0);
 
-    evas_object_event_callback_add(layout, EVAS_CALLBACK_FREE, mini_player_free, mpd);
+    evas_object_event_callback_add(layout, EVAS_CALLBACK_FREE, audio_player_free, mpd);
 
     update_player_display(mpd);
     return mpd;
 }
 
 void
-mini_player_stop(audio_player *mpd)
+audio_player_stop(audio_player *mpd)
 {
     /* Stop the player */
     playback_service_stop(mpd->p_ps);

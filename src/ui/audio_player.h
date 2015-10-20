@@ -32,22 +32,22 @@
 typedef struct audio_player audio_player;
 
 audio_player*
-mini_player_create(interface *intf, playback_service *p_ps, Evas_Object *layout);
+audio_player_create(interface *intf, playback_service *p_ps, Evas_Object *layout);
 
 void
 audio_player_start(audio_player *mpd, Eina_Array *array, int pos);
 
 void
-mini_player_stop(audio_player *);
+audio_player_stop(audio_player *);
 
 bool
-mini_player_play_state(audio_player *);
+audio_player_play_state(audio_player *);
 
 bool
-mini_player_fs_state(audio_player *);
+audio_player_fs_state(audio_player *);
 
 void
-collapse_fullscreen_player(audio_player *);
+audio_player_collapse_fullscreen_player(audio_player *);
 
 bool
 audio_player_handle_back_key(audio_player *);

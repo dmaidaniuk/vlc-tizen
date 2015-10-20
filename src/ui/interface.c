@@ -363,14 +363,14 @@ intf_mini_player_visible_set(interface *intf, bool visible)
 void
 intf_update_mini_player(interface *intf)
 {
-    if((mini_player_play_state(intf->p_mini_player) == true) && (intf_mini_player_visible_get(intf) == false))
+    if((audio_player_play_state(intf->p_mini_player) == true) && (intf_mini_player_visible_get(intf) == false))
     {
         intf_mini_player_visible_set(intf, true);
     }
 
-    if((mini_player_play_state(intf->p_mini_player) == false) && (mini_player_fs_state(intf->p_mini_player) == true))
+    if((audio_player_play_state(intf->p_mini_player) == false) && (mini_player_fs_state(intf->p_mini_player) == true))
     {
-        mini_player_stop(intf->p_mini_player);
+        audio_player_stop(intf->p_mini_player);
     }
 }
 
@@ -398,7 +398,7 @@ create_main_box(interface *intf, Evas_Object *parent)
 
     /* Mini Player creation */
     intf->mini_player_layout = elm_layout_add(intf->main_box);
-    intf->p_mini_player = mini_player_create(intf, application_get_playback_service(intf->p_app), intf->mini_player_layout);
+    intf->p_mini_player = audio_player_create(intf, application_get_playback_service(intf->p_app), intf->mini_player_layout);
     evas_object_hide(intf->mini_player_layout);
 
     /* */
