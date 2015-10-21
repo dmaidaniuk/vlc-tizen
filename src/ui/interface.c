@@ -38,6 +38,7 @@
 #include "sidebar.h"
 #include "audio_player.h"
 #include "playback_service.h"
+#include "utils.h"
 
 #include "views/audio_view.h"
 #include "views/video_view.h"
@@ -201,11 +202,7 @@ intf_show_view(interface *intf, view_e view_type)
 static void
 intf_pop_view(interface *intf)
 {
-    Eina_List* nf_items = elm_naviframe_items_get(intf->nf_content);
-    unsigned int nf_items_count = eina_list_count(nf_items);
-    eina_list_free(nf_items);
-
-    if (nf_items_count == 1)
+    if (naviframe_count(intf->nf_content) == 1)
     {
         playback_service *p_ps = application_get_playback_service(intf->p_app);
 

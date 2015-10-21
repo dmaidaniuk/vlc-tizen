@@ -76,3 +76,22 @@ media_timetostr(int64_t time)
         asprintf(&str, "%02lld:%02lld", d.rem, sec);
     return str;
 }
+
+void
+naviframe_clear(Evas_Object *nf)
+{
+    Evas_Object* obj;
+    do
+    {
+        obj = elm_naviframe_item_pop(nf);
+    } while (obj != NULL);
+}
+
+unsigned int
+naviframe_count(Evas_Object *nf)
+{
+    Eina_List* nf_items = elm_naviframe_items_get(nf);
+    unsigned int nf_items_count = eina_list_count(nf_items);
+    eina_list_free(nf_items);
+    return nf_items_count;
+}

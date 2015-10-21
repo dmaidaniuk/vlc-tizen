@@ -35,5 +35,11 @@ create_image(Evas_Object *parent, const char *image_path);
 char *
 media_timetostr(int64_t time);
 
+void
+naviframe_clear(Evas_Object *nf);
+
+unsigned int
+naviframe_count(Evas_Object *nf);
+
 #endif /* UTILS_H_ */
 
