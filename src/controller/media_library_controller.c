@@ -46,13 +46,13 @@ media_library_controller_add_item(media_library_controller* ctrl, media_item* p_
 }
 
 bool
-media_library_controller_file_update( media_library_controller* ctrl, const library_item* p_media_item )
+media_library_controller_file_update( media_library_controller* ctrl, const library_item* p_library_item )
 {
-    if ( ctrl->pf_accept_item( p_media_item ) == false )
+    if ( ctrl->pf_accept_item( p_library_item ) == false )
         return false;
 
-    void* p_new_media_item = ctrl->pf_item_duplicate( p_media_item );
-    if (p_new_media_item == NULL)
+    void* p_new_library_item = ctrl->pf_item_duplicate( p_library_item );
+    if (p_new_library_item == NULL)
         return true;
 
     if ( ctrl->p_content != NULL )
@@ -63,14 +63,14 @@ media_library_controller_file_update( media_library_controller* ctrl, const libr
         {
             const void* p_media_item = ctrl->p_list_view->pf_get_item(p_item);
 
-            if ( ctrl->pf_item_compare( p_media_item, p_new_media_item) )
+            if ( ctrl->pf_item_compare( p_media_item, p_new_library_item) )
             {
-                ctrl->p_list_view->pf_set_item(p_item, p_new_media_item);
+                ctrl->p_list_view->pf_set_item(p_item, p_new_library_item);
                 return true;
             }
         }
     }
-    media_library_controller_add_item( ctrl, p_new_media_item );
+    media_library_controller_add_item( ctrl, p_new_library_item );
     return true;
 }
 
