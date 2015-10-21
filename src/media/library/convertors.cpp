@@ -79,17 +79,6 @@ fileToMediaItem( MediaPtr file )
     }
     else if ( file->type() == IMedia::Type::AudioType )
     {
-        auto artists = file->artists();
-        if (artists.size() > 0)
-        {
-            std::string artistStr;
-            for ( auto& a : artists )
-            {
-                artistStr += a->name() + ", ";
-            }
-            artistStr.erase( artistStr.length() - 2, 2 );
-            media_item_set_meta(mi, MEDIA_ITEM_META_ARTIST, artistStr.c_str());
-        }
         auto albumTrack = file->albumTrack();
         if (albumTrack != nullptr)
         {
@@ -113,6 +102,9 @@ fileToMediaItem( MediaPtr file )
                 }
             }
         }
+        auto artist = file->artist();
+        if (artist.length() > 0)
+            media_item_set_meta(mi, MEDIA_ITEM_META_ARTIST, artist.c_str());
     }
     return mi;
 }
