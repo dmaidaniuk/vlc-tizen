@@ -50,7 +50,6 @@ struct view_sys
     interface*              p_intf;
     Evas_Object*            nf_toolbar;
     Evas_Object*            p_overflow_menu;
-    list_view*              p_lists[AUDIO_VIEW_MAX];
     audio_view_type         i_current_tab;
 };
 
@@ -62,27 +61,20 @@ typedef struct toolbar_tab {
 static list_view*
 create_audio_list_type(view_sys *p_view_sys, audio_view_type type )
 {
-    list_view* p_view = p_view_sys->p_lists[type];
-    if(p_view == NULL)
+    list_view* p_view;
+
+    switch (type)
     {
-        switch (type)
-        {
-        case AUDIO_VIEW_SONG:
-        default:
-            p_view = audio_list_song_view_create(p_view_sys->p_intf, p_view_sys->nf_toolbar, LIST_CREATE_ALL);
-            break;
-        case AUDIO_VIEW_ARTIST:
-            p_view = audio_list_artist_view_create(p_view_sys->p_intf, p_view_sys->nf_toolbar, LIST_CREATE_ALL);
-            break;
-        case AUDIO_VIEW_ALBUM:
-            p_view = audio_list_album_view_create(p_view_sys->p_intf, p_view_sys->nf_toolbar, LIST_CREATE_ALL);
-            break;
-        }
-        p_view_sys->p_lists[type] = p_view;
-    }
-    else
-    {
-        LOGD("Recycling View %i", type);
+    case AUDIO_VIEW_SONG:
+    default:
+        p_view = audio_list_song_view_create(p_view_sys->p_intf, p_view_sys->nf_toolbar, LIST_CREATE_ALL);
+        break;
+    case AUDIO_VIEW_ARTIST:
+        p_view = audio_list_artist_view_create(p_view_sys->p_intf, p_view_sys->nf_toolbar, LIST_CREATE_ALL);
+        break;
+    case AUDIO_VIEW_ALBUM:
+        p_view = audio_list_album_view_create(p_view_sys->p_intf, p_view_sys->nf_toolbar, LIST_CREATE_ALL);
+        break;
     }
 
     Evas_Object* p_list = p_view->pf_get_widget(p_view->p_sys);
@@ -254,14 +246,6 @@ void
 destroy_audio_view(interface_view *view)
 {
     view_sys* p_sys = view->p_view_sys;
-    for ( unsigned int i = 0; i < AUDIO_VIEW_MAX; ++i )
-    {
-        if (p_sys->p_lists[i] != NULL)
-        {
-            p_sys->p_lists[i]->pf_del(p_sys->p_lists[i]->p_sys);
-            free(p_sys->p_lists[i]);
-        }
-    }
     free(p_sys);
     free(view);
 }
