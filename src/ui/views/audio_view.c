@@ -27,6 +27,7 @@
 #include "common.h"
 #include "system_storage.h"
 
+#include "ui/utils.h"
 #include "ui/interface.h"
 #include "ui/views/audio_view.h"
 #include "ui/views/list_view.h"
@@ -76,6 +77,9 @@ create_audio_list_type(view_sys *p_view_sys, audio_view_type type )
         p_view = audio_list_album_view_create(p_view_sys->p_intf, p_view_sys->nf_toolbar, LIST_CREATE_ALL);
         break;
     }
+
+    // Purge the audio view naviframe when switching tabs
+    naviframe_clear(p_view_sys->nf_toolbar);
 
     Evas_Object* p_list = p_view->pf_get_widget(p_view->p_sys);
     Elm_Object_Item *it = elm_naviframe_item_push(p_view_sys->nf_toolbar, "", NULL, NULL, p_list, NULL);
@@ -181,6 +185,11 @@ audio_view_callback(view_sys *p_view_sys, interface_view_event event)
         if (p_view_sys->p_overflow_menu) {
             evas_object_del(p_view_sys->p_overflow_menu);
             p_view_sys->p_overflow_menu = NULL;
+            return true;
+        }
+        if (naviframe_count(p_view_sys->nf_toolbar) > 1)
+        {
+            elm_naviframe_item_pop(p_view_sys->nf_toolbar);
             return true;
         }
         return false;
