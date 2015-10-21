@@ -229,12 +229,9 @@ video_view_list_create(interface *p_intf, Evas_Object *p_parent, list_view_creat
     p_list_view->pf_get_item = &video_list_item_get_media_item;
     p_list_view->pf_set_item = &video_list_item_set_media_item;
 
-    if (opts & LIST_CREATE_MEDIA_CONTROLLER)
-    {
-        // So far we don't manually refresh the list because it's going to happen once we
-        // start the media library. This seems like a weird asymmetry with the audio views though.
-        p_list_sys->p_ctrl = video_controller_create(intf_get_application(p_intf), p_list_view);
-    }
+    // So far we don't manually refresh the list because it's going to happen once we
+    // start the media library. This seems like a weird asymmetry with the audio views though.
+    p_list_sys->p_ctrl = video_controller_create(intf_get_application(p_intf), p_list_view);
 
     return p_list_view;
 }

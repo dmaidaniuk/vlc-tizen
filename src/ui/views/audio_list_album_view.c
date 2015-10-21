@@ -32,6 +32,7 @@
 struct list_sys
 {
     LIST_VIEW_COMMON
+    char* psz_artist_name;
 };
 
 struct list_view_item
@@ -40,34 +41,16 @@ struct list_view_item
     const Elm_Genlist_Item_Class*   itc;
     album_item*                     p_album_item;
     Elm_Object_Item*                p_object_item;
-    // members used when spawning a new view out of an item
-    media_library_controller*       p_songs_controller;
 };
 
 /* List songs when an album is clicked */
-static void
-audio_list_album_item_get_songs_cb(media_library* p_ml, media_library_list_cb cb, void* p_user_data )
-{
-    list_view_item* p_view_item = (list_view_item*)p_user_data;
-    media_library_get_album_songs(p_ml, p_view_item->p_album_item->psz_name, cb, p_view_item->p_songs_controller);
-}
-
 static void
 audio_list_album_item_selected(void *data, Evas_Object *obj /*EINA_UNUSED*/, void *event_info)
 {
     list_view_item *p_view_item = (list_view_item*)data;
 
-    list_view* p_songs_view = audio_list_song_view_create(p_view_item->p_list_sys->p_intf, p_view_item->p_list_sys->p_parent,
-            LIST_CREATE_ALL & ~LIST_CREATE_MEDIA_CONTROLLER);
-
-    /* Create a controller that will feed the new view */
-    application* p_app = intf_get_application(p_view_item->p_list_sys->p_intf);
-    p_songs_view->p_sys->p_ctrl = p_view_item->p_songs_controller = audio_controller_create(p_app, p_songs_view);
-
-    /* Tweak the video controller to list the songs of a specific album only */
-    media_library_controller_set_content_callback(p_view_item->p_songs_controller,
-            audio_list_album_item_get_songs_cb, p_view_item);
-    media_library_controller_refresh(p_view_item->p_songs_controller);
+    list_view* p_songs_view = audio_list_song_view_album_create(p_view_item->p_list_sys->p_intf, p_view_item->p_list_sys->p_parent,
+            p_view_item->p_album_item->psz_name, LIST_CREATE_ALL);
 
     Evas_Object* p_new_list = p_songs_view->pf_get_widget(p_songs_view->p_sys);
     Elm_Object_Item *it = elm_naviframe_item_push(p_view_item->p_list_sys->p_parent, "", NULL, NULL, p_new_list, NULL);
@@ -137,8 +120,27 @@ audio_list_album_view_append_item(list_sys *p_list_sys, void* p_data)
     return p_view_item;
 }
 
+static void
+audio_list_album_view_delete(list_sys* p_list_sys)
+{
+    media_library_controller_destroy(p_list_sys->p_ctrl);
+    elm_genlist_item_class_free(p_list_sys->p_default_item_class);
+    free(p_list_sys->psz_artist_name);
+    free(p_list_sys);
+}
+
+static void
+audio_list_album_get_albums_cb(media_library* p_ml, media_library_list_cb cb, void* p_user_data )
+{
+    list_sys* p_list_sys = (list_sys*)p_user_data;
+    if (p_list_sys->psz_artist_name != NULL)
+        media_library_get_artist_albums(p_ml, p_list_sys->psz_artist_name, cb, p_list_sys->p_ctrl);
+    else
+        media_library_get_albums(p_ml, cb, p_list_sys->p_ctrl);
+}
+
 list_view*
-audio_list_album_view_create(interface* p_intf, Evas_Object* p_parent, list_view_create_option opts)
+audio_list_album_view_create(interface* p_intf, Evas_Object* p_parent, const char* psz_artist_name, list_view_create_option opts)
 {
     list_view* p_list_view = calloc(1, sizeof(*p_list_view));
     if (p_list_view == NULL)
@@ -146,6 +148,8 @@ audio_list_album_view_create(interface* p_intf, Evas_Object* p_parent, list_view
     list_sys* p_list_sys = p_list_view->p_sys = calloc(1, sizeof(*p_list_sys));
     if (p_list_sys == NULL)
         return NULL;
+    if (psz_artist_name != NULL)
+        p_list_sys->psz_artist_name = strdup(psz_artist_name);
 
     list_view_common_setup(p_list_view, p_list_sys, p_intf, p_parent, opts);
 
@@ -158,13 +162,11 @@ audio_list_album_view_create(interface* p_intf, Evas_Object* p_parent, list_view
     p_list_view->pf_append_item = &audio_list_album_view_append_item;
     p_list_view->pf_get_item = &audio_list_album_item_get_media_item;
     p_list_view->pf_set_item = &audio_list_album_item_set_media_item;
+    p_list_view->pf_del = &audio_list_album_view_delete;
 
-    if (opts & LIST_CREATE_MEDIA_CONTROLLER)
-    {
-        application* p_app = intf_get_application( p_intf );
-        p_list_sys->p_ctrl = album_controller_create(p_app, p_list_view);
-        media_library_controller_refresh( p_list_sys->p_ctrl );
-    }
-
+    application* p_app = intf_get_application( p_intf );
+    p_list_sys->p_ctrl = album_controller_create(p_app, p_list_view);
+    media_library_controller_set_content_callback(p_list_sys->p_ctrl, audio_list_album_get_albums_cb, p_list_sys);
+    media_library_controller_refresh(p_list_sys->p_ctrl);
     return p_list_view;
 }

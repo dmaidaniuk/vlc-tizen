@@ -31,7 +31,6 @@
 
 typedef enum list_view_create_option
 {
-    LIST_CREATE_MEDIA_CONTROLLER = 1,
     LIST_CREATE_LIST             = 1 << 1,
     LIST_CREATE_ALL              = ~0
 } list_view_create_option;
@@ -39,13 +38,25 @@ typedef enum list_view_create_option
 list_view*
 audio_list_artist_view_create(interface* p_intf, Evas_Object* p_parent, list_view_create_option opts );
 
+// Creates a view that lists all known songs
 list_view*
-audio_list_song_view_create(interface* p_intf, Evas_Object* p_parent, list_view_create_option opts );
+audio_list_song_view_all_create(interface* p_intf, Evas_Object* p_parent, list_view_create_option opts );
+
+// Creates a view that lists the specified artist's songs
+list_view*
+audio_list_song_view_artist_create(interface* p_intf, Evas_Object* p_parent, const char* psz_artist_name, list_view_create_option opts );
+
+// Creates a view that lists the specified album's songs
+list_view*
+audio_list_song_view_album_create(interface* p_intf, Evas_Object* p_parent, const char* psz_album_name, list_view_create_option opts );
 
 list_view*
 video_view_list_create(interface *intf, Evas_Object *p_parent, list_view_create_option opts );
 
+// Create a view that lists albums.
+// If psz_artist_name is non-NULL, only this artist's albums are listed.
+// Otherwise, all known albums are displayed
 list_view*
-audio_list_album_view_create(interface* p_intf, Evas_Object* p_parent, list_view_create_option opts);
+audio_list_album_view_create(interface* p_intf, Evas_Object* p_parent, const char* psz_artist_name, list_view_create_option opts);
 
 #endif // LIST_VIEW_H_

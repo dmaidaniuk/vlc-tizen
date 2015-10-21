@@ -36,6 +36,8 @@
 struct list_sys
 {
     LIST_VIEW_COMMON
+    char* psz_artist_name;
+    char* psz_album_name;
 };
 
 struct list_view_item
@@ -172,7 +174,31 @@ audio_list_song_view_append_item(list_sys *p_sys, void* p_data)
     return ali;
 }
 
-list_view*
+static void
+audio_list_song_view_delete(list_sys* p_list_sys)
+{
+    media_library_controller_destroy(p_list_sys->p_ctrl);
+    elm_genlist_item_class_free(p_list_sys->p_default_item_class);
+    free(p_list_sys->psz_album_name);
+    free(p_list_sys->psz_artist_name);
+    free(p_list_sys);
+}
+
+static void
+audio_list_song_get_artist_songs_cb(media_library* p_ml, media_library_list_cb cb, void* p_user_data)
+{
+    list_sys* p_list_sys = (list_sys*)p_user_data;
+    media_library_get_artist_albums(p_ml, p_list_sys->psz_artist_name, cb, p_list_sys->p_ctrl);
+}
+
+static void
+audio_list_song_get_album_songs_cb(media_library* p_ml, media_library_list_cb cb, void* p_user_data)
+{
+    list_sys* p_list_sys = (list_sys*)p_user_data;
+    media_library_get_album_songs(p_ml, p_list_sys->psz_album_name, cb, p_list_sys->p_ctrl);
+}
+
+static list_view*
 audio_list_song_view_create(interface* p_intf, Evas_Object* p_parent, list_view_create_option opts)
 {
     list_view* p_view = calloc(1, sizeof(*p_view));
@@ -195,14 +221,42 @@ audio_list_song_view_create(interface* p_intf, Evas_Object* p_parent, list_view_
     p_view->pf_append_item = &audio_list_song_view_append_item;
     p_view->pf_get_item = &audio_list_song_item_get_media_item;
     p_view->pf_set_item = &audio_list_song_item_set_media_item;
+    p_view->pf_del = &audio_list_song_view_delete;
 
-    if (opts & LIST_CREATE_MEDIA_CONTROLLER)
-    {
-        application* p_app = intf_get_application( p_intf );
-        p_sys->p_ctrl = audio_controller_create(p_app, p_view);
-        media_library_controller_refresh(p_sys->p_ctrl);
-    }
+    application* p_app = intf_get_application( p_intf );
+    p_sys->p_ctrl = audio_controller_create(p_app, p_view);
 
+    return p_view;
+}
+
+list_view*
+audio_list_song_view_all_create(interface* p_intf, Evas_Object* p_parent, list_view_create_option opts )
+{
+    list_view* p_view = audio_list_song_view_create(p_intf, p_parent, opts);
+    // Default audio controller is listing all songs. No more config is required.
+    media_library_controller_refresh(p_view->p_sys->p_ctrl);
+    return p_view;
+}
+
+list_view*
+audio_list_song_view_artist_create(interface* p_intf, Evas_Object* p_parent, const char* psz_artist_name, list_view_create_option opts )
+{
+    list_view* p_view = audio_list_song_view_create(p_intf, p_parent, opts);
+    if (psz_artist_name != NULL)
+        p_view->p_sys->psz_artist_name = strdup(psz_artist_name);
+    media_library_controller_set_content_callback(p_view->p_sys->p_ctrl, audio_list_song_get_artist_songs_cb, p_view->p_sys);
+    media_library_controller_refresh(p_view->p_sys->p_ctrl);
+    return p_view;
+}
+
+list_view*
+audio_list_song_view_album_create(interface* p_intf, Evas_Object* p_parent, const char* psz_album_name, list_view_create_option opts )
+{
+    list_view* p_view = audio_list_song_view_create(p_intf, p_parent, opts);
+    if (psz_album_name != NULL)
+        p_view->p_sys->psz_album_name = strdup(psz_album_name);
+    media_library_controller_set_content_callback(p_view->p_sys->p_ctrl, audio_list_song_get_album_songs_cb, p_view->p_sys);
+    media_library_controller_refresh(p_view->p_sys->p_ctrl);
     return p_view;
 }
 
