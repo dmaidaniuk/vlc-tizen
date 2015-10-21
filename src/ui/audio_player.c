@@ -53,6 +53,8 @@ struct audio_player {
 
     Evas_Object *fs_save_btn, *fs_playlist_btn, *fs_more_btn;
     Evas_Object *fs_repeat_btn, *fs_shuffle_btn;
+
+    Ecore_Timer *long_press_timer;
 };
 
 static Evas_Object *
@@ -398,11 +400,39 @@ play_pause_fs_player_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_in
     update_player_display(mpd);
 }
 
+static Eina_Bool
+play_pause_timer_cb(void *data)
+{
+   audio_player *mpd = data;
+   mpd->long_press_timer = NULL;
+   audio_player_stop(mpd);
+   return ECORE_CALLBACK_CANCEL;
+}
+
 static void
-stop_audio_player_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
+play_pause_mouse_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
     audio_player *mpd = data;
-    audio_player_stop(mpd);
+    Evas_Event_Mouse_Down *ev = event_info;
+    if (ev->button != 1) return;
+
+    mpd->long_press_timer = ecore_timer_add(1.0, play_pause_timer_cb, mpd);
+}
+
+static void
+play_pause_mouse_up_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+    audio_player *mpd = data;
+    Evas_Event_Mouse_Up *ev = event_info;
+    if (ev->button != 1) return;
+
+    if (mpd->long_press_timer)
+    {
+        ecore_timer_del(mpd->long_press_timer);
+        mpd->long_press_timer = NULL;
+        // click
+        play_pause_audio_player_cb(mpd, obj, event_info);
+    }
 }
 
 static void
@@ -1009,8 +1039,8 @@ audio_player_create(interface *intf, playback_service *p_ps, Evas_Object *layout
     swallow_mini_player(mpd, layout);
 
     /* Add button callbacks */
-    evas_object_smart_callback_add(mpd->play_pause_img, "clicked", play_pause_audio_player_cb, mpd);
-    evas_object_smart_callback_add(mpd->cover, "clicked", stop_audio_player_cb, mpd);
+    evas_object_event_callback_add(mpd->play_pause_img, EVAS_CALLBACK_MOUSE_DOWN, play_pause_mouse_down_cb, mpd);
+    evas_object_event_callback_add(mpd->play_pause_img, EVAS_CALLBACK_MOUSE_UP, play_pause_mouse_up_cb, mpd);
     evas_object_smart_callback_add(mpd->title, "clicked", audio_player_fullscreen_cb, mpd);
     evas_object_smart_callback_add(mpd->sub_title, "clicked", audio_player_fullscreen_cb, mpd);
 
