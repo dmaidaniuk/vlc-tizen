@@ -1041,6 +1041,7 @@ audio_player_create(interface *intf, playback_service *p_ps, Evas_Object *layout
     /* Add button callbacks */
     evas_object_event_callback_add(mpd->play_pause_img, EVAS_CALLBACK_MOUSE_DOWN, play_pause_mouse_down_cb, mpd);
     evas_object_event_callback_add(mpd->play_pause_img, EVAS_CALLBACK_MOUSE_UP, play_pause_mouse_up_cb, mpd);
+    evas_object_smart_callback_add(mpd->cover, "clicked", audio_player_fullscreen_cb, mpd);
     evas_object_smart_callback_add(mpd->title, "clicked", audio_player_fullscreen_cb, mpd);
     evas_object_smart_callback_add(mpd->sub_title, "clicked", audio_player_fullscreen_cb, mpd);
 
