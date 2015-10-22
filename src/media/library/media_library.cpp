@@ -100,6 +100,12 @@ media_library::onReloadCompleted()
 }
 
 void
+media_library::onParsingStatsUpdated( uint32_t nbParsed, uint32_t nbToParse )
+{
+    LOGI("Parser progress: %d/%d", nbParsed, nbToParse);
+}
+
+void
 media_library::registerOnChange(media_library_file_list_changed_cb cb, void* cbUserData)
 {
     m_onChangeCb.emplace_back(cb, cbUserData);
