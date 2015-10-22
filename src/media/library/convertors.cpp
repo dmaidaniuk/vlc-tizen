@@ -101,6 +101,7 @@ fileToMediaItem( MediaPtr file )
                     mi->psz_snapshot = strdup( artwork.c_str() + strlen( "file://" ) );
                 }
             }
+            mi->i_track_number = albumTrack->trackNumber();
         }
         auto artist = file->artist();
         if (artist.length() > 0)

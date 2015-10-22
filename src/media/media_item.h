@@ -66,6 +66,7 @@ typedef struct media_item {
 
     char* psz_snapshot;             /* Path to a snapshot file */
     uint32_t i_id;                  /* Opaque file type specific ID, provided by the media library */
+    uint16_t i_track_number;        /* Track number, or 0 if unknown or not part of an album */
 } media_item;
 
 media_item *

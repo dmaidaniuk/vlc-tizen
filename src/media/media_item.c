@@ -55,6 +55,7 @@ media_item_copy(const media_item* p_item)
     p_new->i_duration = p_item->i_duration;
     p_new->i_w = p_item->i_w;
     p_new->i_h = p_item->i_h;
+    p_new->i_track_number = p_item->i_track_number;
     for (unsigned int i = 0; i < MEDIA_ITEM_META_COUNT; ++i)
     {
         if (p_item->psz_metas[i] != NULL)
