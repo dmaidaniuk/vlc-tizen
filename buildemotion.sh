@@ -24,6 +24,8 @@ EMOTION_CONFIGURE_ARGS="\
     --disable-xine \
     --disable-generic \
     --disable-gstreamer \
+    --enable-static \
+    --disable-shared \
 "
 
 echo -e "\e[1m\e[36mCFLAGS:            ${CFLAGS}\e[0m"
@@ -93,12 +95,6 @@ make $MAKEFLAGS -C src install
 
 checkfail "emotion: make failed"
 
-cp -a ${EMOTION_PREFIX}/lib/libemotion.so* ${PROJECTPATH}/lib
+cp -a ${EMOTION_PREFIX}/lib/libemotion.a ${PROJECTPATH}/lib
 
 cd ../../
-
-if [ "$RELEASE" = 1 ]; then
-    echo -e "\e[1m\e[32mStripping\e[0m"
-    ${CROSS_COMPILE}strip ${PROJECTPATH}/lib/libemotion.so.1.7.99
-    checkfail "stripping"
-fi

@@ -15,7 +15,7 @@ checkfail "buildmedialibrary.sh failed"
 
 if [ "$RELEASE" = 1 -o "$STRIP" = 1 ]; then
 	echo -e "\e[1m\e[32mStripping\e[0m"
-    ${CROSS_COMPILE}strip -v ${PROJECTPATH}/lib/*
+    ${CROSS_COMPILE}strip -v ${PROJECTPATH}/lib/*so
     checkfail "stripping"
 fi
 

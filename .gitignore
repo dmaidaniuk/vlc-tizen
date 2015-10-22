@@ -9,6 +9,7 @@
 /Debug/
 /Release/
 /lib/*.so*
+/lib/*.a
 /emotion/
 /libvlcpp/
 /medialibrary/
