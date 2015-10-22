@@ -449,6 +449,7 @@ create_video_player(interface *intf, playback_service *p_ps, Evas_Object *parent
 void
 destroy_video_player(interface_view *view)
 {
+    playback_service_set_evas_video(view->p_view_sys->p_ps, NULL);
     free(view->p_view_sys);
     free(view);
 }
