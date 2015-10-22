@@ -357,10 +357,12 @@ playback_service_destroy(playback_service *p_ps)
     }
 
     /* Clear callback list */
-    EINA_LIST_FOREACH(p_ps->p_cbs_list, p_el, p_id)
-      free(p_id);
-    eina_list_free(p_ps->p_cbs_list);
-    p_ps->p_cbs_list = NULL;
+    if (p_ps->p_cbs_list)
+    {
+        EINA_LIST_FOREACH(p_ps->p_cbs_list, p_el, p_id)
+          free(p_id);
+        eina_list_free(p_ps->p_cbs_list);
+    }
 
     if (p_ps->p_ea)
         ps_emotion_destroy(p_ps, p_ps->p_ea);
