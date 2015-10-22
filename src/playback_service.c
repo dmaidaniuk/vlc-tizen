@@ -430,20 +430,21 @@ playback_service_set_context(playback_service *p_ps, enum PLAYLIST_CONTEXT i_ctx
 playback_service_cbs_id *
 playback_service_register_callbacks(playback_service *p_ps, playback_service_callbacks *p_cbs)
 {
-    Eina_List *p_el;
     playback_service_callbacks *p_cbs_dup = malloc(sizeof(playback_service_callbacks));
 
     if (!p_cbs_dup)
+    {
+        LOGE("malloc failed");
         return NULL;
+    }
     memcpy(p_cbs_dup, p_cbs, sizeof(playback_service_callbacks));
 
-    p_el = eina_list_append(p_ps->p_cbs_list, p_cbs_dup);
-    if (p_el == p_ps->p_cbs_list)
+    p_ps->p_cbs_list = eina_list_append(p_ps->p_cbs_list, p_cbs_dup);
+    if (!p_ps->p_cbs_list)
     {
         free(p_cbs_dup);
         return NULL;
     }
-    p_ps->p_cbs_list = p_el;
     return (playback_service_cbs_id *) p_cbs_dup;
 }
 

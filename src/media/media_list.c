@@ -116,20 +116,18 @@ media_list_destroy(media_list *p_ml)
 media_list_cbs_id *
 media_list_register_callbacks(media_list *p_ml, media_list_callbacks *p_cbs)
 {
-    Eina_List *p_el;
     media_list_callbacks *p_cbs_dup = malloc(sizeof(media_list_callbacks));
 
     if (!p_cbs_dup)
         return NULL;
     memcpy(p_cbs_dup, p_cbs, sizeof(media_list_callbacks));
 
-    p_el = eina_list_append(p_ml->p_cbs_list, p_cbs_dup);
-    if (p_el == p_ml->p_cbs_list)
+    p_ml->p_cbs_list = eina_list_append(p_ml->p_cbs_list, p_cbs_dup);
+    if (!p_ml->p_cbs_list)
     {
         free(p_cbs_dup);
         return NULL;
     }
-    p_ml->p_cbs_list = p_el;
     return (media_list_cbs_id *) p_cbs_dup;
 }
 
