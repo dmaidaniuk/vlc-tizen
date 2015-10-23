@@ -185,6 +185,7 @@ media_library_start(media_library* p_media_library)
         return false;
     }
     p_media_library->logger.reset( new TizenLogger );
+    p_media_library->ml->setVerbosity( LogLevel::Info );
     p_media_library->ml->setLogger( p_media_library->logger.get() );
     return p_media_library->ml->initialize( appData + "vlc.db", snapshotPath, p_media_library );
 }
