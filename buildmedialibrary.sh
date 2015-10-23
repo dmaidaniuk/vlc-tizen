@@ -43,6 +43,9 @@ if [ "$RELEASE" = 1 ]; then
     CMAKE_OPTS=""
 fi
 
+# PKG_CONFIG_PATH is required to have a proper evas detection.
+# however, since the .pc the SDK provides are broken, we override with
+# our own values
 if [ ! -e ./Makefile -o "$RELEASE" = 1 -o ../CMakeLists.txt -nt ./Makefile ]; then
 CPPFLAGS="$CPPFLAGS" \
 CFLAGS="$CFLAGS ${EXTRA_CFLAGS}" \
@@ -53,6 +56,7 @@ CXX="${CROSS_COMPILE}g++ -fPIC --sysroot=${SYSROOT} -D__cpp_static_assert=200410
 NM="${CROSS_COMPILE}nm" \
 STRIP="${CROSS_COMPILE}strip" \
 RANLIB="${CROSS_COMPILE}ranlib" \
+PKG_CONFIG_PATH="${TIZEN_SDK}/tools/efl-tools/lib/pkgconfig/" \
 AR="${CROSS_COMPILE}ar" \
 cmake \
     ${CMAKE_OPTS} \
@@ -63,9 +67,9 @@ cmake \
     -DSQLITE3_INCLUDE_DIR="${TIZEN_INCLUDES}/" \
     -DSQLITE3_LIBRARY_DEBUG="${TIZEN_LIBS}/libsqlite3.so" \
     -DSQLITE3_LIBRARY_RELEASE="${TIZEN_LIBS}/libsqlite3.so" \
-    -DJPEG_INCLUDE_DIR="${PROJECTPATH}/vlc/contrib/${TARGET_TUPLE}/include" \
-    -DJPEG_LIBRARY="${PROJECTPATH}/vlc/contrib/${TARGET_TUPLE}/lib/libjpeg.a" \
     -DEXTRA_LIBS="${SYSROOT}/${TARGET_TUPLE}/lib/libatomic.a" \
+    -DEVAS_INCLUDE_DIRS="${TIZEN_INCLUDES}/ecore-evas-1;${TIZEN_INCLUDES}/evas-1;${TIZEN_INCLUDES}/efl-1;${TIZEN_INCLUDES}/eina-1;${TIZEN_INCLUDES}/eina-1/eina;${TIZEN_INCLUDES}/eo-1;${TIZEN_INCLUDES}/emile-1" \
+    -DEVAS_LIBRARIES="-L${TIZEN_LIBS} -levas -lecore_evas" \
     ..
 checkfail "medialibrary: cmake failed"
 fi
