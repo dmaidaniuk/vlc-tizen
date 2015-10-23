@@ -115,14 +115,10 @@ fileToMediaItem( MediaPtr file )
             if (album != nullptr)
             {
                 media_item_set_meta(mi, MEDIA_ITEM_META_ALBUM, album->title().c_str());
-                auto date = album->releaseDate();
-                if (date != 0)
+                auto year = album->releaseYear();
+                if (year != 0)
                 {
-                    auto t = tm{};
-                    if (gmtime_r(&date, &t) != NULL)
-                    {
-                        media_item_set_meta(mi, MEDIA_ITEM_META_YEAR, std::to_string(t.tm_year).c_str());
-                    }
+                    media_item_set_meta(mi, MEDIA_ITEM_META_YEAR, std::to_string(year).c_str());
                 }
                 auto artwork = album->artworkUrl();
                 mi->psz_snapshot = path_from_url(artwork.c_str());
@@ -142,7 +138,7 @@ albumToAlbumItem( AlbumPtr album )
     auto p_item = album_item_create(album->title().c_str());
     if (p_item == nullptr)
         return nullptr;
-    p_item->i_release_date = album->releaseDate();
+    p_item->i_release_date = album->releaseYear();
     p_item->i_nb_tracks = album->nbTracks();
     p_item->psz_artwork = path_from_url(album->artworkUrl().c_str());
     return p_item;
