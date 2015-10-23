@@ -84,6 +84,12 @@ media_item_identical(const media_item* p_left, const media_item* p_right);
 int
 media_item_set_meta(media_item *p_mi, enum MEDIA_ITEM_META i_meta, const char *psz_meta);
 
+static inline const char *
+media_item_get_filename(const media_item *p_mi)
+{
+    const char *psz_filename = strrchr( p_mi->psz_path, '/' );
+    return psz_filename ? psz_filename + 1 : p_mi->psz_path;
+}
 #define media_item_title(p_mi) (p_mi)->psz_metas[MEDIA_ITEM_META_TITLE]
 #define media_item_artist(p_mi) (p_mi)->psz_metas[MEDIA_ITEM_META_ARTIST]
 #define media_item_album(p_mi) (p_mi)->psz_metas[MEDIA_ITEM_META_ALBUM]
