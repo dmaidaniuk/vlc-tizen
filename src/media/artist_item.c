@@ -51,6 +51,7 @@ artist_item_destroy(artist_item* p_item)
 {
     if (p_item == NULL)
         return;
+    free(p_item->psz_artwork);
     free(p_item->psz_name);
     free(p_item);
 }
@@ -58,7 +59,12 @@ artist_item_destroy(artist_item* p_item)
 artist_item*
 artist_item_copy(const artist_item* p_item )
 {
-    return artist_item_create( p_item->psz_name );
+    artist_item* p_new = artist_item_create( p_item->psz_name );
+    if (p_new == NULL)
+        return NULL;
+    if (p_item->psz_artwork != NULL)
+        p_new->psz_artwork = strdup(p_item->psz_artwork);
+    return p_new;
 }
 
 bool

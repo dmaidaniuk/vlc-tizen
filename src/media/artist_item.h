@@ -38,6 +38,7 @@ typedef struct artist_item
     LIBRARY_ITEM_COMMON
 
     char* psz_name;
+    char* psz_artwork;
 } artist_item;
 
 artist_item*
