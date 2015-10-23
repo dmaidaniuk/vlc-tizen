@@ -141,7 +141,7 @@ ps_notification_update_meta(playback_service *p_ps, media_item *p_mi)
     else if (psz_meta_artist)
         notification_set_text(p_ps->p_notification, NOTIFICATION_TEXT_TYPE_TITLE, psz_meta_artist, NULL, NOTIFICATION_VARIABLE_TYPE_NONE);
     else
-        notification_set_text(p_ps->p_notification, NOTIFICATION_TEXT_TYPE_TITLE, "Unknown media", NULL, NOTIFICATION_VARIABLE_TYPE_NONE);
+        notification_set_text(p_ps->p_notification, NOTIFICATION_TEXT_TYPE_TITLE, media_item_get_filename(p_mi), NULL, NOTIFICATION_VARIABLE_TYPE_NONE);
 
     if (psz_meta_title && psz_meta_artist)
         notification_set_text(p_ps->p_notification, NOTIFICATION_TEXT_TYPE_CONTENT, psz_meta_artist, NULL, NOTIFICATION_VARIABLE_TYPE_NONE);
