@@ -34,6 +34,35 @@
 #include "IAlbumTrack.h"
 #include "IArtist.h"
 
+static char*
+path_from_url(const char* psz_str)
+{
+    if (psz_str == NULL || *psz_str == 0)
+        return NULL;
+    if (strncmp(psz_str, "file://", 7) == 0)
+        psz_str += 7;
+    size_t len = strlen(psz_str);
+    char* psz_res;
+    char* psz_dest = psz_res = (char*)malloc((len + 1) * sizeof(*psz_dest));
+
+    while (*psz_str)
+    {
+        if (*psz_str == '%' && psz_str[1] != 0 && psz_str[2] != 0)
+        {
+            sscanf(psz_str + 1,"%02x",(int*)psz_dest);
+            ++psz_dest;
+            psz_str += 3;
+        }
+        else
+        {
+            *psz_dest++ = *psz_str++;
+        }
+    }
+    *psz_dest = 0;
+    return psz_res;
+}
+
+
 media_item*
 fileToMediaItem( MediaPtr file )
 {
@@ -96,10 +125,7 @@ fileToMediaItem( MediaPtr file )
                     }
                 }
                 auto artwork = album->artworkUrl();
-                if ( artwork.size() > 0 && artwork.compare( 0, strlen("file://"), "file://" ) == 0 )
-                {
-                    mi->psz_snapshot = strdup( artwork.c_str() + strlen( "file://" ) );
-                }
+                mi->psz_snapshot = path_from_url(artwork.c_str());
             }
             mi->i_track_number = albumTrack->trackNumber();
         }
@@ -127,5 +153,7 @@ artistToArtistItem( ArtistPtr artist )
     auto p_item = artist_item_create(artist->name().c_str());
     if (p_item == nullptr)
         return nullptr;
+    if (artist->artworkUrl().empty() == false)
+        p_item->psz_artwork = path_from_url( artist->artworkUrl().c_str() );
     return p_item;
 }
