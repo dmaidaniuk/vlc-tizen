@@ -96,11 +96,16 @@ genlist_text_get_cb(void *data, Evas_Object *obj, const char *part)
 {
     list_view_item *p_view_item = data;
     const Elm_Genlist_Item_Class *itc = p_view_item->itc;
-    char *buf;
+    char *buf = NULL;
 
     if (itc->item_style && !strcmp(itc->item_style, "2line.top.3")) {
         if (part && !strcmp(part, "elm.text.main.left.top")) {
             asprintf(&buf, "<b>%s</b>", p_view_item->p_album_item->psz_name);
+            return buf;
+        }
+        else if (!strcmp(part, "elm.text.sub.right.bottom")) {
+            asprintf(&buf, "%d track%s", p_view_item->p_album_item->i_nb_tracks,
+                    p_view_item->p_album_item->i_nb_tracks > 1 ? "s" : "" );
             return buf;
         }
     }
