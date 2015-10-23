@@ -176,7 +176,8 @@ ps_emotion_position_update_cb(void *data, Evas_Object *obj, void *event)
         double i_pos = (i_time > 0.0 && i_len > 0.0) ? i_time / i_len : 0.0;
 
         /* update position every 1 % */
-        if (fabs(p_ps->i_last_notification_pos - i_pos) > 0.01f)
+        if (p_ps->i_ctx != PLAYLIST_CONTEXT_VIDEO
+         && fabs(p_ps->i_last_notification_pos - i_pos) > 0.01f)
         {
             notification_set_progress(p_ps->p_notification, i_pos);
             notification_update(p_ps->p_notification);
@@ -199,7 +200,8 @@ ps_emotion_play_started_cb(void *data, Evas_Object *obj, void *event)
 
     PS_SEND_CALLBACK(pf_on_started, media_list_get_item(p_ps->p_ml));
 
-    ps_notification_update_meta(p_ps, p_mi);
+    if (p_ps->i_ctx != PLAYLIST_CONTEXT_VIDEO)
+        ps_notification_update_meta(p_ps, p_mi);
 }
 
 static void
