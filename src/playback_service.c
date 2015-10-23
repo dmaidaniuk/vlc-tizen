@@ -79,6 +79,7 @@ struct playback_service
     bool b_auto_exit;
 
     notification_h  p_notification;
+    double          i_last_notification_pos;
     app_control_h   p_app_control;
 };
 
@@ -145,6 +146,7 @@ ps_notification_update_meta(playback_service *p_ps, media_item *p_mi)
     if (psz_meta_title && psz_meta_artist)
         notification_set_text(p_ps->p_notification, NOTIFICATION_TEXT_TYPE_CONTENT, psz_meta_artist, NULL, NOTIFICATION_VARIABLE_TYPE_NONE);
 
+    p_ps->i_last_notification_pos = 0.0f;
     notification_post(p_ps->p_notification);
 }
 
@@ -173,8 +175,13 @@ ps_emotion_position_update_cb(void *data, Evas_Object *obj, void *event)
         double i_len = emotion_object_play_length_get(obj);
         double i_pos = (i_time > 0.0 && i_len > 0.0) ? i_time / i_len : 0.0;
 
-        notification_set_progress(p_ps->p_notification, i_pos);
-        notification_update(p_ps->p_notification);
+        /* update position every 1 % */
+        if (fabs(p_ps->i_last_notification_pos - i_pos) > 0.01f)
+        {
+            notification_set_progress(p_ps->p_notification, i_pos);
+            notification_update(p_ps->p_notification);
+            p_ps->i_last_notification_pos = i_pos;
+        }
 
         PS_SEND_CALLBACK(pf_on_new_time, i_time, i_pos);
     }
