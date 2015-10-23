@@ -67,7 +67,8 @@ genlist_text_get_cb(void *data, Evas_Object *obj, const char *part)
     /* Then put this string as the genlist item label */
     if (itc->item_style && !strcmp(itc->item_style, "2line.top.3")) {
         if (part && !strcmp(part, "elm.text.main.left.top")) {
-            if (ali->p_media_item->i_track_number > 0)
+            // Don't display track number out of the album songs view (ie. when psz_album_name != NULL)
+            if (ali->p_media_item->i_track_number > 0 && ali->p_list->psz_album_name != NULL)
                 asprintf(&buf, "%d - <b>%s</b>", ali->p_media_item->i_track_number, media_item_title(ali->p_media_item));
             else
                 asprintf(&buf, "<b>%s</b>", media_item_title(ali->p_media_item));
