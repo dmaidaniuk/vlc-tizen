@@ -51,6 +51,8 @@ album_item_copy(const album_item* p_item)
         return NULL;
     if (p_item->psz_summary != NULL)
         p_new_item->psz_summary = strdup(p_item->psz_summary);
+    if (p_item->psz_artwork != NULL)
+        p_new_item->psz_artwork = strdup(p_item->psz_artwork);
     return p_new_item;
 }
 
@@ -66,6 +68,7 @@ album_item_destroy(album_item* p_item)
 {
     if (p_item == NULL)
         return;
+    free(p_item->psz_artwork);
     free(p_item->psz_summary);
     free(p_item->psz_name);
     free(p_item);

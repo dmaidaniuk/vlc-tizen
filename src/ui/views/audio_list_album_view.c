@@ -28,6 +28,7 @@
 #include "list_view_private.h"
 #include "media/album_item.h"
 #include "controller/media_controller.h"
+#include "ui/utils.h"
 
 struct list_sys
 {
@@ -63,6 +64,31 @@ free_list_item_data(void *data, Evas_Object *obj, void *event_info)
     list_view_item *p_view_item = data;
     album_item_destroy(p_view_item->p_album_item);
     free(p_view_item);
+}
+
+static Evas_Object*
+genlist_content_get_cb(void *data, Evas_Object *obj, const char *part)
+{
+    list_view_item *ali = data;
+    const Elm_Genlist_Item_Class *itc = ali->itc;
+    Evas_Object *layout = NULL;
+
+    /* Check the item class style and add the object needed in the item class*/
+    /* Here, puts the icon in the item class to add it to genlist items */
+    if (itc->item_style && !strcmp(itc->item_style, "2line.top.3")) {
+        if (part && !strcmp(part, "elm.icon.1")) {
+            layout = elm_layout_add(obj);
+            elm_layout_theme_set(layout, "layout", "list/B/type.1", "default");
+            Evas_Object *icon;
+            if (ali->p_album_item->psz_artwork != NULL)
+                icon = create_image(layout, ali->p_album_item->psz_artwork);
+            else
+                icon = create_icon(layout, "background_cone.png");
+            elm_layout_content_set(layout, "elm.swallow.content", icon);
+        }
+    }
+
+    return layout;
 }
 
 static char *
@@ -158,6 +184,7 @@ audio_list_album_view_create(interface* p_intf, Evas_Object* p_parent, const cha
 
     /* Item Class */
     p_list_sys->p_default_item_class->func.text_get = genlist_text_get_cb;
+    p_list_sys->p_default_item_class->func.content_get = genlist_content_get_cb;
 
     p_list_view->pf_append_item = &audio_list_album_view_append_item;
     p_list_view->pf_get_item = &audio_list_album_item_get_media_item;
