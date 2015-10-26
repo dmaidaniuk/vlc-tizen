@@ -140,6 +140,7 @@ VLC_CONFIGURE_ARGS="\
     --disable-faad \
     --disable-x264 \
     --disable-schroedinger \
+    --enable-evas \
 "
 
 ########################
@@ -302,6 +303,10 @@ STRIP="${CROSS_COMPILE}strip" \
 RANLIB="${CROSS_COMPILE}ranlib" \
 AR="${CROSS_COMPILE}ar" \
 PKG_CONFIG_LIBDIR=../contrib/$TARGET_TUPLE/lib/pkgconfig \
+EVAS_CFLAGS="-I${TIZEN_INCLUDES} -I${TIZEN_INCLUDES}/evas-1 \
+             -I${TIZEN_INCLUDES}/ecore-1 \
+             -I${TIZEN_INCLUDES}/eina-1 -I${TIZEN_INCLUDES}/eina-1/eina" \
+EVAS_LIBS="-L${TIZEN_LIBS}" \
 sh ../configure --host=$TARGET_TUPLE --build=x86_64-unknown-linux \
                 ${EXTRA_PARAMS} ${VLC_CONFIGURE_ARGS} ${OPTS}
 checkfail "vlc: configure failed"
@@ -429,6 +434,7 @@ ${CC} -fPIC -rdynamic -shared \
     -lmodplug \
     -lupnp -lthreadutil -lixml \
     -larchive \
+    -levas -lecore \
     ${EXTRA_LDFLAGS}
 
 # Missing:f
