@@ -886,7 +886,6 @@ add_fullscreen_item_table(audio_player *mpd, Evas_Object *parent)
     evas_object_smart_callback_add(mpd->fs_save_btn, "clicked", fs_save_player_cb, mpd);
     evas_object_smart_callback_add(mpd->fs_playlist_btn, "clicked", fs_playlist_player_cb, mpd);
     evas_object_smart_callback_add(mpd->fs_more_btn, "clicked", fs_more_player_cb, mpd);
-    LOGE("add_fullscreen_item_table!");
 
     return mpd->fs_table;
 }
