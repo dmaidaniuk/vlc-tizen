@@ -42,6 +42,7 @@ struct audio_player {
     double slider_event_time;
 
 
+    Evas_Object *layout;
     Evas_Object *fs_table, *popup;
     Evas_Object *fullscreen_box;
     Evas_Object *slider, *fs_slider;
@@ -364,13 +365,13 @@ update_player_display(audio_player* mpd)
         const char *psz_meta = media_item_title(p_mi);
         if (psz_meta)
         {
-            elm_object_text_set(mpd->title, psz_meta);
+            elm_object_part_text_set(mpd->layout, "swallow.title", psz_meta);
             elm_object_text_set(mpd->fs_title, psz_meta);
         }
         psz_meta = media_item_artist(p_mi);
         if (psz_meta)
         {
-            elm_object_text_set(mpd->sub_title, psz_meta);
+            elm_object_part_text_set(mpd->layout, "swallow.subtitle", psz_meta);
             elm_object_text_set(mpd->fs_sub_title, psz_meta);
         }
     }
@@ -665,16 +666,6 @@ swallow_mini_player(audio_player *mpd, Evas_Object *layout)
     /* set the cover image */
     mpd->cover = create_icon(layout, "background_cone.png");
     elm_object_part_content_set(layout, "swallow.cover", mpd->cover);
-
-    /* set the title label */
-    mpd->title = elm_label_add(layout);
-    //elm_object_text_set(mpd->title, "<b>Title</b>");
-    elm_object_part_content_set(layout, "swallow.title", mpd->title);
-
-    /* set the sub title label */
-    mpd->sub_title = elm_label_add(layout);
-    //elm_object_text_set(mpd->sub_title, "Subtitle");
-    elm_object_part_content_set(layout, "swallow.subtitle", mpd->sub_title);
 
     /* set the play/pause button */
     mpd->play_pause_img = create_icon(layout, "ic_pause_circle_normal_o.png");
@@ -1037,6 +1028,8 @@ audio_player_create(interface *intf, playback_service *p_ps, Evas_Object *layout
         LOGE("Unable to register the audio player");
 
     swallow_mini_player(mpd, layout);
+    mpd->layout = layout;
+
 
     /* Add button callbacks */
     evas_object_event_callback_add(mpd->play_pause_img, EVAS_CALLBACK_MOUSE_DOWN, play_pause_mouse_down_cb, mpd);

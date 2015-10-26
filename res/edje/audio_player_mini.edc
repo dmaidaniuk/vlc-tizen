@@ -72,10 +72,11 @@ collections
             }
             part {
                 name: "swallow.title";
-                type: SWALLOW;
+                type: TEXT;
                 description {
-                    state: "pause" 0.0;
-                    color: 0 0 255 255; // transparent grey
+                    state: "default" 0.0;
+                    color: 0 0 0 255; // black
+                    visible: 1;
                     rel1 {
                         relative: 0.2 0.0;
                         to: "hub_button";
@@ -88,14 +89,19 @@ collections
                         to_x: "hub_button";
                         to_y: "hub_button";
                     }
+                     text {
+                        text: "title";
+                        size: 22;
+                        ellipsis: 0;
+                    }
                 }
             }
             part {
                 name: "swallow.subtitle";
-                type: SWALLOW;
+                type: TEXT;
                 description {
                     state: "pause" 0.0;
-                    color: 0 255 0 255; // transparent grey
+                    color:  70 70 70 255; // grey/black
                     rel1 {
                         relative: 0.2 0.5;
                         to: "hub_button";
@@ -105,6 +111,11 @@ collections
                         to: "hub_button";
                         to_x: "hub_button";
                         to_y: "hub_button";
+                    }
+                    text {
+                        text: "subtitle";
+                        size: 20;
+                        ellipsis: 0;
                     }
                 }
             }
