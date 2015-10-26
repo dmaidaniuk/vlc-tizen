@@ -47,7 +47,7 @@ struct audio_player {
     Evas_Object *fullscreen_box;
     Evas_Object *slider, *fs_slider;
     Evas_Object *cover, *fs_cover, *fs_time, *fs_total_time;
-    Evas_Object *title, *sub_title, *fs_title, *fs_sub_title;
+    Evas_Object *fs_title, *fs_sub_title;
 
     Evas_Object *play_pause_img;
     Evas_Object *fs_play_pause_img;
@@ -912,9 +912,8 @@ create_fullscreen_player_view(audio_player *mpd, Evas_Object *parent)
 }
 
 static void
-audio_player_fullscreen_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
+audio_player_show_fullscreen(audio_player *mpd)
 {
-    audio_player *mpd = data;
     Evas_Object *fs_view;
 
     /* */
@@ -929,6 +928,18 @@ audio_player_fullscreen_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event
     evas_object_show(fs_view);
     /* Update fullscreen state bool */
     mpd->fs_state = true;
+}
+
+static void
+audio_player_fullscreen_cb(void *data, Evas_Object *obj, void *event_info)
+{
+    audio_player_show_fullscreen(data);
+}
+
+static void
+audio_player_fullscreen_edge_cb(void *data, Evas_Object *o, const char *emission, const char *source)
+{
+    audio_player_show_fullscreen(data);
 }
 
 static void
@@ -1009,6 +1020,7 @@ audio_player_create(interface *intf, playback_service *p_ps, Evas_Object *layout
     audio_player *mpd = calloc(1, sizeof(*mpd));
     mpd->intf = intf;
     mpd->p_ps = p_ps;
+    mpd->layout = layout;
 
     playback_service_callbacks cbs = {
         .pf_on_media_added = NULL,
@@ -1028,15 +1040,16 @@ audio_player_create(interface *intf, playback_service *p_ps, Evas_Object *layout
         LOGE("Unable to register the audio player");
 
     swallow_mini_player(mpd, layout);
-    mpd->layout = layout;
 
+    Evas_Object *edje = elm_layout_edje_get(layout);
 
     /* Add button callbacks */
     evas_object_event_callback_add(mpd->play_pause_img, EVAS_CALLBACK_MOUSE_DOWN, play_pause_mouse_down_cb, mpd);
     evas_object_event_callback_add(mpd->play_pause_img, EVAS_CALLBACK_MOUSE_UP, play_pause_mouse_up_cb, mpd);
     evas_object_smart_callback_add(mpd->cover, "clicked", audio_player_fullscreen_cb, mpd);
-    evas_object_smart_callback_add(mpd->title, "clicked", audio_player_fullscreen_cb, mpd);
-    evas_object_smart_callback_add(mpd->sub_title, "clicked", audio_player_fullscreen_cb, mpd);
+
+    edje_object_signal_callback_add(edje, "*clicked*", "swallow.title", audio_player_fullscreen_edge_cb, mpd);
+    edje_object_signal_callback_add(edje, "*clicked*", "swallow.subtitle", audio_player_fullscreen_edge_cb, mpd);
 
     /* Put the mini player at the bottom of the content_box */
     evas_object_size_hint_align_set(layout, EVAS_HINT_FILL, 1.0);
