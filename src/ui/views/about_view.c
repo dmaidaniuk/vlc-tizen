@@ -54,9 +54,9 @@ cone_do_drop(void *data, double pos)
    double posy = frame * (anim->anim_end_y - anim->anim_begin_y);
    evas_object_move(anim->obj, x, anim->anim_begin_y + posy);
 
-   if (y + h > anim->container_height)
+   if (y > anim->container_height)
    {
-       anim->anim_begin_y = 0;
+       anim->anim_begin_y = -h;
        anim->anim_end_y = anim->initial_y;
        ecore_animator_timeline_add(1, cone_do_drop, anim);
        return EINA_FALSE;
@@ -81,7 +81,7 @@ cone_clicked_cb(void *data, Evas_Object *obj, void *event_info)
     anim->anim_begin_y = y;
     anim->anim_end_y = anim->container_height + h;
 
-    ecore_animator_timeline_add(1, cone_do_drop, anim);
+    ecore_animator_timeline_add(2, cone_do_drop, anim);
 }
 
 static void
