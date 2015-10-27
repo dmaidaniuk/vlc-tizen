@@ -128,16 +128,14 @@ create_toolbar(view_sys *p_view_sys, Evas_Object *parent)
     /* Create and set the toolbar */
     Evas_Object *tabbar = elm_toolbar_add(parent);
 
-    /* Set the toolbar shrink mode to NONE */
-    elm_toolbar_shrink_mode_set(tabbar, ELM_TOOLBAR_SHRINK_SCROLL);
-    /* Expand the content to fill the toolbar */
-    elm_toolbar_transverse_expanded_set(tabbar, EINA_TRUE);
+    /* Set the toolbar shrink mode */
+    elm_toolbar_shrink_mode_set(tabbar, ELM_TOOLBAR_SHRINK_EXPAND);
 
-    evas_object_size_hint_weight_set(tabbar, EVAS_HINT_EXPAND, 0.0);
+    elm_toolbar_homogeneous_set(tabbar, EINA_FALSE);
+    elm_toolbar_transverse_expanded_set(tabbar, EINA_FALSE);
+
+    evas_object_size_hint_weight_set(tabbar, EVAS_HINT_FILL, 0.0);
     evas_object_size_hint_align_set(tabbar, EVAS_HINT_FILL, EVAS_HINT_FILL);
-
-    evas_object_size_hint_min_set(tabbar, 450, 400);
-    evas_object_size_hint_max_set(tabbar, 450, 400);
 
     /* Append new entry in the toolbar with the Icon & Label wanted */
     toolbar_item_append(tabbar, AUDIO_VIEW_ARTIST,  "Artists",  tabbar_item_cb, p_view_sys);
