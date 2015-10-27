@@ -146,7 +146,7 @@ create_button(Evas_Object *parent, char *style)
     return button;
 }
 
-static void
+static Elm_Object_Item*
 intf_push_view(interface *intf, interface_view *view, const char *title)
 {
     /* Push the view in the naviframe with the corresponding header */
@@ -169,6 +169,8 @@ intf_push_view(interface *intf, interface_view *view, const char *title)
         }
         elm_object_part_content_set(intf->nf_content, "title_right_btn", intf->popup_toggle_btn);
     }
+
+    return nf_it;
 }
 
 void
@@ -310,7 +312,10 @@ intf_video_player_play(interface *intf, const char *psz_path)
     if(intf->video_player == NULL)
         intf_video_player_create(intf);
 
-    intf_push_view(intf, intf->video_player, NULL);
+    Elm_Object_Item* it = intf_push_view(intf, intf->video_player, NULL);
+
+    /* Hide the title bar of the naviframe */
+    elm_naviframe_item_title_enabled_set(it, EINA_FALSE, EINA_TRUE);
 
     /* So far, there is no start action */
     video_player_start(intf->video_player->p_view_sys, psz_path);
