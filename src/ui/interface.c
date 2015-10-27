@@ -456,12 +456,18 @@ intf_create(application *app)
     elm_win_autodel_set(intf->win, EINA_TRUE);
 
     /* Change colors */
+
+    // 2.3.1
     EDJE_COLOR_CLASS_SET_VLC_ORANGE("B011");    // Base class
     EDJE_COLOR_CLASS_SET_VLC_ORANGE("B0511");   // Naviframe base
     EDJE_COLOR_CLASS_SET_VLC_ORANGE("B0514");   // Naviframe tab bar
     EDJE_COLOR_CLASS_SET_VLC_ORANGE("B0514S");  // Naviframe tab bar
     EDJE_COLOR_CLASS_SET_VLC_ORANGE("B0514P");  // Naviframe tab bar
     EDJE_COLOR_CLASS_SET_VLC_ORANGE("B0517");   // Naviframe second
+
+    // 2.4
+    EDJE_COLOR_CLASS_SET_VLC_ORANGE("B001");    // Base class
+    EDJE_COLOR_CLASS_SET_VLC_ORANGE("B071");    // Scrollbars
 
     /* Progress Bar Colors */
     EDJE_COLOR_CLASS_SET_VLC_COLOR("W062L1", VLC_GREY_400_TRANSPARENT);    // slider background
