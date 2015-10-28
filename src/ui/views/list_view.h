@@ -48,7 +48,7 @@ audio_list_song_view_artist_create(interface* p_intf, Evas_Object* p_parent, con
 
 // Creates a view that lists the specified album's songs
 list_view*
-audio_list_song_view_album_create(interface* p_intf, Evas_Object* p_parent, const char* psz_album_name, list_view_create_option opts );
+audio_list_song_view_album_create(interface* p_intf, Evas_Object* p_parent, unsigned int i_album_id, list_view_create_option opts );
 
 list_view*
 video_view_list_create(interface *intf, Evas_Object *p_parent, list_view_create_option opts );

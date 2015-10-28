@@ -37,7 +37,7 @@ struct list_sys
 {
     LIST_VIEW_COMMON
     char* psz_artist_name;
-    char* psz_album_name;
+    unsigned int i_album_id;
 };
 
 struct list_view_item
@@ -67,8 +67,8 @@ genlist_text_get_cb(void *data, Evas_Object *obj, const char *part)
     /* Then put this string as the genlist item label */
     if (itc->item_style && !strcmp(itc->item_style, "2line.top.3")) {
         if (part && !strcmp(part, "elm.text.main.left.top")) {
-            // Don't display track number out of the album songs view (ie. when psz_album_name != NULL)
-            if (ali->p_media_item->i_track_number > 0 && ali->p_list->psz_album_name != NULL)
+            // Don't display track number out of the album songs view (ie. when i_album_id != 0)
+            if (ali->p_media_item->i_track_number > 0 && ali->p_list->i_album_id != 0)
                 asprintf(&buf, "%d - <b>%s</b>", ali->p_media_item->i_track_number, media_item_title(ali->p_media_item));
             else
                 asprintf(&buf, "<b>%s</b>", media_item_title(ali->p_media_item));
@@ -183,7 +183,6 @@ audio_list_song_view_delete(list_sys* p_list_sys)
 {
     media_library_controller_destroy(p_list_sys->p_ctrl);
     elm_genlist_item_class_free(p_list_sys->p_default_item_class);
-    free(p_list_sys->psz_album_name);
     free(p_list_sys->psz_artist_name);
     free(p_list_sys);
 }
@@ -199,7 +198,7 @@ static void
 audio_list_song_get_album_songs_cb(media_library* p_ml, media_library_list_cb cb, void* p_user_data)
 {
     list_sys* p_list_sys = (list_sys*)p_user_data;
-    media_library_get_album_songs(p_ml, p_list_sys->psz_album_name, cb, p_list_sys->p_ctrl);
+    media_library_get_album_songs(p_ml, p_list_sys->i_album_id, cb, p_list_sys->p_ctrl);
 }
 
 static list_view*
@@ -254,11 +253,10 @@ audio_list_song_view_artist_create(interface* p_intf, Evas_Object* p_parent, con
 }
 
 list_view*
-audio_list_song_view_album_create(interface* p_intf, Evas_Object* p_parent, const char* psz_album_name, list_view_create_option opts )
+audio_list_song_view_album_create(interface* p_intf, Evas_Object* p_parent, unsigned int i_album_id, list_view_create_option opts )
 {
     list_view* p_view = audio_list_song_view_create(p_intf, p_parent, opts);
-    if (psz_album_name != NULL)
-        p_view->p_sys->psz_album_name = strdup(psz_album_name);
+    p_view->p_sys->i_album_id = i_album_id;
     media_library_controller_set_content_callback(p_view->p_sys->p_ctrl, audio_list_song_get_album_songs_cb, p_view->p_sys);
     media_library_controller_refresh(p_view->p_sys->p_ctrl);
     return p_view;

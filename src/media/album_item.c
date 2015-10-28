@@ -49,6 +49,7 @@ album_item_copy(const album_item* p_item)
     album_item* p_new_item = album_item_create(p_item->psz_name);
     if (p_new_item == NULL)
         return NULL;
+    p_new_item->i_id = p_item->i_id;
     if (p_item->psz_summary != NULL)
         p_new_item->psz_summary = strdup(p_item->psz_summary);
     if (p_item->psz_artwork != NULL)
@@ -61,7 +62,7 @@ album_item_copy(const album_item* p_item)
 bool
 album_item_identical(const album_item* p_left, const album_item* p_right)
 {
-    return strcmp(p_left->psz_name, p_right->psz_name) == 0;
+    return p_left->i_id == p_right->i_id;
 }
 
 

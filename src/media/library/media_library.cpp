@@ -304,12 +304,12 @@ media_library_get_artist_albums( media_library* p_ml, const char* psz_artistName
 }
 
 void
-media_library_get_album_songs(media_library* p_ml, const char* psz_albumName, media_library_list_cb cb, void* p_user_data)
+media_library_get_album_songs(media_library* p_ml, unsigned int i_album_id, media_library_list_cb cb, void* p_user_data)
 {
-    auto album = p_ml->ml->album(psz_albumName);
+    auto album = p_ml->ml->album(i_album_id);
     if (album == nullptr)
     {
-        LOGE("Can't find album %s", psz_albumName);
+        LOGE("Can't find album #%d", i_album_id);
         return;
     }
     media_library_common_getter(cb, p_user_data,

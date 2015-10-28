@@ -36,6 +36,7 @@ extern "C" {
 typedef struct album_item {
     LIBRARY_ITEM_COMMON
 
+    unsigned int i_id;
     char* psz_name;
     char* psz_summary;
     time_t i_release_date;
