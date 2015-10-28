@@ -672,13 +672,6 @@ swallow_mini_player(audio_player *mpd, Evas_Object *layout)
     elm_object_part_content_set(layout, "swallow.play", mpd->play_pause_img);
 }
 
-static void
-fullscreen_player_collapse_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
-{
-    audio_player *mpd = data;
-    audio_player_collapse_fullscreen_player(mpd);
-}
-
 void
 audio_player_collapse_fullscreen_player(audio_player *mpd){
     /* Pop the previous view in the content naviframe */
