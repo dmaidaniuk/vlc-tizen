@@ -715,7 +715,7 @@ add_fullscreen_item_table(audio_player *mpd, Evas_Object *parent)
     elm_object_part_content_set(layout, "cover_button", mpd->fs_cover);
 
     /* Seek */
-    mpd->fs_slider = elm_slider_add(mpd->fs_table);
+    mpd->fs_slider = elm_slider_add(parent);
     elm_slider_horizontal_set(mpd->fs_slider, EINA_TRUE);
     //elm_object_part_content_set(layout, "slider", mpd->fs_slider); // TODO
     set_sliders_callbacks(mpd, mpd->fs_slider);
