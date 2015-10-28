@@ -82,9 +82,13 @@ list_view_common_setup(list_view* p_list_view, list_sys* p_list_sys, interface* 
 
     /* Empty list */
     p_list_sys->p_empty = elm_layout_add(p_list_sys->p_container);
-    elm_layout_file_set(p_list_sys->p_empty, NOCONTENTEDJ, "no_content");
+    elm_layout_file_set(p_list_sys->p_empty, BASICTEXTEDJ, "basic_text");
     evas_object_size_hint_weight_set(p_list_sys->p_empty, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
     evas_object_size_hint_align_set(p_list_sys->p_empty, EVAS_HINT_FILL, EVAS_HINT_FILL);
+
+    Evas_Object *label = elm_label_add(p_list_sys->p_empty);
+    elm_object_text_set(label, "No content to display");
+    elm_object_part_content_set(p_list_sys->p_empty, "swallow.main", label);
 
     /* Create genlist (if required) */
     if (opts & LIST_CREATE_LIST)
