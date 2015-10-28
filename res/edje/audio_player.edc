@@ -47,15 +47,6 @@ collections {
                rel2 {relative: 1.0 0.1;}
                }
             part {
-               name: "cover_button";
-               type: SWALLOW;
-               description {
-                  state: "default" 0.0;
-                  rel1 {relative: 0.0 0.0;}
-                  rel2 {relative: 0.1 1.0;}
-               }
-            }
-            part {
                name: "switch_cover_button";
                type: SWALLOW;
                description {
@@ -88,7 +79,7 @@ collections {
                description {
                   state: "default" 0.0;
                   color: 33 33 33 255;
-                  rel1.relative: 0.1 0.0;
+                  rel1.relative: 0.0 0.0;
                   rel2.relative: 0.7 0.5;
                   text {
                      align: 0.03 1.0;
@@ -104,10 +95,10 @@ collections {
                description {
                   state: "default" 0.0;
                   color: 33 33 33 255;
-                  rel1.relative: 0.1 0.5;
+                  rel1.relative: 0.0 0.5;
                   rel2.relative: 0.7 1.0;
                   text {
-                     align: 0.03 1.0;
+                     align: 0.03 0.0;
                      size: 20;
                      text: "Unknown";
                      ellipsis: 0;
@@ -117,6 +108,32 @@ collections {
          }
 
          part {
+               name: "hub_cover";
+               type: RECT;
+               description {
+                  state: "default" 0.0;
+                  color: 250 250 250 255;
+                  rel1 {relative: 0.0 0.1;}
+                  rel2 {relative: 1.0 0.9;}
+               }
+         }
+         part {
+               name: "cover";
+               type: SWALLOW;
+               description {
+                  state: "default" 0.0;
+                  rel1{
+                      relative: 0.05 0.05;
+                      to: "hub_cover";
+                  }
+                  rel2{
+                      relative: 0.95 0.95;
+                      to: "hub_cover";
+                  }
+               }
+            }
+
+            part {
             name: "hub_miniplayer";
             type: RECT;
             description {

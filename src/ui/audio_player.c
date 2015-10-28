@@ -702,10 +702,10 @@ add_fullscreen_item_table(audio_player *mpd, Evas_Object *parent)
     evas_object_show(mpd->fs_more_btn);
     elm_object_part_content_set(layout, "more_button", mpd->fs_more_btn);
 
-    /* Small cover */
+    /* Cover */
     mpd->fs_cover = create_icon(parent, "background_cone.png");
     evas_object_show(mpd->fs_cover);
-    elm_object_part_content_set(layout, "cover_button", mpd->fs_cover);
+    elm_object_part_content_set(layout, "cover", mpd->fs_cover);
 
     /* Seek */
     mpd->fs_slider = elm_slider_add(parent);
