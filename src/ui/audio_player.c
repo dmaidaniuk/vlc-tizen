@@ -833,7 +833,7 @@ ps_on_started_cb(playback_service *p_ps, void *p_user_data, media_item *p_mi)
     update_player_display(mpd);
 
     /* Show the mini player only if it isn't already shown */
-    if (intf_mini_player_visible_get(mpd->intf) == false){
+    if (intf_mini_player_visible_get(mpd->intf) == false && audio_player_fs_state(mpd) == false){
         intf_mini_player_visible_set(mpd->intf, true);
     }
 }
