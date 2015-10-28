@@ -43,7 +43,7 @@ struct audio_player {
 
 
     Evas_Object *layout, *fs_layout;
-    Evas_Object *fs_table, *popup;
+    Evas_Object *popup;
     Evas_Object *slider, *fs_slider;
     Evas_Object *cover, *fs_cover, *fs_time, *fs_total_time;
     Evas_Object *fs_title, *fs_sub_title;
