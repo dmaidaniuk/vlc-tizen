@@ -156,10 +156,17 @@ browse(view_sys *dv, const char* path)
     /* Clear the layout */
     elm_box_clear(dv->p_box);
 
+    Evas_Object *label_layout = elm_layout_add(dv->p_box);
+    elm_layout_file_set(label_layout, BASICTEXTEDJ, "basic_text");
+    evas_object_size_hint_align_set(label_layout, EVAS_HINT_FILL, 0.0);
+    evas_object_show(label_layout);
+
     /* Create the current directory label */
     Evas_Object *directory =  elm_label_add(dv->p_box);
     elm_object_text_set(directory, cpath);
-    elm_box_pack_end(dv->p_box, directory);
+    elm_object_part_content_set(label_layout, "swallow.main", directory);
+
+    elm_box_pack_end(dv->p_box, label_layout);
     evas_object_show(directory);
 
     /* Create the list */
