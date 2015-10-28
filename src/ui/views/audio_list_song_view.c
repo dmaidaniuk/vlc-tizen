@@ -191,7 +191,7 @@ static void
 audio_list_song_get_artist_songs_cb(media_library* p_ml, media_library_list_cb cb, void* p_user_data)
 {
     list_sys* p_list_sys = (list_sys*)p_user_data;
-    media_library_get_artist_albums(p_ml, p_list_sys->psz_artist_name, cb, p_list_sys->p_ctrl);
+    media_library_get_artist_songs(p_ml, p_list_sys->psz_artist_name, cb, p_list_sys->p_ctrl);
 }
 
 static void
