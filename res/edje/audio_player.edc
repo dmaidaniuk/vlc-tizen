@@ -93,8 +93,8 @@ collections {
                   text {
                      align: 0.03 1.0;
                      size: 20;
-                     min: 1 1;
-                     text: "Title";
+                     text: "Unknown";
+                     ellipsis: 0;
                   }
                }
             }
@@ -109,8 +109,8 @@ collections {
                   text {
                      align: 0.03 1.0;
                      size: 20;
-                     min: 1 1;
-                     text: "Subtitle";
+                     text: "Unknown";
+                     ellipsis: 0;
                   }
                }
             }
