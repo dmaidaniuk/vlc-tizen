@@ -323,22 +323,22 @@ repeat_mode(audio_player *mpd)
 }
 
 bool
-audio_player_fs_state(audio_player *mp)
+audio_player_fs_state(audio_player *mpd)
 {
-    return mp->fs_state;
+    return mpd->fs_state;
 }
 
 bool
-audio_player_handle_back_key(audio_player *mp)
+audio_player_handle_back_key(audio_player *mpd)
 {
-    if (mp->popup)
+    if (mpd->popup)
     {
-        evas_object_del(mp->popup);
+        evas_object_del(mpd->popup);
         return true;
     }
-    if (audio_player_fs_state(mp) == true)
+    if (audio_player_fs_state(mpd) == true)
     {
-        audio_player_collapse_fullscreen_player(mp);
+        audio_player_collapse_fullscreen_player(mpd);
         return true;
     }
 
