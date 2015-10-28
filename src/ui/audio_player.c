@@ -781,29 +781,16 @@ add_fullscreen_item_table(audio_player *mpd, Evas_Object *parent)
     return layout;
 }
 
-
-static Evas_Object*
-create_fullscreen_player_view(audio_player *mpd, Evas_Object *parent)
-{
-    update_player_display(mpd);
-    return mpd->fs_layout;
-}
-
 static void
 audio_player_show_fullscreen(audio_player *mpd)
 {
-    Evas_Object *fs_view;
-
     /* */
     intf_mini_player_visible_set(mpd->intf, false);
 
     /* Show the fullcreen box in the content naviframe */
-    /* FIXME */
-    fs_view = create_fullscreen_player_view(mpd, intf_get_main_naviframe(mpd->intf));
-    elm_naviframe_item_simple_push(intf_get_main_naviframe(mpd->intf), fs_view);
+    update_player_display(mpd);
+    elm_naviframe_item_simple_push(intf_get_main_naviframe(mpd->intf), mpd->fs_layout);
 
-    /* */
-    evas_object_show(fs_view);
     /* Update fullscreen state bool */
     mpd->fs_state = true;
 }
