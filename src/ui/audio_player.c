@@ -42,9 +42,8 @@ struct audio_player {
     double slider_event_time;
 
 
-    Evas_Object *layout;
+    Evas_Object *layout, *fs_layout;
     Evas_Object *fs_table, *popup;
-    Evas_Object *fullscreen_box;
     Evas_Object *slider, *fs_slider;
     Evas_Object *cover, *fs_cover, *fs_time, *fs_total_time;
     Evas_Object *fs_title, *fs_sub_title;
@@ -353,6 +352,7 @@ update_player_play_pause(audio_player* mpd)
     elm_image_file_set(mpd->play_pause_img, b_playing ? ICON_DIR "ic_pause_circle_normal_o.png" : ICON_DIR "ic_play_circle_normal_o.png", NULL);
     elm_image_file_set(mpd->fs_play_pause_img, b_playing ? ICON_DIR "ic_pause_circle_normal_o.png" : ICON_DIR "ic_play_circle_normal_o.png", NULL);
     evas_object_show(mpd->play_pause_img);
+    evas_object_show(mpd->fs_play_pause_img);
 }
 
 static void
@@ -366,13 +366,13 @@ update_player_display(audio_player* mpd)
         if (psz_meta)
         {
             elm_object_part_text_set(mpd->layout, "swallow.title", psz_meta);
-            elm_object_text_set(mpd->fs_title, psz_meta);
+            elm_object_part_text_set(mpd->fs_layout, "title_text", psz_meta);
         }
         psz_meta = media_item_artist(p_mi);
         if (psz_meta)
         {
             elm_object_part_text_set(mpd->layout, "swallow.subtitle", psz_meta);
-            elm_object_text_set(mpd->fs_sub_title, psz_meta);
+            elm_object_part_text_set(mpd->fs_layout, "subtitle_text", psz_meta);
         }
     }
 
@@ -692,66 +692,13 @@ audio_player_collapse_fullscreen_player(audio_player *mpd){
 static Evas_Object*
 add_fullscreen_item_table(audio_player *mpd, Evas_Object *parent)
 {
-    Evas_Object *fs_slider, *fs_padding;
+    Evas_Object *layout = elm_layout_add(parent);;
+    evas_object_size_hint_weight_set(layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+    evas_object_size_hint_align_set(layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
-    /* */
-    mpd->fs_table = elm_table_add(parent);
-    /* */
-    evas_object_size_hint_align_set(mpd->fs_table, 0.5, 0.5);
-    /* */
-    elm_table_padding_set(mpd->fs_table, ELM_SCALE_SIZE(0), ELM_SCALE_SIZE(0));
-    /* */
-    evas_object_show(mpd->fs_table);
+    elm_layout_file_set(layout, AUDIOPLAYEREDJ, "audio_player");
 
-    /* */
-    mpd->fs_title = elm_label_add(parent);
-    evas_object_show(mpd->fs_title);
-    evas_object_size_hint_min_set(mpd->fs_title, 250, 25);
-    evas_object_size_hint_max_set(mpd->fs_title, 250, 25);
-    evas_object_size_hint_align_set(mpd->fs_title, 0.0, 1.0);
-    /* Put the object in the chosen slot of the item table */
-    elm_table_pack(mpd->fs_table, mpd->fs_title, 0, 0, 3, 1);
-
-    /* */
-    mpd->fs_sub_title = elm_label_add(parent);
-    evas_object_show(mpd->fs_sub_title);
-    evas_object_size_hint_min_set(mpd->fs_sub_title, 250, 25);
-    evas_object_size_hint_max_set(mpd->fs_sub_title, 250, 25);
-    evas_object_size_hint_align_set(mpd->fs_sub_title, 0.0, 1.0);
-    /* Put the object in the chosen slot of the item table */
-    elm_table_pack(mpd->fs_table, mpd->fs_sub_title, 0, 1, 3, 1);
-
-    /* */
-    if (mpd->save_state == FALSE)
-    {
-        mpd->fs_save_btn = create_icon(parent, "ic_save_normal.png");
-    }
-    else {
-        mpd->fs_save_btn = create_icon(parent, "ic_save_pressed.png");
-    }
-    evas_object_size_hint_min_set(mpd->fs_save_btn, 50, 50);
-    evas_object_size_hint_max_set(mpd->fs_save_btn, 50, 50);
-    evas_object_size_hint_align_set(mpd->fs_save_btn, 1.0, 1.0);
-    /* Put the object in the chosen slot of the item table */
-    elm_table_pack(mpd->fs_table, mpd->fs_save_btn, 3, 0, 1, 2);
-    evas_object_show(mpd->fs_save_btn);
-
-    /* */
-    if (mpd->playlist_state == FALSE)
-    {
-        mpd->fs_playlist_btn = create_icon(parent, "ic_playlist_normal.png");
-    }
-    else {
-        mpd->fs_playlist_btn = create_icon(parent, "ic_playlist_pressed.png");
-    }
-    evas_object_size_hint_min_set(mpd->fs_playlist_btn, 50, 50);
-    evas_object_size_hint_max_set(mpd->fs_playlist_btn, 50, 50);
-    evas_object_size_hint_align_set(mpd->fs_playlist_btn, 1.0, 1.0);
-    /* Put the object in the chosen slot of the item table */
-    elm_table_pack(mpd->fs_table, mpd->fs_playlist_btn, 4, 0, 1, 2);
-    evas_object_show(mpd->fs_playlist_btn);
-
-    /* */
+    /* More button */
     if (mpd->more_state == FALSE)
     {
         mpd->fs_more_btn = create_icon(parent, "ic_more_circle_normal_o.png");
@@ -759,96 +706,50 @@ add_fullscreen_item_table(audio_player *mpd, Evas_Object *parent)
     else {
         mpd->fs_more_btn = create_icon(parent, "ic_more_circle_pressed_o.png");
     }
-    evas_object_size_hint_min_set(mpd->fs_more_btn, 50, 50);
-    evas_object_size_hint_max_set(mpd->fs_more_btn, 50, 50);
-    evas_object_size_hint_align_set(mpd->fs_more_btn, 1.0, 1.0);
-    /* Put the object in the chosen slot of the item table */
-    elm_table_pack(mpd->fs_table, mpd->fs_more_btn, 5, 0, 1, 2);
     evas_object_show(mpd->fs_more_btn);
+    elm_object_part_content_set(layout, "more_button", mpd->fs_more_btn);
 
-    /* */
-    fs_padding = create_icon(parent, "");
-    evas_object_size_hint_min_set(fs_padding, 400, 40);
-    evas_object_size_hint_max_set(fs_padding, 400, 40);
-    evas_object_size_hint_align_set(fs_padding, EVAS_HINT_FILL, EVAS_HINT_FILL);
-    /* Put the object in the chosen slot of the item table */
-    elm_table_pack(mpd->fs_table, fs_padding, 0, 2, 6, 1);
-    evas_object_show(fs_padding);
-
-    /* */
+    /* Small cover */
     mpd->fs_cover = create_icon(parent, "background_cone.png");
-    evas_object_size_hint_min_set(mpd->fs_cover, 400, 400);
-    evas_object_size_hint_max_set(mpd->fs_cover, 400, 400);
-    evas_object_size_hint_align_set(mpd->fs_cover, EVAS_HINT_FILL, EVAS_HINT_FILL);
-    /* Put the object in the chosen slot of the item table */
-    elm_table_pack(mpd->fs_table, mpd->fs_cover, 0, 3, 6, 1);
     evas_object_show(mpd->fs_cover);
+    elm_object_part_content_set(layout, "cover_button", mpd->fs_cover);
 
-    /* */
-    fs_padding = create_icon(parent, "");
-    evas_object_size_hint_min_set(fs_padding, 400, 40);
-    evas_object_size_hint_max_set(fs_padding, 400, 40);
-    evas_object_size_hint_align_set(fs_padding, EVAS_HINT_FILL, EVAS_HINT_FILL);
-    /* Put the object in the chosen slot of the item table */
-    elm_table_pack(mpd->fs_table, fs_padding, 0, 4, 6, 1);
-    evas_object_show(fs_padding);
-
-    /* */
-    fs_slider = elm_slider_add(mpd->fs_table);
-    elm_slider_horizontal_set(fs_slider, EINA_TRUE);
-
-    evas_object_size_hint_min_set(fs_slider, 400, 3);
-    evas_object_size_hint_max_set(fs_slider, 400, 3);
-    evas_object_size_hint_align_set(fs_slider, EVAS_HINT_FILL, 0.5);
-    evas_object_size_hint_weight_set(fs_slider, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-
-    evas_object_show(fs_slider);
-    /* Put the object in the chosen slot of the item table */
-    elm_table_pack(mpd->fs_table, fs_slider, 0, 5, 6, 1);
-    mpd->fs_slider = fs_slider;
+    /* Seek */
+    mpd->fs_slider = elm_slider_add(mpd->fs_table);
+    elm_slider_horizontal_set(mpd->fs_slider, EINA_TRUE);
+    //elm_object_part_content_set(layout, "slider", mpd->fs_slider); // TODO
     set_sliders_callbacks(mpd, mpd->fs_slider);
-    double i_pos = playback_service_get_pos(mpd->p_ps);
-    double i_time = playback_service_get_time(mpd->p_ps);
+
+    double i_pos = playback_service_get_time(mpd->p_ps);
     double i_len = playback_service_get_len(mpd->p_ps);
 
     player_update_sliders(mpd, i_pos);
 
-    /* */
-    mpd->fs_play_pause_img = create_icon(mpd->fs_table, "ic_pause_circle_normal_o.png");
-    update_player_play_pause(mpd);
-    evas_object_size_hint_min_set(mpd->fs_play_pause_img, 200, 100);
-    evas_object_size_hint_max_set(mpd->fs_play_pause_img, 200, 100);
-    evas_object_size_hint_align_set(mpd->fs_play_pause_img, 0.5, 1.0);
-    /* Put the object in the chosen slot of the item table */
-    elm_table_pack(mpd->fs_table, mpd->fs_play_pause_img, 1, 6, 4, 2);
+    /* Play / Pause */
+    mpd->fs_play_pause_img = create_icon(parent, "ic_pause_circle_normal_o.png");
     evas_object_show(mpd->fs_play_pause_img);
+    elm_object_part_content_set(layout, "play_button", mpd->fs_play_pause_img);
+    update_player_play_pause(mpd);
 
-    /* */
+    /* Elapsed time */
     mpd->fs_time = elm_label_add(parent);
-    evas_change_time(mpd->fs_time, i_time);
-    evas_object_size_hint_min_set(mpd->fs_time, 100, 25);
-    evas_object_size_hint_max_set(mpd->fs_time, 100, 25);
-    evas_object_size_hint_align_set(mpd->fs_time, 1.0, 0.5);
-    /* Put the object in the chosen slot of the item table */
-    elm_table_pack(mpd->fs_table, mpd->fs_time, 0, 6, 1, 1);
     evas_object_show(mpd->fs_time);
+    //elm_object_part_content_set(layout, "?", mpd->fs_time); // TODO
+    evas_change_time(mpd->fs_time, i_pos);
 
-    /* */
+    /* Total time */
     mpd->fs_total_time = elm_label_add(parent);
-    evas_change_time(mpd->fs_total_time, i_len);
-    evas_object_size_hint_min_set(mpd->fs_total_time, 100, 25);
-    evas_object_size_hint_max_set(mpd->fs_total_time, 100, 25);
-    evas_object_size_hint_align_set(mpd->fs_total_time, 0.0, 0.5);
-    /* Put the object in the chosen slot of the item table */
-    elm_table_pack(mpd->fs_table, mpd->fs_total_time, 5, 6, 1, 1);
     evas_object_show(mpd->fs_total_time);
+    //elm_object_part_content_set(layout, "?", mpd->fs_total_time); // TODO
+    evas_change_time(mpd->fs_total_time, i_len);
 
-    /* */
-    if (repeat_mode(mpd) == REPEAT_NONE)
+    /* Repeat */
+    enum PLAYLIST_REPEAT repeat_state = repeat_mode(mpd);
+    if (repeat_state == REPEAT_NONE)
     {
         mpd->fs_repeat_btn = create_icon(parent, "ic_repeat_normal.png");
     }
-    else if (repeat_mode(mpd) == REPEAT_ALL)
+    else if (repeat_state == REPEAT_ALL)
     {
         mpd->fs_repeat_btn = create_icon(parent, "ic_repeat_pressed.png");
     }
@@ -856,58 +757,36 @@ add_fullscreen_item_table(audio_player *mpd, Evas_Object *parent)
     {
         mpd->fs_repeat_btn = create_icon(parent, "ic_repeat_one_pressed.png");
     }
-    evas_object_size_hint_min_set(mpd->fs_repeat_btn, 100, 50);
-    evas_object_size_hint_max_set(mpd->fs_repeat_btn, 100, 50);
-    evas_object_size_hint_align_set(mpd->fs_repeat_btn, 0.5, 1.0);
-    /* Put the object in the chosen slot of the item table */
-    elm_table_pack(mpd->fs_table, mpd->fs_repeat_btn, 0, 7, 1, 1);
     evas_object_show(mpd->fs_repeat_btn);
+    elm_object_part_content_set(layout, "repeat_button", mpd->fs_repeat_btn);
 
-    /* */
+    /* Shuffle */
     if (mpd->shuffle_state == FALSE){
         mpd->fs_shuffle_btn = create_icon(parent, "ic_shuffle_normal.png");
     }
     else {
         mpd->fs_shuffle_btn = create_icon(parent, "ic_shuffle_pressed.png");
     }
-    evas_object_size_hint_min_set(mpd->fs_shuffle_btn, 100, 50);
-    evas_object_size_hint_max_set(mpd->fs_shuffle_btn, 100, 50);
-    evas_object_size_hint_align_set(mpd->fs_shuffle_btn, 0.5, 1.0);
-    /* Put the object in the chosen slot of the item table */
-    elm_table_pack(mpd->fs_table, mpd->fs_shuffle_btn, 5, 7, 1, 1);
     evas_object_show(mpd->fs_shuffle_btn);
+    elm_object_part_content_set(layout, "shuffle_button", mpd->fs_shuffle_btn);
 
-    /* Add callbacks */
-    evas_object_smart_callback_add(mpd->fs_title, "clicked", fullscreen_player_collapse_cb, mpd);
-    evas_object_smart_callback_add(mpd->fs_sub_title, "clicked", fullscreen_player_collapse_cb, mpd);
+    /* Callbacks */
     evas_object_smart_callback_add(mpd->fs_play_pause_img, "clicked", play_pause_fs_player_cb, mpd);
     evas_object_smart_callback_add(mpd->fs_shuffle_btn, "clicked", fs_shuffle_player_cb, mpd);
     evas_object_smart_callback_add(mpd->fs_repeat_btn, "clicked", fs_repeat_player_cb, mpd);
-    evas_object_smart_callback_add(mpd->fs_save_btn, "clicked", fs_save_player_cb, mpd);
-    evas_object_smart_callback_add(mpd->fs_playlist_btn, "clicked", fs_playlist_player_cb, mpd);
+    //    evas_object_smart_callback_add(mpd->fs_save_btn, "clicked", fs_save_player_cb, mpd);
+    //    evas_object_smart_callback_add(mpd->fs_playlist_btn, "clicked", fs_playlist_player_cb, mpd);
     evas_object_smart_callback_add(mpd->fs_more_btn, "clicked", fs_more_player_cb, mpd);
 
-    return mpd->fs_table;
+    return layout;
 }
 
 
 static Evas_Object*
 create_fullscreen_player_view(audio_player *mpd, Evas_Object *parent)
 {
-    /* Add the box for the fullscreen player view */
-    Evas_Object *fullscreen_box = elm_box_add(parent);
-    /* Add the fullscreen table layout in the fullscreen box */
-    Evas_Object *fullscreen_item_table = add_fullscreen_item_table(mpd, parent);
-    /* */
-    elm_box_pack_end(fullscreen_box, fullscreen_item_table);
-    evas_object_show(fullscreen_item_table);
-    /* The fullscreen box recalculate the layout of her children */
-    elm_box_recalculate(fullscreen_box);
-    /* Put the fullscreen box in the audio player structure */
-    mpd->fullscreen_box = fullscreen_box;
-
     update_player_display(mpd);
-    return mpd->fullscreen_box;
+    return mpd->fs_layout;
 }
 
 static void
@@ -1039,6 +918,7 @@ audio_player_create(interface *intf, playback_service *p_ps, Evas_Object *layout
         LOGE("Unable to register the audio player");
 
     swallow_mini_player(mpd, layout);
+    mpd->fs_layout = add_fullscreen_item_table(mpd, intf_get_main_naviframe(mpd->intf));
 
     Evas_Object *edje = elm_layout_edje_get(layout);
 

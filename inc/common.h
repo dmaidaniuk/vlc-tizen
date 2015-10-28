@@ -68,6 +68,7 @@
 #define IMAGESPATH "images"
 #define VIDEOPLAYEREDJ get_resource_path( EDJPATH "/video_player.edj")
 #define AUDIOPLAYERMINIEDJ get_resource_path( EDJPATH "/audio_player_mini.edj")
+#define AUDIOPLAYEREDJ get_resource_path( EDJPATH "/audio_player.edj")
 #define BASICTEXTEDJ get_resource_path( EDJPATH "/basic_text.edj")
 
 #define RES_DIR "/opt/usr/apps/" PACKAGE "/res/"
