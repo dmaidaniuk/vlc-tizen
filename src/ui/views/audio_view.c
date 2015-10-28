@@ -138,10 +138,13 @@ create_toolbar(view_sys *p_view_sys, Evas_Object *parent)
     evas_object_size_hint_align_set(tabbar, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
     /* Append new entry in the toolbar with the Icon & Label wanted */
-    toolbar_item_append(tabbar, AUDIO_VIEW_ARTIST,  "Artists",  tabbar_item_cb, p_view_sys);
+    Elm_Object_Item *it = toolbar_item_append(tabbar, AUDIO_VIEW_ARTIST,  "Artists",  tabbar_item_cb, p_view_sys);
     toolbar_item_append(tabbar, AUDIO_VIEW_ALBUM,   "Albums",   tabbar_item_cb, p_view_sys);
     toolbar_item_append(tabbar, AUDIO_VIEW_SONG,    "Songs",    tabbar_item_cb, p_view_sys);
     //toolbar_item_append(tabbar, AUDIO_VIEW_GENRE,   "Genre",    tabbar_item_cb, p_view_sys);
+
+    // Select the first tab.
+    elm_toolbar_item_selected_set(it, EINA_TRUE);
 
     return tabbar;
 }
@@ -231,24 +234,24 @@ create_audio_view(interface *intf, Evas_Object *parent)
     evas_object_size_hint_weight_set(audio_box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
     evas_object_size_hint_align_set(audio_box, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
-    /* Create the toolbar in the view */
-    Evas_Object *tabbar = create_toolbar(audio_view_sys, audio_box);
-    elm_box_pack_end(audio_box, tabbar);
-    evas_object_show(tabbar);
-
     /* Toolbar Naviframe */
     audio_view_sys->nf_toolbar = elm_naviframe_add(audio_box);
     evas_object_size_hint_weight_set(audio_view_sys->nf_toolbar, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
     evas_object_size_hint_align_set(audio_view_sys->nf_toolbar, EVAS_HINT_FILL, EVAS_HINT_FILL);
-    elm_box_pack_end(audio_box, audio_view_sys->nf_toolbar );
     evas_object_show(audio_view_sys->nf_toolbar);
+
+    /* Create the toolbar in the view */
+    Evas_Object *tabbar = create_toolbar(audio_view_sys, audio_box);
+    elm_toolbar_select_mode_set(tabbar, ELM_OBJECT_SELECT_MODE_ALWAYS);
+    evas_object_show(tabbar);
 
     /*
      * Items will only call their selection func and callback when first becoming selected
      * Doing it before creating the naviframe would cause the first tab selection to fail
      * since the selection callback requires a non NULL nf_toolbar.
      */
-    elm_toolbar_select_mode_set(tabbar, ELM_OBJECT_SELECT_MODE_ALWAYS);
+    elm_box_pack_end(audio_box, tabbar);
+    elm_box_pack_end(audio_box, audio_view_sys->nf_toolbar );
 
     /*  */
     evas_object_show(audio_box);
