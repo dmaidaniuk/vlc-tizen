@@ -710,7 +710,8 @@ add_fullscreen_item_table(audio_player *mpd, Evas_Object *parent)
     /* Seek */
     mpd->fs_slider = elm_slider_add(parent);
     elm_slider_horizontal_set(mpd->fs_slider, EINA_TRUE);
-    //elm_object_part_content_set(layout, "slider", mpd->fs_slider); // TODO
+    evas_object_show(mpd->fs_slider);
+    elm_object_part_content_set(layout, "seek", mpd->fs_slider);
     set_sliders_callbacks(mpd, mpd->fs_slider);
 
     double i_pos = playback_service_get_time(mpd->p_ps);
