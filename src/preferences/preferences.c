@@ -50,6 +50,7 @@ pref_key_id_map mapping[] =
 
         // type index
         {{PREF_SUBSENC}, "SUBSENC"},
+        {{PREF_CURRENT_VIEW}, "CURRENT_VIEW"},
 
         // type bool
         {{PREF_FRAME_SKIP}, "FRAME_SKIP"},

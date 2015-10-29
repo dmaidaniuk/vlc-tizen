@@ -40,6 +40,7 @@ typedef enum pref_enum {
 
 typedef enum pref_index {
     PREF_SUBSENC = 2000,
+    PREF_CURRENT_VIEW,
 } pref_index;
 
 typedef enum pref_bool {

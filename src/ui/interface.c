@@ -39,6 +39,7 @@
 #include "audio_player.h"
 #include "playback_service.h"
 #include "utils.h"
+#include "preferences/preferences.h"
 
 #include "views/audio_view.h"
 #include "views/video_view.h"
@@ -178,12 +179,13 @@ void
 intf_show_view(interface *intf, view_e view_type)
 {
     if(view_type == VIEW_AUTO)
-        view_type = VIEW_VIDEO; /* Replace by the last saved tab */
+        view_type = preferences_get_index(PREF_CURRENT_VIEW, VIEW_VIDEO);
 
     if(view_type == intf->current_view)
         return;
 
     intf->current_view = view_type;
+    preferences_set_index(PREF_CURRENT_VIEW, view_type);
 
     Evas_Object *nf_content = intf->nf_content;
 
