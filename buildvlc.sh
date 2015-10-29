@@ -425,7 +425,7 @@ ${CC} -fPIC -rdynamic -shared \
     -lspeex -lspeexdsp \
     -lxml2 -lpng -lgnutls -lgcrypt -lgpg-error \
     -lnettle -lhogweed -lgmp \
-    -lfreetype -liconv -lass -lfribidi -lopus \
+    -lfreetype -liconv -lass -lfribidi -lopus -lharfbuzz \
     -ljpeg \
     -ldvdnav -ldvdread -ldvdcss \
     -ltasn1 \
