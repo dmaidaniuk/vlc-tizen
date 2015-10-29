@@ -53,7 +53,7 @@ void
 preferences_set_enum(pref_enum key, menu_id value);
 
 void
-preferences_set_index(pref_enum key, int value);
+preferences_set_index(pref_index key, int value);
 
 void
 preferences_set_bool(pref_bool key, bool value);

@@ -78,7 +78,7 @@ preferences_set_enum(pref_enum key, menu_id value)
 }
 
 void
-preferences_set_index(pref_enum key, int value)
+preferences_set_index(pref_index key, int value)
 {
     pref_id key_id;
     key_id.t_index = key;
