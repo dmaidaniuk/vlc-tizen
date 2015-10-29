@@ -57,6 +57,7 @@ struct interface {
     /* Naviframe */
     Evas_Object *nf_content; /* Main naviframe */
     interface_view *nf_views[VIEW_MAX];
+    view_e current_view;
     interface_view *video_player;
 
     /* */
@@ -178,6 +179,11 @@ intf_show_view(interface *intf, view_e view_type)
 {
     if(view_type == VIEW_AUTO)
         view_type = VIEW_VIDEO; /* Replace by the last saved tab */
+
+    if(view_type == intf->current_view)
+        return;
+
+    intf->current_view = view_type;
 
     Evas_Object *nf_content = intf->nf_content;
 
@@ -445,6 +451,7 @@ intf_create(application *app)
 {
     interface *intf = calloc(1, sizeof(*intf));
     intf->p_app = app;
+    intf->current_view = -1;
 
 #ifdef __arm__
     /* no opengl for emulator */
