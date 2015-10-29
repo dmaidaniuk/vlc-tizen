@@ -129,6 +129,7 @@ if [ "${TIZEN_ABI}" = "armv7l" ] ; then
     EXTRA_CFLAGS="${EXTRA_CFLAGS} -march=armv7-a -mtune=cortex-a8 -mfpu=vfpv3-d16 -mthumb -mfloat-abi=softfp"
 elif [ "${TIZEN_ABI}" = "x86" ] ; then
     EXTRA_CFLAGS="${EXTRA_CFLAGS} -mtune=atom -msse3 -mfpmath=sse -m32"
+    EXTRA_CFLAGS="${EXTRA_CFLAGS} -DHB_NO_MT" # HACK for harbfuzz atomics
 fi
 
 TIZEN_SDK_MAJOR=`echo "${TIZEN_SDK_VERSION}" | cut -d. -f1`
