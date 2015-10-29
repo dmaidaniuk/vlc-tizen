@@ -45,9 +45,11 @@ pref_key_id_map mapping[] =
 {
         // type enum
         {{PREF_HWACCELERATION}, "HWACCELERATION"},
-        {{PREF_SUBSENC}, "SUBSENC"},
         {{PREF_ORIENTATION}, "ORIENTATION"},
         {{PREF_DEBLOCKING}, "DEBLOCKING"},
+
+        // type index
+        {{PREF_SUBSENC}, "SUBSENC"},
 
         // type bool
         {{PREF_FRAME_SKIP}, "FRAME_SKIP"},
