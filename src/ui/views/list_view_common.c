@@ -62,8 +62,8 @@ list_view_toggle_empty(list_sys* p_list_sys, bool b_empty)
         return;
     p_list_sys->b_empty = b_empty;
     Evas_Object* p_list = p_list_sys->p_list;
-    Evas_Object* p_show = b_empty ? p_list_sys->p_empty : p_list;
-    Evas_Object* p_hide = b_empty ? p_list : p_list_sys->p_empty;
+    Evas_Object* p_show = b_empty ? p_list_sys->p_empty_label : p_list;
+    Evas_Object* p_hide = b_empty ? p_list : p_list_sys->p_empty_label;
 
     elm_box_unpack_all(p_list_sys->p_container);
     elm_box_pack_end(p_list_sys->p_container, p_show);
@@ -80,11 +80,9 @@ list_view_common_setup(list_view* p_list_view, list_sys* p_list_sys, interface* 
     /* Container box */
     p_list_sys->p_container = elm_box_add(p_parent);
 
-    /* Empty list */
-    p_list_sys->p_empty = elm_layout_add(p_list_sys->p_container);
-    elm_layout_file_set(p_list_sys->p_empty, NOCONTENTEDJ, "no_content");
-    evas_object_size_hint_weight_set(p_list_sys->p_empty, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-    evas_object_size_hint_align_set(p_list_sys->p_empty, EVAS_HINT_FILL, EVAS_HINT_FILL);
+    /* Empty list label */
+    p_list_sys->p_empty_label = elm_label_add(p_list_sys->p_container);
+    elm_object_text_set(p_list_sys->p_empty_label, "No content to display");
 
     /* Create genlist (if required) */
     if (opts & LIST_CREATE_LIST)

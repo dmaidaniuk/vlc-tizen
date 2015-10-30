@@ -37,7 +37,7 @@
     media_library_controller*   p_ctrl;                 \
     Elm_Genlist_Item_Class*     p_default_item_class;   \
     Evas_Object*                p_container;            \
-    Evas_Object*                p_empty;                \
+    Evas_Object*                p_empty_label;          \
     bool                        b_empty;
 
 void
