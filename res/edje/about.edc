@@ -1,0 +1,85 @@
+collections {
+   group { name: "about";
+      parts {
+         
+         part { name: "hub_background";
+            type: RECT;
+            description {
+               color: 255 255 255 255;
+            }
+         }
+         
+         part { name: "apptitle";
+            type : TEXT;
+            scale: 1;
+            effect: SOFT_SHADOW;
+            description { state: "default" 0.0;
+               rel1.relative: 0.0 0.1;
+               rel2.relative: 1.0 0.0;
+               color: 255 136 0 255;
+               text {
+                  text: "VLC for Tizen™";
+                  size: 30;
+               }
+            }
+         }
+         
+         part {
+               name: "cone";
+               type: SWALLOW;
+               description {
+                  state: "default" 0.0;
+                  rel1 {relative: 0.3 0.1;}
+                  rel2 {relative: 0.7 0.4;}
+               }
+            }
+         
+         part {
+               name: "description";
+               scale: 1;
+               type: SWALLOW;
+               description {
+                  state: "default" 0.0;
+                  rel1.relative: 0.05 0.4;
+                  rel2.relative: 0.95 0.6;
+               }
+            }
+         
+         part {
+               name: "copyright";
+               type: TEXT;
+               description {
+                  state: "default" 0.0;
+                  color: 90 90 90 255;
+                  rel1.relative: 0.0 0.7;
+                  rel2.relative: 1.0 1.0;
+                  text {
+                     align: 0.5 0.1;
+                     size: 22;
+                     text: "Copyleft © 1996-2015 by VideoLAN";
+                     ellipsis: -1;
+                  }
+               }
+            }
+         
+         
+         part {
+               name: "revision";
+               type: TEXT;
+               description {
+                  state: "default" 0.0;
+                  color: 120 120 120 255;
+                  rel1.relative: 0.0 0.9;
+                  rel2.relative: 1.0 1.0;
+                  text {
+                     align: 0.5 0.1;
+                     size: 22;
+                     text: "Revision";
+                     ellipsis: -1;
+                  }
+               }
+            }
+         
+         }
+   }
+}
