@@ -401,7 +401,6 @@ create_settings_view(interface *intf, Evas_Object *parent)
 
     int len = COUNT_OF(settings_menu);
     view->view = settings_list_add(settings_menu, len, NULL, NULL, view->p_view_sys, view->p_view_sys->nav);
-    evas_object_event_callback_add(view->view, EVAS_CALLBACK_FREE, settings_view_delete_context_cb, view->p_view_sys);
     evas_object_show(view->view);
 
     return view;
