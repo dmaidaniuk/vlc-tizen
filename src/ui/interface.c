@@ -192,6 +192,7 @@ intf_show_view(interface *intf, view_e view_type)
     {
         LOGD("New interface view %i", view_type);
         intf->nf_views[view_type] = interface_views[view_type].pf_create(intf, nf_content);
+        intf->nf_views[view_type]->i_type = view_type;
     }
     else
         LOGD("Recycling interface view %i", view_type);
@@ -258,15 +259,24 @@ intf_pop_view(interface *intf)
 
     elm_object_part_content_set(intf->nf_content, "title_left_btn", intf->sidebar_toggle_btn);
     view = (interface_view *)elm_object_item_data_get(elm_naviframe_top_item_get(intf->nf_content));
-    if (view && view->pf_has_menu && view->pf_has_menu(view->p_view_sys) == true)
+    if (view)
     {
-        elm_object_part_content_set(intf->nf_content, "title_right_btn", intf->popup_toggle_btn);
-        evas_object_show(intf->popup_toggle_btn);
+        intf->current_view = view->i_type;
+
+        if (view->pf_has_menu && view->pf_has_menu(view->p_view_sys) == true)
+        {
+            elm_object_part_content_set(intf->nf_content, "title_right_btn", intf->popup_toggle_btn);
+            evas_object_show(intf->popup_toggle_btn);
+        }
+        else
+            evas_object_hide(intf->popup_toggle_btn);
+
+        evas_object_show(view->view);
     }
     else
-        evas_object_hide(intf->popup_toggle_btn);
-
-    evas_object_show(view->view);
+    {
+        LOGE("Cannot get view metadata");
+    }
 }
 
 void
