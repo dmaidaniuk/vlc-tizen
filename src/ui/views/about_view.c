@@ -184,9 +184,12 @@ create_toolbar(Evas_Object *nf_toolbar)
     Evas_Object *tabbar = elm_toolbar_add(nf_toolbar);
 
     /* Set the toolbar options */
-    elm_toolbar_shrink_mode_set(tabbar, ELM_TOOLBAR_SHRINK_NONE);
-    elm_toolbar_transverse_expanded_set(tabbar, EINA_TRUE);
+    elm_toolbar_shrink_mode_set(tabbar, ELM_TOOLBAR_SHRINK_EXPAND);
+    elm_toolbar_homogeneous_set(tabbar, EINA_FALSE);
+    elm_toolbar_transverse_expanded_set(tabbar, EINA_FALSE);
     elm_toolbar_select_mode_set(tabbar, ELM_OBJECT_SELECT_MODE_DEFAULT);
+    evas_object_size_hint_weight_set(tabbar, EVAS_HINT_FILL, 0.0);
+    evas_object_size_hint_align_set(tabbar, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
     /* Append new entry in the toolbar with the Icon & Label wanted */
     elm_toolbar_item_append(tabbar, NULL, "About",   tabbar_item_cb, nf_toolbar);
