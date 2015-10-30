@@ -152,6 +152,7 @@ clicked_audio_tracks(void *data, Evas_Object *obj, void *event_info)
             asprintf(&menu[i].title, "Audio channel #%d", i);
         menu[i].icon = NULL;
         menu[i].cb = audio_channel_selected;
+        menu[i].hidden = EINA_FALSE;
         i++;
     }
 
@@ -211,6 +212,7 @@ clicked_spu(void *data, Evas_Object *obj, void *event_info)
             asprintf(&menu[i].title, "Subtitle track #%d", i);
         menu[i].icon = NULL;
         menu[i].cb = spu_selected;
+        menu[i].hidden = EINA_FALSE;
         i++;
     }
 

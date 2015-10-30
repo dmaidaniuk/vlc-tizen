@@ -37,6 +37,8 @@ typedef struct popup_menu
     char* icon;
 
     Evas_Smart_Cb cb;
+
+    Eina_Bool hidden;
 } popup_menu;
 
 Evas_Object *

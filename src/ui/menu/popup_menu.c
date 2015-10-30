@@ -123,7 +123,7 @@ popup_menu_orient_add(popup_menu *menu, Elm_Popup_Orient orient, void *data, Eva
     Evas_Object *box = elm_box_add(popup);
     Elm_Object_Item *it, *hit = NULL;
     Evas_Object *genlist;
-    int index;
+    int index, index_visible;
 
     elm_popup_orient_set(popup, orient);
 
@@ -141,7 +141,12 @@ popup_menu_orient_add(popup_menu *menu, Elm_Popup_Orient orient, void *data, Eva
     elm_genlist_homogeneous_set(genlist, EINA_TRUE);
     elm_genlist_mode_set(genlist, ELM_LIST_COMPRESS);
 
-    for (index = 0; menu[index].title != NULL; index++) {
+    for (index = index_visible = 0; menu[index].title != NULL; index++) {
+        if (menu[index].hidden)
+            continue;
+
+        index_visible++;
+
         popup_menu_internal *pmi = calloc(1, sizeof(*pmi));
 
         pmi->index = index;
@@ -171,9 +176,9 @@ popup_menu_orient_add(popup_menu *menu, Elm_Popup_Orient orient, void *data, Eva
 
 
     /* Set the popup Y axis value */
-    if (index < 6) {
-        evas_object_size_hint_min_set(box, EVAS_HINT_FILL, index * 100);
-        evas_object_size_hint_max_set(box, EVAS_HINT_FILL, index * 100);
+    if (index_visible < 6) {
+        evas_object_size_hint_min_set(box, EVAS_HINT_FILL, index_visible * 100);
+        evas_object_size_hint_max_set(box, EVAS_HINT_FILL, index_visible * 100);
     } else {
         evas_object_size_hint_min_set(box, EVAS_HINT_FILL, 500);
         evas_object_size_hint_max_set(box, EVAS_HINT_FILL, 500);
