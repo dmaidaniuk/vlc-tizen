@@ -265,13 +265,31 @@ create_directory_view(interface *intf, Evas_Object *parent)
     view->p_view_sys = dv;
     view->pf_event = directory_event;
 
+    /* Create layout and set the theme */
+    Evas_Object *layout = elm_layout_add(parent);
+    elm_layout_theme_set(layout, "layout", "application", "default");
+
+    /* Create the background */
+    Evas_Object *bg = elm_bg_add(layout);
+    elm_bg_color_set(bg, 255, 255, 255);
+    evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+    evas_object_size_hint_align_set(bg, EVAS_HINT_FILL, EVAS_HINT_FILL);
+    evas_object_show(bg);
+
+    /* Set the background to the theme */
+    elm_object_part_content_set(layout, "elm.swallow.bg", bg);
+
     /* Create the box container */
-    Evas_Object *box = elm_box_add(parent);
+    Evas_Object *box = elm_box_add(layout);
     evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
     evas_object_size_hint_align_set(box, EVAS_HINT_FILL, EVAS_HINT_FILL);
     evas_object_show(box);
 
-    view->view = dv->p_box = box;
+    /* Set the content to the theme */
+    elm_object_part_content_set(layout, "elm.swallow.content", box);
+
+    dv->p_box = box;
+    view->view = layout;
 
     const char *psz_path = application_get_media_path(intf_get_application(intf), MEDIA_DIRECTORY);
     browse(dv, psz_path);
