@@ -239,7 +239,25 @@ static popup_menu menu_more[] =
 static void
 clicked_more(void *data, Evas_Object *obj, void *event_info)
 {
+    Eina_List *list;
+    int spu_count, audio_tracks_count;
     view_sys *p_sys = data;
+
+    /* SPU */
+    list = playback_service_spu_channel_get_list(p_sys->p_ps);
+    spu_count = eina_list_count(list);
+    eina_list_free(list);
+
+    /* Audio tracks */
+    list = playback_service_audio_channel_get_list(p_sys->p_ps);
+    audio_tracks_count = eina_list_count(list);
+    eina_list_free(list);
+
+    if (spu_count + audio_tracks_count == 0)
+        return;
+
+    menu_more[0].hidden = spu_count == 0;
+    menu_more[1].hidden = audio_tracks_count == 0;
 
     Evas_Object *popup = p_sys->p_current_popup = popup_menu_orient_add(menu_more, ELM_POPUP_ORIENT_CENTER, p_sys, p_sys->p_evas_video);
     evas_object_show(popup);
