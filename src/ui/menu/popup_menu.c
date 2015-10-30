@@ -120,7 +120,6 @@ Evas_Object *
 popup_menu_orient_add(popup_menu *menu, Elm_Popup_Orient orient, void *data, Evas_Object *parent)
 {
     Evas_Object *popup = elm_popup_add(parent);
-    Evas_Object *box = elm_box_add(popup);
     Elm_Object_Item *it, *hit = NULL;
     Evas_Object *genlist;
     int index, index_visible;
@@ -136,10 +135,11 @@ popup_menu_orient_add(popup_menu *menu, Elm_Popup_Orient orient, void *data, Eva
     itc->func.content_get = popup_menu_content_get_cb;
 
     /* */
-    genlist = elm_genlist_add(parent);
+    genlist = elm_genlist_add(popup);
     elm_scroller_single_direction_set(genlist, ELM_SCROLLER_SINGLE_DIRECTION_HARD);
-    elm_genlist_homogeneous_set(genlist, EINA_TRUE);
-    elm_genlist_mode_set(genlist, ELM_LIST_COMPRESS);
+    elm_genlist_homogeneous_set(genlist, EINA_FALSE);
+    elm_genlist_mode_set(genlist, ELM_LIST_SCROLL);
+    evas_object_show(genlist);
 
     for (index = index_visible = 0; menu[index].title != NULL; index++) {
         if (menu[index].hidden)
@@ -171,25 +171,9 @@ popup_menu_orient_add(popup_menu *menu, Elm_Popup_Orient orient, void *data, Eva
     /* */
     elm_genlist_item_class_free(itc);
 
-    evas_object_size_hint_weight_set(genlist, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-    evas_object_size_hint_align_set(genlist, EVAS_HINT_FILL, EVAS_HINT_FILL);
-
-
-    /* Set the popup Y axis value */
-    if (index_visible < 6) {
-        evas_object_size_hint_min_set(box, EVAS_HINT_FILL, index_visible * 100);
-        evas_object_size_hint_max_set(box, EVAS_HINT_FILL, index_visible * 100);
-    } else {
-        evas_object_size_hint_min_set(box, EVAS_HINT_FILL, 500);
-        evas_object_size_hint_max_set(box, EVAS_HINT_FILL, 500);
-    }
-
-    elm_box_pack_end(box, genlist);
+    elm_object_content_set(popup, genlist);
 
     evas_object_smart_callback_add(popup, "block,clicked", popup_menu_close_cb, NULL);
-
-    elm_object_content_set(popup, box);
-    evas_object_show(genlist);
 
     return popup;
 }
