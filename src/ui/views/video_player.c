@@ -138,7 +138,7 @@ clicked_audio_tracks(void *data, Evas_Object *obj, void *event_info)
         evas_object_del(p_sys->p_current_popup);
 
     // Get the list of channels
-    channel_list = playback_service_spu_channel_get_list(p_sys->p_ps);
+    channel_list = playback_service_audio_channel_get_list(p_sys->p_ps);
 
     // Allocate the memory for the menu + 1 (menu + NULL terminating item)
     menu = malloc(sizeof(*menu) * (eina_list_count(channel_list) + 1));
