@@ -94,11 +94,26 @@ cone_delete_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 static Evas_Object*
 create_about_section(Evas_Object *parent)
 {
+    /* Create layout and set the theme */
+    Evas_Object *layout = elm_layout_add(parent);
+    elm_layout_theme_set(layout, "layout", "application", "default");
+
+    /* Create the background */
+    Evas_Object *bg = elm_bg_add(layout);
+    elm_bg_color_set(bg, 255, 255, 255);
+    evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+    evas_object_size_hint_align_set(bg, EVAS_HINT_FILL, EVAS_HINT_FILL);
+    evas_object_show(bg);
+
+    /* Set the background to the theme */
+    elm_object_part_content_set(layout, "elm.swallow.bg", bg);
+
     /* */
-    Evas_Object *box = elm_box_add(parent);
+    Evas_Object *box = elm_box_add(layout);
     elm_box_horizontal_set(box, EINA_FALSE);
     evas_object_size_hint_align_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
     //evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+    evas_object_show(box);
 
     /* Add and set the label in the box */
     Evas_Object *lbl_about_title = elm_label_add(box);
@@ -138,10 +153,12 @@ create_about_section(Evas_Object *parent)
     evas_object_smart_callback_add(cone, "clicked", cone_clicked_cb, anim);
     evas_object_event_callback_add(box, EVAS_CALLBACK_FREE, cone_delete_cb, anim);
 
+    /* Set the content to the theme */
+    elm_object_part_content_set(layout, "elm.swallow.content", box);
 
     /* */
-    evas_object_show(box);
-    return box;
+    evas_object_show(layout);
+    return layout;
 }
 
 static Evas_Object*
