@@ -94,6 +94,11 @@ app_create(void *data)
     if (!app->p_mediaLibrary)
         goto error;
 
+    if ( !media_library_start( app->p_mediaLibrary ) )
+        goto error;
+    media_library_discover( app->p_mediaLibrary, application_get_media_path( app, MEDIA_DIRECTORY_VIDEOS ) );
+    media_library_discover( app->p_mediaLibrary, application_get_media_path( app, MEDIA_DIRECTORY_MUSIC ) );
+
     /* */
     app->p_ps = playback_service_create(app);
     if (!app->p_ps)
@@ -103,13 +108,6 @@ app_create(void *data)
     app->p_intf = intf_create(app);
     if (!app->p_intf)
         goto error;
-
-    /* Now that the UI is ready to receive potential updates, start the ML */
-    if ( !media_library_start( app->p_mediaLibrary ) )
-        goto error;
-    media_library_discover( app->p_mediaLibrary, application_get_media_path( app, MEDIA_DIRECTORY_VIDEOS ) );
-    media_library_discover( app->p_mediaLibrary, application_get_media_path( app, MEDIA_DIRECTORY_MUSIC ) );
-
 
     return true;
 error:
