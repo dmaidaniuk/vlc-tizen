@@ -271,27 +271,11 @@ Evas_Object *
 settings_popup_add(settings_item *menu, int menu_len, Settings_menu_callback global_menu_cb, void *data, view_sys* p_view_sys, Evas_Object *parent)
 {
     Evas_Object *popup = elm_popup_add(parent);
-    Evas_Object *box = elm_box_add(popup);
-    Evas_Object *genlist;
-
-    /* Set the popup Y axis value */
-    if(menu_len < 6){
-        evas_object_size_hint_min_set(box, EVAS_HINT_FILL, menu_len * 100);
-        evas_object_size_hint_max_set(box, EVAS_HINT_FILL, menu_len * 100);
-    }
-
-    else{
-        evas_object_size_hint_min_set(box, EVAS_HINT_FILL, 500);
-        evas_object_size_hint_max_set(box, EVAS_HINT_FILL, 500);
-    }
-
-    genlist = settings_list_add(menu, menu_len, global_menu_cb, data, p_view_sys, popup);
-
-    elm_box_pack_end(box, genlist);
+    Evas_Object *genlist = settings_list_add(menu, menu_len, global_menu_cb, data, p_view_sys, popup);
 
     evas_object_smart_callback_add(popup, "block,clicked", popup_close_cb, NULL);
 
-    elm_object_content_set(popup, box);
+    elm_object_content_set(popup, genlist);
     evas_object_show(genlist);
 
     return popup;
