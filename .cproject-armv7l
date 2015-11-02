@@ -160,10 +160,10 @@
 								</option>
 								<option id="gnu.cpp.compiler.option.warnings.toerrors.361648454" name="Warnings as errors (-Werror)" superClass="gnu.cpp.compiler.option.warnings.toerrors" value="false" valueType="boolean"/>
 								<option id="gnu.cpp.compiler.option.dialect.std.2027917307" name="Language standard" superClass="gnu.cpp.compiler.option.dialect.std" value="gnu.cpp.compiler.dialect.c++11" valueType="enumerated"/>
-								<option id="sbi.gnu.cpp.compiler.option.dynamicanalysis.core.1831622868" superClass="sbi.gnu.cpp.compiler.option.dynamicanalysis.core" valueType="userObjs">
+								<option id="sbi.gnu.cpp.compiler.option.dynamicanalysis.core.1831622868" name="Tizen-DynamicAnalysis" superClass="sbi.gnu.cpp.compiler.option.dynamicanalysis.core" valueType="userObjs">
 									<listOptionValue builtIn="false" value=""/>
 								</option>
-								<option id="sbi.gnu.cpp.compiler.option.dynamicanalysis_flags.core.1087666224" superClass="sbi.gnu.cpp.compiler.option.dynamicanalysis_flags.core" valueType="stringList">
+								<option id="sbi.gnu.cpp.compiler.option.dynamicanalysis_flags.core.1087666224" name="Tizen-DynamicAnalysis-Compiler-Flags" superClass="sbi.gnu.cpp.compiler.option.dynamicanalysis_flags.core" valueType="stringList">
 									<listOptionValue builtIn="false" value=""/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.1722031451" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
@@ -307,10 +307,10 @@
 								</option>
 								<option id="gnu.c.compiler.option.dialect.std.1897886913" name="Language standard" superClass="gnu.c.compiler.option.dialect.std" value="gnu.c.compiler.dialect.c11" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.warnings.toerrors.1094237689" name="Warnings as errors (-Werror)" superClass="gnu.c.compiler.option.warnings.toerrors" value="false" valueType="boolean"/>
-								<option id="sbi.gnu.c.compiler.option.dynamicanalysis.core.1715685460" superClass="sbi.gnu.c.compiler.option.dynamicanalysis.core" valueType="userObjs">
+								<option id="sbi.gnu.c.compiler.option.dynamicanalysis.core.1715685460" name="Tizen-DynamicAnalysis" superClass="sbi.gnu.c.compiler.option.dynamicanalysis.core" valueType="userObjs">
 									<listOptionValue builtIn="false" value=""/>
 								</option>
-								<option id="sbi.gnu.c.compiler.option.dynamicanalysis_flags.core.834367599" superClass="sbi.gnu.c.compiler.option.dynamicanalysis_flags.core" valueType="stringList">
+								<option id="sbi.gnu.c.compiler.option.dynamicanalysis_flags.core.834367599" name="Tizen-DynamicAnalysis-Compiler-Flags" superClass="sbi.gnu.c.compiler.option.dynamicanalysis_flags.core" valueType="stringList">
 									<listOptionValue builtIn="false" value=""/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.2048528090" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
@@ -335,7 +335,7 @@
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="emotion"/>
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="medialibrary"/>
 								</option>
-								<option id="sbi.gnu.cpp.linker.option.dynamicanalysis_flags.core.755132870" superClass="sbi.gnu.cpp.linker.option.dynamicanalysis_flags.core" valueType="stringList">
+								<option id="sbi.gnu.cpp.linker.option.dynamicanalysis_flags.core.755132870" name="Tizen-DynamicAnalysis-Linker-Flags" superClass="sbi.gnu.cpp.linker.option.dynamicanalysis_flags.core" valueType="stringList">
 									<listOptionValue builtIn="false" value=""/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.1580865246" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
@@ -351,7 +351,17 @@
 							<tool command="arm-linux-gnueabi-gcc" id="org.tizen.nativecore.tool.ast.228456971" name="C Static Analyzer" superClass="org.tizen.nativecore.tool.ast"/>
 							<tool id="org.tizen.nativecore.tool.ast.cpp.554651495" name="C++ Static Analyzer" superClass="org.tizen.nativecore.tool.ast.cpp"/>
 							<tool id="org.tizen.nativecore.tool.sbi.po.compiler.2059629768" name="PO Resource Compiler" superClass="org.tizen.nativecore.tool.sbi.po.compiler"/>
-							<tool id="org.tizen.nativecore.tool.sbi.edc.compiler.1930427795" name="EDC Resource Compiler" superClass="org.tizen.nativecore.tool.sbi.edc.compiler"/>
+							<tool id="org.tizen.nativecore.tool.sbi.edc.compiler.1930427795" name="EDC Resource Compiler" superClass="org.tizen.nativecore.tool.sbi.edc.compiler">
+								<option id="sbi.gnu.edc.compiler.option.misc.id.1613246187" superClass="sbi.gnu.edc.compiler.option.misc.id" valueType="stringList">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}}/res/images&quot;"/>
+								</option>
+								<option id="sbi.gnu.edc.compiler.option.misc.sd.989495863" superClass="sbi.gnu.edc.compiler.option.misc.sd" valueType="stringList">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}}/res/sounds&quot;"/>
+								</option>
+								<option id="sbi.gnu.edc.compiler.option.misc.fd.1431222612" superClass="sbi.gnu.edc.compiler.option.misc.fd" valueType="stringList">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}}/res/fonts&quot;"/>
+								</option>
+							</tool>
 							<tool id="org.tizen.nativecore.tool.sbi.gnu.archiver.mergelib.903113472" name="Archive Generator" superClass="org.tizen.nativecore.tool.sbi.gnu.archiver.mergelib"/>
 						</toolChain>
 					</folderInfo>
@@ -519,10 +529,10 @@
 									<listOptionValue builtIn="false" value="Native_API"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.dialect.std.1737831638" name="Language standard" superClass="gnu.cpp.compiler.option.dialect.std" value="gnu.cpp.compiler.dialect.c++11" valueType="enumerated"/>
-								<option id="sbi.gnu.cpp.compiler.option.dynamicanalysis.core.1541862918" superClass="sbi.gnu.cpp.compiler.option.dynamicanalysis.core" valueType="userObjs">
+								<option id="sbi.gnu.cpp.compiler.option.dynamicanalysis.core.1541862918" name="Tizen-DynamicAnalysis" superClass="sbi.gnu.cpp.compiler.option.dynamicanalysis.core" valueType="userObjs">
 									<listOptionValue builtIn="false" value=""/>
 								</option>
-								<option id="sbi.gnu.cpp.compiler.option.dynamicanalysis_flags.core.1479218229" superClass="sbi.gnu.cpp.compiler.option.dynamicanalysis_flags.core" valueType="stringList">
+								<option id="sbi.gnu.cpp.compiler.option.dynamicanalysis_flags.core.1479218229" name="Tizen-DynamicAnalysis-Compiler-Flags" superClass="sbi.gnu.cpp.compiler.option.dynamicanalysis_flags.core" valueType="stringList">
 									<listOptionValue builtIn="false" value=""/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.1436342112" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
@@ -662,10 +672,10 @@
 									<listOptionValue builtIn="false" value="Native_API"/>
 								</option>
 								<option id="gnu.c.compiler.option.dialect.std.1274159738" name="Language standard" superClass="gnu.c.compiler.option.dialect.std" value="gnu.c.compiler.dialect.c11" valueType="enumerated"/>
-								<option id="sbi.gnu.c.compiler.option.dynamicanalysis.core.1794142790" superClass="sbi.gnu.c.compiler.option.dynamicanalysis.core" valueType="userObjs">
+								<option id="sbi.gnu.c.compiler.option.dynamicanalysis.core.1794142790" name="Tizen-DynamicAnalysis" superClass="sbi.gnu.c.compiler.option.dynamicanalysis.core" valueType="userObjs">
 									<listOptionValue builtIn="false" value=""/>
 								</option>
-								<option id="sbi.gnu.c.compiler.option.dynamicanalysis_flags.core.1049593475" superClass="sbi.gnu.c.compiler.option.dynamicanalysis_flags.core" valueType="stringList">
+								<option id="sbi.gnu.c.compiler.option.dynamicanalysis_flags.core.1049593475" name="Tizen-DynamicAnalysis-Compiler-Flags" superClass="sbi.gnu.c.compiler.option.dynamicanalysis_flags.core" valueType="stringList">
 									<listOptionValue builtIn="false" value=""/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.1740946228" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
@@ -690,7 +700,7 @@
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="emotion"/>
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="medialibrary"/>
 								</option>
-								<option id="sbi.gnu.cpp.linker.option.dynamicanalysis_flags.core.2107508973" superClass="sbi.gnu.cpp.linker.option.dynamicanalysis_flags.core" valueType="stringList">
+								<option id="sbi.gnu.cpp.linker.option.dynamicanalysis_flags.core.2107508973" name="Tizen-DynamicAnalysis-Linker-Flags" superClass="sbi.gnu.cpp.linker.option.dynamicanalysis_flags.core" valueType="stringList">
 									<listOptionValue builtIn="false" value=""/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.1347366043" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
