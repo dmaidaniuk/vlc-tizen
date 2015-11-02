@@ -22,8 +22,8 @@
  * compatibility with the Store
  *****************************************************************************/
 
-#define BUTTON_NAVIFRAME_DRAWERS_WIDTH_INC 24
-#define BUTTON_NAVIFRAME_DRAWERS_IMAGE_SIZE_INC 24 24
+#define BUTTON_NAVIFRAME_MORE_WIDTH_INC 24
+#define BUTTON_NAVIFRAME_MORE_IMAGE_SIZE_INC 24 24
 
 collections {
    group { name: "elm/button/base/naviframe/custom_more";
@@ -46,8 +46,8 @@ collections {
             mouse_events: 0;
             clip_to: "button_bg_clipper";
             description { state: "default" 0.0;
-               min: BUTTON_NAVIFRAME_DRAWERS_WIDTH_INC 0;
-               max: BUTTON_NAVIFRAME_DRAWERS_WIDTH_INC -1;
+               min: BUTTON_NAVIFRAME_MORE_WIDTH_INC 0;
+               max: BUTTON_NAVIFRAME_MORE_WIDTH_INC -1;
                fixed: 1 0;
             }
          }
@@ -76,8 +76,8 @@ collections {
                rel1 { to: "button_bg"; relative: 0.0 0.0; }
                rel2 { to: "button_bg"; relative: 0.0 1.0; }
                image.normal: "ic_more_normal";
-               max: BUTTON_NAVIFRAME_DRAWERS_IMAGE_SIZE_INC;
-               min: BUTTON_NAVIFRAME_DRAWERS_IMAGE_SIZE_INC;
+               max: BUTTON_NAVIFRAME_MORE_IMAGE_SIZE_INC;
+               min: BUTTON_NAVIFRAME_MORE_IMAGE_SIZE_INC;
             }
          }
          part { name: "button_icon_clipper";
