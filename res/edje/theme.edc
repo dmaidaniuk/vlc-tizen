@@ -206,3 +206,6 @@ collections {
       }
    }
 }
+
+#undef BUTTON_NAVIFRAME_MORE_WIDTH_INC
+#undef BUTTON_NAVIFRAME_MORE_IMAGE_SIZE_INC
