@@ -66,11 +66,11 @@
 #define EDJPATH "edje"
 #define ICONPATH "icon"
 #define IMAGESPATH "images"
-#define VIDEOPLAYEREDJ get_resource_path( EDJPATH "/video_player.edj")
-#define AUDIOPLAYERMINIEDJ get_resource_path( EDJPATH "/audio_player_mini.edj")
-#define AUDIOPLAYEREDJ get_resource_path( EDJPATH "/audio_player.edj")
-#define ABOUTEDJ get_resource_path( EDJPATH "/about.edj")
-#define THEMEEDJ get_resource_path( EDJPATH "/theme.edj")
+#define VIDEOPLAYER_EDJ get_resource_path( EDJPATH "/video_player.edj")
+#define AUDIOPLAYERMINI_EDJ get_resource_path( EDJPATH "/audio_player_mini.edj")
+#define AUDIOPLAYER_EDJ get_resource_path( EDJPATH "/audio_player.edj")
+#define ABOUT_EDJ get_resource_path( EDJPATH "/about.edj")
+#define THEME_EDJ get_resource_path( EDJPATH "/theme.edj")
 
 #define RES_DIR "/opt/usr/apps/" PACKAGE "/res/"
 #define ICON_DIR RES_DIR "/images/"

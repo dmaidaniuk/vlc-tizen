@@ -415,7 +415,7 @@ create_video_player(interface *intf, playback_service *p_ps, Evas_Object *parent
 
     /* Create the layout */
     Evas_Object *layout = p_sys->layout = elm_layout_add(parent);
-    elm_layout_file_set(layout, VIDEOPLAYEREDJ, "media_player_renderer");
+    elm_layout_file_set(layout, VIDEOPLAYER_EDJ, "media_player_renderer");
     evas_object_size_hint_weight_set(layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
     evas_object_size_hint_align_set(layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
     evas_object_show(layout);

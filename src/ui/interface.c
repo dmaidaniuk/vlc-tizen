@@ -495,7 +495,7 @@ intf_create(application *app)
     EDJE_COLOR_CLASS_SET_VLC_ORANGE("W0641");   // slider thumb
 
     // Extend theme
-    elm_theme_extension_add(NULL, THEMEEDJ);
+    elm_theme_extension_add(NULL, THEME_EDJ);
 
     /* Handle rotations */
     if (elm_win_wm_rotation_supported_get(intf->win)) {

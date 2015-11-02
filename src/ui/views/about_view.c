@@ -98,7 +98,7 @@ create_about_section(Evas_Object *parent)
     Evas_Object *layout = elm_layout_add(parent);
 
     /* */
-    elm_layout_file_set(layout, ABOUTEDJ, "about");
+    elm_layout_file_set(layout, ABOUT_EDJ, "about");
 
     /* Cone */
     Evas_Object *cone = elm_image_add(layout);

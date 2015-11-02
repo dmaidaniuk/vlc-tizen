@@ -654,7 +654,7 @@ set_sliders_callbacks(audio_player *mpd, Evas_Object *slider)
 static void
 swallow_mini_player(audio_player *mpd, Evas_Object *layout)
 {
-    elm_layout_file_set(layout, AUDIOPLAYERMINIEDJ, "audio_player");
+    elm_layout_file_set(layout, AUDIOPLAYERMINI_EDJ, "audio_player");
 
     /* set the progress bar at the top of the table */
     mpd->slider = elm_slider_add(layout);
@@ -689,7 +689,7 @@ add_fullscreen_item_table(audio_player *mpd, Evas_Object *parent)
     evas_object_size_hint_weight_set(layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
     evas_object_size_hint_align_set(layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
-    elm_layout_file_set(layout, AUDIOPLAYEREDJ, "audio_player");
+    elm_layout_file_set(layout, AUDIOPLAYER_EDJ, "audio_player");
 
     /* More button */
     if (mpd->more_state == FALSE)
