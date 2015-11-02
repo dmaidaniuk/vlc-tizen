@@ -71,8 +71,16 @@ video_view_callback(view_sys *p_view_sys, interface_view_event event)
     switch (event) {
     case INTERFACE_VIEW_EVENT_MENU:
     {
-        p_view_sys->p_overflow_menu = popup_menu_add(video_view_popup_menu, p_view_sys, p_view_sys->p_parent);
-        evas_object_show(p_view_sys->p_overflow_menu);
+        if (p_view_sys->p_overflow_menu)
+        {
+            evas_object_del(p_view_sys->p_overflow_menu);
+            p_view_sys->p_overflow_menu = NULL;
+        }
+        else
+        {
+            p_view_sys->p_overflow_menu = popup_menu_add(video_view_popup_menu, p_view_sys, p_view_sys->p_parent);
+            evas_object_show(p_view_sys->p_overflow_menu);
+        }
         return true;
     }
     case INTERFACE_VIEW_EVENT_BACK:
