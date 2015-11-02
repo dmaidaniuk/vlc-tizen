@@ -136,7 +136,7 @@ intf_get_main_naviframe(interface *intf)
 
 /* CREATION */
 static Evas_Object *
-create_button(Evas_Object *parent, char *style)
+create_button(Evas_Object *parent, const char *style)
 {
     Evas_Object *button = elm_button_add(parent);
     elm_object_style_set(button, style);
