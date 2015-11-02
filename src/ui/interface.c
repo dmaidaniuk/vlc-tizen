@@ -164,7 +164,7 @@ intf_push_view(interface *intf, interface_view *view, const char *title)
     {
         if(intf->popup_toggle_btn == NULL)
         {
-            intf->popup_toggle_btn = create_button(intf->nf_content, "naviframe/drawers");
+            intf->popup_toggle_btn = create_button(intf->nf_content, "naviframe/custom_more");
             evas_object_smart_callback_add(intf->popup_toggle_btn, "clicked", right_panel_button_clicked_cb, intf);
         }
         elm_object_part_content_set(intf->nf_content, "title_right_btn", intf->popup_toggle_btn);
@@ -493,6 +493,9 @@ intf_create(application *app)
     EDJE_COLOR_CLASS_SET_VLC_COLOR("W0641P", VLC_ORANGE_500_TRANSPARENT);  // slider thumb pressed
     EDJE_COLOR_CLASS_SET_VLC_COLOR("W0641D", VLC_ORANGE_500_TRANSPARENT);  // slider thumb disabled
     EDJE_COLOR_CLASS_SET_VLC_ORANGE("W0641");   // slider thumb
+
+    // Extend theme
+    elm_theme_extension_add(NULL, THEMEEDJ);
 
     /* Handle rotations */
     if (elm_win_wm_rotation_supported_get(intf->win)) {

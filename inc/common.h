@@ -70,6 +70,7 @@
 #define AUDIOPLAYERMINIEDJ get_resource_path( EDJPATH "/audio_player_mini.edj")
 #define AUDIOPLAYEREDJ get_resource_path( EDJPATH "/audio_player.edj")
 #define ABOUTEDJ get_resource_path( EDJPATH "/about.edj")
+#define THEMEEDJ get_resource_path( EDJPATH "/theme.edj")
 
 #define RES_DIR "/opt/usr/apps/" PACKAGE "/res/"
 #define ICON_DIR RES_DIR "/images/"
