@@ -481,6 +481,7 @@ intf_create(application *app)
     EDJE_COLOR_CLASS_SET_VLC_ORANGE("B0514S");  // Naviframe tab bar
     EDJE_COLOR_CLASS_SET_VLC_ORANGE("B0514P");  // Naviframe tab bar
     EDJE_COLOR_CLASS_SET_VLC_ORANGE("B0517");   // Naviframe second
+    EDJE_COLOR_CLASS_SET_VLC_COLOR("F043P", VLC_GREY_400_TRANSPARENT); // Naviframe selection
 
     // 2.4
     EDJE_COLOR_CLASS_SET_VLC_ORANGE("B001");    // Base class
