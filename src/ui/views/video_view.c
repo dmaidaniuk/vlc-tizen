@@ -59,6 +59,14 @@ video_view_refresh_cb(void *data, Evas_Object *obj, void *event_info)
     p_sys->p_overflow_menu = NULL;
 }
 
+static void
+video_view_popup_close_cb(void *data, Evas_Object *obj, void *event_info)
+{
+    view_sys *p_view_sys = data;
+    evas_object_del(p_view_sys->p_overflow_menu);
+    p_view_sys->p_overflow_menu = NULL;
+}
+
 static popup_menu video_view_popup_menu[] =
 {
     {"Refresh", NULL, video_view_refresh_cb},
@@ -79,6 +87,7 @@ video_view_callback(view_sys *p_view_sys, interface_view_event event)
         else
         {
             p_view_sys->p_overflow_menu = popup_menu_add(video_view_popup_menu, p_view_sys, p_view_sys->p_parent);
+            evas_object_smart_callback_add(p_view_sys->p_overflow_menu, "block,clicked", video_view_popup_close_cb, p_view_sys);
             evas_object_show(p_view_sys->p_overflow_menu);
         }
         return true;

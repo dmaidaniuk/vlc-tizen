@@ -172,6 +172,14 @@ static popup_menu audio_view_popup_menu[] =
         {0}
 };
 
+static void
+audio_view_popup_close_cb(void *data, Evas_Object *obj, void *event_info)
+{
+    view_sys *p_view_sys = data;
+    evas_object_del(p_view_sys->p_overflow_menu);
+    p_view_sys->p_overflow_menu = NULL;
+}
+
 static bool
 audio_view_callback(view_sys *p_view_sys, interface_view_event event)
 {
@@ -186,6 +194,7 @@ audio_view_callback(view_sys *p_view_sys, interface_view_event event)
         else
         {
             p_view_sys->p_overflow_menu = popup_menu_add(audio_view_popup_menu, p_view_sys, p_view_sys->nf_toolbar);
+            evas_object_smart_callback_add(p_view_sys->p_overflow_menu, "block,clicked", audio_view_popup_close_cb, p_view_sys);
             evas_object_show(p_view_sys->p_overflow_menu);
         }
         return true;
