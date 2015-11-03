@@ -113,6 +113,10 @@ genlist_text_get_cb(void *data, Evas_Object *obj, const char *part)
             asprintf(&buf, "<b>%s</b>", p_view_item->p_artist_item->psz_name ?
                     p_view_item->p_artist_item->psz_name : "Unknown Artist");
             return buf;
+        } else if (!strcmp(part, "elm.text.sub.right.bottom")) {
+            asprintf(&buf, "%d album%s", p_view_item->p_artist_item->i_nb_albums,
+                    p_view_item->p_artist_item->i_nb_albums > 1 ? "s" : "" );
+            return buf;
         }
     }
     return NULL;
