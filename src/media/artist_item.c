@@ -34,6 +34,7 @@ artist_item_create(const char* psz_name)
     if (p_item == NULL)
         return NULL;
     p_item->i_library_item_type = LIBRARY_ITEM_ARTIST;
+    p_item->i_nb_albums = 0;
     if (psz_name != NULL && *psz_name != 0)
     {
         p_item->psz_name = strdup(psz_name);
@@ -64,6 +65,7 @@ artist_item_copy(const artist_item* p_item )
         return NULL;
     if (p_item->psz_artwork != NULL)
         p_new->psz_artwork = strdup(p_item->psz_artwork);
+    p_new->i_nb_albums = p_item->i_nb_albums;
     return p_new;
 }
 

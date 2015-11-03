@@ -153,5 +153,8 @@ artistToArtistItem( ArtistPtr artist )
         return nullptr;
     if (artist->artworkUrl().empty() == false)
         p_item->psz_artwork = path_from_url( artist->artworkUrl().c_str() );
+
+    auto albums = artist->albums();
+    p_item->i_nb_albums = albums.size();
     return p_item;
 }

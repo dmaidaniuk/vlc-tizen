@@ -39,6 +39,7 @@ typedef struct artist_item
 
     char* psz_name;
     char* psz_artwork;
+    uint32_t i_nb_albums;
 } artist_item;
 
 artist_item*
