@@ -322,6 +322,8 @@ intf_video_player_create(interface *intf)
 void
 intf_video_player_play(interface *intf, const char *psz_path)
 {
+    audio_player_stop(intf->p_mini_player);
+
     if(intf->video_player == NULL)
         intf_video_player_create(intf);
 
