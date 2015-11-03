@@ -790,12 +790,6 @@ audio_player_show_fullscreen(audio_player *mpd)
 }
 
 static void
-audio_player_fullscreen_cb(void *data, Evas_Object *obj, void *event_info)
-{
-    audio_player_show_fullscreen(data);
-}
-
-static void
 audio_player_fullscreen_edge_cb(void *data, Evas_Object *o, const char *emission, const char *source)
 {
     audio_player_show_fullscreen(data);
@@ -906,7 +900,6 @@ audio_player_create(interface *intf, playback_service *p_ps, Evas_Object *layout
     /* Add button callbacks */
     evas_object_event_callback_add(mpd->play_pause_img, EVAS_CALLBACK_MOUSE_DOWN, play_pause_mouse_down_cb, mpd);
     evas_object_event_callback_add(mpd->play_pause_img, EVAS_CALLBACK_MOUSE_UP, play_pause_mouse_up_cb, mpd);
-    evas_object_smart_callback_add(mpd->cover, "clicked", audio_player_fullscreen_cb, mpd);
 
     edje_object_signal_callback_add(edje, "*clicked*", "expand_region", audio_player_fullscreen_edge_cb, mpd);
 
