@@ -176,9 +176,6 @@ intf_push_view(interface *intf, interface_view *view, const char *title)
 void
 intf_show_view(interface *intf, view_e view_type)
 {
-    if(view_type == VIEW_AUTO)
-        view_type = preferences_get_index(PREF_CURRENT_VIEW, VIEW_VIDEO);
-
     if(view_type == intf->current_view)
         return;
 
@@ -429,7 +426,7 @@ create_main_box(interface *intf, Evas_Object *parent)
 }
 
 static void
-create_main_layout(interface *intf, Evas_Object *conform)
+create_main_layout(interface *intf, Evas_Object *conform, view_e view_type)
 {
     /* Add a layout to the conformant */
     Evas_Object *layout = elm_layout_add(conform);
@@ -437,7 +434,7 @@ create_main_layout(interface *intf, Evas_Object *conform)
     evas_object_show(layout);
 
     /* Create the panel and put it in the layout */
-    intf->sidebar = create_sidebar(intf, layout);
+    intf->sidebar = create_sidebar(intf, layout, view_type);
     elm_object_part_content_set(layout, "elm.swallow.left", intf->sidebar);
 
     /* Create the content box and put it in the layout */
@@ -527,11 +524,13 @@ intf_create(application *app)
     elm_object_part_content_set(conform, "elm.swallow.indicator_bg", bg);
     evas_object_show(bg);
 
+    view_e view_type = preferences_get_index(PREF_CURRENT_VIEW, VIEW_VIDEO);
+
     /* Create the main view in the conformant */
-    create_main_layout(intf, conform);
+    create_main_layout(intf, conform, view_type);
 
     /* Create the default view in the content naviframe */
-    intf_show_view(intf, VIEW_AUTO);
+    intf_show_view(intf, view_type);
 
     /* */
     evas_object_show(intf->win);

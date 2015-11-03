@@ -30,6 +30,6 @@
 #include "interface.h"
 
 Evas_Object*
-create_sidebar(interface *intf, Evas_Object *layout);
+create_sidebar(interface *intf, Evas_Object *layout, view_e view_type);
 
 #endif /* PANEL_GENLIST_H_ */

@@ -34,24 +34,31 @@
 #include "audio_player.h"
 #include "ui/utils.h"
 
+typedef struct sidebar {
+    bool initialized;
+} sidebar_s;
+
 typedef struct menu_cb_data
 {
     interface *intf;
 
     int index;
     const Elm_Genlist_Item_Class *itc;
+    Elm_Object_Item *it;
+    sidebar_s *sb;
 } menu_cb_data_s;
 
 typedef struct {
     const char* label;
-    const char* icon_name;
+    const char* icon;
+    const char* icon_selected;
 } menu_entry;
 static const menu_entry menu_entries[] = {
-        { "Video",      "ic_menu_video.png" },
-        { "Audio",      "ic_menu_audio.png" },
-        { "Directory",  "ic_menu_folder.png" },
-        { "Settings",   "ic_menu_preferences.png" },
-        { "About",      "ic_menu_cone.png" }
+        { "Video",      "ic_menu_video.png",        "ic_menu_video_selected.png" },
+        { "Audio",      "ic_menu_audio.png",        "ic_menu_audio_selected.png" },
+        { "Directory",  "ic_menu_folder.png",       "ic_menu_folder_selected.png" },
+        { "Settings",   "ic_menu_preferences.png",  "ic_menu_preferences_selected.png" },
+        { "About",      "ic_menu_cone.png",         "ic_menu_cone_selected.png" }
 };
 
 static char *
@@ -73,6 +80,7 @@ sidebar_content_get_cb(void *data, Evas_Object *obj, const char *part)
 {
     menu_cb_data_s *cd = data;
     Evas_Object *content = NULL;
+    const char *icon_str;
 
     /* Check the item class style and add the object needed in the item class*/
     /* Here, puts the icon in the item class to add it to genlist items */
@@ -80,7 +88,13 @@ sidebar_content_get_cb(void *data, Evas_Object *obj, const char *part)
         if (part && !strcmp(part, "elm.icon.1")) {
             content = elm_layout_add(obj);
             elm_layout_theme_set(content, "layout", "list/B/type.3", "default");
-            Evas_Object *icon = create_icon(content, menu_entries[cd->index].icon_name);
+
+            if (elm_genlist_item_selected_get(cd->it))
+                icon_str = menu_entries[cd->index].icon_selected;
+            else
+                icon_str = menu_entries[cd->index].icon;
+
+            Evas_Object *icon = create_icon(content, icon_str);
             elm_layout_content_set(content, "elm.swallow.content", icon);
         }
     }
@@ -93,6 +107,12 @@ sidebar_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
     menu_cb_data_s *cd = data;
     /* Generate the view depending on which sidebar genlist item is selected */
+
+    if (!cd->sb->initialized)
+    {
+        // Don't forward selection until we're ready
+        return;
+    }
 
     intf_update_mini_player(cd->intf);
 
@@ -126,8 +146,14 @@ sidebar_item_delete_cb(void *data, Evas_Object *obj, void *event_info)
     free(cd);
 }
 
+void sidebar_delete_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+    sidebar_s *sb = data;
+    free(sb);
+}
+
 static Evas_Object *
-sidebar_create_panel_genlist(interface *intf, Evas_Object *sidebar)
+sidebar_create_panel_genlist(interface *intf, Evas_Object *sidebar, sidebar_s *sb)
 {
     /* Set then create the Genlist object */
     Elm_Genlist_Item_Class *itc = elm_genlist_item_class_new();
@@ -166,6 +192,8 @@ sidebar_create_panel_genlist(interface *intf, Evas_Object *sidebar)
         cd->index = index;
         cd->intf = intf;
         cd->itc = itc;
+        cd->it = it;
+        cd->sb = sb;
     }
 
     elm_genlist_item_class_free(itc);
@@ -182,10 +210,10 @@ sidebar_list_clicked_cb(void *data, Evas_Object *obj, void *event_info)
 }
 
 Evas_Object*
-create_sidebar(interface *intf, Evas_Object *layout)
+create_sidebar(interface *intf, Evas_Object *layout, view_e view_type)
 {
-    Evas_Object *sidebar_list;
-    Evas_Object *sidebar;
+    Evas_Object *sidebar_list, *sidebar;
+    sidebar_s *sb = calloc(1, sizeof(*sb));
 
     /* Create then set the sidebar */
     sidebar = elm_panel_add(layout);
@@ -194,17 +222,21 @@ create_sidebar(interface *intf, Evas_Object *layout)
     elm_panel_orient_set(sidebar, ELM_PANEL_ORIENT_LEFT);
 
     /* Add the sidebar genlist in the sidebar */
-    sidebar_list = sidebar_create_panel_genlist(intf, sidebar);
+    sidebar_list = sidebar_create_panel_genlist(intf, sidebar, sb);
     evas_object_show(sidebar_list);
     evas_object_size_hint_weight_set(sidebar_list, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
     evas_object_size_hint_align_set(sidebar_list, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
     /* */
-    evas_object_smart_callback_add(sidebar_list, "selected", sidebar_list_clicked_cb, sidebar);
+    elm_object_content_set(sidebar, sidebar_list);
+
+    /* Select the nth item by default */
+    elm_genlist_item_selected_set(elm_genlist_nth_item_get(sidebar_list, view_type), EINA_TRUE);
+    sb->initialized = true;
 
     /* */
-    elm_object_content_set(sidebar, sidebar_list);
-    elm_genlist_item_selected_set(elm_genlist_first_item_get(sidebar), EINA_TRUE);
+    evas_object_smart_callback_add(sidebar_list, "selected", sidebar_list_clicked_cb, sidebar);
+    evas_object_event_callback_add(sidebar_list, EVAS_CALLBACK_FREE, sidebar_delete_cb, sb);
 
     return sidebar;
 }
