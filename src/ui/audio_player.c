@@ -849,7 +849,6 @@ audio_player_start(audio_player *mpd, Eina_Array *array, int pos)
     audio_player_reset_states(mpd);
 
     playback_service_set_context(mpd->p_ps, PLAYLIST_CONTEXT_AUDIO);
-    playback_service_set_evas_video(mpd->p_ps, NULL);
     playback_service_list_clear(mpd->p_ps);
 
     media_item *p_mi;
