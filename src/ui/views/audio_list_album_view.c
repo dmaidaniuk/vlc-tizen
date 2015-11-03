@@ -108,12 +108,6 @@ genlist_text_get_cb(void *data, Evas_Object *obj, const char *part)
                     p_view_item->p_album_item->i_nb_tracks > 1 ? "s" : "" );
             return buf;
         }
-        else if (!strcmp(part, "elm.text.sub.left.bottom")) {
-            if (p_view_item->p_album_item->i_release_date) {
-                asprintf(&buf, "%d", p_view_item->p_album_item->i_release_date);
-                return buf;
-            }
-        }
     }
     return NULL;
 }

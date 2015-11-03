@@ -139,7 +139,6 @@ albumToAlbumItem( AlbumPtr album )
     if (p_item == nullptr)
         return nullptr;
     p_item->i_id = album->id();
-    p_item->i_release_date = album->releaseYear();
     p_item->i_nb_tracks = album->nbTracks();
     p_item->psz_artwork = path_from_url(album->artworkUrl().c_str());
     return p_item;
