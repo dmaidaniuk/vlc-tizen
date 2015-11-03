@@ -120,7 +120,7 @@ sidebar_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 }
 
 static void
-sidebar_del_cb(void *data, Evas_Object *obj, void *event_info)
+sidebar_item_delete_cb(void *data, Evas_Object *obj, void *event_info)
 {
     menu_cb_data_s *cd = data;
     free(cd);
@@ -160,7 +160,7 @@ sidebar_create_panel_genlist(interface *intf, Evas_Object *sidebar)
                 sidebar_selected_cb,                 /* select smart callback    */
                 cd);                            /* smart callback user data */
 
-        elm_object_item_del_cb_set(it, sidebar_del_cb);
+        elm_object_item_del_cb_set(it, sidebar_item_delete_cb);
 
         /* Put the index and the gui_data in the cb_data struct for callbacks */
         cd->index = index;
