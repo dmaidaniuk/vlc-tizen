@@ -64,7 +64,7 @@ collections
                         to: "hub_background";
                    }
                     rel2 {
-                        relative: 1.0 1.0;
+                        relative: 0.8 1.0;
                         to: "hub_background";
                    }
                 }
