@@ -47,10 +47,26 @@ collections
                        relative: 0.0 0.0;
                        to: "hub_background";
                     }
-                       rel2 {
+                    rel2 {
                        relative: 1.0 0.2;
                        to: "hub_background";
                     }
+                }
+            }
+            part {
+                name: "expand_region";
+                type: RECT;
+                description {
+                    state: "" 0.0;
+                    color: 0 0 0 0; // transparent
+                    rel1 {
+                        relative: 0.0 0.2;
+                        to: "hub_background";
+                   }
+                    rel2 {
+                        relative: 1.0 1.0;
+                        to: "hub_background";
+                   }
                 }
             }
             part{

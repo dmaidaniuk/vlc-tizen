@@ -908,8 +908,7 @@ audio_player_create(interface *intf, playback_service *p_ps, Evas_Object *layout
     evas_object_event_callback_add(mpd->play_pause_img, EVAS_CALLBACK_MOUSE_UP, play_pause_mouse_up_cb, mpd);
     evas_object_smart_callback_add(mpd->cover, "clicked", audio_player_fullscreen_cb, mpd);
 
-    edje_object_signal_callback_add(edje, "*clicked*", "swallow.title", audio_player_fullscreen_edge_cb, mpd);
-    edje_object_signal_callback_add(edje, "*clicked*", "swallow.subtitle", audio_player_fullscreen_edge_cb, mpd);
+    edje_object_signal_callback_add(edje, "*clicked*", "expand_region", audio_player_fullscreen_edge_cb, mpd);
 
     /* Put the mini player at the bottom of the content_box */
     evas_object_size_hint_align_set(layout, EVAS_HINT_FILL, 1.0);
