@@ -33,7 +33,7 @@ collections
                 type: RECT;
                 description{
                     state: "default" 0.0;
-                    color: 128 128 128 100; // transparent grey
+                    color: 245 245 245 255; // grey
                     min: 0 120;
                     max: -1 120;
                 }
