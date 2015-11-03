@@ -431,10 +431,13 @@ playback_service_set_context(playback_service *p_ps, enum PLAYLIST_CONTEXT i_ctx
         return -1;
     if (get_media_list(p_ps, i_ctx) == p_ps->p_ml)
         return -1;
+    if (i_ctx == PLAYLIST_CONTEXT_VIDEO && !p_ps->p_ev)
+        return -1;
 
     playback_service_stop_notify(p_ps, true);
     p_ps->i_ctx = i_ctx;
     p_ps->p_ml = get_media_list(p_ps, i_ctx);
+    p_ps->p_e = i_ctx == PLAYLIST_CONTEXT_VIDEO ? p_ps->p_ev : p_ps->p_ea;
     return 0;
 }
 
@@ -480,14 +483,14 @@ playback_service_set_evas_video(playback_service *p_ps, Evas *p_evas)
         p_ps->p_ev = ps_emotion_create(p_ps, p_evas, false);
         if (!p_ps->p_ev)
             return NULL;
-        p_ps->p_e = p_ps->p_ev;
         p_ps->p_ev_evas = p_evas;
 
         return p_ps->p_ev;
     }
     else
     {
-        p_ps->p_e = p_ps->p_ea;
+        if (p_ps->i_ctx == PLAYLIST_CONTEXT_VIDEO)
+            playback_service_set_context(p_ps, PLAYLIST_CONTEXT_AUDIO);
         return NULL;
     }
 }
