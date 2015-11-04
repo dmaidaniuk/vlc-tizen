@@ -146,9 +146,6 @@ ps_notification_update_meta(playback_service *p_ps, media_item *p_mi)
     if (psz_meta_title && psz_meta_artist)
         notification_set_text(p_ps->p_notification, NOTIFICATION_TEXT_TYPE_CONTENT, psz_meta_artist, NULL, NOTIFICATION_VARIABLE_TYPE_NONE);
 
-    p_ps->i_last_notification_pos = 0.0001f;
-    notification_post(p_ps->p_notification);
-    notification_set_progress(p_ps->p_notification, p_ps->i_last_notification_pos);
     notification_update(p_ps->p_notification);
 }
 
@@ -207,7 +204,13 @@ ps_emotion_play_started_cb(void *data, Evas_Object *obj, void *event)
     PS_SEND_CALLBACK(pf_on_started, p_mi);
 
     if (p_ps->i_ctx != PLAYLIST_CONTEXT_VIDEO)
+    {
+        p_ps->i_last_notification_pos = 0.0001f;
+        notification_post(p_ps->p_notification);
+        notification_set_progress(p_ps->p_notification, p_ps->i_last_notification_pos);
+
         ps_notification_update_meta(p_ps, p_mi);
+    }
 }
 
 static void
