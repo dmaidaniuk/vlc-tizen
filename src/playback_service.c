@@ -195,10 +195,14 @@ ps_emotion_play_started_cb(void *data, Evas_Object *obj, void *event)
 {
     playback_service *p_ps = data;
     media_item *p_mi = media_list_get_item(p_ps->p_ml);
+    const char *meta;
 
     for (unsigned int i = 0; i < EMOTION_META_INFO_TRACK_COUNT; ++i)
-        media_item_set_meta(p_mi, META_EMOTIOM_TO_MEDIA_ITEM[i],
-                            emotion_object_meta_info_get(obj, i));
+    {
+        meta = emotion_object_meta_info_get(obj, i);
+        if (meta != NULL)
+            media_item_set_meta(p_mi, META_EMOTIOM_TO_MEDIA_ITEM[i], meta);
+    }
 
     PS_SEND_CALLBACK(pf_on_started, p_mi);
 
