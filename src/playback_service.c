@@ -200,7 +200,7 @@ ps_emotion_play_started_cb(void *data, Evas_Object *obj, void *event)
         media_item_set_meta(p_mi, META_EMOTIOM_TO_MEDIA_ITEM[i],
                             emotion_object_meta_info_get(obj, i));
 
-    PS_SEND_CALLBACK(pf_on_started, media_list_get_item(p_ps->p_ml));
+    PS_SEND_CALLBACK(pf_on_started, p_mi);
 
     if (p_ps->i_ctx != PLAYLIST_CONTEXT_VIDEO)
         ps_notification_update_meta(p_ps, p_mi);
