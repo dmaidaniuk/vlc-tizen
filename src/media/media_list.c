@@ -63,8 +63,13 @@ media_list_on_new_pos(media_list *p_ml)
 static void
 media_list_on_media_added(media_list *p_ml, unsigned int i_index, media_item *p_mi)
 {
-    if (p_ml->i_pos >= 0 && p_ml->i_pos <= i_index)
+    if (p_ml->i_pos >= 0 && p_ml->i_pos >= i_index)
+    {
+        // A media has been inserted before the current media
+        // we need to shift its position.
         p_ml->i_pos++;
+    }
+
     ML_SEND_CALLBACK(pf_on_media_added, i_index, p_mi);
 }
 
