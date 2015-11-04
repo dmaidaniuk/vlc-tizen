@@ -123,7 +123,7 @@ ps_notification_create(playback_service *p_ps)
     // Note: notification_* are noop if p_notification is NULL
     notification_set_tag(p_ps->p_notification, "vlc_ps");
     notification_set_display_applist(p_ps->p_notification, NOTIFICATION_DISPLAY_APP_NOTIFICATION_TRAY);
-    notification_set_image(p_ps->p_notification, NOTIFICATION_IMAGE_TYPE_THUMBNAIL, ICON_DIR"cone.png");
+    notification_set_image(p_ps->p_notification, NOTIFICATION_IMAGE_TYPE_ICON, ICON_DIR"cone.png");
 
     app_control_create(&p_ps->p_app_control);
     app_control_set_app_id(p_ps->p_app_control, PACKAGE);
@@ -145,6 +145,11 @@ ps_notification_update_meta(playback_service *p_ps, media_item *p_mi)
 
     if (psz_meta_title && psz_meta_artist)
         notification_set_text(p_ps->p_notification, NOTIFICATION_TEXT_TYPE_CONTENT, psz_meta_artist, NULL, NOTIFICATION_VARIABLE_TYPE_NONE);
+
+    if (p_mi->psz_snapshot)
+        notification_set_image(p_ps->p_notification, NOTIFICATION_IMAGE_TYPE_ICON, p_mi->psz_snapshot);
+    else
+        notification_set_image(p_ps->p_notification, NOTIFICATION_IMAGE_TYPE_ICON, ICON_DIR"cone.png");
 
     notification_update(p_ps->p_notification);
 }
