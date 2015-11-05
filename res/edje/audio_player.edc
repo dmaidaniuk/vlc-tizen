@@ -83,7 +83,7 @@ collections {
                   rel2.relative: 0.7 0.5;
                   text {
                      align: 0.00 1.0;
-                     size: 20;
+                     size: 28;
                      text: "Unknown";
                      ellipsis: 0;
                   }
@@ -99,9 +99,10 @@ collections {
                   rel2.relative: 0.7 1.0;
                   text {
                      align: 0.00 0.0;
-                     size: 20;
+                     size: 28;
                      text: "Unknown";
                      ellipsis: 0;
+                     font: "Sans:style=Bold";
                   }
                }
             }
