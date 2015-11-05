@@ -88,6 +88,9 @@ settings_list_add(settings_item *menu, int len, Settings_menu_callback global_me
 Evas_Object *
 settings_popup_add(settings_item *menu, int menu_len, Settings_menu_callback global_menu_cb, void *data, view_sys* p_view_sys, Evas_Object *parent);
 
+Evas_Object *
+settings_list_add_styled(settings_item *menu, int len, Settings_menu_callback global_menu_cb, void *data, view_sys* p_view_sys, Evas_Object *parent);
+
 void
 settings_toggle_set_all(settings_item *menu, int menu_len, bool value);
 

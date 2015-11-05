@@ -261,6 +261,30 @@ settings_list_add(settings_item *menu, int len, Settings_menu_callback global_me
     return genlist;
 }
 
+Evas_Object *
+settings_list_add_styled(settings_item *menu, int len, Settings_menu_callback global_menu_cb, void *data, view_sys* p_view_sys, Evas_Object *parent)
+{
+    /* Create layout and set the theme */
+   Evas_Object *layout = elm_layout_add(parent);
+   elm_layout_theme_set(layout, "layout", "application", "default");
+
+   Evas_Object *bg = elm_bg_add(layout);
+   elm_bg_color_set(bg, 255, 136, 0);
+   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(bg, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_show(bg);
+
+   /* Set the background to the theme */
+   elm_object_part_content_set(layout, "elm.swallow.bg", bg);
+
+   Evas_Object *genlist = settings_list_add(menu, len, global_menu_cb, data, p_view_sys, layout);
+
+   elm_object_part_content_set(layout, "elm.swallow.content", genlist);
+   evas_object_show(genlist);
+
+   return layout;
+}
+
 static void
 popup_close_cb(void *data, Evas_Object *obj, void *event_info)
 {
