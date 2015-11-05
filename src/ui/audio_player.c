@@ -183,18 +183,13 @@ audio_player_create_popup(audio_player *mpd)
     Evas_Object *genlist;
     Elm_Object_Item *it;
 
-    /* Set popup max size */
-    Evas_Object *box = elm_box_add(mpd->popup);
-    evas_object_size_hint_min_set(box, 300, 300);
-    evas_object_size_hint_max_set(box, 300, 300);
-
     /* Set then create the Genlist object */
     Elm_Genlist_Item_Class *itc = elm_genlist_item_class_new();
     itc->item_style = "1line";
     itc->func.text_get = gl_text_get_cb;
     itc->func.content_get = gl_content_get_cb;
 
-    genlist = elm_genlist_add(box);
+    genlist = elm_genlist_add(intf_get_main_naviframe(mpd->intf));
 
     /* Set the genlist scoller mode */
     elm_scroller_single_direction_set(genlist, ELM_SCROLLER_SINGLE_DIRECTION_HARD);
@@ -223,14 +218,12 @@ audio_player_create_popup(audio_player *mpd)
         elm_object_item_del_cb_set(it, audio_player_popup_free_cb);
     }
 
-    elm_box_pack_end(box, genlist);
-    evas_object_size_hint_weight_set(genlist, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-    evas_object_size_hint_align_set(genlist, EVAS_HINT_FILL, EVAS_HINT_FILL);
-    evas_object_show(genlist);
-
     elm_genlist_item_class_free(itc);
 
-    return box;
+    evas_object_size_hint_weight_set(genlist, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+    evas_object_size_hint_align_set(genlist, EVAS_HINT_FILL, EVAS_HINT_FILL);
+
+    return genlist;
 }
 
 
