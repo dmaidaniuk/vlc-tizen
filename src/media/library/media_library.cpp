@@ -274,15 +274,8 @@ media_library_get_artists( media_library* p_ml, media_library_list_cb cb, void* 
 {
     auto ml = p_ml->ml;
     media_library_common_getter(cb, p_user_data,
-            [ml]() {
-                auto artists = ml->artists();
-                auto unknownArtist = ml->unknownArtist();
-                if (unknownArtist != nullptr )
-                {
-                    artists.emplace_back(unknownArtist);
-                }
-                return artists;
-            }, artistToArtistItem);
+            std::bind(&IMediaLibrary::artists, p_ml->ml),
+                    artistToArtistItem);
 }
 
 void
@@ -291,8 +284,6 @@ media_library_get_artist_albums( media_library* p_ml, const char* psz_artistName
     ArtistPtr artist;
     if (psz_artistName != NULL)
         artist = p_ml->ml->artist(psz_artistName);
-    else
-        artist = p_ml->ml->unknownArtist();
     if (artist == nullptr)
     {
         LOGE("Can't find artist %s", psz_artistName);
@@ -323,8 +314,6 @@ media_library_get_artist_songs(media_library* p_ml, const char* psz_artistName, 
     ArtistPtr artist;
     if (psz_artistName != NULL)
         artist = p_ml->ml->artist(psz_artistName);
-    else
-        artist = p_ml->ml->unknownArtist();
     if (artist == nullptr)
     {
         LOGE("Can't find artist %s", psz_artistName);
