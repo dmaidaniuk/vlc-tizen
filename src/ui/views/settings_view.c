@@ -254,7 +254,7 @@ menu_directories_selected_cb(settings_menu_selected *selected, view_sys* p_view_
 {
     bool internal = preferences_get_bool(PREF_DIRECTORIES_INTERNAL, true);
     int len = COUNT_OF(directory_menu);
-    Evas_Object *genlist = settings_list_add(directory_menu, len, settings_view_directories_save, NULL, p_view_sys, parent);
+    Evas_Object *genlist = settings_list_add_styled(directory_menu, len, settings_view_directories_save, NULL, p_view_sys, parent);
     settings_toggle_set_one_by_id(directory_menu, len, DIRECTORIES_INTERNAL, internal, false);
     elm_naviframe_item_push(p_view_sys->nav, "Media library", NULL, NULL, genlist, NULL);
     evas_object_show(genlist);
@@ -343,7 +343,7 @@ menu_developer_selected_cb(settings_menu_selected *selected, view_sys* p_view_sy
 
     bool verbose = preferences_get_bool(PREF_DEVELOPER_VERBOSE, false);
     int len = COUNT_OF(developer_menu);
-    Evas_Object *genlist = settings_list_add(developer_menu, len, settings_view_simple_save_toggle, ctx, p_view_sys, parent);
+    Evas_Object *genlist = settings_list_add_styled(developer_menu, len, settings_view_simple_save_toggle, ctx, p_view_sys, parent);
     settings_toggle_set_one_by_id(developer_menu, len, DEVELOPER_VERBOSE, verbose, false);
     elm_naviframe_item_push(p_view_sys->nav, "Developer options", NULL, NULL, genlist, NULL);
     evas_object_show(genlist);
@@ -400,7 +400,7 @@ create_settings_view(interface *intf, Evas_Object *parent)
     view->p_view_sys->p_intf = intf;
 
     int len = COUNT_OF(settings_menu);
-    view->view = settings_list_add(settings_menu, len, NULL, NULL, view->p_view_sys, view->p_view_sys->nav);
+    view->view = settings_list_add_styled(settings_menu, len, NULL, NULL, view->p_view_sys, view->p_view_sys->nav);
     evas_object_show(view->view);
 
     return view;
