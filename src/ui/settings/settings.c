@@ -197,6 +197,8 @@ settings_list_add(settings_item *menu, int len, Settings_menu_callback global_me
     elm_genlist_homogeneous_set(genlist, EINA_TRUE);
     /* Enable the genlist COMPRESS mode */
     elm_genlist_mode_set(genlist, ELM_LIST_COMPRESS);
+    /* Even if selected, every click calls the selected callbacks */
+    elm_genlist_select_mode_set(genlist, ELM_OBJECT_SELECT_MODE_ALWAYS);
 
     /* Set smart Callbacks */
     //evas_object_smart_callback_add(genlist, "realized", gl_realized_cb, NULL);
