@@ -79,10 +79,10 @@ collections {
                description {
                   state: "default" 0.0;
                   color: 33 33 33 255;
-                  rel1.relative: 0.0 0.0;
+                  rel1.relative: 0.015 0.0;
                   rel2.relative: 0.7 0.5;
                   text {
-                     align: 0.03 1.0;
+                     align: 0.00 1.0;
                      size: 20;
                      text: "Unknown";
                      ellipsis: 0;
@@ -95,10 +95,10 @@ collections {
                description {
                   state: "default" 0.0;
                   color: 33 33 33 255;
-                  rel1.relative: 0.0 0.5;
+                  rel1.relative: 0.015 0.5;
                   rel2.relative: 0.7 1.0;
                   text {
-                     align: 0.03 0.0;
+                     align: 0.00 0.0;
                      size: 20;
                      text: "Unknown";
                      ellipsis: 0;
