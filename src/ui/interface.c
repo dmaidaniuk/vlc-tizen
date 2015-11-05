@@ -452,6 +452,7 @@ create_main_layout(interface *intf, Evas_Object *conform, view_e view_type)
 
 #define VLC_ORANGE_500 255, 136, 0, 255
 #define VLC_ORANGE_500_TRANSPARENT 255, 136, 0, 180
+#define VLC_ORANGE_500_TRANSPARENT_100 255, 136, 0, 100
 #define VLC_GREY_400_TRANSPARENT 189, 189, 189, 128
 #define EDJE_COLOR_CLASS_SET_VLC_COLOR(x, b) edje_color_class_set((x), b, b, b)
 #define EDJE_COLOR_CLASS_SET_VLC_ORANGE(x) EDJE_COLOR_CLASS_SET_VLC_COLOR(x, VLC_ORANGE_500)
@@ -486,6 +487,7 @@ intf_create(application *app)
     // 2.4
     EDJE_COLOR_CLASS_SET_VLC_ORANGE("B001");    // Base class
     EDJE_COLOR_CLASS_SET_VLC_ORANGE("B071");    // Scrollbars
+    EDJE_COLOR_CLASS_SET_VLC_COLOR("B018", VLC_ORANGE_500_TRANSPARENT_100); // End of list effect
 
     /* Progress Bar Colors */
     EDJE_COLOR_CLASS_SET_VLC_COLOR("W062L1", VLC_GREY_400_TRANSPARENT);    // slider background
