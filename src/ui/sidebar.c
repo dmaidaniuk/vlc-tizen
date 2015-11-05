@@ -35,8 +35,10 @@
 #include "ui/utils.h"
 
 typedef struct sidebar {
+    Evas_Object *sidebar_panel;
+    Evas_Object *sidebar_genlist;
     bool initialized;
-} sidebar_s;
+} sidebar;
 
 typedef struct menu_cb_data
 {
@@ -45,7 +47,7 @@ typedef struct menu_cb_data
     int index;
     const Elm_Genlist_Item_Class *itc;
     Elm_Object_Item *it;
-    sidebar_s *sb;
+    sidebar *sb;
 } menu_cb_data_s;
 
 typedef struct {
@@ -148,12 +150,12 @@ sidebar_item_delete_cb(void *data, Evas_Object *obj, void *event_info)
 
 void sidebar_delete_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
-    sidebar_s *sb = data;
+    sidebar *sb = data;
     free(sb);
 }
 
 static Evas_Object *
-sidebar_create_panel_genlist(interface *intf, Evas_Object *sidebar, sidebar_s *sb)
+sidebar_create_panel_genlist(interface *intf, Evas_Object *parent, sidebar *sb)
 {
     /* Set then create the Genlist object */
     Elm_Genlist_Item_Class *itc = elm_genlist_item_class_new();
@@ -162,7 +164,7 @@ sidebar_create_panel_genlist(interface *intf, Evas_Object *sidebar, sidebar_s *s
     itc->func.content_get = sidebar_content_get_cb;
 
     /* */
-    Evas_Object *genlist = elm_genlist_add(sidebar);
+    Evas_Object *genlist = elm_genlist_add(parent);
 
     /* Set the genlist scoller mode */
     elm_scroller_single_direction_set(genlist, ELM_SCROLLER_SINGLE_DIRECTION_HARD);
@@ -203,40 +205,51 @@ sidebar_create_panel_genlist(interface *intf, Evas_Object *sidebar, sidebar_s *s
 static void
 sidebar_list_clicked_cb(void *data, Evas_Object *obj, void *event_info)
 {
-    Evas_Object *sidebar = data;
+    Evas_Object *sidebar_panel = data;
     /* Disable the sidebar when one of the item list is selected */
-    if (!elm_object_disabled_get(sidebar))
-        elm_panel_toggle(sidebar);
+    if (!elm_object_disabled_get(sidebar_panel))
+        elm_panel_toggle(sidebar_panel);
+}
+
+void
+sidebar_set_selected_view(sidebar *sb, view_e view_type)
+{
+    elm_genlist_item_selected_set(elm_genlist_nth_item_get(sb->sidebar_genlist, view_type), EINA_TRUE);
 }
 
 Evas_Object*
+sidebar_get_widget(sidebar *sb)
+{
+    return sb->sidebar_panel;
+}
+
+sidebar*
 create_sidebar(interface *intf, Evas_Object *layout, view_e view_type)
 {
-    Evas_Object *sidebar_list, *sidebar;
-    sidebar_s *sb = calloc(1, sizeof(*sb));
+    sidebar *sb = calloc(1, sizeof(*sb));
 
     /* Create then set the sidebar */
-    sidebar = elm_panel_add(layout);
-    elm_panel_scrollable_set(sidebar, EINA_TRUE);
-    elm_panel_hidden_set(sidebar, EINA_TRUE);
-    elm_panel_orient_set(sidebar, ELM_PANEL_ORIENT_LEFT);
+    sb->sidebar_panel = elm_panel_add(layout);
+    elm_panel_scrollable_set(sb->sidebar_panel, EINA_TRUE);
+    elm_panel_hidden_set(sb->sidebar_panel, EINA_TRUE);
+    elm_panel_orient_set(sb->sidebar_panel, ELM_PANEL_ORIENT_LEFT);
 
     /* Add the sidebar genlist in the sidebar */
-    sidebar_list = sidebar_create_panel_genlist(intf, sidebar, sb);
-    evas_object_show(sidebar_list);
-    evas_object_size_hint_weight_set(sidebar_list, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-    evas_object_size_hint_align_set(sidebar_list, EVAS_HINT_FILL, EVAS_HINT_FILL);
+    sb->sidebar_genlist = sidebar_create_panel_genlist(intf, sb->sidebar_panel, sb);
+    evas_object_show(sb->sidebar_genlist);
+    evas_object_size_hint_weight_set(sb->sidebar_genlist, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+    evas_object_size_hint_align_set(sb->sidebar_genlist, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
     /* */
-    elm_object_content_set(sidebar, sidebar_list);
+    elm_object_content_set(sb->sidebar_panel, sb->sidebar_genlist);
 
     /* Select the nth item by default */
-    elm_genlist_item_selected_set(elm_genlist_nth_item_get(sidebar_list, view_type), EINA_TRUE);
+    elm_genlist_item_selected_set(elm_genlist_nth_item_get(sb->sidebar_genlist, view_type), EINA_TRUE);
     sb->initialized = true;
 
     /* */
-    evas_object_smart_callback_add(sidebar_list, "selected", sidebar_list_clicked_cb, sidebar);
-    evas_object_event_callback_add(sidebar_list, EVAS_CALLBACK_FREE, sidebar_delete_cb, sb);
+    evas_object_smart_callback_add(sb->sidebar_genlist, "selected", sidebar_list_clicked_cb, sb->sidebar_panel);
+    evas_object_event_callback_add(sb->sidebar_genlist, EVAS_CALLBACK_FREE, sidebar_delete_cb, sb);
 
-    return sidebar;
+    return sb;
 }

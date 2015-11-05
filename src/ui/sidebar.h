@@ -29,7 +29,12 @@
 
 #include "interface.h"
 
-Evas_Object*
+typedef struct sidebar sidebar;
+
+sidebar*
 create_sidebar(interface *intf, Evas_Object *layout, view_e view_type);
+
+Evas_Object*
+sidebar_get_widget(sidebar *sb);
 
 #endif /* PANEL_GENLIST_H_ */

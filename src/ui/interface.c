@@ -62,7 +62,7 @@ struct interface {
     interface_view *video_player;
 
     /* */
-    Evas_Object *sidebar;    /* Sidebar panel */
+    sidebar *sidebar;    /* Sidebar */
     Evas_Object *sidebar_toggle_btn;
 
     /* Context popup-menu */
@@ -99,7 +99,7 @@ left_panel_button_clicked_cb(void *data, Evas_Object * obj, void *event_info)
 {
     interface *intf = data;
     /* Disable the panel when left button is pressed */
-    if (!elm_object_disabled_get(intf->sidebar)) elm_panel_toggle(intf->sidebar);
+    if (!elm_object_disabled_get(sidebar_get_widget(intf->sidebar))) elm_panel_toggle(sidebar_get_widget(intf->sidebar));
 }
 
 static void
@@ -287,8 +287,8 @@ win_back_key_cb(void *data, Evas_Object *obj, void *event_info)
 {
     interface *intf = data;
     /* Hide the sidebar first */
-    if (!elm_object_disabled_get(intf->sidebar) && !elm_panel_hidden_get(intf->sidebar)) {
-        elm_panel_hidden_set(intf->sidebar, EINA_TRUE);
+    if (!elm_object_disabled_get(sidebar_get_widget(intf->sidebar)) && !elm_panel_hidden_get(sidebar_get_widget(intf->sidebar))) {
+        elm_panel_hidden_set(sidebar_get_widget(intf->sidebar), EINA_TRUE);
     }
     /* Hide the audio_player then */
     else if (audio_player_handle_back_key(intf->p_mini_player) == true) { //FIXME
@@ -437,7 +437,7 @@ create_main_layout(interface *intf, Evas_Object *conform, view_e view_type)
 
     /* Create the panel and put it in the layout */
     intf->sidebar = create_sidebar(intf, layout, view_type);
-    elm_object_part_content_set(layout, "elm.swallow.left", intf->sidebar);
+    elm_object_part_content_set(layout, "elm.swallow.left", sidebar_get_widget(intf->sidebar));
 
     /* Create the content box and put it in the layout */
     intf->main_box = create_main_box(intf, layout);
