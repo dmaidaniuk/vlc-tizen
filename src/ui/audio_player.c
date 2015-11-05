@@ -49,7 +49,7 @@ struct audio_player {
     Evas_Object *fs_title, *fs_sub_title;
 
     Evas_Object *play_pause_img;
-    Evas_Object *fs_play_pause_img;
+    Evas_Object *fs_play_pause_img, *fs_previous_img, *fs_next_img;
 
     Evas_Object *fs_save_btn, *fs_playlist_btn, *fs_more_btn;
     Evas_Object *fs_repeat_btn, *fs_shuffle_btn;
@@ -598,6 +598,22 @@ fs_repeat_player_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 }
 
 static void
+fs_previous_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
+{
+    audio_player *mpd = data;
+
+    playback_service_list_set_prev(mpd->p_ps);
+}
+
+static void
+fs_next_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
+{
+    audio_player *mpd = data;
+
+    playback_service_list_set_next(mpd->p_ps);
+}
+
+static void
 fs_shuffle_player_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
     audio_player *mpd = data;
@@ -729,6 +745,12 @@ add_fullscreen_item_table(audio_player *mpd, Evas_Object *parent)
     elm_object_part_content_set(layout, "play_button", mpd->fs_play_pause_img);
     update_player_play_pause(mpd);
 
+    /* Next / Previous */
+    mpd->fs_previous_img = create_icon(parent, "ic_widget_previous_normal.png");
+    elm_object_part_content_set(layout, "previous_button", mpd->fs_previous_img);
+    mpd->fs_next_img = create_icon(parent, "ic_widget_next_normal.png");
+    elm_object_part_content_set(layout, "next_button", mpd->fs_next_img);
+
     /* Elapsed time */
     mpd->fs_time = elm_label_add(parent);
     evas_object_show(mpd->fs_time);
@@ -772,6 +794,8 @@ add_fullscreen_item_table(audio_player *mpd, Evas_Object *parent)
     evas_object_smart_callback_add(mpd->fs_play_pause_img, "clicked", play_pause_fs_player_cb, mpd);
     evas_object_smart_callback_add(mpd->fs_shuffle_btn, "clicked", fs_shuffle_player_cb, mpd);
     evas_object_smart_callback_add(mpd->fs_repeat_btn, "clicked", fs_repeat_player_cb, mpd);
+    evas_object_smart_callback_add(mpd->fs_previous_img, "clicked", fs_previous_cb, mpd);
+    evas_object_smart_callback_add(mpd->fs_next_img, "clicked", fs_next_cb, mpd);
     //    evas_object_smart_callback_add(mpd->fs_save_btn, "clicked", fs_save_player_cb, mpd);
     //    evas_object_smart_callback_add(mpd->fs_playlist_btn, "clicked", fs_playlist_player_cb, mpd);
     evas_object_smart_callback_add(mpd->fs_more_btn, "clicked", fs_more_player_cb, mpd);
