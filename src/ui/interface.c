@@ -259,6 +259,7 @@ intf_pop_view(interface *intf)
     if (view)
     {
         intf->current_view = view->i_type;
+        sidebar_set_selected_view(intf->sidebar, intf->current_view);
 
         if (view->pf_has_menu && view->pf_has_menu(view->p_view_sys) == true)
         {

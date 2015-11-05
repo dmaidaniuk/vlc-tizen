@@ -37,4 +37,7 @@ create_sidebar(interface *intf, Evas_Object *layout, view_e view_type);
 Evas_Object*
 sidebar_get_widget(sidebar *sb);
 
+void
+sidebar_set_selected_view(sidebar *sb, view_e view_type);
+
 #endif /* PANEL_GENLIST_H_ */

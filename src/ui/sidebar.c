@@ -215,6 +215,10 @@ void
 sidebar_set_selected_view(sidebar *sb, view_e view_type)
 {
     elm_genlist_item_selected_set(elm_genlist_nth_item_get(sb->sidebar_genlist, view_type), EINA_TRUE);
+
+    // For an unknown reason, elm_genlist_item_selected_set unhide its parent object
+    // so we have to hide it again manually.
+    elm_panel_hidden_set(sb->sidebar_panel, EINA_TRUE);
 }
 
 Evas_Object*
