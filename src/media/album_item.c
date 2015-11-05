@@ -55,6 +55,7 @@ album_item_copy(const album_item* p_item)
     if (p_item->psz_artwork != NULL)
         p_new_item->psz_artwork = strdup(p_item->psz_artwork);
     p_new_item->i_nb_tracks = p_item->i_nb_tracks;
+    p_new_item->i_release_date = p_item->i_release_date;
     return p_new_item;
 }
 

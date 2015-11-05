@@ -39,6 +39,7 @@ typedef struct album_item {
     unsigned int i_id;
     char* psz_name;
     char* psz_summary;
+    time_t i_release_date;
     char* psz_artwork;
     uint32_t i_nb_tracks;
 } album_item;
