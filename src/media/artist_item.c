@@ -74,8 +74,6 @@ artist_item_copy(const artist_item* p_item )
 bool
 artist_item_identical(const artist_item* p_left, const artist_item* p_right)
 {
-    if (p_left->psz_name == NULL || p_right->psz_name == NULL)
-        return p_left->psz_name == p_right->psz_name;
     return p_left->i_id == p_right->i_id;
 }
 
