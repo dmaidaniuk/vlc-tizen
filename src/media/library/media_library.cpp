@@ -349,3 +349,9 @@ media_library_reload(media_library* ml)
 {
     ml->ml->reload();
 }
+
+bool
+media_library_is_various_artist(const artist_item* p_item)
+{
+    return p_item->i_id == medialibrary::VariousArtistID;
+}

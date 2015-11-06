@@ -110,8 +110,7 @@ genlist_text_get_cb(void *data, Evas_Object *obj, const char *part)
 
     if (itc->item_style && !strcmp(itc->item_style, "2line.top.3")) {
         if (part && !strcmp(part, "elm.text.main.left.top")) {
-            asprintf(&buf, "<b>%s</b>", p_view_item->p_artist_item->psz_name ?
-                    p_view_item->p_artist_item->psz_name : "Unknown Artist");
+            asprintf(&buf, "<b>%s</b>", artist_item_get_name(p_view_item->p_artist_item));
             return buf;
         } else if (!strcmp(part, "elm.text.sub.right.bottom")) {
             asprintf(&buf, "%d album%s", p_view_item->p_artist_item->i_nb_albums,

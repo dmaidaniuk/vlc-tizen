@@ -55,6 +55,9 @@ artist_item_copy(const artist_item* p_item );
 bool
 artist_item_identical(const artist_item* p_left, const artist_item* p_right);
 
+const char*
+artist_item_get_name(const artist_item* p_item);
+
 #ifdef __cplusplus
 } // extern "C"
 #endif

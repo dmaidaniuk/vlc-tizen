@@ -29,6 +29,7 @@
 
 #include "application.h"
 #include "media/media_item.h"
+#include "media/artist_item.h"
 #include <Elementary.h>
 
 #ifdef __cplusplus
@@ -93,6 +94,9 @@ media_library_unregister_item_updated(media_library* ml, media_library_item_upda
 
 void
 media_library_reload(media_library* ml);
+
+bool
+media_library_is_various_artist(const artist_item* p_item);
 
 #ifdef __cplusplus
 }
