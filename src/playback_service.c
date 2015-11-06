@@ -33,6 +33,7 @@
 #include <app_control.h>
 
 #include <device/power.h>
+#include <telephony.h>
 
 #include "playback_service.h"
 #include "media/media_list.h"
@@ -58,6 +59,13 @@ static const char *STR_POWER_LOCKS[] = {
     "POWER_LOCK_DISPLAY_DIM",
 };
 
+static int
+voice_call_noti_tbl[] =
+{
+   TELEPHONY_NOTI_VOICE_CALL_STATE, // Deprecated in 2.4
+   TELEPHONY_NOTI_VIDEO_CALL_STATE, // Deprecated in 2.4
+};
+
 struct playback_service
 {
     enum PLAYLIST_CONTEXT i_ctx;
@@ -81,6 +89,8 @@ struct playback_service
     notification_h  p_notification;
     double          i_last_notification_pos;
     app_control_h   p_app_control;
+
+    telephony_handle_list_s t_handle_list;
 };
 
 #define PS_SEND_CALLBACK(pf_cb, ...) do { \
@@ -322,6 +332,35 @@ get_media_list(playback_service *p_ps, enum PLAYLIST_CONTEXT i_ctx)
     return p_ps->p_ml_list[i_ctx - 1];
 }
 
+void
+voice_call_status_noti_cb(telephony_h handle, telephony_noti_e noti_id, void *data, void* user_data)
+{
+    playback_service *p_ps = user_data;
+    telephony_call_state_e *state = data;
+
+    if (state == NULL)
+    {
+        LOGE("Invalid telephony_call_state_e");
+        return;
+    }
+
+    switch (noti_id)
+    {
+        case TELEPHONY_NOTI_VIDEO_CALL_STATE:
+        case TELEPHONY_NOTI_VOICE_CALL_STATE:
+            if (*state == TELEPHONY_CALL_STATE_CONNECTING || *state == TELEPHONY_CALL_STATE_CONNECTED)
+            {
+                LOGD("Call in progress - stopping playback");
+                playback_service_stop(p_ps);
+            }
+            break;
+
+        default:
+            LOGD("Unknown telephony notification");
+            break;
+       }
+}
+
 playback_service *
 playback_service_create(application *p_app)
 {
@@ -360,6 +399,28 @@ playback_service_create(application *p_app)
 
     ps_notification_create(p_ps);
 
+    /* Phone state */
+
+    telephony_error_e ret = telephony_init(&p_ps->t_handle_list);
+    if (ret != TELEPHONY_ERROR_NONE)
+    {
+        LOGE("telephony_init failed");
+    }
+    else
+    {
+        LOGD("Monitoring %d telephony handle(s)", p_ps->t_handle_list.count);
+        for (int i = 0; i < p_ps->t_handle_list.count; i++)
+        {
+            for (int j = 0; j < (sizeof(voice_call_noti_tbl) / sizeof(int)); j++)
+            {
+                ret = telephony_set_noti_cb(p_ps->t_handle_list.handle[i], voice_call_noti_tbl[j],
+                        voice_call_status_noti_cb, p_ps);
+                if (ret != TELEPHONY_ERROR_NONE)
+                    LOGE("Unable to set telephony notification for event %d on handle %d", voice_call_noti_tbl[j], i);
+            }
+        }
+    }
+
     return p_ps;
 
 error:
@@ -372,6 +433,8 @@ playback_service_destroy(playback_service *p_ps)
 {
     Eina_List *p_el;
     void *p_id;
+
+    telephony_deinit(&p_ps->t_handle_list);
 
     for (unsigned int i = 0; i < PLAYLIST_CONTEXT_COUNT; ++i)
     {
