@@ -100,7 +100,10 @@ genlist_text_get_cb(void *data, Evas_Object *obj, const char *part)
 
     if (itc->item_style && !strcmp(itc->item_style, "2line.top.3")) {
         if (part && !strcmp(part, "elm.text.main.left.top")) {
-            asprintf(&buf, "<b>%s</b>", p_view_item->p_album_item->psz_name);
+            const char* name = p_view_item->p_album_item->psz_name;
+            if (*name == 0)
+                name = "Unknown Album";
+            asprintf(&buf, "<b>%s</b>", name);
             return buf;
         }
         else if (!strcmp(part, "elm.text.sub.right.bottom")) {
