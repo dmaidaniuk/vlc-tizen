@@ -52,7 +52,7 @@ CFLAGS="$CFLAGS ${EXTRA_CFLAGS}" \
 CXXFLAGS="$CFLAGS ${EXTRA_CXXFLAGS} -pthread" \
 LDFLAGS="$LDFLAGS -static-libstdc++" \
 CC="${CROSS_COMPILE}gcc -fPIC --sysroot=${SYSROOT}" \
-CXX="${CROSS_COMPILE}g++ -fPIC --sysroot=${SYSROOT} -D__cpp_static_assert=200410" \
+CXX="${CROSS_COMPILE}g++ -fPIC --sysroot=${SYSROOT} -D__cpp_static_assert=200410 -DTIZEN" \
 NM="${CROSS_COMPILE}nm" \
 STRIP="${CROSS_COMPILE}strip" \
 RANLIB="${CROSS_COMPILE}ranlib" \
