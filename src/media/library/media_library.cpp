@@ -279,14 +279,12 @@ media_library_get_artists( media_library* p_ml, media_library_list_cb cb, void* 
 }
 
 void
-media_library_get_artist_albums( media_library* p_ml, const char* psz_artistName, media_library_list_cb cb, void* p_user_data )
+media_library_get_artist_albums( media_library* p_ml, unsigned int i_artist_id, media_library_list_cb cb, void* p_user_data )
 {
-    ArtistPtr artist;
-    if (psz_artistName != NULL)
-        artist = p_ml->ml->artist(psz_artistName);
+    ArtistPtr artist = p_ml->ml->artist( i_artist_id );
     if (artist == nullptr)
     {
-        LOGE("Can't find artist %s", psz_artistName);
+        LOGE("Can't find artist %d", i_artist_id);
         return;
     }
     media_library_common_getter(cb, p_user_data,
@@ -309,14 +307,12 @@ media_library_get_album_songs(media_library* p_ml, unsigned int i_album_id, medi
 }
 
 void
-media_library_get_artist_songs(media_library* p_ml, const char* psz_artistName, media_library_list_cb cb, void* p_user_data)
+media_library_get_artist_songs(media_library* p_ml, unsigned int i_artist_id, media_library_list_cb cb, void* p_user_data)
 {
-    ArtistPtr artist;
-    if (psz_artistName != NULL)
-        artist = p_ml->ml->artist(psz_artistName);
+    ArtistPtr artist = p_ml->ml->artist(i_artist_id);
     if (artist == nullptr)
     {
-        LOGE("Can't find artist %s", psz_artistName);
+        LOGE("Can't find artist %u", i_artist_id);
         return;
     }
     media_library_common_getter(cb, p_user_data,

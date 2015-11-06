@@ -44,7 +44,7 @@ audio_list_song_view_all_create(interface* p_intf, Evas_Object* p_parent, list_v
 
 // Creates a view that lists the specified artist's songs
 list_view*
-audio_list_song_view_artist_create(interface* p_intf, Evas_Object* p_parent, const char* psz_artist_name, list_view_create_option opts );
+audio_list_song_view_artist_create(interface* p_intf, Evas_Object* p_parent, unsigned int i_artist_id, list_view_create_option opts );
 
 // Creates a view that lists the specified album's songs
 list_view*
@@ -57,6 +57,6 @@ video_view_list_create(interface *intf, Evas_Object *p_parent, list_view_create_
 // If psz_artist_name is non-NULL, only this artist's albums are listed.
 // Otherwise, all known albums are displayed
 list_view*
-audio_list_album_view_create(interface* p_intf, Evas_Object* p_parent, const char* psz_artist_name, list_view_create_option opts);
+audio_list_album_view_create(interface* p_intf, Evas_Object* p_parent, unsigned int i_artist_, list_view_create_option opts);
 
 #endif // LIST_VIEW_H_

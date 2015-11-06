@@ -33,7 +33,7 @@
 struct list_sys
 {
     LIST_VIEW_COMMON
-    char* psz_artist_name;
+    unsigned int i_artist_id;
 };
 
 struct list_view_item
@@ -162,7 +162,6 @@ audio_list_album_view_delete(list_sys* p_list_sys)
 {
     media_library_controller_destroy(p_list_sys->p_ctrl);
     elm_genlist_item_class_free(p_list_sys->p_default_item_class);
-    free(p_list_sys->psz_artist_name);
     free(p_list_sys);
 }
 
@@ -170,14 +169,14 @@ static void
 audio_list_album_get_albums_cb(media_library* p_ml, media_library_list_cb cb, void* p_user_data )
 {
     list_sys* p_list_sys = (list_sys*)p_user_data;
-    if (p_list_sys->psz_artist_name != NULL)
-        media_library_get_artist_albums(p_ml, p_list_sys->psz_artist_name, cb, p_list_sys->p_ctrl);
+    if (p_list_sys->i_artist_id != 0)
+        media_library_get_artist_albums(p_ml, p_list_sys->i_artist_id, cb, p_list_sys->p_ctrl);
     else
         media_library_get_albums(p_ml, cb, p_list_sys->p_ctrl);
 }
 
 list_view*
-audio_list_album_view_create(interface* p_intf, Evas_Object* p_parent, const char* psz_artist_name, list_view_create_option opts)
+audio_list_album_view_create(interface* p_intf, Evas_Object* p_parent, unsigned int i_artist_id, list_view_create_option opts)
 {
     list_view* p_list_view = calloc(1, sizeof(*p_list_view));
     if (p_list_view == NULL)
@@ -185,8 +184,7 @@ audio_list_album_view_create(interface* p_intf, Evas_Object* p_parent, const cha
     list_sys* p_list_sys = p_list_view->p_sys = calloc(1, sizeof(*p_list_sys));
     if (p_list_sys == NULL)
         return NULL;
-    if (psz_artist_name != NULL)
-        p_list_sys->psz_artist_name = strdup(psz_artist_name);
+    p_list_sys->i_artist_id = i_artist_id;
 
     list_view_common_setup(p_list_view, p_list_sys, p_intf, p_parent, opts);
 

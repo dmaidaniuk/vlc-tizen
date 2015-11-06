@@ -151,6 +151,7 @@ artistToArtistItem( ArtistPtr artist )
     auto p_item = artist_item_create(artist->name().c_str());
     if (p_item == nullptr)
         return nullptr;
+    p_item->i_id = artist->id();
     if (artist->artworkUrl().empty() == false)
         p_item->psz_artwork = path_from_url( artist->artworkUrl().c_str() );
 

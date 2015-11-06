@@ -63,6 +63,7 @@ artist_item_copy(const artist_item* p_item )
     artist_item* p_new = artist_item_create( p_item->psz_name );
     if (p_new == NULL)
         return NULL;
+    p_new->i_id = p_item->i_id;
     if (p_item->psz_artwork != NULL)
         p_new->psz_artwork = strdup(p_item->psz_artwork);
     p_new->i_nb_albums = p_item->i_nb_albums;
@@ -74,5 +75,5 @@ artist_item_identical(const artist_item* p_left, const artist_item* p_right)
 {
     if (p_left->psz_name == NULL || p_right->psz_name == NULL)
         return p_left->psz_name == p_right->psz_name;
-    return strcmp( p_left->psz_name, p_right->psz_name ) == 0;
+    return p_left->i_id == p_right->i_id;
 }

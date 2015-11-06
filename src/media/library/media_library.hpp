@@ -65,7 +65,7 @@ void
 media_library_get_audio_files( media_library* p_ml, media_library_list_cb cb, void* p_user_data );
 
 void
-media_library_get_artist_albums( media_library* p_ml, const char* psz_artistName, media_library_list_cb cb, void* p_user_data );
+media_library_get_artist_albums( media_library* p_ml, unsigned int i_artist_id, media_library_list_cb cb, void* p_user_data );
 
 void
 media_library_get_albums( media_library* p_ml, media_library_list_cb cb, void* p_user_data );
@@ -77,7 +77,7 @@ void
 media_library_get_album_songs(media_library* p_ml, unsigned int i_album_id, media_library_list_cb cb, void* p_user_data);
 
 void
-media_library_get_artist_songs(media_library* p_ml, const char* psz_artistName, media_library_list_cb cb, void* p_user_data);
+media_library_get_artist_songs(media_library* p_ml, unsigned int i_artist_id, media_library_list_cb cb, void* p_user_data);
 
 void
 media_library_register_on_change(media_library* ml, media_library_file_list_changed_cb cb, void* p_data);
