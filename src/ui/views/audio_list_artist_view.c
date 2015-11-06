@@ -52,16 +52,8 @@ audio_list_artist_item_selected(void *data, Evas_Object *obj /*EINA_UNUSED*/, vo
     list_view_item *p_view_item = (list_view_item*)data;
     list_view* p_view;
 
-    if (p_view_item->p_artist_item->i_id != 0)
-    {
-        p_view = audio_list_album_view_create(p_view_item->p_list_sys->p_intf, p_view_item->p_list_sys->p_parent,
-                p_view_item->p_artist_item->i_id, LIST_CREATE_ALL );
-    }
-    else
-    {
-        p_view = audio_list_song_view_artist_create(p_view_item->p_list_sys->p_intf, p_view_item->p_list_sys->p_parent,
-                0, LIST_CREATE_ALL );
-    }
+    p_view = audio_list_album_view_create(p_view_item->p_list_sys->p_intf, p_view_item->p_list_sys->p_parent,
+            p_view_item->p_artist_item->i_id, LIST_CREATE_ALL );
 
     Evas_Object* p_new_list = p_view->pf_get_widget(p_view->p_sys);
     Elm_Object_Item *it = elm_naviframe_item_push(p_view_item->p_list_sys->p_parent, "", NULL, NULL, p_new_list, NULL);
