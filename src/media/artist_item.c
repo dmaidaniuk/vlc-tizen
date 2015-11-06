@@ -82,7 +82,7 @@ artist_item_get_name(const artist_item* p_item)
 {
     if (media_library_is_various_artist(p_item) == true)
         return "Various Artists";
-    else if (*p_item->psz_name == 0)
+    else if (p_item->psz_name == NULL || *p_item->psz_name == 0)
         return "Unknown Artist";
     return p_item->psz_name;
 }
