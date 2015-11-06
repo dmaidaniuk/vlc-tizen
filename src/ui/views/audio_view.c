@@ -74,7 +74,7 @@ create_audio_list_type(view_sys *p_view_sys, audio_view_type type )
         p_view = audio_list_artist_view_create(p_view_sys->p_intf, p_view_sys->nf_toolbar, LIST_CREATE_ALL);
         break;
     case AUDIO_VIEW_ALBUM:
-        p_view = audio_list_album_view_create(p_view_sys->p_intf, p_view_sys->nf_toolbar, NULL, LIST_CREATE_ALL);
+        p_view = audio_list_album_view_create(p_view_sys->p_intf, p_view_sys->nf_toolbar, 0, LIST_CREATE_ALL);
         break;
     }
 
