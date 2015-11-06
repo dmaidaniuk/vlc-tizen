@@ -299,6 +299,8 @@ settings_popup_add(settings_item *menu, int menu_len, Settings_menu_callback glo
     Evas_Object *popup = elm_popup_add(parent);
     Evas_Object *genlist = settings_list_add(menu, menu_len, global_menu_cb, data, p_view_sys, popup);
 
+    elm_scroller_content_min_limit(genlist, true, true);
+
     evas_object_smart_callback_add(popup, "block,clicked", popup_close_cb, NULL);
 
     elm_object_content_set(popup, genlist);
