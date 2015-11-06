@@ -85,6 +85,7 @@ struct playback_service
     bool b_seeking;
 
     bool b_auto_exit;
+    bool b_restart_emotion;
 
     notification_h  p_notification;
     double          i_last_notification_pos;
@@ -462,9 +463,12 @@ playback_service_destroy(playback_service *p_ps)
 }
 
 int
-playback_service_restart_emotion(playback_service *p_ps)
+playback_service_force_restart_emotion(playback_service *p_ps)
 {
+    LOGD("Restarting emotion...");
     bool is_ea = p_ps->p_e == p_ps->p_ea;
+
+    p_ps->b_restart_emotion = false;
 
     playback_service_stop_notify(p_ps, true);
 
@@ -498,6 +502,18 @@ playback_service_restart_emotion(playback_service *p_ps)
     return 0;
 }
 
+int
+playback_service_restart_emotion(playback_service *p_ps, bool immediate)
+{
+    if (immediate || !playback_service_is_playing(p_ps))
+        return playback_service_force_restart_emotion(p_ps);
+
+    // Schedule a restart after the next playback stop
+    p_ps->b_restart_emotion = true;
+
+    LOGD("Emotion will restart after the next stop");
+    return 0;
+}
 
 int
 playback_service_set_context(playback_service *p_ps, enum PLAYLIST_CONTEXT i_ctx)
@@ -648,6 +664,9 @@ playback_service_stop_notify(playback_service *p_ps, bool b_notify)
     emotion_object_file_set(p_ps->p_e, NULL);
     p_ps->b_started = false;
     ps_release_lock(p_ps);
+
+    if (p_ps->b_restart_emotion && !p_ps->b_auto_exit)
+        playback_service_force_restart_emotion(p_ps);
 
     if (b_notify)
         PS_SEND_VOID_CALLBACK(pf_on_stopped);

@@ -367,12 +367,10 @@ Eina_Bool
 settings_view_last_view_pop(void *data, Elm_Object_Item *it)
 {
     view_sys *p_view_sys = data;
-
-    LOGD("Reloading emotion...");
     application *p_app = intf_get_application(p_view_sys->p_intf);
     playback_service *p_ps = application_get_playback_service(p_app);
-    playback_service_restart_emotion(p_ps);
 
+    playback_service_restart_emotion(p_ps, false);
     return EINA_TRUE;
 }
 
