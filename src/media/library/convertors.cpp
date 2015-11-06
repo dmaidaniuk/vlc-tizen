@@ -120,7 +120,9 @@ fileToMediaItem( MediaPtr file )
                 {
                     media_item_set_meta(mi, MEDIA_ITEM_META_YEAR, std::to_string(year).c_str());
                 }
-                auto artwork = album->artworkUrl();
+                auto artwork = file->snapshot();
+                if ( artwork.empty() == true )
+                    artwork = album->artworkUrl();
                 mi->psz_snapshot = path_from_url(artwork.c_str());
             }
             mi->i_track_number = albumTrack->trackNumber();
