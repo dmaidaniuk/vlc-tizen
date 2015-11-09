@@ -4,7 +4,10 @@ VLC_TESTED_HASH=0deb1ed
 
 SCRIPT=$(readlink -f "$0")
 PROJECTPATH=$(dirname "$SCRIPT")
-source ${PROJECTPATH}/buildcommon
+
+if [ "$BUILDCOMMONDONE" != 1 ]; then
+    source ${PROJECTPATH}/buildcommon
+fi
 
 # atomics are broken for x86 on 2.3, dirty hacks since it's used only from emulator
 if [ ${TIZEN_SDK_VERSION} = "2.3.1" -a "${TIZEN_ABI}" = "x86" ];then

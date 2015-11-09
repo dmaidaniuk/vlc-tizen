@@ -2,7 +2,10 @@
 
 SCRIPT=$(readlink -f "$0")
 PROJECTPATH=$(dirname "$SCRIPT")
-source ${PROJECTPATH}/buildcommon
+
+if [ "$BUILDCOMMONDONE" != 1 ]; then
+    source ${PROJECTPATH}/buildcommon
+fi
 
 #########################
 # FETCH EMOTION SOURCES #
