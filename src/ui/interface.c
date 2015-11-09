@@ -134,6 +134,12 @@ intf_get_main_naviframe(interface *intf)
     return intf->nf_content;
 }
 
+Evas_Object *
+intf_get_window(interface *intf)
+{
+    return intf->win;
+}
+
 /* CREATION */
 static Evas_Object *
 create_button(Evas_Object *parent, const char *style)

@@ -106,6 +106,9 @@ intf_update_mini_player(interface *);
 Evas_Object *
 intf_get_main_naviframe(interface *intf);
 
+Evas_Object *
+intf_get_window(interface *intf);
+
 /* Media Library */
 void
 intf_register_file_changed(interface *intf, view_e type,
