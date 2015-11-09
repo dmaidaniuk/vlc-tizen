@@ -842,7 +842,7 @@ ps_on_new_len_cb(playback_service *p_ps, void *p_user_data, double i_len)
 }
 
 static void
-ps_on_media_selected_cb(playback_service *p_ps, void *p_user_data, media_item *p_mi)
+ps_on_media_selected_cb(playback_service *p_ps, void *p_user_data, unsigned int i_pos, media_item *p_mi)
 {
     audio_player *mpd = p_user_data;
 
