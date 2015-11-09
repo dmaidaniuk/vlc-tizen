@@ -43,6 +43,7 @@ struct audio_player {
 
 
     Evas_Object *layout, *fs_layout;
+    Evas_Object *placeholder, *fs_placeholder;
     Evas_Object *popup;
     Evas_Object *slider, *fs_slider;
     Evas_Object *fs_time, *fs_total_time;
@@ -375,8 +376,8 @@ update_player_display(audio_player* mpd)
         }
         else
         {
-            elm_object_part_content_set(mpd->layout, "swallow.cover", create_icon(mpd->layout, "background_cone.png"));
-            elm_object_part_content_set(mpd->fs_layout, "cover", create_icon(mpd->fs_layout, "background_cone.png"));
+            elm_object_part_content_set(mpd->layout, "swallow.cover", mpd->placeholder);
+            elm_object_part_content_set(mpd->fs_layout, "cover", mpd->fs_placeholder);
         }
     }
 
@@ -684,8 +685,8 @@ swallow_mini_player(audio_player *mpd, Evas_Object *layout)
     player_update_sliders(mpd, playback_service_get_pos(mpd->p_ps));
 
     /* set the cover image */
-    Evas_Object *cover = create_icon(layout, "background_cone.png");
-    elm_object_part_content_set(layout, "swallow.cover", cover);
+    mpd->placeholder = create_icon(layout, "background_cone.png");
+    elm_object_part_content_set(layout, "swallow.cover", mpd->placeholder);
 
     /* set the play/pause button */
     mpd->play_pause_img = create_icon(layout, "ic_pause_circle_normal_o.png");
@@ -723,9 +724,9 @@ add_fullscreen_item_table(audio_player *mpd, Evas_Object *parent)
     elm_object_part_content_set(layout, "more_button", mpd->fs_more_btn);
 
     /* Cover */
-    Evas_Object *cover = create_icon(parent, "background_cone.png");
-    evas_object_show(cover);
-    elm_object_part_content_set(layout, "cover", cover);
+    mpd->fs_placeholder = create_icon(parent, "background_cone.png");
+    evas_object_show(mpd->fs_placeholder);
+    elm_object_part_content_set(layout, "cover", mpd->fs_placeholder);
 
     /* Seek */
     mpd->fs_slider = elm_slider_add(parent);
