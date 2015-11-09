@@ -51,7 +51,12 @@ fi
 # CONFIGURE #
 #############
 
-EMOTION_BUILD_DIR=${PROJECTPATH}/emotion/build-tizen-${TARGET_TUPLE}
+if [ "$RELEASE" = 1 ]; then
+    EMOTION_BUILD_DIR=${PROJECTPATH}/emotion/build-tizen-${TARGET_TUPLE}-release
+else
+    EMOTION_BUILD_DIR=${PROJECTPATH}/emotion/build-tizen-${TARGET_TUPLE}
+fi
+
 EMOTION_PREFIX=${EMOTION_BUILD_DIR}/prefix
 mkdir -p ${EMOTION_PREFIX}
 

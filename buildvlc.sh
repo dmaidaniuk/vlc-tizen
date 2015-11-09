@@ -237,7 +237,11 @@ fi
 ############
 
 echo -e "\e[1m\e[32mBuilding the contribs\e[0m"
-mkdir -p contrib/contrib-tizen-${TARGET_TUPLE}
+
+CONTRIB_BUILD_DIR=contrib/contrib-tizen-${TARGET_TUPLE}
+
+
+mkdir -p ${CONTRIB_BUILD_DIR}
 
 gen_pc_file() {
     echo "Generating $1 pkg-config file"
@@ -252,7 +256,7 @@ mkdir -p contrib/${TARGET_TUPLE}/lib/pkgconfig
 gen_pc_file EGL 1.1
 gen_pc_file GLESv2 2
 
-cd contrib/contrib-tizen-${TARGET_TUPLE}
+cd ${CONTRIB_BUILD_DIR}
 
 TIZEN_ABI=${TIZEN_ABI} TIZEN_API=${TIZEN_API} \
     ../bootstrap --host=${TARGET_TUPLE} --build=x86_64-linux-gnu ${VLC_BOOTSTRAP_ARGS}
@@ -284,7 +288,11 @@ cd ../../
 # BUILD DIRECTORY #
 ###################
 
-VLC_BUILD_DIR=build-tizen-${TARGET_TUPLE}
+if [ "$RELEASE" = 1 ]; then
+    VLC_BUILD_DIR=build-tizen-${TARGET_TUPLE}-release
+else
+    VLC_BUILD_DIR=build-tizen-${TARGET_TUPLE}
+fi
 mkdir -p $VLC_BUILD_DIR && cd $VLC_BUILD_DIR
 
 #############
@@ -408,11 +416,11 @@ ${CC} -fPIC -rdynamic -shared \
     -o ${PROJECTPATH}/lib/libvlc.so.5 \
     ${PROJECTPATH}/vlc/.modules/libvlc-modules.c \
     -Wl,--whole-archive \
-    ${PROJECTPATH}/vlc/build-tizen-${TARGET_TUPLE}/lib/.libs/libvlc.a \
+    ${PROJECTPATH}/vlc/${VLC_BUILD_DIR}/lib/.libs/libvlc.a \
     -Wl,--no-whole-archive \
-    ${PROJECTPATH}/vlc/.modules/build-tizen-${TARGET_TUPLE}/*.a \
-    ${PROJECTPATH}/vlc/build-tizen-${TARGET_TUPLE}/src/.libs/libvlccore.a \
-    ${PROJECTPATH}/vlc/build-tizen-${TARGET_TUPLE}/compat/.libs/libcompat.a \
+    ${PROJECTPATH}/vlc/.modules/${VLC_BUILD_DIR}/*.a \
+    ${PROJECTPATH}/vlc/${VLC_BUILD_DIR}/src/.libs/libvlccore.a \
+    ${PROJECTPATH}/vlc/${VLC_BUILD_DIR}/compat/.libs/libcompat.a \
     -Wl,--whole-archive \
     ${PROJECTPATH}/vlc/contrib/${TARGET_TUPLE}/lib/libiconv.a \
     -Wl,--no-whole-archive \

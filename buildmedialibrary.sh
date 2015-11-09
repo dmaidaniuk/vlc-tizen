@@ -29,7 +29,13 @@ echo -e "\e[1m\e[36mEXTRA_CFLAGS:      ${EXTRA_CFLAGS}\e[0m"
 # Setup folders #
 #################
 
-MEDIALIBRARY_BUILD_DIR=${PROJECTPATH}/medialibrary/build-tizen-${TARGET_TUPLE}
+if [ "$RELEASE" = 1 ]; then
+    MEDIALIBRARY_BUILD_DIR=${PROJECTPATH}/medialibrary/build-tizen-${TARGET_TUPLE}-release
+else
+    MEDIALIBRARY_BUILD_DIR=${PROJECTPATH}/medialibrary/build-tizen-${TARGET_TUPLE}
+fi
+
+
 mkdir -p ${MEDIALIBRARY_BUILD_DIR}
 
 #############
@@ -62,7 +68,7 @@ cmake \
     ${CMAKE_OPTS} \
     -DBUILD_TESTS=OFF \
     -DLIBVLCPP_DIR="${PROJECTPATH}/libvlcpp" \
-    -DLIBVLC_INCLUDE_DIR="${PROJECTPATH}/vlc/include;${PROJECTPATH}/vlc/build-tizen-${TARGET_TUPLE}/include" \
+    -DLIBVLC_INCLUDE_DIR="${PROJECTPATH}/vlc/include;${PROJECTPATH}/vlc/${VLC_BUILD_DIR}/include" \
     -DLIBVLC_LIBRARY="${PROJECTPATH}/lib/libvlc.so" \
     -DSQLITE3_INCLUDE_DIR="${TIZEN_INCLUDES}/" \
     -DSQLITE3_LIBRARY_DEBUG="${TIZEN_LIBS}/libsqlite3.so" \
