@@ -91,6 +91,16 @@ TIZEN_TOOLCHAIN_PATH=${SYSROOT}/bin
 
 export PATH=${TIZEN_TOOLCHAIN_PATH}:${LIBEXEC}:${PATH}
 
+#################
+# GLOBAL EXPORT #
+#################
+
+if [ "$RELEASE" = 1 ]; then
+    export VLC_BUILD_DIR=build-tizen-${TARGET_TUPLE}-release
+else
+    export VLC_BUILD_DIR=build-tizen-${TARGET_TUPLE}
+fi
+
 ###############
 # DISPLAY ABI #
 ###############

@@ -291,11 +291,6 @@ cd ../../
 # BUILD DIRECTORY #
 ###################
 
-if [ "$RELEASE" = 1 ]; then
-    VLC_BUILD_DIR=build-tizen-${TARGET_TUPLE}-release
-else
-    VLC_BUILD_DIR=build-tizen-${TARGET_TUPLE}
-fi
 mkdir -p $VLC_BUILD_DIR && cd $VLC_BUILD_DIR
 
 #############
