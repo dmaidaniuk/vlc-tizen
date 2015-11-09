@@ -42,10 +42,18 @@ typedef struct cone_animation {
     int container_height;
 } cone_animation;
 
+typedef struct view_sys {
+    interface *p_intf;
+    Evas_Object *nf_toolbar;
+    cone_animation *p_anim;
+} view_sys;
+
 static Eina_Bool
 cone_do_drop(void *data, double pos)
 {
-   cone_animation *anim = data;
+   view_sys *p_sys = data;
+   cone_animation *anim = p_sys->p_anim;
+
    int x,y,w,h;
    double frame = pos;
    frame = ecore_animator_pos_map(pos, ECORE_POS_MAP_BOUNCE, 2, 4);
@@ -58,7 +66,7 @@ cone_do_drop(void *data, double pos)
    {
        anim->anim_begin_y = -h;
        anim->anim_end_y = anim->initial_y;
-       ecore_animator_timeline_add(1, cone_do_drop, anim);
+       ecore_animator_timeline_add(1, cone_do_drop, p_sys);
        return EINA_FALSE;
    }
 
@@ -68,7 +76,8 @@ cone_do_drop(void *data, double pos)
 static void
 cone_clicked_cb(void *data, Evas_Object *obj, void *event_info)
 {
-    cone_animation *anim = data;
+    view_sys *p_sys = data;
+    cone_animation *anim = p_sys->p_anim;
     int y, h;
     evas_object_geometry_get(anim->obj, NULL, &y, NULL, &h);
 
@@ -81,21 +90,14 @@ cone_clicked_cb(void *data, Evas_Object *obj, void *event_info)
     anim->anim_begin_y = y;
     anim->anim_end_y = anim->container_height + h;
 
-    ecore_animator_timeline_add(2, cone_do_drop, anim);
-}
-
-static void
-cone_delete_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
-{
-    cone_animation *anim = data;
-    free(anim);
+    ecore_animator_timeline_add(2, cone_do_drop, p_sys);
 }
 
 static Evas_Object*
-create_about_section(Evas_Object *parent)
+create_about_section(view_sys *p_sys)
 {
     /* Create layout and set the theme */
-    Evas_Object *layout = elm_layout_add(parent);
+    Evas_Object *layout = elm_layout_add(p_sys->nf_toolbar);
 
     /* */
     elm_layout_file_set(layout, ABOUT_EDJ, "about");
@@ -121,22 +123,27 @@ create_about_section(Evas_Object *parent)
     elm_object_part_text_set(layout, "revision", REVISION);
 
     /* Handle cone animation */
-    cone_animation *anim = malloc(sizeof(*anim));
-    anim->initial_y = -1; // Initial position unknown
-    anim->obj = cone;
-    anim->container = layout;
-    evas_object_smart_callback_add(cone, "clicked", cone_clicked_cb, anim);
-    evas_object_event_callback_add(layout, EVAS_CALLBACK_FREE, cone_delete_cb, anim);
+    p_sys->p_anim->initial_y = -1; // Initial position unknown
+    p_sys->p_anim->obj = cone;
+    p_sys->p_anim->container = layout;
+    evas_object_smart_callback_add(cone, "clicked", cone_clicked_cb, p_sys);
 
     /* */
     evas_object_show(layout);
     return layout;
 }
 
-static Evas_Object*
-create_licence_section(Evas_Object *parent)
+static void
+rotation_cb(void *data, Evas_Object *obj, void *event_info)
 {
-    Evas *e_webview = evas_object_evas_get(parent);
+    view_sys *p_sys = data;
+    p_sys->p_anim->initial_y = -1;
+}
+
+static Evas_Object*
+create_licence_section(view_sys *p_sys)
+{
+    Evas *e_webview = evas_object_evas_get(p_sys->nf_toolbar);
     Evas_Object *browser = ewk_view_add(e_webview);
     evas_object_layer_set(browser, EVAS_LAYER_MIN);
 
@@ -149,28 +156,28 @@ create_licence_section(Evas_Object *parent)
 static void
 tabbar_item_cb(void *data, Evas_Object *obj, void *event_info)
 {
-    Evas_Object *nf_toolbar = data;
+    view_sys *p_sys = data;
     const char *str = elm_object_item_text_get((Elm_Object_Item *)event_info);
 
     /* Create the view depending on the item selected in the toolbar */
     Evas_Object *content;
     if (str && !strcmp(str, "License")) {
-        content = create_licence_section(nf_toolbar);
+        content = create_licence_section(p_sys);
     }
     else {
-        content = create_about_section(nf_toolbar);
+        content = create_about_section(p_sys);
     }
 
     /* Show it without title */
-    Elm_Object_Item *item = elm_naviframe_item_push(nf_toolbar, str, NULL, NULL, content, NULL);
+    Elm_Object_Item *item = elm_naviframe_item_push(p_sys->nf_toolbar, str, NULL, NULL, content, NULL);
     elm_naviframe_item_title_enabled_set(item, EINA_FALSE, EINA_FALSE);
 }
 
 static Evas_Object*
-create_toolbar(Evas_Object *nf_toolbar)
+create_toolbar(view_sys *p_sys)
 {
     /* Create and set the toolbar */
-    Evas_Object *tabbar = elm_toolbar_add(nf_toolbar);
+    Evas_Object *tabbar = elm_toolbar_add(p_sys->nf_toolbar);
 
     /* Set the toolbar options */
     elm_toolbar_shrink_mode_set(tabbar, ELM_TOOLBAR_SHRINK_EXPAND);
@@ -181,8 +188,8 @@ create_toolbar(Evas_Object *nf_toolbar)
     evas_object_size_hint_align_set(tabbar, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
     /* Append new entry in the toolbar with the Icon & Label wanted */
-    elm_toolbar_item_append(tabbar, NULL, "About",   tabbar_item_cb, nf_toolbar);
-    elm_toolbar_item_append(tabbar, NULL, "License", tabbar_item_cb, nf_toolbar);
+    elm_toolbar_item_append(tabbar, NULL, "About",   tabbar_item_cb, p_sys);
+    elm_toolbar_item_append(tabbar, NULL, "License", tabbar_item_cb, p_sys);
 
     return tabbar;
 }
@@ -192,18 +199,25 @@ create_about_view(interface *intf, Evas_Object *parent)
 {
     interface_view *view = calloc(1, sizeof(*view));
 
+    /* */
+    view_sys *about_view_sys = calloc(1, sizeof(*about_view_sys));
+    about_view_sys->p_intf = intf;
+    about_view_sys->p_anim = malloc(sizeof(*about_view_sys->p_anim));
+
+    view->p_view_sys = about_view_sys;
+
     /* Content box */
     Evas_Object *about_box = elm_box_add(parent);
     evas_object_size_hint_weight_set(about_box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
     evas_object_size_hint_align_set(about_box, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
     /* Toolbar Naviframe */
-    Evas_Object *nf_toolbar = elm_naviframe_add(about_box);
+    Evas_Object *nf_toolbar = about_view_sys->nf_toolbar = elm_naviframe_add(about_box);
     evas_object_size_hint_weight_set(nf_toolbar, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
     evas_object_size_hint_align_set(nf_toolbar, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
     /* Create the toolbar in the view */
-    Evas_Object *tabbar = create_toolbar(nf_toolbar);
+    Evas_Object *tabbar = create_toolbar(about_view_sys);
 
     /* Add them to the box */
     elm_box_pack_end(about_box, tabbar);
@@ -214,6 +228,10 @@ create_about_view(interface *intf, Evas_Object *parent)
     /* Set the first item in the toolbar */
     elm_toolbar_item_selected_set(elm_toolbar_first_item_get(tabbar), EINA_TRUE);
 
+    /* Rotation */
+    Evas_Object *win = intf_get_window(about_view_sys->p_intf);
+    evas_object_smart_callback_add(win, "wm,rotation,changed", rotation_cb, about_view_sys);
+
     /*  */
     evas_object_show(about_box);
     view->view = about_box;
@@ -223,4 +241,8 @@ create_about_view(interface *intf, Evas_Object *parent)
 void
 destroy_about_view(interface_view *view)
 {
+    view_sys* p_sys = view->p_view_sys;
+    free(p_sys->p_anim);
+    free(p_sys);
+    free(view);
 }
