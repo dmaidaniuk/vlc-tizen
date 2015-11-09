@@ -138,7 +138,7 @@ popup_menu_orient_add(popup_menu *menu, Elm_Popup_Orient orient, void *data, Eva
     genlist = elm_genlist_add(popup);
     elm_scroller_single_direction_set(genlist, ELM_SCROLLER_SINGLE_DIRECTION_HARD);
     elm_genlist_homogeneous_set(genlist, EINA_FALSE);
-    elm_genlist_mode_set(genlist, ELM_LIST_SCROLL);
+    elm_genlist_mode_set(genlist, ELM_LIST_COMPRESS);
     elm_scroller_content_min_limit(genlist, true, true);
     evas_object_show(genlist);
 
