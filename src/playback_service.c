@@ -33,6 +33,7 @@
 #include <app_control.h>
 
 #include <device/power.h>
+#include <sound_manager.h>
 
 #include "playback_service.h"
 #include "media/media_list.h"
@@ -78,6 +79,9 @@ struct playback_service
 
     bool b_auto_exit;
     bool b_restart_emotion;
+    bool b_interrupted;
+
+    double d_pos;
 
     notification_h  p_notification;
     double          i_last_notification_pos;
@@ -546,6 +550,61 @@ ps_release_lock(playback_service *p_ps)
     }
 }
 
+void
+sound_session_interrupted_cb2(sound_session_interrupted_code_e code, void *user_data)
+{
+    playback_service *p_ps = user_data;
+
+    switch(code) {
+    case SOUND_SESSION_INTERRUPTED_COMPLETED:
+        LOGD("SOUND_SESSION_INTERRUPTED_COMPLETED");
+        break;
+    case SOUND_SESSION_INTERRUPTED_BY_MEDIA:
+        LOGD("SOUND_SESSION_INTERRUPTED_BY_MEDIA");
+        break;
+    case SOUND_SESSION_INTERRUPTED_BY_CALL:
+        LOGD("SOUND_SESSION_INTERRUPTED_BY_CALL");
+        break;
+    case SOUND_SESSION_INTERRUPTED_BY_EARJACK_UNPLUG:
+        LOGD("SOUND_SESSION_INTERRUPTED_BY_EARJACK_UNPLUG");
+        break;
+    case SOUND_SESSION_INTERRUPTED_BY_RESOURCE_CONFLICT:
+        LOGD("SOUND_SESSION_INTERRUPTED_BY_RESOURCE_CONFLICT");
+        break;
+    case SOUND_SESSION_INTERRUPTED_BY_ALARM:
+        LOGD("SOUND_SESSION_INTERRUPTED_BY_ALARM");
+        break;
+    case SOUND_SESSION_INTERRUPTED_BY_EMERGENCY:
+        LOGD("SOUND_SESSION_INTERRUPTED_BY_EMERGENCY");
+        break;
+    case SOUND_SESSION_INTERRUPTED_BY_NOTIFICATION:
+        LOGD("SOUND_SESSION_INTERRUPTED_BY_NOTIFICATION");
+        break;
+    default:
+        LOGD("DEFAULT");
+    }
+
+    switch(code) {
+    case SOUND_SESSION_INTERRUPTED_COMPLETED:
+        playback_service_play(p_ps);
+        break;
+    case SOUND_SESSION_INTERRUPTED_BY_MEDIA:
+    case SOUND_SESSION_INTERRUPTED_BY_CALL:
+    case SOUND_SESSION_INTERRUPTED_BY_ALARM:
+    case SOUND_SESSION_INTERRUPTED_BY_EMERGENCY:
+        playback_service_pause(p_ps);
+        p_ps->b_interrupted = true;
+        p_ps->d_pos = emotion_object_position_get(p_ps->p_e);
+        break;
+    case SOUND_SESSION_INTERRUPTED_BY_RESOURCE_CONFLICT:
+    case SOUND_SESSION_INTERRUPTED_BY_EARJACK_UNPLUG:
+        playback_service_pause(p_ps);
+        break;
+    case SOUND_SESSION_INTERRUPTED_BY_NOTIFICATION:
+        break;
+    }
+}
+
 int
 playback_service_start(playback_service *p_ps, double i_time)
 {
@@ -587,6 +646,8 @@ playback_service_start(playback_service *p_ps, double i_time)
         ps_acquire_lock(p_ps, i_new_lock);
     }
 
+    sound_manager_set_session_interrupted_cb(sound_session_interrupted_cb2, p_ps);
+
     p_ps->b_started = true;
     return playback_service_play(p_ps);
 }
@@ -601,6 +662,8 @@ playback_service_stop_notify(playback_service *p_ps, bool b_notify)
     emotion_object_file_set(p_ps->p_e, NULL);
     p_ps->b_started = false;
     ps_release_lock(p_ps);
+
+    sound_manager_unset_session_interrupted_cb();
 
     if (p_ps->b_restart_emotion && !p_ps->b_auto_exit)
         playback_service_force_restart_emotion(p_ps);
@@ -633,6 +696,14 @@ playback_service_play(playback_service *p_ps)
 {
     if (!p_ps->b_started)
         return -1;
+
+    if (p_ps->b_interrupted)
+    {
+        p_ps->b_interrupted = false;
+        playback_service_stop(p_ps);
+        playback_service_start(p_ps, p_ps->d_pos);
+        return 0;
+    }
 
     emotion_object_play_set(p_ps->p_e, true);
     return 0;

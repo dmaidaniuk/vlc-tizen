@@ -29,6 +29,7 @@
 #include <app.h>
 #include <storage.h>
 #include <system_settings.h>
+#include <sound_manager.h>
 
 #include <Emotion.h>
 #include <Elementary.h>                 /* Elm_language_set */
@@ -83,6 +84,12 @@ app_create(void *data)
     eina_init();
     ecore_evas_init();
     emotion_init();
+
+    /* */
+    sound_manager_set_session_type(SOUND_SESSION_TYPE_MEDIA);
+    sound_manager_set_media_session_option(SOUND_SESSION_OPTION_PAUSE_OTHERS_WHEN_START,
+            SOUND_SESSION_OPTION_INTERRUPTIBLE_DURING_PLAY);
+    sound_manager_set_media_session_resumption_option(SOUND_SESSION_OPTION_RESUMPTION_BY_SYSTEM_OR_MEDIA_PAUSED);
 
     /* */
     app->p_ms = media_storage_create(app);
