@@ -863,6 +863,13 @@ ps_on_started_cb(playback_service *p_ps, void *p_user_data, media_item *p_mi)
 }
 
 static void
+ps_on_playpause_cb(playback_service *p_ps, void *p_user_data, bool b_playing)
+{
+    audio_player *mpd = p_user_data;
+    update_player_play_pause(mpd);
+}
+
+static void
 ps_on_stopped_cb(playback_service *p_ps, void *p_user_data)
 {
     audio_player_stop(p_user_data);
@@ -915,6 +922,7 @@ audio_player_create(interface *intf, playback_service *p_ps, Evas_Object *layout
         .pf_on_media_removed = NULL,
         .pf_on_media_selected = ps_on_media_selected_cb,
         .pf_on_started = ps_on_started_cb,
+        .pf_on_playpause = ps_on_playpause_cb,
         .pf_on_stopped = ps_on_stopped_cb,
         .pf_on_new_len = ps_on_new_len_cb,
         .pf_on_new_time = ps_on_new_time_cb,

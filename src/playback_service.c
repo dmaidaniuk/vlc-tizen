@@ -697,15 +697,20 @@ playback_service_play(playback_service *p_ps)
     if (!p_ps->b_started)
         return -1;
 
+    PS_SEND_CALLBACK(pf_on_playpause, true);
+
     if (p_ps->b_interrupted)
     {
         p_ps->b_interrupted = false;
         playback_service_stop(p_ps);
         playback_service_start(p_ps, p_ps->d_pos);
-        return 0;
+        goto end;
     }
 
     emotion_object_play_set(p_ps->p_e, true);
+
+    end:
+    PS_SEND_CALLBACK(pf_on_playpause, true);
     return 0;
 }
 
@@ -716,6 +721,7 @@ playback_service_pause(playback_service *p_ps)
         return -1;
 
     emotion_object_play_set(p_ps->p_e, false);
+    PS_SEND_CALLBACK(pf_on_playpause, false);
     return 0;
 }
 
@@ -728,6 +734,7 @@ playback_service_toggle_play_pause(playback_service *p_ps)
 
     b_new_state = !emotion_object_play_get(p_ps->p_e);
     emotion_object_play_set(p_ps->p_e, b_new_state);
+    PS_SEND_CALLBACK(pf_on_playpause, b_new_state);
     return b_new_state;
 }
 

@@ -44,6 +44,7 @@ struct playback_service_callbacks
     void (*pf_on_media_removed)(playback_service *p_ps, void *p_user_data, unsigned int i_pos, media_item *p_mi);
     void (*pf_on_media_selected)(playback_service *p_ps, void *p_user_data, unsigned int i_pos, media_item *p_mi);
     void (*pf_on_started)(playback_service *p_ps, void *p_user_data, media_item *p_mi);
+    void (*pf_on_playpause)(playback_service *p_ps, void *p_user_data, bool b_playing);
     void (*pf_on_stopped)(playback_service *p_ps, void *p_user_data);
     void (*pf_on_new_len)(playback_service *p_ps, void *p_user_data, double i_len);
     void (*pf_on_new_time)(playback_service *p_ps, void *p_user_data, double i_time, double i_pos);
