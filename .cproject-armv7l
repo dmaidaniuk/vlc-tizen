@@ -352,13 +352,13 @@
 							<tool id="org.tizen.nativecore.tool.ast.cpp.554651495" name="C++ Static Analyzer" superClass="org.tizen.nativecore.tool.ast.cpp"/>
 							<tool id="org.tizen.nativecore.tool.sbi.po.compiler.2059629768" name="PO Resource Compiler" superClass="org.tizen.nativecore.tool.sbi.po.compiler"/>
 							<tool id="org.tizen.nativecore.tool.sbi.edc.compiler.1930427795" name="EDC Resource Compiler" superClass="org.tizen.nativecore.tool.sbi.edc.compiler">
-								<option id="sbi.gnu.edc.compiler.option.misc.id.1613246187" superClass="sbi.gnu.edc.compiler.option.misc.id" valueType="stringList">
+								<option id="sbi.gnu.edc.compiler.option.misc.id.1613246187" name="Image Path (-id)" superClass="sbi.gnu.edc.compiler.option.misc.id" valueType="stringList">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}}/res/images&quot;"/>
 								</option>
-								<option id="sbi.gnu.edc.compiler.option.misc.sd.989495863" superClass="sbi.gnu.edc.compiler.option.misc.sd" valueType="stringList">
+								<option id="sbi.gnu.edc.compiler.option.misc.sd.989495863" name="Sound Path (-sd)" superClass="sbi.gnu.edc.compiler.option.misc.sd" valueType="stringList">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}}/res/sounds&quot;"/>
 								</option>
-								<option id="sbi.gnu.edc.compiler.option.misc.fd.1431222612" superClass="sbi.gnu.edc.compiler.option.misc.fd" valueType="stringList">
+								<option id="sbi.gnu.edc.compiler.option.misc.fd.1431222612" name="Font Path (-fd)" superClass="sbi.gnu.edc.compiler.option.misc.fd" valueType="stringList">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}}/res/fonts&quot;"/>
 								</option>
 							</tool>
@@ -716,7 +716,17 @@
 							<tool command="arm-linux-gnueabi-gcc" id="org.tizen.nativecore.tool.ast.1793395576" name="C Static Analyzer" superClass="org.tizen.nativecore.tool.ast"/>
 							<tool id="org.tizen.nativecore.tool.ast.cpp.1225176543" name="C++ Static Analyzer" superClass="org.tizen.nativecore.tool.ast.cpp"/>
 							<tool id="org.tizen.nativecore.tool.sbi.po.compiler.1845620859" name="PO Resource Compiler" superClass="org.tizen.nativecore.tool.sbi.po.compiler"/>
-							<tool id="org.tizen.nativecore.tool.sbi.edc.compiler.1480845917" name="EDC Resource Compiler" superClass="org.tizen.nativecore.tool.sbi.edc.compiler"/>
+							<tool id="org.tizen.nativecore.tool.sbi.edc.compiler.1480845917" name="EDC Resource Compiler" superClass="org.tizen.nativecore.tool.sbi.edc.compiler">
+								<option id="sbi.gnu.edc.compiler.option.misc.id.428803915" superClass="sbi.gnu.edc.compiler.option.misc.id" valueType="stringList">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}}/res/images&quot;"/>
+								</option>
+								<option id="sbi.gnu.edc.compiler.option.misc.sd.312051525" superClass="sbi.gnu.edc.compiler.option.misc.sd" valueType="stringList">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}}/res/sounds&quot;"/>
+								</option>
+								<option id="sbi.gnu.edc.compiler.option.misc.fd.2029091046" superClass="sbi.gnu.edc.compiler.option.misc.fd" valueType="stringList">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}}/res/fonts&quot;"/>
+								</option>
+							</tool>
 							<tool id="org.tizen.nativecore.tool.sbi.gnu.archiver.mergelib.762081902" name="Archive Generator" superClass="org.tizen.nativecore.tool.sbi.gnu.archiver.mergelib"/>
 						</toolChain>
 					</folderInfo>
