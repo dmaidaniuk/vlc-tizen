@@ -327,6 +327,8 @@ audio_player_handle_back_key(audio_player *mpd)
 {
     if (mpd->popup)
     {
+        mpd->more_state = false;
+        elm_image_file_set(mpd->fs_more_btn, ICON_DIR"ic_more_circle_normal_o.png", NULL);
         evas_object_del(mpd->popup);
         return true;
     }
