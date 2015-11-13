@@ -72,12 +72,16 @@ typedef struct audio_popup_data
 
 /* Set the panel list labels */
 const char *audio_popup_list[] = {
-        "Jump to Time", "Playback Speed", "Sleep in"
+        "Jump to Time",
+        "Playback Speed",
+        "Sleep in",
 };
 
 /* Set the panel list icons */
 const char *audio_popup_icon_names[] = {
-        "jumpto", "speed", "sleep"
+        "jumpto",
+        "speed",
+        "sleep",
 };
 
 
