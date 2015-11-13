@@ -60,14 +60,12 @@ media_library::sendFileUpdate( MediaPtr file, bool added )
     auto item = fileToMediaItem( file );
     auto ctx = new FileUpdateCallbackCtx{this, item, added};
     ecore_main_loop_thread_safe_call_async([](void* data) {
-        auto ctx = reinterpret_cast<FileUpdateCallbackCtx*>(data);
-        auto item_ptr = std::unique_ptr<media_item, void(*)(media_item*)> ( ctx->item, &media_item_destroy );
+        std::unique_ptr<FileUpdateCallbackCtx> ctx( reinterpret_cast<FileUpdateCallbackCtx*>(data) );
         for ( auto& p : ctx->ml->m_onItemUpdatedCb )
         {
-            if ( p.first( p.second, reinterpret_cast<library_item*>(ctx->item), ctx->added ) == true )
+            if ( p.first( p.second, reinterpret_cast<library_item*>(ctx->item.get()), ctx->added ) == true )
                 break;
         }
-        delete ctx;
     }, ctx);
 }
 
