@@ -86,9 +86,9 @@ typedef struct more_menu {
 #define MORE_END -1
 
 more_menu more_menu_list[] = {
-        { MORE_JUMPTO,  "Jump to Time",    "ic_jumpto_normal.png" },
+        //{ MORE_JUMPTO,  "Jump to Time",    "ic_jumpto_normal.png" }, // Not implemented
         { MORE_SPEED,   "Playback Speed",  "ic_speed_normal.png"  },
-        { MORE_SLEEP,   "Sleep in",        "ic_sleep_normal.png"  },
+        //{ MORE_SLEEP,   "Sleep in",        "ic_sleep_normal.png"  }, // Not implemented
         { MORE_END },
 };
 
