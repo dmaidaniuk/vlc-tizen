@@ -99,9 +99,11 @@ private:
     struct FileUpdateCallbackCtx
     {
         FileUpdateCallbackCtx(media_library* _ml, media_item* _item, bool _added)
-            : ml(_ml), item(_item, media_item_destroy), added(_added) {}
+            : ml(_ml), wml(ml->ml), item(_item, media_item_destroy), added(_added) {}
         media_library* ml;
+        std::weak_ptr<IMediaLibrary> wml;
         std::unique_ptr<media_item, void(*)(media_item*)> item;
+        // Used to monitor media_library's lifetime.
         bool added;
     };
 
