@@ -946,3 +946,15 @@ playback_service_get_repeat_mode(playback_service *p_ps)
 {
     return media_list_get_repeat_mode(get_media_list(p_ps, PLAYLIST_CONTEXT_AUDIO));
 }
+
+double
+playback_service_get_play_speed(playback_service *p_ps)
+{
+    return emotion_object_play_speed_get(p_ps->p_e);
+}
+
+void
+playback_service_set_play_speed(playback_service *p_ps, double rate)
+{
+    emotion_object_play_speed_set(p_ps->p_e, rate);
+}

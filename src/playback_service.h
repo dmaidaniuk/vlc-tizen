@@ -179,4 +179,10 @@ playback_service_set_repeat_mode(playback_service *p_ps, enum PLAYLIST_REPEAT i_
 enum PLAYLIST_REPEAT
 playback_service_get_repeat_mode(playback_service *p_ps);
 
+double
+playback_service_get_play_speed(playback_service *p_ps);
+
+void
+playback_service_set_play_speed(playback_service *p_ps, double rate);
+
 #endif /* PLAYBACK_SERVICE_H */
