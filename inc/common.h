@@ -69,6 +69,7 @@
 #define VIDEOPLAYER_EDJ get_resource_path( EDJPATH "/video_player.edj")
 #define AUDIOPLAYERMINI_EDJ get_resource_path( EDJPATH "/audio_player_mini.edj")
 #define AUDIOPLAYER_EDJ get_resource_path( EDJPATH "/audio_player.edj")
+#define AUDIOPLAYERSPEED_EDJ get_resource_path( EDJPATH "/audio_player_speed.edj")
 #define ABOUT_EDJ get_resource_path( EDJPATH "/about.edj")
 #define THEME_EDJ get_resource_path( EDJPATH "/theme.edj")
 

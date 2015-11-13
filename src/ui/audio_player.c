@@ -27,6 +27,7 @@
 #include "common.h"
 
 #include <Elementary.h>
+#include <math.h>
 
 #include "playback_service.h"
 #include "interface.h"
@@ -54,6 +55,8 @@ struct audio_player {
 
     Evas_Object *fs_save_btn, *fs_playlist_btn, *fs_more_btn;
     Evas_Object *fs_repeat_btn, *fs_shuffle_btn;
+
+    Evas_Object *speed_popup_layout, *speed_popup_progress;
 
     Ecore_Timer *long_press_timer;
 };
@@ -84,6 +87,75 @@ const char *audio_popup_icon_names[] = {
         "sleep",
 };
 
+double
+audio_player_convert_slider_rate(double slider_value)
+{
+    return  pow(4, (slider_value / 100) - 1);
+}
+
+static void
+audio_player_speed_slider_drag_stop_cb(void *data, Evas_Object *obj, void *event_info)
+{
+    audio_player *mpd = data;
+
+    /* */
+    double value = elm_slider_value_get(mpd->speed_popup_progress);
+
+    /* */
+    playback_service_set_play_speed(mpd->p_ps, audio_player_convert_slider_rate(value));
+}
+
+static void
+audio_player_speed_slider_changed_cb(void *data, Evas_Object *obj, void *event_info)
+{
+    audio_player *mpd = data;
+    char buf[8];
+
+    /* */
+    double value = elm_slider_value_get(mpd->speed_popup_progress);
+
+    /* Update the UI */
+    sprintf(buf, "%.2fx", audio_player_convert_slider_rate(value));
+    elm_object_part_text_set(mpd->speed_popup_layout, "swallow.value", buf);
+}
+
+static double
+audio_player_get_speed_value(audio_player *mpd)
+{
+    // Note: 1.0 represents the normal speed, 2 double speed, 0.5 half speed and so on.
+    double rate = playback_service_get_play_speed(mpd->p_ps);
+    return 100 * (1 + log(rate) / log(4));
+}
+
+static void
+audio_player_popup_playback_speed(audio_player *mpd)
+{
+    Evas_Object *layout;
+
+    /* */
+    mpd->popup = elm_popup_add(intf_get_main_naviframe(mpd->intf));
+    elm_popup_orient_set(mpd->popup, ELM_POPUP_ORIENT_CENTER);
+
+    /* */
+    mpd->speed_popup_layout = layout = elm_layout_add(mpd->popup);
+
+    /* */
+    elm_layout_file_set(layout, AUDIOPLAYERSPEED_EDJ, "audio_player_speed");
+    evas_object_show(layout);
+
+    /* */
+    Evas_Object *slider = mpd->speed_popup_progress = elm_slider_add(layout);
+    elm_slider_horizontal_set(slider, EINA_TRUE);
+    elm_slider_min_max_set(slider, 0, 200);
+    elm_slider_value_set(slider, audio_player_get_speed_value(mpd));
+    elm_object_part_content_set(layout, "swallow.speed", slider);
+    evas_object_smart_callback_add(slider, "changed", audio_player_speed_slider_changed_cb, mpd);
+    evas_object_smart_callback_add(slider, "slider,drag,stop", audio_player_speed_slider_drag_stop_cb, mpd);
+
+    /* */
+    elm_object_content_set(mpd->popup, layout);
+    evas_object_show(mpd->popup);
+}
 
 static char *
 gl_text_get_cb(void *data, Evas_Object *obj, const char *part)
@@ -156,7 +228,7 @@ popup_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
         /* Update the button state (pressed or not) */
         apd->mpd->more_state = false;
 
-        //TODO : Add a Playback Speed fcn of the current list
+        audio_player_popup_playback_speed(apd->mpd);
 
         break;
 
