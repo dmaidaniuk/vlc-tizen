@@ -54,6 +54,11 @@ class TizenLogger : public ILogger
     {
         dlog_print( DLOG_INFO, "medialibrary", msg.c_str() );
     }
+
+    virtual void Debug( const std::string& msg ) override
+    {
+        dlog_print( DLOG_DEBUG, "medialibrary", msg.c_str() );
+    }
 };
 
 struct media_library : public IMediaLibraryCb
