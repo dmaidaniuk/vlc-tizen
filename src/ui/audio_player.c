@@ -67,24 +67,29 @@ audio_player_create_popup(audio_player *mpd);
 typedef struct audio_popup_data
 {
     int index;
+    int id;
     Evas_Object *box, *genlist;
     Elm_Object_Item *item;
     audio_player *mpd;
 
 } audio_popup_data_s;
 
-/* Set the panel list labels */
-const char *audio_popup_list[] = {
-        "Jump to Time",
-        "Playback Speed",
-        "Sleep in",
-};
+typedef struct more_menu {
+    int id;
+    const char *text;
+    const char *icon;
+} more_menu;
 
-/* Set the panel list icons */
-const char *audio_popup_icon_names[] = {
-        "jumpto",
-        "speed",
-        "sleep",
+#define MORE_JUMPTO 1
+#define MORE_SPEED 2
+#define MORE_SLEEP 3
+#define MORE_END -1
+
+more_menu more_menu_list[] = {
+        { MORE_JUMPTO,  "Jump to Time",    "ic_jumpto_normal.png" },
+        { MORE_SPEED,   "Playback Speed",  "ic_speed_normal.png"  },
+        { MORE_SLEEP,   "Sleep in",        "ic_sleep_normal.png"  },
+        { MORE_END },
 };
 
 double
@@ -168,7 +173,7 @@ gl_text_get_cb(void *data, Evas_Object *obj, const char *part)
     /* Then put this string as the genlist item label */
     if (itc->item_style && !strcmp(itc->item_style, "1line")) {
         if (part && !strcmp(part, "elm.text.main.left")) {
-            asprintf(&buf, "%s", audio_popup_list[apd->index]);
+            asprintf(&buf, "%s", more_menu_list[apd->index].text);
 
             return buf;
         }
@@ -189,7 +194,7 @@ gl_content_get_cb(void *data, Evas_Object *obj, const char *part)
         if (part && !strcmp(part, "elm.icon.1")) {
             content = elm_layout_add(obj);
             elm_layout_theme_set(content, "layout", "list/B/type.3", "default");
-            Evas_Object *icon = create_icon(content, audio_popup_icon_names[apd->index]);
+            Evas_Object *icon = create_icon(content, more_menu_list[apd->index].icon);
             elm_layout_content_set(content, "elm.swallow.content", icon);
         }
     }
@@ -202,9 +207,9 @@ popup_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
     audio_popup_data_s *apd = data;
     /* Generate the view depending on which panel genlist item is selected */
-    switch(apd->index){
+    switch(apd->id){
 
-    case 0:
+    case MORE_JUMPTO:
         /* */
         evas_object_del(apd->mpd->popup);
         /* */
@@ -218,7 +223,7 @@ popup_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 
         break;
 
-    case 1:
+    case MORE_SPEED:
         /* */
         evas_object_del(apd->mpd->popup);
         /* */
@@ -232,7 +237,7 @@ popup_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 
         break;
 
-    case 2:
+    case MORE_SLEEP:
         /* */
         evas_object_del(apd->mpd->popup);
         /* */
@@ -276,11 +281,12 @@ audio_player_create_popup(audio_player *mpd)
     elm_genlist_mode_set(genlist, ELM_LIST_COMPRESS);
 
     /* Stop when the panel list names is all used */
-    for (int index = 0; index < 3; index++) {
+    for (int index = 0; more_menu_list[index].id >= 0; index++) {
 
         audio_popup_data_s *apd = malloc(sizeof(*apd));
         /* Put the index and the gui_data in the cb_data struct for callbacks */
         apd->index = index;
+        apd->id = more_menu_list[index].id;
         apd->mpd = mpd;
 
         it = elm_genlist_item_append(genlist,
