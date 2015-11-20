@@ -201,17 +201,17 @@ settings_view_simple_save_toggle(settings_menu_selected *selected, view_sys* p_v
         // Save the value
         preferences_set_enum(PREF_HWACCELERATION, selected->menu[selected->index].id);
         // Close the popup
-        evas_object_del(parent);
+        evas_object_del(p_view_sys->popup);
         break;
     case SETTINGS_ID_SUBSENC:
         settings_toggle_set_one_by_index(selected->menu, selected->menu_len, selected->index, true, true);
         preferences_set_index(PREF_SUBSENC, selected->index);
-        evas_object_del(parent);
+        evas_object_del(p_view_sys->popup);
         break;
     case SETTINGS_ID_VORIENTATION:
         settings_toggle_set_one_by_index(selected->menu, selected->menu_len, selected->index, true, true);
         preferences_set_enum(PREF_ORIENTATION, selected->menu[selected->index].id);
-        evas_object_del(parent);
+        evas_object_del(p_view_sys->popup);
         break;
     case SETTINGS_ID_PERFORMANCES:
     {
@@ -221,13 +221,13 @@ settings_view_simple_save_toggle(settings_menu_selected *selected, view_sys* p_v
             preferences_set_bool(PREF_FRAME_SKIP, newvalue);
         else if (selected->menu[selected->index].id == PERFORMANCE_STRETCH)
             preferences_set_bool(PREF_AUDIO_STRETCH, newvalue);
-        evas_object_del(parent);
+        evas_object_del(p_view_sys->popup);
         break;
     }
     case SETTINGS_ID_DEBLOCKING:
         settings_toggle_set_one_by_index(selected->menu, selected->menu_len, selected->index, true, true);
         preferences_set_enum(PREF_DEBLOCKING, selected->menu[selected->index].id);
-        evas_object_del(parent);
+        evas_object_del(p_view_sys->popup);
         break;
     case SETTINGS_ID_DEVELOPER:
     {
