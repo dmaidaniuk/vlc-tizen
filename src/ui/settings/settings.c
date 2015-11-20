@@ -159,15 +159,6 @@ gl_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
         sd->global_cb(&sd->selected, sd->p_view_sys, sd->data, sd->parent);
 }
 
-static void
-gl_contracted_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
-{
-    Elm_Object_Item *it = event_info;
-
-    /* Free the genlist subitems when contracted */
-    elm_genlist_item_subitems_clear(it);
-}
-
 Evas_Object *
 settings_list_add(settings_item *menu, int len, Settings_menu_callback global_menu_cb, void *data, view_sys* p_view_sys, Evas_Object *parent)
 {
@@ -199,12 +190,6 @@ settings_list_add(settings_item *menu, int len, Settings_menu_callback global_me
     elm_genlist_mode_set(genlist, ELM_LIST_COMPRESS);
     /* Even if selected, every click calls the selected callbacks */
     elm_genlist_select_mode_set(genlist, ELM_OBJECT_SELECT_MODE_ALWAYS);
-
-    /* Set smart Callbacks */
-    //evas_object_smart_callback_add(genlist, "realized", gl_realized_cb, NULL);
-    //evas_object_smart_callback_add(genlist, "loaded", gl_loaded_cb, NULL);
-    //evas_object_smart_callback_add(genlist, "longpressed", gl_longpressed_cb, NULL);
-    evas_object_smart_callback_add(genlist, "contracted", gl_contracted_cb, NULL);
 
     /* Stop when the setting list names is all used */
     for (index = 0; index < len; index++) {
