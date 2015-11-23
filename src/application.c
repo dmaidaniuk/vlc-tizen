@@ -103,8 +103,8 @@ app_create(void *data)
 
     if ( !media_library_start( app->p_mediaLibrary ) )
         goto error;
-    media_library_discover( app->p_mediaLibrary, application_get_media_path( app, MEDIA_DIRECTORY_VIDEOS ) );
-    media_library_discover( app->p_mediaLibrary, application_get_media_path( app, MEDIA_DIRECTORY_MUSIC ) );
+
+    media_storage_start_discovery(app->p_ms);
 
     /* */
     app->p_ps = playback_service_create(app);

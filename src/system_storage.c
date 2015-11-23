@@ -26,14 +26,70 @@
 
 #include "common.h"
 #include "system_storage.h"
+#include "media/library/media_library.hpp"
+#include "preferences/preferences.h"
 
 #include <storage.h>
 #include <app_common.h>
 
 struct media_storage {
+    application *p_app;
     int i_internal_storage_id;
     char *psz_paths[MEDIA_DIRECTORY_MAX];
 };
+
+static int
+discover_storage(application *app, int storage_id, storage_type_e type)
+{
+    char *path;
+    int ret;
+
+    ret = storage_get_directory(storage_id, type, &path);
+    if (ret == STORAGE_ERROR_NONE)
+    {
+        media_library_discover(application_get_media_library(app), path);
+        free(path);
+    }
+
+    return ret;
+}
+
+static bool
+media_storage_device_supported_cb(int storage_id, storage_type_e type, storage_state_e state, const char *path, void *user_data)
+{
+    application *app = user_data;
+
+    if (state != STORAGE_STATE_MOUNTED && state != STORAGE_STATE_MOUNTED_READ_ONLY)
+    {
+        // Ignore unmounted filesystem
+        return true;
+    }
+
+    if (type == STORAGE_TYPE_INTERNAL && preferences_get_bool(PREF_DIRECTORIES_INTERNAL, true))
+    {
+        LOGD("Discovered internal memory: %s", path);
+        // Scan only known directories on the internal memory
+        discover_storage(app, storage_id, STORAGE_DIRECTORY_VIDEOS);
+        discover_storage(app, storage_id, STORAGE_DIRECTORY_MUSIC);
+        discover_storage(app, storage_id, STORAGE_DIRECTORY_CAMERA);
+        discover_storage(app, storage_id, STORAGE_DIRECTORY_SOUNDS);
+        discover_storage(app, storage_id, STORAGE_DIRECTORY_DOWNLOADS);
+    }
+    else if (type == STORAGE_TYPE_EXTERNAL && preferences_get_bool(PREF_DIRECTORIES_EXTERNAL, true))
+    {
+        LOGD("Discovered external memory: %s", path);
+        // Scan everything on the external memory
+        media_library_discover(application_get_media_library(app), path);
+    }
+
+    return true;
+}
+
+void
+media_storage_start_discovery(media_storage *p_ms)
+{
+    storage_foreach_device_supported(media_storage_device_supported_cb, p_ms->p_app);
+}
 
 static bool storage_cb(int storage_id, storage_type_e type, storage_state_e state, const char *path, void *user_data)
 {
@@ -54,6 +110,8 @@ media_storage_create(application *p_app)
     media_storage *p_ms = calloc(1, sizeof(media_storage));
     if (!p_ms)
         return NULL;
+
+    p_ms->p_app = p_app;
 
     /* Connect to the device storage */
     if (storage_foreach_device_supported(storage_cb, p_ms))

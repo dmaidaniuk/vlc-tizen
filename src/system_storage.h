@@ -50,4 +50,7 @@ media_storage_get_path(media_storage *p_ms, media_directory_e type);
 char*
 system_storage_appdata_get();
 
+void
+media_storage_start_discovery(media_storage *p_ms);
+
 #endif /* SYSTEM_STORAGE_H_ */
