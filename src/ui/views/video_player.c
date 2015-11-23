@@ -320,7 +320,6 @@ video_player_win_back_key_cb(void *data, Evas_Object *obj, void *event_info)
     if (p_sys->win)
     {
         video_player_stop(p_sys);
-        playback_service_set_evas_video(p_sys->p_ps, NULL);
         evas_object_hide(p_sys->win);
     }
 }
@@ -350,22 +349,6 @@ video_player_lock_orientation_cb(void *data, Evas_Object *obj, void *event_info)
 bool
 video_player_start(view_sys *p_sys, const char* file_path)
 {
-    if (p_sys->win)
-        evas_object_del(p_sys->win);
-
-    p_sys->win = elm_win_util_standard_add(PACKAGE, PACKAGE);
-    elm_win_conformant_set(p_sys->win, EINA_TRUE);
-    elm_win_fullscreen_set(p_sys->win, EINA_TRUE);
-    elm_win_autodel_set(p_sys->win, EINA_TRUE);
-
-    eext_object_event_callback_add(p_sys->win, EEXT_CALLBACK_BACK, video_player_win_back_key_cb, p_sys);
-    eext_object_event_callback_add(p_sys->win, EEXT_CALLBACK_MORE, video_player_win_more_key_cb, p_sys);
-
-    Evas_Object *conform = elm_conformant_add(p_sys->win);
-    evas_object_size_hint_weight_set(conform, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-    elm_win_resize_object_add(p_sys->win, conform);
-    evas_object_show(conform);
-
     /* Screen orientation */
     menu_id orientation = preferences_get_enum(PREF_ORIENTATION, ORIENTATION_AUTOMATIC);
 
@@ -393,54 +376,6 @@ video_player_start(view_sys *p_sys, const char* file_path)
             evas_object_smart_callback_add(p_sys->win, "focus,in", video_player_lock_orientation_cb, p_sys);
         break;
     }
-
-    /* Create the layout */
-    Evas_Object *layout = p_sys->layout = elm_layout_add(conform);
-    elm_layout_file_set(layout, VIDEOPLAYER_EDJ, "media_player_renderer");
-    evas_object_size_hint_weight_set(layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-    evas_object_size_hint_align_set(layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
-    evas_object_show(layout);
-
-    /* Create the evas */
-    Evas *evas = evas_object_evas_get(layout);
-    p_sys->p_evas_video = playback_service_set_evas_video(p_sys->p_ps, evas);
-
-    elm_object_part_content_set(layout, "swallow.visualization", p_sys->p_evas_video);
-    emotion_object_keep_aspect_set(p_sys->p_evas_video, EMOTION_ASPECT_KEEP_BOTH);
-    evas_object_show(p_sys->p_evas_video);
-
-    /* create play/pause button */
-    p_sys->play_pause_button = elm_image_add(layout);
-    elm_image_file_set(p_sys->play_pause_button, ICON_DIR"ic_pause_circle_normal_o.png", NULL);
-    /* attach to edje layout */
-    elm_object_part_content_set(layout, "swallow.play_button", p_sys->play_pause_button);
-
-    /* create backward button */
-    p_sys->backward_button = elm_image_add(layout);
-    elm_image_file_set(p_sys->backward_button, ICON_DIR"ic_backward_circle_normal_o.png", NULL);
-    elm_object_part_content_set(layout, "swallow.backward_button", p_sys->backward_button);
-
-    /* create forward button */
-    p_sys->forward_button = elm_image_add(layout);
-    elm_image_file_set(p_sys->forward_button, ICON_DIR"ic_forward_circle_normal_o.png", NULL);
-    elm_object_part_content_set(layout, "swallow.forward_button", p_sys->forward_button);
-
-    /* create lock button */
-    p_sys->lock_button = elm_image_add(layout);
-    elm_image_file_set(p_sys->lock_button, ICON_DIR"ic_lock_circle_normal_o.png", NULL);
-    elm_object_part_content_set(layout, "swallow.lock_button", p_sys->lock_button);
-
-    /* create more button */
-    p_sys->more_button = elm_image_add(layout);
-    elm_image_file_set(p_sys->more_button, ICON_DIR"ic_more_circle_normal_o.png", NULL);
-    elm_object_part_content_set(layout, "swallow.more_button", p_sys->more_button);
-
-    /* progress slider */
-    p_sys->progress_slider = elm_slider_add(layout);
-    elm_slider_horizontal_set(p_sys->progress_slider, EINA_TRUE);
-    elm_object_part_content_set(layout, "swallow.progress", p_sys->progress_slider);
-
-    elm_object_content_set(conform, p_sys->layout);
 
     /* */
     elm_object_part_text_set(p_sys->layout, "duration", "--:--:--");
@@ -519,6 +454,71 @@ video_player_stop(view_sys *p_sys)
     }
 }
 
+void
+video_player_create_ui(view_sys *p_sys)
+{
+    p_sys->win = elm_win_util_standard_add(PACKAGE, PACKAGE);
+    elm_win_conformant_set(p_sys->win, EINA_TRUE);
+    elm_win_fullscreen_set(p_sys->win, EINA_TRUE);
+    elm_win_autodel_set(p_sys->win, EINA_TRUE);
+
+    eext_object_event_callback_add(p_sys->win, EEXT_CALLBACK_BACK, video_player_win_back_key_cb, p_sys);
+    eext_object_event_callback_add(p_sys->win, EEXT_CALLBACK_MORE, video_player_win_more_key_cb, p_sys);
+
+    Evas_Object *conform = elm_conformant_add(p_sys->win);
+    evas_object_size_hint_weight_set(conform, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+    elm_win_resize_object_add(p_sys->win, conform);
+    evas_object_show(conform);
+
+    /* Create the layout */
+    Evas_Object *layout = p_sys->layout = elm_layout_add(conform);
+    elm_layout_file_set(layout, VIDEOPLAYER_EDJ, "media_player_renderer");
+    evas_object_size_hint_weight_set(layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+    evas_object_size_hint_align_set(layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
+    evas_object_show(layout);
+
+    /* Create the evas */
+    Evas *evas = evas_object_evas_get(layout);
+    p_sys->p_evas_video = playback_service_set_evas_video(p_sys->p_ps, evas);
+
+    elm_object_part_content_set(layout, "swallow.visualization", p_sys->p_evas_video);
+    emotion_object_keep_aspect_set(p_sys->p_evas_video, EMOTION_ASPECT_KEEP_BOTH);
+    evas_object_show(p_sys->p_evas_video);
+
+    /* create play/pause button */
+    p_sys->play_pause_button = elm_image_add(layout);
+    elm_image_file_set(p_sys->play_pause_button, ICON_DIR"ic_pause_circle_normal_o.png", NULL);
+    /* attach to edje layout */
+    elm_object_part_content_set(layout, "swallow.play_button", p_sys->play_pause_button);
+
+    /* create backward button */
+    p_sys->backward_button = elm_image_add(layout);
+    elm_image_file_set(p_sys->backward_button, ICON_DIR"ic_backward_circle_normal_o.png", NULL);
+    elm_object_part_content_set(layout, "swallow.backward_button", p_sys->backward_button);
+
+    /* create forward button */
+    p_sys->forward_button = elm_image_add(layout);
+    elm_image_file_set(p_sys->forward_button, ICON_DIR"ic_forward_circle_normal_o.png", NULL);
+    elm_object_part_content_set(layout, "swallow.forward_button", p_sys->forward_button);
+
+    /* create lock button */
+    p_sys->lock_button = elm_image_add(layout);
+    elm_image_file_set(p_sys->lock_button, ICON_DIR"ic_lock_circle_normal_o.png", NULL);
+    elm_object_part_content_set(layout, "swallow.lock_button", p_sys->lock_button);
+
+    /* create more button */
+    p_sys->more_button = elm_image_add(layout);
+    elm_image_file_set(p_sys->more_button, ICON_DIR"ic_more_circle_normal_o.png", NULL);
+    elm_object_part_content_set(layout, "swallow.more_button", p_sys->more_button);
+
+    /* progress slider */
+    p_sys->progress_slider = elm_slider_add(layout);
+    elm_slider_horizontal_set(p_sys->progress_slider, EINA_TRUE);
+    elm_object_part_content_set(layout, "swallow.progress", p_sys->progress_slider);
+
+    elm_object_content_set(conform, p_sys->layout);
+}
+
 interface_view*
 create_video_player(interface *intf, playback_service *p_ps, Evas_Object *parent)
 {
@@ -533,13 +533,18 @@ create_video_player(interface *intf, playback_service *p_ps, Evas_Object *parent
     view->view = NULL;
     view->pf_event = NULL;
     view->pf_stop = video_player_stop;
+
+    video_player_create_ui(p_sys);
+
     return view;
 }
 
 void
 destroy_video_player(interface_view *view)
 {
+    video_player_stop(view->p_view_sys);
     playback_service_set_evas_video(view->p_view_sys->p_ps, NULL);
+    evas_object_del(view->p_view_sys->win);
     free(view->p_view_sys);
     free(view);
 }
