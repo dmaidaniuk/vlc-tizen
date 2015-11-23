@@ -57,7 +57,7 @@ void
 media_library_delete(media_library* p_media_library);
 
 void
-media_library_discover( media_library* p_ml, const char* psz_location );
+media_library_discover( const media_library* p_ml, const char* psz_location );
 
 void
 media_library_get_video_files( media_library* p_ml, media_library_list_cb cb, void* p_user_data );

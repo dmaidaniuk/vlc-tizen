@@ -198,7 +198,7 @@ media_library_delete(media_library* p_media_library)
 }
 
 void
-media_library_discover( media_library* p_ml, const char* psz_location )
+media_library_discover( const media_library* p_ml, const char* psz_location )
 {
     p_ml->ml->discover( psz_location );
 }
