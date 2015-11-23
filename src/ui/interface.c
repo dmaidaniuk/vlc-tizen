@@ -334,16 +334,8 @@ intf_video_player_play(interface *intf, const char *psz_path)
     if(intf->video_player == NULL)
         intf_video_player_create(intf);
 
-    Elm_Object_Item* it = intf_push_view(intf, intf->video_player, NULL);
-
-    /* Hide the title bar of the naviframe */
-    elm_naviframe_item_title_enabled_set(it, EINA_FALSE, EINA_TRUE);
-
-    /* So far, there is no start action */
+    /* The video player will create its own window */
     video_player_start(intf->video_player->p_view_sys, psz_path);
-
-    /* We want fullscreen */
-    elm_win_indicator_mode_set(intf->win, ELM_WIN_INDICATOR_HIDE);
 }
 
 /* Mini Player */
