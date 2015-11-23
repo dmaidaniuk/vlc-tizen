@@ -75,7 +75,7 @@ media_storage_device_supported_cb(int storage_id, storage_type_e type, storage_s
         discover_storage(app, storage_id, STORAGE_DIRECTORY_SOUNDS);
         discover_storage(app, storage_id, STORAGE_DIRECTORY_DOWNLOADS);
     }
-    else if (type == STORAGE_TYPE_EXTERNAL && preferences_get_bool(PREF_DIRECTORIES_EXTERNAL, true))
+    else if (type == STORAGE_TYPE_EXTERNAL && preferences_get_bool(PREF_DIRECTORIES_EXTERNAL, false))
     {
         LOGD("Discovered external memory: %s", path);
         // Scan everything on the external memory
