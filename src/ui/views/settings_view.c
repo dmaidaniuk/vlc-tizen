@@ -249,6 +249,12 @@ void settings_view_delete_context_cb(void *data, Evas *e, Evas_Object *obj, void
     free(ctx);
 }
 
+void settings_view_popup_clear_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+    view_sys *p_sys = data;
+    p_sys->popup = NULL;
+}
+
 void
 menu_directories_selected_cb(settings_menu_selected *selected, view_sys* p_view_sys, void *data, Evas_Object *parent)
 {
@@ -272,6 +278,7 @@ menu_hwacceleration_selected_cb(settings_menu_selected *selected, view_sys* p_vi
     settings_toggle_set_one_by_id(hardware_acceleration_menu, len, value, true, true);
     evas_object_show(p_view_sys->popup);
     evas_object_event_callback_add(p_view_sys->popup, EVAS_CALLBACK_FREE, settings_view_delete_context_cb, ctx);
+    evas_object_event_callback_add(p_view_sys->popup, EVAS_CALLBACK_FREE, settings_view_popup_clear_cb, p_view_sys);
 }
 
 void
@@ -286,6 +293,7 @@ menu_subsenc_selected_cb(settings_menu_selected *selected, view_sys* p_view_sys,
     settings_toggle_set_one_by_index(subtitles_text_encoding_menu, len, value, true, true);
     evas_object_show(p_view_sys->popup);
     evas_object_event_callback_add(p_view_sys->popup, EVAS_CALLBACK_FREE, settings_view_delete_context_cb, ctx);
+    evas_object_event_callback_add(p_view_sys->popup, EVAS_CALLBACK_FREE, settings_view_popup_clear_cb, p_view_sys);
 }
 
 void
@@ -300,6 +308,7 @@ menu_vorientation_selected_cb(settings_menu_selected *selected, view_sys* p_view
     settings_toggle_set_one_by_id(video_orientation_menu, len, value, true, true);
     evas_object_show(p_view_sys->popup);
     evas_object_event_callback_add(p_view_sys->popup, EVAS_CALLBACK_FREE, settings_view_delete_context_cb, ctx);
+    evas_object_event_callback_add(p_view_sys->popup, EVAS_CALLBACK_FREE, settings_view_popup_clear_cb, p_view_sys);
 }
 
 void
@@ -319,6 +328,7 @@ menu_performance_selected_cb(settings_menu_selected *selected, view_sys* p_view_
 
     evas_object_show(p_view_sys->popup);
     evas_object_event_callback_add(p_view_sys->popup, EVAS_CALLBACK_FREE, settings_view_delete_context_cb, ctx);
+    evas_object_event_callback_add(p_view_sys->popup, EVAS_CALLBACK_FREE, settings_view_popup_clear_cb, p_view_sys);
 }
 
 void
@@ -333,6 +343,7 @@ menu_deblocking_selected_cb(settings_menu_selected *selected, view_sys* p_view_s
     settings_toggle_set_one_by_id(deblocking_filter_settings_menu, len, value, true, true);
     evas_object_show(p_view_sys->popup);
     evas_object_event_callback_add(p_view_sys->popup, EVAS_CALLBACK_FREE, settings_view_delete_context_cb, ctx);
+    evas_object_event_callback_add(p_view_sys->popup, EVAS_CALLBACK_FREE, settings_view_popup_clear_cb, p_view_sys);
 }
 
 void
