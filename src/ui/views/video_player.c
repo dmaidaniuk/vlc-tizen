@@ -451,6 +451,7 @@ video_player_stop(view_sys *p_sys)
         playback_service_unregister_callbacks(p_sys->p_ps, p_sys->p_ps_cbs_id);
         playback_service_list_clear(p_sys->p_ps);
         playback_service_stop(p_sys->p_ps);
+        p_sys->p_ps_cbs_id = NULL;
     }
 }
 
