@@ -592,6 +592,7 @@ sound_session_interrupted_cb2(sound_session_interrupted_code_e code, void *user_
     case SOUND_SESSION_INTERRUPTED_BY_CALL:
     case SOUND_SESSION_INTERRUPTED_BY_ALARM:
     case SOUND_SESSION_INTERRUPTED_BY_EMERGENCY:
+    case SOUND_SESSION_INTERRUPTED_BY_NOTIFICATION:
         playback_service_pause(p_ps);
         p_ps->b_interrupted = true;
         p_ps->d_pos = emotion_object_position_get(p_ps->p_e);
@@ -599,8 +600,6 @@ sound_session_interrupted_cb2(sound_session_interrupted_code_e code, void *user_
     case SOUND_SESSION_INTERRUPTED_BY_RESOURCE_CONFLICT:
     case SOUND_SESSION_INTERRUPTED_BY_EARJACK_UNPLUG:
         playback_service_pause(p_ps);
-        break;
-    case SOUND_SESSION_INTERRUPTED_BY_NOTIFICATION:
         break;
     }
 }
