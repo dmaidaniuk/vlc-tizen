@@ -284,7 +284,14 @@ settings_popup_add(settings_item *menu, int menu_len, Settings_menu_callback glo
     Evas_Object *popup = elm_popup_add(parent);
     Evas_Object *genlist = settings_list_add(menu, menu_len, global_menu_cb, data, p_view_sys, popup);
 
-    elm_scroller_content_min_limit(genlist, true, true);
+    elm_scroller_content_min_limit(genlist, EINA_TRUE, EINA_TRUE);
+
+    if (application_get_system_version() >= TIZEN_VERSION_2_4_0)
+    {
+        // Workaround: popup menu are blank when shown in landscape
+        // on devices running Tizen 2.4 and compiled with the 2.3 SDK.
+        evas_object_size_hint_min_set(genlist, 600, 100);
+    }
 
     evas_object_smart_callback_add(popup, "block,clicked", popup_close_cb, NULL);
 

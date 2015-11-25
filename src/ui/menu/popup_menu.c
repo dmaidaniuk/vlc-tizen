@@ -139,7 +139,15 @@ popup_menu_orient_add(popup_menu *menu, Elm_Popup_Orient orient, void *data, Eva
     elm_scroller_single_direction_set(genlist, ELM_SCROLLER_SINGLE_DIRECTION_HARD);
     elm_genlist_homogeneous_set(genlist, EINA_FALSE);
     elm_genlist_mode_set(genlist, ELM_LIST_COMPRESS);
-    elm_scroller_content_min_limit(genlist, true, true);
+    elm_scroller_content_min_limit(genlist, EINA_TRUE, EINA_TRUE);
+
+    if (application_get_system_version() >= TIZEN_VERSION_2_4_0)
+    {
+        // Workaround: popup menu are blank when shown in landscape
+        // on devices running Tizen 2.4 and compiled with the 2.3 SDK.
+        evas_object_size_hint_min_set(genlist, 600, 100);
+    }
+
     evas_object_show(genlist);
 
     for (index = index_visible = 0; menu[index].title != NULL; index++) {
