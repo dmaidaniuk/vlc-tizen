@@ -30,6 +30,7 @@
 #include <storage.h>
 #include <system_settings.h>
 #include <sound_manager.h>
+#include <system_info.h>
 
 #include <Emotion.h>
 #include <Elementary.h>                 /* Elm_language_set */
@@ -49,7 +50,35 @@ struct application {
     playback_service *p_ps;           /* Playback, using Emotion and libVLC */
 };
 
+static tizen_version system_version; /* Tizen system version */
 static void app_terminate(void *data);
+
+void
+initialize_system_info()
+{
+    char *value;
+    int ret = system_info_get_platform_string("tizen.org/feature/platform.version", &value);
+    if (ret == SYSTEM_INFO_ERROR_NONE)
+    {
+        int major, minor, patch;
+        sscanf(value, "%d.%d.%d", &major, &minor, &patch);
+        free(value);
+
+        LOGD("Running on Tizen %d.%d.%d", major, minor, patch);
+
+        system_version = major * 10000 + minor * 100 + patch;
+    }
+    else
+    {
+        system_version = TIZEN_VERSION_UNKNOWN;
+    }
+}
+
+tizen_version
+application_get_system_version()
+{
+    return system_version;
+}
 
 static bool
 app_create(void *data)
@@ -57,6 +86,8 @@ app_create(void *data)
     LOGD("Lifecycle: app_create");
     application *app = data;
     char *options;
+
+    initialize_system_info();
 
     /* Prepare libvlc options */
     if ((options = preferences_get_libvlc_options()) != NULL)

@@ -42,6 +42,13 @@ typedef struct media_library_controller media_library_controller;
 
 #include "system_storage.h"
 
+typedef enum tizen_version {
+    TIZEN_VERSION_UNKNOWN =      0,
+    TIZEN_VERSION_2_3_0   =  20300,
+    TIZEN_VERSION_2_4_0   =  20400,
+    TIZEN_VERSION_MAX     = 999999,
+} tizen_version;
+
 const char *
 application_get_media_path(application *app, media_directory_e type);
 
@@ -53,6 +60,9 @@ application_get_media_library(application *app);
 
 playback_service *
 application_get_playback_service(application *app);
+
+tizen_version
+application_get_system_version();
 
 #ifdef __cplusplus
 } // extern "C"
