@@ -76,7 +76,7 @@ settings_item settings_menu[] =
 settings_item directory_menu[] =
 {
         {DIRECTORIES_INTERNAL,  "Internal memory",              NULL,   SETTINGS_TYPE_TOGGLE},
-        {DIRECTORIES_EXTERNAL,  "External memory (SD card)",    NULL,   SETTINGS_TYPE_TOGGLE},
+        //{DIRECTORIES_EXTERNAL,  "External memory (SD card)",    NULL,   SETTINGS_TYPE_TOGGLE},
         //{DIRECTORIES_ADDLOCATION,   "Add location",    "call_button_add_call_press.png",   SETTINGS_TYPE_ITEM}
 };
 
