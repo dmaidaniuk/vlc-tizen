@@ -331,7 +331,14 @@ intf_video_player_play(interface *intf, const char *psz_path)
 {
     audio_player_stop(intf->p_mini_player);
 
-    if(intf->video_player == NULL)
+    /* Workaround tizen bug black screen */
+    if (intf->video_player != NULL)
+    {
+        destroy_video_player(intf->video_player);
+        intf->video_player = NULL;
+    }
+
+    if (intf->video_player == NULL)
         intf_video_player_create(intf);
 
     /* The video player will create its own window */
