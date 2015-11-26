@@ -57,11 +57,14 @@ struct audio_player {
 
     Evas_Object *speed_popup_layout, *speed_popup_progress;
 
-    Ecore_Timer *long_press_timer;
+    Ecore_Timer *long_press_timer, *mini_player_hide_timer;
 };
 
 static Evas_Object *
 audio_player_create_popup(audio_player *mpd);
+
+static void
+audio_player_stop_delay_ui(audio_player *mpd, bool delayed);
 
 typedef struct audio_popup_data
 {
@@ -970,6 +973,9 @@ ps_on_started_cb(playback_service *p_ps, void *p_user_data, media_item *p_mi)
 {
     audio_player *mpd = p_user_data;
 
+    if (mpd->mini_player_hide_timer)
+        ecore_timer_del(mpd->mini_player_hide_timer);
+
     update_player_display(mpd);
 
     /* Show the mini player only if it isn't already shown */
@@ -988,7 +994,7 @@ ps_on_playpause_cb(playback_service *p_ps, void *p_user_data, bool b_playing)
 static void
 ps_on_stopped_cb(playback_service *p_ps, void *p_user_data)
 {
-    audio_player_stop(p_user_data);
+    audio_player_stop_delay_ui(p_user_data, true);
 }
 
 void
@@ -1069,8 +1075,19 @@ audio_player_create(interface *intf, playback_service *p_ps, Evas_Object *layout
     return mpd;
 }
 
-void
-audio_player_stop(audio_player *mpd)
+Eina_Bool
+audio_player_mini_hide_cb(void *data)
+{
+    audio_player *mpd = data;
+
+    /* Hide the player */
+    intf_mini_player_visible_set(mpd->intf, false);
+
+    return ECORE_CALLBACK_CANCEL;
+}
+
+static void
+audio_player_stop_delay_ui(audio_player *mpd, bool delayed)
 {
     /* Stop the player */
     playback_service_stop(mpd->p_ps);
@@ -1078,6 +1095,23 @@ audio_player_stop(audio_player *mpd)
     /* Reset the fullscreen state */
     mpd->fs_state = false;
 
-    /* Hide the player */
-    intf_mini_player_visible_set(mpd->intf, false);
+    if (!delayed)
+    {
+        /* Hide the player */
+        intf_mini_player_visible_set(mpd->intf, false);
+    }
+    else
+    {
+        if (mpd->mini_player_hide_timer)
+            ecore_timer_del(mpd->mini_player_hide_timer);
+
+        /* Hide the player after a small delay to avoid flickering between tracks */
+        mpd->mini_player_hide_timer = ecore_timer_add(0.5, audio_player_mini_hide_cb, mpd);
+    }
+}
+
+void
+audio_player_stop(audio_player *mpd)
+{
+    audio_player_stop_delay_ui(mpd, false);
 }
