@@ -150,6 +150,8 @@ ps_notification_update_meta(playback_service *p_ps, media_item *p_mi)
 
     if (psz_meta_title && psz_meta_artist)
         notification_set_text(p_ps->p_notification, NOTIFICATION_TEXT_TYPE_CONTENT, psz_meta_artist, NULL, NOTIFICATION_VARIABLE_TYPE_NONE);
+    else
+        notification_set_text(p_ps->p_notification, NOTIFICATION_TEXT_TYPE_CONTENT, "", NULL, NOTIFICATION_VARIABLE_TYPE_NONE);
 
     if (p_mi->psz_snapshot)
         notification_set_image(p_ps->p_notification, NOTIFICATION_IMAGE_TYPE_ICON, p_mi->psz_snapshot);
