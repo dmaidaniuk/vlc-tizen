@@ -435,24 +435,35 @@ update_player_play_pause(audio_player* mpd)
 }
 
 static void
+update_player_title_display(audio_player* mpd, const char *title)
+{
+    elm_object_part_text_set(mpd->layout, "swallow.title", title);
+    elm_object_part_text_set(mpd->fs_layout, "title_text", title);
+}
+
+static void
+update_player_artist_display(audio_player* mpd, const char *artist)
+{
+    elm_object_part_text_set(mpd->layout, "swallow.subtitle", artist);
+    elm_object_part_text_set(mpd->fs_layout, "subtitle_text", artist);
+}
+
+static void
 update_player_display(audio_player* mpd)
 {
+    const char *psz_meta;
     media_item *p_mi = playback_service_list_get_item(mpd->p_ps);
 
     if (p_mi)
     {
-        const char *psz_meta = media_item_title(p_mi);
-        if (psz_meta)
-        {
-            elm_object_part_text_set(mpd->layout, "swallow.title", psz_meta);
-            elm_object_part_text_set(mpd->fs_layout, "title_text", psz_meta);
-        }
-        psz_meta = media_item_artist(p_mi);
-        if (psz_meta)
-        {
-            elm_object_part_text_set(mpd->layout, "swallow.subtitle", psz_meta);
-            elm_object_part_text_set(mpd->fs_layout, "subtitle_text", psz_meta);
-        }
+        if ((psz_meta = media_item_title(p_mi)) != NULL)
+            update_player_title_display(mpd, psz_meta);
+
+        if ((psz_meta = media_item_artist(p_mi)) != NULL)
+            update_player_artist_display(mpd, psz_meta);
+        else
+            update_player_artist_display(mpd, "Unknown Artist");
+
         const char *cover = p_mi->psz_snapshot;
         if (cover)
         {
