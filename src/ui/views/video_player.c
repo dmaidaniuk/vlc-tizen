@@ -350,31 +350,32 @@ bool
 video_player_start(view_sys *p_sys, const char* file_path)
 {
     /* Screen orientation */
-    menu_id orientation = preferences_get_enum(PREF_ORIENTATION, ORIENTATION_AUTOMATIC);
+    if (elm_win_wm_rotation_supported_get(p_sys->win)) {
+        menu_id orientation = preferences_get_enum(PREF_ORIENTATION, ORIENTATION_AUTOMATIC);
 
-    switch (orientation) {
-    case ORIENTATION_LANDSCAPE:
-        elm_win_wm_rotation_preferred_rotation_set(p_sys->win, 270);
-        break;
-    case ORIENTATION_PORTRAIT:
-        elm_win_wm_rotation_preferred_rotation_set(p_sys->win, 0);
-        break;
-    case ORIENTATION_R_LANDSCAPE:
-        elm_win_wm_rotation_preferred_rotation_set(p_sys->win, 90);
-        break;
-    case ORIENTATION_R_PORTRAIT:
-        elm_win_wm_rotation_preferred_rotation_set(p_sys->win, 180);
-        break;
-    case ORIENTATION_LOCKED:
-    case ORIENTATION_AUTOMATIC:
-    default:
-        if (elm_win_wm_rotation_supported_get(p_sys->win)) {
-            int rots[4] = { 0, 90, 180, 270 };
-            elm_win_wm_rotation_available_rotations_set(p_sys->win, (const int *)(&rots), 4);
-        }
-        if (orientation == ORIENTATION_LOCKED)
+        int rots[4] = { 0, 90, 180, 270 };
+        elm_win_wm_rotation_available_rotations_set(p_sys->win, (const int *)(&rots), 4);
+
+        switch (orientation) {
+        case ORIENTATION_LANDSCAPE:
+            elm_win_wm_rotation_preferred_rotation_set(p_sys->win, 270);
+            break;
+        case ORIENTATION_PORTRAIT:
+            elm_win_wm_rotation_preferred_rotation_set(p_sys->win, 0);
+            break;
+        case ORIENTATION_R_LANDSCAPE:
+            elm_win_wm_rotation_preferred_rotation_set(p_sys->win, 90);
+            break;
+        case ORIENTATION_R_PORTRAIT:
+            elm_win_wm_rotation_preferred_rotation_set(p_sys->win, 180);
+            break;
+        case ORIENTATION_LOCKED:
             evas_object_smart_callback_add(p_sys->win, "focus,in", video_player_lock_orientation_cb, p_sys);
-        break;
+            break;
+        case ORIENTATION_AUTOMATIC:
+        default:
+            break;
+        }
     }
 
     /* */
