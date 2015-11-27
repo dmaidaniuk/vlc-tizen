@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VLC_TESTED_HASH=0deb1ed
+VLC_TESTED_HASH=4e0fa1b
 
 SCRIPT=$(readlink -f "$0")
 PROJECTPATH=$(dirname "$SCRIPT")
