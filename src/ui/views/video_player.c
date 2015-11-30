@@ -303,7 +303,8 @@ static void
 ps_on_stop_cb(playback_service *p_ps, void *p_user_data)
 {
     view_sys *p_sys = p_user_data;
-    intf_show_previous_view(p_sys->intf);
+    video_player_stop(p_sys);
+    evas_object_hide(p_sys->win);
 }
 
 static void
