@@ -451,7 +451,7 @@ Evas_Object*
 video_player_create_ui(view_sys *p_sys, Evas_Object *parent)
 {
     /* Create the layout */
-    Evas_Object *layout = elm_layout_add(parent);
+    Evas_Object *layout = p_sys->layout = elm_layout_add(parent);
     elm_layout_file_set(layout, VIDEOPLAYER_EDJ, "media_player_renderer");
     evas_object_size_hint_weight_set(layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
     evas_object_size_hint_align_set(layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
