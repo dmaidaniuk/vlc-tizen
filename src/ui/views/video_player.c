@@ -578,6 +578,7 @@ create_video_player(interface *intf, playback_service *p_ps, Evas_Object *parent
     p_sys->intf = intf;
     p_sys->p_ps = p_ps;
     view->view = NULL;
+    view->p_view_sys = p_sys;
     view->pf_event = NULL;
     view->pf_stop = video_player_stop;
 
