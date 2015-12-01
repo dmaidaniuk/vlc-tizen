@@ -370,6 +370,9 @@ video_player_display_state_changed_cb(device_callback_e type, void *value, void 
 
     switch ((int)value) {
     case 0:
+        evas_object_show(p_sys->win);
+        elm_win_raise(p_sys->win);
+        elm_win_activate(p_sys->win);
         layout_touch_up_cb(p_sys, NULL, NULL, NULL);
         break;
     case 2:
