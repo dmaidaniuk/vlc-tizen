@@ -317,7 +317,10 @@ static void
 ps_on_playpause_cb(playback_service *p_ps, void *p_user_data, bool b_playing)
 {
     view_sys *p_sys = p_user_data;
-    video_player_update_play_pause_state(p_sys);
+    elm_image_file_set(p_sys->play_pause_button,
+            b_playing ?
+                    ICON_DIR "ic_pause_circle_normal_o.png" :
+                    ICON_DIR "ic_play_circle_normal_o.png", NULL);
 }
 
 static void
