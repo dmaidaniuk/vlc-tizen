@@ -294,8 +294,9 @@ win_back_key_cb(void *data, Evas_Object *obj, void *event_info)
 {
     interface *intf = data;
     /* Hide the sidebar first */
-    if (!elm_object_disabled_get(sidebar_get_widget(intf->sidebar)) && !elm_panel_hidden_get(sidebar_get_widget(intf->sidebar))) {
-        elm_panel_hidden_set(sidebar_get_widget(intf->sidebar), EINA_TRUE);
+    Evas_Object *sidebar = sidebar_get_widget(intf->sidebar);
+    if (!elm_object_disabled_get(sidebar) && !elm_panel_hidden_get(sidebar)) {
+        elm_panel_hidden_set(sidebar, EINA_TRUE);
     }
     /* Hide the audio_player then */
     else if (audio_player_handle_back_key(intf->p_mini_player) == true) { //FIXME
