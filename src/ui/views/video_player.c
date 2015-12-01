@@ -29,6 +29,7 @@
 #include <Elementary.h>
 #include <Emotion.h>
 #include <efl_extension.h>
+#include <device/callback.h>
 
 #include "ui/interface.h"
 #include "ui/utils.h"
@@ -69,14 +70,21 @@ _on_slider_changed_cb(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
+video_player_update_play_pause_state(view_sys *p_sys)
+{
+    elm_image_file_set(p_sys->play_pause_button,
+            playback_service_is_playing(p_sys->p_ps) ?
+                                   ICON_DIR "ic_pause_circle_normal_o.png" :
+                                   ICON_DIR "ic_play_circle_normal_o.png", NULL);
+}
+
+static void
 clicked_play_pause(void *data, Evas_Object *obj, void *event_info)
 {
     view_sys *p_sys = data;
 
-    elm_image_file_set(p_sys->play_pause_button,
-                       playback_service_toggle_play_pause(p_sys->p_ps) ?
-                               ICON_DIR "ic_pause_circle_normal_o.png" :
-                               ICON_DIR "ic_play_circle_normal_o.png", NULL);
+    playback_service_toggle_play_pause(p_sys->p_ps);
+    video_player_update_play_pause_state(p_sys);
 }
 
 static void
@@ -347,6 +355,33 @@ video_player_lock_orientation_cb(void *data, Evas_Object *obj, void *event_info)
     evas_object_smart_callback_del(p_sys->win, "focus,in", video_player_lock_orientation_cb);
 }
 
+void
+video_player_display_state_changed_cb(device_callback_e type, void *value, void *user_data)
+{
+    view_sys *p_sys = user_data;
+
+    if (type != DEVICE_CALLBACK_DISPLAY_STATE)
+        return;
+
+    // Undocumented:
+    // 0 = Screen on
+    // 1 = Unknown (Dimmed?)
+    // 2 = Screen off
+
+    switch ((int)value) {
+    case 0:
+        layout_touch_up_cb(p_sys, NULL, NULL, NULL);
+        break;
+    case 2:
+        playback_service_pause(p_sys->p_ps);
+        video_player_update_play_pause_state(p_sys);
+        break;
+    default:
+        // Do nothing
+        break;
+    }
+}
+
 bool
 video_player_start(view_sys *p_sys, const char* file_path)
 {
@@ -418,6 +453,13 @@ video_player_start(view_sys *p_sys, const char* file_path)
         return false;
     }
 
+    /* moulaf */
+
+    if (device_add_callback(DEVICE_CALLBACK_DISPLAY_STATE, video_player_display_state_changed_cb, p_sys) != DEVICE_ERROR_NONE)
+    {
+        LOGE("Unable to register DEVICE_CALLBACK_DISPLAY_STATE");
+    }
+
     LOGE("playback_service_start: %s", p_mi->psz_path);
     playback_service_set_context(p_sys->p_ps, PLAYLIST_CONTEXT_VIDEO);
 
@@ -455,6 +497,8 @@ video_player_stop(view_sys *p_sys)
         playback_service_stop(p_sys->p_ps);
         p_sys->p_ps_cbs_id = NULL;
     }
+
+    device_remove_callback(DEVICE_CALLBACK_DISPLAY_STATE, video_player_display_state_changed_cb);
 }
 
 void
