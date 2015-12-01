@@ -472,6 +472,12 @@ playback_service_set_context(playback_service *p_ps, enum PLAYLIST_CONTEXT i_ctx
     return 0;
 }
 
+enum PLAYLIST_CONTEXT
+playback_service_get_context(playback_service *p_ps)
+{
+    return p_ps->i_ctx;
+}
+
 playback_service_cbs_id *
 playback_service_register_callbacks(playback_service *p_ps, playback_service_callbacks *p_cbs)
 {
