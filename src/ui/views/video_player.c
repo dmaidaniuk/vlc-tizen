@@ -477,10 +477,6 @@ video_player_stop(view_sys *p_sys)
     }
 
     device_remove_callback(DEVICE_CALLBACK_DISPLAY_STATE, video_player_display_state_changed_cb);
-
-    LOGD("@@@@ Restored rotation");
-    int rots[4] = { 0, 90, 180, 270 };
-    elm_win_wm_rotation_available_rotations_set(p_sys->win, (const int *)(&rots), 4);
 }
 
 Evas_Object*
