@@ -504,6 +504,7 @@ video_player_callback(view_sys *p_view_sys, interface_view_event event)
 {
     switch (event) {
     case INTERFACE_VIEW_EVENT_MENU:
+    case INTERFACE_VIEW_EVENT_RESUME:
     {
         layout_touch_up_cb(p_view_sys, NULL, NULL, NULL);
         return true;
