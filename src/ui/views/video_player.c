@@ -315,6 +315,13 @@ ps_on_stop_cb(playback_service *p_ps, void *p_user_data)
 }
 
 static void
+ps_on_playpause_cb(playback_service *p_ps, void *p_user_data, bool b_playing)
+{
+    view_sys *p_sys = p_user_data;
+    video_player_update_play_pause_state(p_sys);
+}
+
+static void
 video_player_lock_orientation_cb(void *data, Evas_Object *obj, void *event_info)
 {
     view_sys *p_sys = data;
@@ -415,6 +422,7 @@ video_player_start(view_sys *p_sys, const char* file_path)
         .pf_on_new_len = ps_on_new_len_cb,
         .pf_on_new_time = ps_on_new_time_cb,
         .pf_on_stopped = ps_on_stop_cb,
+        .pf_on_playpause = ps_on_playpause_cb,
         .p_user_data = p_sys,
         .i_ctx = PLAYLIST_CONTEXT_VIDEO,
     };

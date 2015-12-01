@@ -165,8 +165,13 @@ static void
 app_pause(void *data)
 {
     LOGD("Lifecycle: app_pause");
-    /* Take necessary actions when application becomes invisible. */
-    //    application *app = data;
+    application *app = data;
+
+    if (playback_service_is_playing(app->p_ps) &&
+        playback_service_get_context(app->p_ps) != PLAYLIST_CONTEXT_AUDIO)
+    {
+        playback_service_pause(app->p_ps);
+    }
 }
 
 static void
