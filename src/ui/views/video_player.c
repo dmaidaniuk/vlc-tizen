@@ -507,7 +507,7 @@ video_player_create_ui(view_sys *p_sys)
     p_sys->win = elm_win_util_standard_add(PACKAGE, PACKAGE);
     elm_win_conformant_set(p_sys->win, EINA_TRUE);
     elm_win_fullscreen_set(p_sys->win, EINA_TRUE);
-    elm_win_autodel_set(p_sys->win, EINA_TRUE);
+    elm_win_autodel_set(p_sys->win, EINA_FALSE);
 
     eext_object_event_callback_add(p_sys->win, EEXT_CALLBACK_BACK, video_player_win_back_key_cb, p_sys);
     eext_object_event_callback_add(p_sys->win, EEXT_CALLBACK_MORE, video_player_win_more_key_cb, p_sys);
