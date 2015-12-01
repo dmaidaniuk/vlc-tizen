@@ -311,33 +311,7 @@ static void
 ps_on_stop_cb(playback_service *p_ps, void *p_user_data)
 {
     view_sys *p_sys = p_user_data;
-    video_player_stop(p_sys);
-    evas_object_hide(p_sys->win);
-}
-
-static void
-video_player_win_back_key_cb(void *data, Evas_Object *obj, void *event_info)
-{
-    view_sys *p_sys = data;
-    if (p_sys->p_current_popup)
-    {
-        evas_object_del(p_sys->p_current_popup);
-        p_sys->p_current_popup = NULL;
-        return;
-    }
-
-    if (p_sys->win)
-    {
-        video_player_stop(p_sys);
-        evas_object_hide(p_sys->win);
-    }
-}
-
-static void
-video_player_win_more_key_cb(void *data, Evas_Object * obj, void *event_info)
-{
-    view_sys *p_sys = data;
-    layout_touch_up_cb(p_sys, NULL, NULL, NULL);
+    intf_show_previous_view(p_sys->intf);
 }
 
 static void
@@ -370,9 +344,6 @@ video_player_display_state_changed_cb(device_callback_e type, void *value, void 
 
     switch ((int)value) {
     case 0:
-        evas_object_show(p_sys->win);
-        elm_win_raise(p_sys->win);
-        elm_win_activate(p_sys->win);
         layout_touch_up_cb(p_sys, NULL, NULL, NULL);
         break;
     case 2:
@@ -456,8 +427,6 @@ video_player_start(view_sys *p_sys, const char* file_path)
         return false;
     }
 
-    /* moulaf */
-
     if (device_add_callback(DEVICE_CALLBACK_DISPLAY_STATE, video_player_display_state_changed_cb, p_sys) != DEVICE_ERROR_NONE)
     {
         LOGE("Unable to register DEVICE_CALLBACK_DISPLAY_STATE");
@@ -469,8 +438,6 @@ video_player_start(view_sys *p_sys, const char* file_path)
     playback_service_list_append(p_sys->p_ps, p_mi);
     playback_service_start(p_sys->p_ps, 0);
     elm_object_signal_emit(p_sys->layout, "hub_background,show", "");
-
-    evas_object_show(p_sys->win);
 
     return true;
 }
@@ -502,26 +469,17 @@ video_player_stop(view_sys *p_sys)
     }
 
     device_remove_callback(DEVICE_CALLBACK_DISPLAY_STATE, video_player_display_state_changed_cb);
+
+    LOGD("@@@@ Restored rotation");
+    int rots[4] = { 0, 90, 180, 270 };
+    elm_win_wm_rotation_available_rotations_set(p_sys->win, (const int *)(&rots), 4);
 }
 
-void
-video_player_create_ui(view_sys *p_sys)
+Evas_Object*
+video_player_create_ui(view_sys *p_sys, Evas_Object *parent)
 {
-    p_sys->win = elm_win_util_standard_add(PACKAGE, PACKAGE);
-    elm_win_conformant_set(p_sys->win, EINA_TRUE);
-    elm_win_fullscreen_set(p_sys->win, EINA_TRUE);
-    elm_win_autodel_set(p_sys->win, EINA_FALSE);
-
-    eext_object_event_callback_add(p_sys->win, EEXT_CALLBACK_BACK, video_player_win_back_key_cb, p_sys);
-    eext_object_event_callback_add(p_sys->win, EEXT_CALLBACK_MORE, video_player_win_more_key_cb, p_sys);
-
-    Evas_Object *conform = elm_conformant_add(p_sys->win);
-    evas_object_size_hint_weight_set(conform, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-    elm_win_resize_object_add(p_sys->win, conform);
-    evas_object_show(conform);
-
     /* Create the layout */
-    Evas_Object *layout = p_sys->layout = elm_layout_add(conform);
+    Evas_Object *layout = elm_layout_add(parent);
     elm_layout_file_set(layout, VIDEOPLAYER_EDJ, "media_player_renderer");
     evas_object_size_hint_weight_set(layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
     evas_object_size_hint_align_set(layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -566,7 +524,28 @@ video_player_create_ui(view_sys *p_sys)
     elm_slider_horizontal_set(p_sys->progress_slider, EINA_TRUE);
     elm_object_part_content_set(layout, "swallow.progress", p_sys->progress_slider);
 
-    elm_object_content_set(conform, p_sys->layout);
+    return layout;
+}
+
+static bool
+video_player_callback(view_sys *p_view_sys, interface_view_event event)
+{
+    switch (event) {
+    case INTERFACE_VIEW_EVENT_MENU:
+    {
+        layout_touch_up_cb(p_view_sys, NULL, NULL, NULL);
+        return true;
+    }
+    case INTERFACE_VIEW_EVENT_BACK:
+        if (p_view_sys->p_current_popup) {
+            evas_object_del(p_view_sys->p_current_popup);
+            return true;
+        }
+        return false;
+    default:
+        break;
+    }
+    return true;
 }
 
 interface_view*
@@ -580,12 +559,12 @@ create_video_player(interface *intf, playback_service *p_ps, Evas_Object *parent
 
     p_sys->intf = intf;
     p_sys->p_ps = p_ps;
-    view->view = NULL;
-    view->p_view_sys = p_sys;
-    view->pf_event = NULL;
-    view->pf_stop = video_player_stop;
+    p_sys->win = intf_get_window(intf);
 
-    video_player_create_ui(p_sys);
+    view->view = video_player_create_ui(p_sys, parent);
+    view->p_view_sys = p_sys;
+    view->pf_event = video_player_callback;
+    view->pf_stop = video_player_stop;
 
     return view;
 }
@@ -595,7 +574,6 @@ destroy_video_player(interface_view *view)
 {
     video_player_stop(view->p_view_sys);
     playback_service_set_evas_video(view->p_view_sys->p_ps, NULL);
-    evas_object_del(view->p_view_sys->win);
     free(view->p_view_sys);
     free(view);
 }
