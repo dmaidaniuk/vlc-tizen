@@ -52,6 +52,8 @@ typedef enum interface_view_event {
     INTERFACE_VIEW_EVENT_NONE,
     INTERFACE_VIEW_EVENT_BACK,
     INTERFACE_VIEW_EVENT_MENU,
+    INTERFACE_VIEW_EVENT_PAUSE,
+    INTERFACE_VIEW_EVENT_RESUME,
 }interface_view_event;
 
 typedef enum view_e {
@@ -116,6 +118,9 @@ intf_register_file_changed(interface *intf, view_e type,
 
 void
 intf_ml_file_changed( void* p_user_data );
+
+void
+intf_propagate_event(interface *intf, interface_view_event event);
 
 /* List view items */
 typedef struct list_sys list_sys;

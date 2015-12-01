@@ -434,6 +434,18 @@ create_main_box(interface *intf, Evas_Object *parent)
     return intf->main_box;
 }
 
+void
+intf_propagate_event(interface *intf, interface_view_event event)
+{
+    Elm_Object_Item *it = elm_naviframe_top_item_get(intf->nf_content);
+    interface_view *view = (interface_view *)elm_object_item_data_get(it);
+
+    if (view && view->pf_event != NULL)
+    {
+        view->pf_event(view->p_view_sys, event);
+    }
+}
+
 static void
 create_main_layout(interface *intf, Evas_Object *conform, view_e view_type)
 {
