@@ -172,6 +172,8 @@ app_pause(void *data)
     {
         playback_service_pause(app->p_ps);
     }
+
+    intf_propagate_event(app->p_intf, INTERFACE_VIEW_EVENT_PAUSE);
 }
 
 static void
@@ -183,6 +185,7 @@ app_resume(void *data)
     playback_service *p_ps = application_get_playback_service(app);
 
     playback_service_set_auto_exit(p_ps, false);
+    intf_propagate_event(app->p_intf, INTERFACE_VIEW_EVENT_RESUME);
 }
 
 static void
