@@ -49,7 +49,7 @@ struct audio_player {
     Evas_Object *fs_time, *fs_total_time;
     Evas_Object *fs_title, *fs_sub_title;
 
-    Evas_Object *play_pause_img;
+    Evas_Object *play_pause_img, *previous_img, *next_img;
     Evas_Object *fs_play_pause_img, *fs_previous_img, *fs_next_img;
 
     Evas_Object *fs_save_btn, *fs_playlist_btn, *fs_more_btn;
@@ -809,6 +809,12 @@ swallow_mini_player(audio_player *mpd, Evas_Object *layout)
     /* set the play/pause button */
     mpd->play_pause_img = create_icon(layout, "ic_pause_circle_normal_o.png");
     elm_object_part_content_set(layout, "swallow.play", mpd->play_pause_img);
+
+    /* set the next/previous buttons */
+    mpd->previous_img = create_icon(layout, "ic_widget_previous_normal.png");
+    elm_object_part_content_set(layout, "swallow.previous", mpd->previous_img);
+    mpd->next_img = create_icon(layout, "ic_widget_next_normal.png");
+    elm_object_part_content_set(layout, "swallow.next", mpd->next_img);
 }
 
 void
@@ -1065,6 +1071,8 @@ audio_player_create(interface *intf, playback_service *p_ps, Evas_Object *layout
     /* Add button callbacks */
     evas_object_event_callback_add(mpd->play_pause_img, EVAS_CALLBACK_MOUSE_DOWN, play_pause_mouse_down_cb, mpd);
     evas_object_event_callback_add(mpd->play_pause_img, EVAS_CALLBACK_MOUSE_UP, play_pause_mouse_up_cb, mpd);
+    evas_object_smart_callback_add(mpd->previous_img, "clicked", fs_previous_cb, mpd);
+    evas_object_smart_callback_add(mpd->next_img, "clicked", fs_next_cb, mpd);
 
     edje_object_signal_callback_add(edje, "*clicked*", "expand_region", audio_player_fullscreen_edge_cb, mpd);
 

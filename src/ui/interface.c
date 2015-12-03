@@ -425,6 +425,9 @@ create_main_box(interface *intf, Evas_Object *parent)
     intf->p_mini_player = audio_player_create(intf, application_get_playback_service(intf->p_app), intf->mini_player_layout);
     evas_object_hide(intf->mini_player_layout);
 
+    evas_object_size_hint_weight_set(intf->mini_player_layout, EVAS_HINT_FILL, 0.1);
+    evas_object_size_hint_align_set(intf->mini_player_layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
+
     /* */
     evas_object_show(intf->nf_content);
 
