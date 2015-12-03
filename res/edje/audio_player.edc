@@ -27,7 +27,7 @@ collections {
       name: "audio_player";
       parts {
          part{
-            name: "background";
+            name: "hub_background";
             type: RECT;
             description {
                color: 250 250 250 255;
@@ -36,7 +36,6 @@ collections {
                rel2{relative: 1.0 1.0;}
                }
             }
-
          part {
             name: "hub_header";
             type: RECT;
@@ -79,8 +78,14 @@ collections {
                description {
                   state: "default" 0.0;
                   color: 33 33 33 255;
-                  rel1.relative: 0.015 0.0;
-                  rel2.relative: 0.7 0.5;
+                  rel1 {
+                     relative: 0.015 0.0;
+                     to: "hub_header";
+                  }
+                  rel2 {
+                     relative: 0.7 0.5;
+                     to: "hub_header";
+                  }
                   text {
                      align: 0.00 1.0;
                      size: 28;
@@ -113,8 +118,14 @@ collections {
                type: RECT;
                description {
                   state: "default" 0.0;
-                  rel1 {relative: 0.0 0.1;}
-                  rel2 {relative: 1.0 0.85;}
+                  rel1 {
+                     relative: 0.0 1.0;
+                     to: "hub_header";
+                  }
+                  rel2 {
+                     relative: 1.0 0.0;
+                     to: "hub_miniplayer";
+                  }
                }
          }
          part {
@@ -130,6 +141,8 @@ collections {
                       relative: 0.95 0.95;
                       to: "hub_cover";
                   }
+                  aspect: 1.0 1.0;
+                  aspect_preference: BOTH;
                }
             }
 
@@ -139,15 +152,20 @@ collections {
             description {
                state: "default" 0.0;
                color: 250 250 250 255;
-               rel1 {relative: 0.0 0.86;}
-               rel2 {relative: 1.0 1.0;}
+               rel1 {
+                  relative: 0.0 0.86;
+                  to: "hub_background";
+               }
+               rel2 {
+                  relative: 1.0 1.0;
+                  to: "hub_background";
+               }
             }
             part {
                name: "seek";
                type: SWALLOW;
                description {
                   state: "default" 0.0;
-                  min: 0 40;
                   rel1 {relative: 0.0 0.0;}
                   rel2 {relative: 1.0 0.4;}
                }
