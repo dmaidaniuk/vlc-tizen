@@ -52,22 +52,7 @@ collections
                        to: "hub_background";
                     }
                 }
-            }
-            part {
-                name: "expand_region";
-                type: RECT;
-                description {
-                    color: 0 0 0 0; // transparent
-                    rel1 {
-                        relative: 0.0 0.2;
-                        to: "hub_background";
-                   }
-                    rel2 {
-                        relative: 0.0 1.0;
-                        to: "swallow.previous";
-                   }
-                }
-            }
+           }
             part{
                 name: "hub_button";
                 type: RECT;
@@ -145,6 +130,21 @@ collections
                         to_x: "hub_button";
                         to_y: "hub_button";
                     }
+                }
+            }
+            part {
+                name: "expand_region";
+                type: RECT;
+                description {
+                    color: 0 0 0 0; // transparent
+                    rel1 {
+                        relative: 0.0 0.2;
+                        to: "hub_background";
+                   }
+                    rel2 {
+                        relative: 0.0 1.0;
+                        to: "swallow.previous";
+                   }
                 }
             }
             part {
