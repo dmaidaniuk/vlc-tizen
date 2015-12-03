@@ -43,7 +43,6 @@ collections
                 name: "swallow.progress";
                 type: SWALLOW;
                 description {
-                    state: "pause" 0.0;
                     rel1 {
                        relative: 0.0 0.0;
                        to: "hub_background";
@@ -58,7 +57,6 @@ collections
                 name: "expand_region";
                 type: RECT;
                 description {
-                    state: "" 0.0;
                     color: 0 0 0 0; // transparent
                     rel1 {
                         relative: 0.0 0.2;
@@ -74,7 +72,6 @@ collections
                 name: "hub_button";
                 type: RECT;
                 description{
-                    state: "" 0.0;
                     visible: 0;
                     rel1{
                         relative: 0.0 0.2;
@@ -91,7 +88,6 @@ collections
                 name: "swallow.title";
                 type: TEXT;
                 description {
-                    state: "default" 0.0;
                     color: 0 0 0 255; // black
                     visible: 1;
                     rel1 {
@@ -114,7 +110,6 @@ collections
                 name: "swallow.subtitle";
                 type: TEXT;
                 description {
-                    state: "pause" 0.0;
                     color:  70 70 70 255; // grey/black
                     rel1 {
                         relative: 1.2 0.5;
@@ -136,7 +131,6 @@ collections
                 name: "swallow.cover";
                 type: SWALLOW;
                 description {
-                    state: "pause" 0.0;
                     aspect: 1.0 1.0;
                     aspect_preference: VERTICAL;
                     color: 255 0 0 255; // transparent grey
@@ -157,7 +151,6 @@ collections
                 name: "swallow.previous";
                 type: SWALLOW;
                 description {
-                    state: "default" 0.0;
                     aspect: 0.9 0.9;
                     aspect_preference: VERTICAL;
                     color: 255 0 0 255; // transparent grey
@@ -175,7 +168,6 @@ collections
                 name: "swallow.play";
                 type: SWALLOW;
                 description {
-                    state: "pause" 0.0;
                     aspect: 0.9 0.9;
                     aspect_preference: VERTICAL;
                     color: 255 0 0 255; // transparent grey
@@ -193,7 +185,6 @@ collections
                 name: "swallow.next";
                 type: SWALLOW;
                 description {
-                    state: "default" 0.0;
                     aspect: 0.9 0.9;
                     aspect_preference: VERTICAL;
                     color: 255 0 0 255; // transparent grey
