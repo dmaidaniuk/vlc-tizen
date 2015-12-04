@@ -567,6 +567,11 @@ intf_create(application *app)
 void
 intf_destroy(interface *intf)
 {
+
+    /* Unregister callbacks */
+    eext_object_event_callback_del(intf->win, EEXT_CALLBACK_BACK, win_back_key_cb);
+    eext_object_event_callback_del(intf->win, EEXT_CALLBACK_MORE, right_panel_button_clicked_cb);
+
     /* Destroy the views */
     for(int i = 0; i< VIEW_MAX; i++)
         if(intf->nf_views[i] != NULL)
