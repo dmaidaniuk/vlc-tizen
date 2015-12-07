@@ -36,7 +36,7 @@
 
 
 media_library::media_library()
-    : ml( MediaLibraryFactory::create() )
+    : ml( NewMediaLibrary() )
 {
     if ( ml == nullptr )
         throw std::runtime_error( "Failed to initialize MediaLibrary" );
