@@ -53,6 +53,11 @@ struct playback_service_callbacks
     enum PLAYLIST_CONTEXT i_ctx;
 };
 
+typedef void      (*ps_on_emotion_restart)(void *data);
+
+void
+ps_register_on_emotion_restart_cb(playback_service *p_ps, ps_on_emotion_restart func, void *data);
+
 playback_service *
 playback_service_create(application *p_app);
 

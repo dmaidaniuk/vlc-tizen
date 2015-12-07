@@ -83,6 +83,9 @@ struct playback_service
     notification_h  p_notification;
     double          i_last_notification_pos;
     app_control_h   p_app_control;
+
+    ps_on_emotion_restart   emotion_restart_cb;
+    void                    *emotion_restart_cb_data;
 };
 
 #define PS_SEND_CALLBACK(pf_cb, ...) do { \
@@ -108,6 +111,13 @@ struct playback_service
 } while(0)
 
 static int playback_service_stop_notify(playback_service *, bool);
+
+void
+ps_register_on_emotion_restart_cb(playback_service *p_ps, ps_on_emotion_restart func, void *data)
+{
+    p_ps->emotion_restart_cb = func;
+    p_ps->emotion_restart_cb_data = data;
+}
 
 static void
 ps_notification_create(playback_service *p_ps)
@@ -439,6 +449,12 @@ playback_service_force_restart_emotion(playback_service *p_ps)
     }
 
     p_ps->p_e = is_ea ? p_ps->p_ea : p_ps->p_ev;
+
+    if (p_ps->emotion_restart_cb != NULL)
+    {
+        p_ps->emotion_restart_cb(p_ps->emotion_restart_cb_data);
+    }
+
     return 0;
 }
 

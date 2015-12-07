@@ -321,6 +321,17 @@ intf_video_player_create(interface *intf)
     intf->video_player = create_video_player(intf, p_ps, intf->nf_content);
 }
 
+static void
+intf_on_emotion_restart_cb(void *data)
+{
+    interface *intf = data;
+
+    // Restarting emotion makes the Evas video surface unusable
+    // so destroying the video player is the easiest solution.
+    destroy_video_player(intf->video_player);
+    intf->video_player = NULL;
+}
+
 void
 intf_video_player_play(interface *intf, const char *psz_path)
 {
@@ -552,6 +563,8 @@ intf_create(application *app)
     /* Create the default view in the content naviframe */
     intf_show_view(intf, view_type);
 
+    ps_register_on_emotion_restart_cb(application_get_playback_service(intf->p_app), intf_on_emotion_restart_cb, intf);
+
     /* */
     evas_object_show(intf->win);
     return intf;
@@ -565,6 +578,7 @@ intf_destroy(interface *intf)
     /* Unregister callbacks */
     eext_object_event_callback_del(intf->win, EEXT_CALLBACK_BACK, win_back_key_cb);
     eext_object_event_callback_del(intf->win, EEXT_CALLBACK_MORE, right_panel_button_clicked_cb);
+    ps_register_on_emotion_restart_cb(application_get_playback_service(intf->p_app), NULL, NULL);
 
     /* Destroy the views */
     for(int i = 0; i< VIEW_MAX; i++)
