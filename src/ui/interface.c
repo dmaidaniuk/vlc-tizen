@@ -168,12 +168,9 @@ intf_push_view(interface *intf, interface_view *view, const char *title)
     /* Prepare the popup menu if needed */
     if(view->pf_has_menu != NULL && view->pf_has_menu(view->p_view_sys) == true)
     {
-        if(intf->popup_toggle_btn == NULL)
-        {
-            intf->popup_toggle_btn = create_button(intf->nf_content, "naviframe/custom_more");
-            evas_object_smart_callback_add(intf->popup_toggle_btn, "clicked", right_panel_button_clicked_cb, intf);
-        }
-        elm_object_part_content_set(intf->nf_content, "title_right_btn", intf->popup_toggle_btn);
+        Evas_Object *popup_toggle_btn = create_button(intf->nf_content, "naviframe/custom_more");
+        evas_object_smart_callback_add(popup_toggle_btn, "clicked", right_panel_button_clicked_cb, intf);
+        elm_object_part_content_set(intf->nf_content, "title_right_btn", popup_toggle_btn);
     }
 
     return nf_it;
@@ -203,12 +200,9 @@ intf_show_view(interface *intf, view_e view_type)
     intf_push_view(intf, intf->nf_views[view_type], interface_views[view_type].title);
 
     /* Create then set the panel toggle btn and add its callbacks */
-    if(intf->sidebar_toggle_btn == NULL)
-    {
-        intf->sidebar_toggle_btn = create_button(nf_content, "naviframe/drawers");
-        evas_object_smart_callback_add(intf->sidebar_toggle_btn, "clicked", left_panel_button_clicked_cb, intf);
-    }
-    elm_object_part_content_set(nf_content, "title_left_btn", intf->sidebar_toggle_btn);
+    Evas_Object *sidebar_toggle_btn = create_button(nf_content, "naviframe/drawers");
+    evas_object_smart_callback_add(sidebar_toggle_btn, "clicked", left_panel_button_clicked_cb, intf);
+    elm_object_part_content_set(nf_content, "title_left_btn", sidebar_toggle_btn);
 }
 
 static void
@@ -253,14 +247,14 @@ intf_pop_view(interface *intf)
 
     evas_object_hide(elm_object_part_content_unset(intf->nf_content, "elm.swallow.content"));
 
-    elm_object_part_content_unset(intf->nf_content, "title_left_btn");
-    elm_object_part_content_unset(intf->nf_content, "title_right_btn");
-
     /* Pop the top view */
     elm_naviframe_item_pop(intf->nf_content);
     elm_win_indicator_mode_set(intf->win, ELM_WIN_INDICATOR_SHOW);
 
-    elm_object_part_content_set(intf->nf_content, "title_left_btn", intf->sidebar_toggle_btn);
+    Evas_Object *sidebar_toggle_btn = create_button(intf->nf_content, "naviframe/drawers");
+    evas_object_smart_callback_add(sidebar_toggle_btn, "clicked", left_panel_button_clicked_cb, intf);
+    elm_object_part_content_set(intf->nf_content, "title_left_btn", sidebar_toggle_btn);
+
     view = (interface_view *)elm_object_item_data_get(elm_naviframe_top_item_get(intf->nf_content));
     if (view)
     {
@@ -269,11 +263,11 @@ intf_pop_view(interface *intf)
 
         if (view->pf_has_menu && view->pf_has_menu(view->p_view_sys) == true)
         {
-            elm_object_part_content_set(intf->nf_content, "title_right_btn", intf->popup_toggle_btn);
-            evas_object_show(intf->popup_toggle_btn);
+            Evas_Object *popup_toggle_btn = create_button(intf->nf_content, "naviframe/custom_more");
+            evas_object_smart_callback_add(popup_toggle_btn, "clicked", right_panel_button_clicked_cb, intf);
+            elm_object_part_content_set(intf->nf_content, "title_right_btn", popup_toggle_btn);
+            evas_object_show(popup_toggle_btn);
         }
-        else
-            evas_object_hide(intf->popup_toggle_btn);
 
         evas_object_show(view->view);
     }
