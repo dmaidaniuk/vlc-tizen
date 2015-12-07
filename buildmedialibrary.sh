@@ -13,7 +13,7 @@ fi
 
 if [ ! -d "${PROJECTPATH}/medialibrary" ]; then
     echo -e "\e[1m\e[32mmedialibrary source not found, cloning\e[0m"
-    git clone http://github.com/chouquette/medialibrary.git "${PROJECTPATH}/medialibrary"
+    git clone http://code.videolan.org/videolan/medialibrary.git "${PROJECTPATH}/medialibrary"
     checkfail "medialibrary source: git clone failed"
 #else
 #    ( cd ${PROJECTPATH}/medialibrary && git pull --rebase ) || echo "Failed to update medialibrary"
