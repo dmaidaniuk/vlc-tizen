@@ -415,12 +415,12 @@ playback_service_force_restart_emotion(playback_service *p_ps)
     p_ps->p_e = NULL;
     if (p_ps->p_ea)
     {
-        evas_object_del(p_ps->p_ea);
+        ps_emotion_destroy(p_ps, p_ps->p_ea);
         p_ps->p_ea = NULL;
     }
     if (p_ps->p_ev)
     {
-        evas_object_del(p_ps->p_ev);
+        ps_emotion_destroy(p_ps, p_ps->p_ev);
         p_ps->p_ev = NULL;
     }
 
@@ -432,7 +432,7 @@ playback_service_force_restart_emotion(playback_service *p_ps)
     {
         p_ps->p_ev = ps_emotion_create(p_ps, p_ps->p_ev_evas, false);
         if (!p_ps->p_ev) {
-            evas_object_del(p_ps->p_ea);
+            ps_emotion_destroy(p_ps, p_ps->p_ea);
             p_ps->p_ea = NULL;
             return -1;
         }
@@ -511,7 +511,7 @@ playback_service_set_evas_video(playback_service *p_ps, Evas *p_evas)
 {
     if (p_ps->p_ev)
     {
-        evas_object_del(p_ps->p_ev);
+        ps_emotion_destroy(p_ps, p_ps->p_ev);
         p_ps->p_ev = NULL;
         p_ps->p_ev_evas = NULL;
     }
