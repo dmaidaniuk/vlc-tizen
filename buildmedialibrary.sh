@@ -52,6 +52,12 @@ if [ "$RELEASE" = 1 ]; then
     CMAKE_OPTS=""
 fi
 
+if [ ${TIZEN_SDK_VERSION} = "2.3.1" ];then
+    PKG_CONFIG_PATH="${TIZEN_SDK}/tools/efl-tools/lib/pkgconfig/"
+else
+    PKG_CONFIG_PATH="${TIZEN_SDK}/platforms/tizen-${TIZEN_SDK_SHORT_VERSION}/common/efl-tool/efl-tools/lib/pkgconfig/"
+fi
+
 # PKG_CONFIG_PATH is required to have a proper evas detection.
 # however, since the .pc the SDK provides are broken, we override with
 # our own values
@@ -65,7 +71,7 @@ CXX="${CROSS_COMPILE}g++ -fPIC --sysroot=${SYSROOT} -D__cpp_static_assert=200410
 NM="${CROSS_COMPILE}nm" \
 STRIP="${CROSS_COMPILE}strip" \
 RANLIB="${CROSS_COMPILE}ranlib" \
-PKG_CONFIG_PATH="${TIZEN_SDK}/tools/efl-tools/lib/pkgconfig/" \
+PKG_CONFIG_PATH="${PKG_CONFIG_PATH}" \
 AR="${CROSS_COMPILE}ar" \
 cmake \
     ${CMAKE_OPTS} \
