@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<manifest xmlns="http://tizen.org/ns/packages" api-version="2.3.1" package="org.videolan.vlc" version="0.0.7">
+<manifest xmlns="http://tizen.org/ns/packages" api-version="2.4" package="org.videolan.vlc" version="0.0.7">
     <author email="videolan@videolan.org" href="http://www.videolan.org">VideoLAN</author>
     <description>VLC media player (commonly known as VLC) is a portable, free and open-source, cross-platform media player and streaming media server written by the VideoLAN project.
 
 VLC media player supports many audio and video compression methods and file formats and streaming protocols.</description>
     <profile name="mobile"/>
-    <ui-application appid="org.videolan.vlc" exec="vlc" multiple="false" nodisplay="false" taskmanage="true" type="capp">
+    <ui-application appid="org.videolan.vlc" exec="vlc" launch_mode="single" multiple="false" nodisplay="false" taskmanage="true" type="capp">
         <label>VLC</label>
         <icon>VLC.png</icon>
     </ui-application>

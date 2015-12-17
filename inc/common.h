@@ -37,6 +37,7 @@
 #include <tizen.h>
 #include <app_common.h>
 #include <dlog.h>
+#include "compat.h"
 
 #ifdef  LOG_TAG
 # undef  LOG_TAG

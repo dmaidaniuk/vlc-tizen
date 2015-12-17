@@ -410,9 +410,9 @@ echo -e "\e[1m\e[32mLinking\e[0m"
 
 ${CC} -fPIC -rdynamic -shared \
     -Lvlc/contrib/${TARGET_TUPLE}/lib \
-    -Wl,-soname -Wl,libvlc.so.5 -Wl,-version-script \
+    -Wl,-soname -Wl,libvlc.so -Wl,-version-script \
     -Wl,${PROJECTPATH}/$VER_FILE \
-    -o ${PROJECTPATH}/lib/libvlc.so.5 \
+    -o ${PROJECTPATH}/lib/libvlc.so \
     ${PROJECTPATH}/vlc/.modules/libvlc-modules.c \
     -Wl,--whole-archive \
     ${PROJECTPATH}/vlc/${VLC_BUILD_DIR}/lib/.libs/libvlc.a \
@@ -449,4 +449,4 @@ ${CC} -fPIC -rdynamic -shared \
 
 checkfail "linker: libvlc.so"
 
-cd ${PROJECTPATH}/lib/ && ln -sf libvlc.so.5 libvlc.so && cd -
+#cd ${PROJECTPATH}/lib/ && ln -sf libvlc.so.5 libvlc.so && cd -
