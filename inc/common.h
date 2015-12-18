@@ -79,6 +79,10 @@
 
 #include <Evas.h>
 
+// Non-type aware!
+#define MAX(a,b) ((a) > (b) ? a : b)
+#define MIN(a,b) ((a) < (b) ? a : b)
+
 #define MAX_LENGTH_PATH 1024
 static inline const char *get_resource_path(const char *file_path)
 {

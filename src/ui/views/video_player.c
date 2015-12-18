@@ -29,6 +29,7 @@
 #include <Elementary.h>
 #include <Emotion.h>
 #include <efl_extension.h>
+#include <sound_manager.h>
 
 #include "ui/interface.h"
 #include "ui/utils.h"
@@ -55,6 +56,11 @@ struct view_sys
     Evas_Object *backward_button, *forward_button;
     Evas_Object *lock_button, *more_button;
     Evas_Object *p_current_popup;
+
+    /* Gestures */
+    bool gesture_volume;
+    int display_distance;
+    int base_volume;
 
 };
 
@@ -439,6 +445,85 @@ video_player_stop(view_sys *p_sys)
     }
 }
 
+static Evas_Event_Flags
+line_start(void *data, void *event_info)
+{
+   Elm_Gesture_Line_Info *p = (Elm_Gesture_Line_Info *) event_info;
+   LOGD("line started angle=<%lf> x1,y1=<%d,%d> x2,y2=<%d,%d> tx,ty=<%u,%u> n=<%u>",
+          p->angle, p->momentum.x1, p->momentum.y1, p->momentum.x2, p->momentum.y2,
+          p->momentum.tx, p->momentum.ty, p->momentum.n);
+
+   view_sys *p_sys = data;
+
+   if (p->momentum.n == 1 && (p->angle > 315 || p->angle < 45 || (p->angle > 135 && p->angle < 225)))
+   {
+       if (sound_manager_get_volume(SOUND_TYPE_MEDIA, &p_sys->base_volume) != 0)
+       {
+           LOGE("Unable to get the volume.");
+           return EVAS_EVENT_FLAG_ON_HOLD;
+       }
+
+       int w, h;
+       evas_object_geometry_get(p_sys->layout, NULL, NULL, &w, &h);
+
+       p_sys->display_distance = MIN(w, h);
+
+       if (p_sys->display_distance == 0)
+           return EVAS_EVENT_FLAG_ON_HOLD;
+
+       p_sys->gesture_volume = true;
+   }
+
+   return EVAS_EVENT_FLAG_ON_HOLD;
+}
+
+static Evas_Event_Flags
+line_move(void *data, void *event_info)
+{
+   Elm_Gesture_Line_Info *p = (Elm_Gesture_Line_Info *) event_info;
+   view_sys *p_sys = data;
+
+   if (p_sys->gesture_volume == true)
+   {
+       int max;
+       if (sound_manager_get_max_volume(SOUND_TYPE_MEDIA, &max) != 0)
+           return EVAS_EVENT_FLAG_ON_HOLD;
+
+       int step = p_sys->display_distance / max;
+       int diff = p->momentum.y1 - p->momentum.y2;
+       int volume = MIN(MAX(0, p_sys->base_volume + (diff / step)), max);
+
+       sound_manager_set_volume(SOUND_TYPE_MEDIA, volume);
+       LOGD("Volume: %d (max %d)", volume, max);
+   }
+
+   return EVAS_EVENT_FLAG_ON_HOLD;
+}
+
+static Evas_Event_Flags
+line_end(void *data, void *event_info)
+{
+   Elm_Gesture_Line_Info *p = (Elm_Gesture_Line_Info *) event_info;
+   LOGD("line end angle=<%lf> x1,y1=<%d,%d> x2,y2=<%d,%d> tx,ty=<%u,%u> n=<%u>",
+          p->angle, p->momentum.x1, p->momentum.y1, p->momentum.x2, p->momentum.y2,
+          p->momentum.tx, p->momentum.ty, p->momentum.n);
+
+   view_sys *p_sys = data;
+
+   p_sys->gesture_volume = false;
+   return EVAS_EVENT_FLAG_ON_HOLD;
+}
+
+static Evas_Event_Flags
+line_abort(void *data, void *event_info)
+{
+   view_sys *p_sys = data;
+   LOGD("line abort");
+
+   p_sys->gesture_volume = false;
+   return EVAS_EVENT_FLAG_ON_HOLD;
+}
+
 Evas_Object*
 video_player_create_ui(view_sys *p_sys, Evas_Object *parent)
 {
@@ -456,6 +541,26 @@ video_player_create_ui(view_sys *p_sys, Evas_Object *parent)
     elm_object_part_content_set(layout, "swallow.visualization", p_sys->p_evas_video);
     emotion_object_keep_aspect_set(p_sys->p_evas_video, EMOTION_ASPECT_KEEP_BOTH);
     evas_object_show(p_sys->p_evas_video);
+
+    /* Create the gesture layer */
+    Evas_Object *r = evas_object_rectangle_add(layout);
+    evas_object_color_set(r, 0, 0, 0, 0);
+    elm_object_part_content_set(layout, "gesturerect", r);
+
+    Evas_Object *g = elm_gesture_layer_add(layout);
+    elm_gesture_layer_attach(g, r);
+    evas_object_show(r);
+
+    elm_gesture_layer_continues_enable_set(g, EINA_FALSE);
+
+    elm_gesture_layer_cb_set(g, ELM_GESTURE_N_LINES, ELM_GESTURE_STATE_START,
+                             line_start, p_sys);
+    elm_gesture_layer_cb_set(g, ELM_GESTURE_N_LINES, ELM_GESTURE_STATE_MOVE,
+                             line_move, p_sys);
+    elm_gesture_layer_cb_set(g, ELM_GESTURE_N_LINES, ELM_GESTURE_STATE_END,
+                             line_end, p_sys);
+    elm_gesture_layer_cb_set(g, ELM_GESTURE_N_LINES, ELM_GESTURE_STATE_ABORT,
+                             line_abort, p_sys);
 
     /* create play/pause button */
     p_sys->play_pause_button = elm_image_add(layout);

@@ -55,6 +55,18 @@ collections
                     }
                 }
             }
+            part {
+               name: "gesturerect";
+                type: SWALLOW;
+                description {
+                    rel1 {
+                       relative: 0.0 0.0;
+                    }
+                    rel2 {
+                       relative: 1.0 1.0;
+                    }
+                }
+            }
             part{
                 name: "hub_background";
                 type: RECT;
