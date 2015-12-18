@@ -119,7 +119,6 @@ collections
                     text {
                         align: 0.0 0.5;
                         size: 16;
-                        min: 1 1;
                         text: "--:--:--";
                     }
                 }
@@ -141,7 +140,6 @@ collections
                     text {
                         align: 1.0 0.5;
                         size: 16;
-                        min: 1 1;
                         text: "--:--:--";
                     }
                 }
@@ -152,7 +150,7 @@ collections
                 clip_to: "hub_background";
                 description {
                     fixed: 1 1;
-                    state: "pause" 0.0;
+                    state: "default" 0.0;
                     rel1 {
                        relative: 0.0 0.0;
                        to: "hub_background";
@@ -221,7 +219,7 @@ collections
                 type: SWALLOW;
                 clip_to: "hub_background";
                 description {
-                    state: "pause" 0.0;
+                    state: "default" 0.0;
                     aspect: 1.0 1.0;
                     aspect_preference: VERTICAL;
                     rel1 {

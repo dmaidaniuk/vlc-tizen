@@ -128,7 +128,7 @@ collections
                 name: "swallow.speed";
                 type: SWALLOW;
                 description {
-                    state: "pause" 0.0;
+                    state: "default" 0.0;
                     rel1 {
                        relative: 0.0 0.6;
                        to: "hub_background";
