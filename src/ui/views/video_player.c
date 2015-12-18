@@ -495,6 +495,11 @@ line_move(void *data, void *event_info)
 
        sound_manager_set_volume(SOUND_TYPE_MEDIA, volume);
        LOGD("Volume: %d (max %d)", volume, max);
+
+       char *tmp;
+       asprintf(&tmp, "Volume: %d%%", (volume * 100) / max);
+       elm_object_part_text_set(p_sys->layout, "text_overlay", tmp);
+       free(tmp);
    }
 
    return EVAS_EVENT_FLAG_ON_HOLD;
@@ -511,6 +516,7 @@ line_end(void *data, void *event_info)
    view_sys *p_sys = data;
 
    p_sys->gesture_volume = false;
+   elm_object_part_text_set(p_sys->layout, "text_overlay", "");
    return EVAS_EVENT_FLAG_ON_HOLD;
 }
 
@@ -521,6 +527,7 @@ line_abort(void *data, void *event_info)
    LOGD("line abort");
 
    p_sys->gesture_volume = false;
+   elm_object_part_text_set(p_sys->layout, "text_overlay", "");
    return EVAS_EVENT_FLAG_ON_HOLD;
 }
 

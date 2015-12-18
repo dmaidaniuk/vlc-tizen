@@ -68,6 +68,27 @@ collections
                 }
             }
             part{
+               name: "text_overlay";
+               type: TEXT;
+               description{
+                  min: 50 50;
+                  state: "default" 0.0;
+                  color: 255 136 0 255; /* orange */
+                  visible: 1;
+                  rel1{
+                     relative: 0.0 0.0;
+                  }
+                  rel2{
+                     relative: 1.0 0.2;
+                  }
+                  text {
+                     align: 0.5 0.5;
+                     size: 25;
+                     //text: "Volume: 30%";
+                  }
+               }
+            }
+            part{
                 name: "hub_background";
                 type: RECT;
                 description{
