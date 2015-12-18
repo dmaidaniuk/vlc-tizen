@@ -436,7 +436,6 @@ video_player_stop(view_sys *p_sys)
     if (elm_win_wm_rotation_supported_get(p_sys->win)) {
         int rots[4] = { 0, 90, 180, 270 };
         elm_win_wm_rotation_available_rotations_set(p_sys->win, (const int *)(&rots), 4);
-        LOGD("Restoring orientation!");
     }
 }
 
