@@ -323,21 +323,6 @@ ps_on_playpause_cb(playback_service *p_ps, void *p_user_data, bool b_playing)
                     ICON_DIR "ic_play_circle_normal_o.png", NULL);
 }
 
-static void
-video_player_lock_orientation_cb(void *data, Evas_Object *obj, void *event_info)
-{
-    view_sys *p_sys = data;
-
-    // Get the current orientation
-    int orient = elm_win_rotation_get(p_sys->win);
-
-    // Prevent any further orientation change
-    elm_win_wm_rotation_available_rotations_set(p_sys->win, &orient, 1);
-
-    // Unsubscribe from the callback
-    evas_object_smart_callback_del(p_sys->win, "focus,in", video_player_lock_orientation_cb);
-}
-
 bool
 video_player_start(view_sys *p_sys, const char* file_path)
 {
@@ -345,29 +330,31 @@ video_player_start(view_sys *p_sys, const char* file_path)
     if (elm_win_wm_rotation_supported_get(p_sys->win)) {
         menu_id orientation = preferences_get_enum(PREF_ORIENTATION, ORIENTATION_AUTOMATIC);
 
-        int rots[4] = { 0, 90, 180, 270 };
-        elm_win_wm_rotation_available_rotations_set(p_sys->win, (const int *)(&rots), 4);
+        int rotation = -1;
 
         switch (orientation) {
         case ORIENTATION_LANDSCAPE:
-            elm_win_wm_rotation_preferred_rotation_set(p_sys->win, 270);
+            rotation = 270;
             break;
         case ORIENTATION_PORTRAIT:
-            elm_win_wm_rotation_preferred_rotation_set(p_sys->win, 0);
+            rotation = 0;
             break;
         case ORIENTATION_R_LANDSCAPE:
-            elm_win_wm_rotation_preferred_rotation_set(p_sys->win, 90);
+            rotation = 90;
             break;
         case ORIENTATION_R_PORTRAIT:
-            elm_win_wm_rotation_preferred_rotation_set(p_sys->win, 180);
+            rotation = 180;
             break;
         case ORIENTATION_LOCKED:
-            evas_object_smart_callback_add(p_sys->win, "focus,in", video_player_lock_orientation_cb, p_sys);
+            rotation = elm_win_rotation_get(p_sys->win);
             break;
         case ORIENTATION_AUTOMATIC:
         default:
             break;
         }
+
+        if (rotation >= 0)
+            elm_win_wm_rotation_available_rotations_set(p_sys->win, &rotation, 1);
     }
 
     /* */
@@ -444,6 +431,12 @@ video_player_stop(view_sys *p_sys)
         playback_service_list_clear(p_sys->p_ps);
         playback_service_stop(p_sys->p_ps);
         p_sys->p_ps_cbs_id = NULL;
+    }
+
+    if (elm_win_wm_rotation_supported_get(p_sys->win)) {
+        int rots[4] = { 0, 90, 180, 270 };
+        elm_win_wm_rotation_available_rotations_set(p_sys->win, (const int *)(&rots), 4);
+        LOGD("Restoring orientation!");
     }
 }
 
