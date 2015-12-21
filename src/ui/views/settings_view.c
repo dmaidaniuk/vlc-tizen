@@ -76,7 +76,7 @@ settings_item settings_menu[] =
 settings_item directory_menu[] =
 {
         {DIRECTORIES_INTERNAL,  "Internal memory",              NULL,   SETTINGS_TYPE_TOGGLE},
-        //{DIRECTORIES_EXTERNAL,  "External memory (SD card)",    NULL,   SETTINGS_TYPE_TOGGLE},
+        {DIRECTORIES_EXTERNAL,  "External memory (SD card)",    NULL,   SETTINGS_TYPE_TOGGLE},
         //{DIRECTORIES_ADDLOCATION,   "Add location",    "call_button_add_call_press.png",   SETTINGS_TYPE_ITEM}
 };
 
@@ -268,7 +268,7 @@ void
 menu_directories_selected_cb(settings_menu_selected *selected, view_sys* p_view_sys, void *data, Evas_Object *parent)
 {
     bool internal = preferences_get_bool(PREF_DIRECTORIES_INTERNAL, true);
-    bool sdcard = preferences_get_bool(PREF_DIRECTORIES_EXTERNAL, false);
+    bool sdcard = preferences_get_bool(PREF_DIRECTORIES_EXTERNAL, true);
     int len = COUNT_OF(directory_menu);
     Evas_Object *genlist = settings_list_add_styled(directory_menu, len, settings_view_directories_save, NULL, p_view_sys, parent);
     settings_toggle_set_one_by_id(directory_menu, len, DIRECTORIES_INTERNAL, internal, false);
