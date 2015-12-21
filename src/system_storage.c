@@ -39,7 +39,7 @@ struct media_storage {
 };
 
 static int
-discover_storage(application *app, int storage_id, storage_type_e type)
+discover_storage(application *app, int storage_id, storage_directory_e type)
 {
     char *path;
     int ret;
