@@ -52,7 +52,7 @@ if [ "$RELEASE" = 1 ]; then
     CMAKE_OPTS=""
 fi
 
-if [ ${TIZEN_SDK_VERSION} = "2.3.1" ];then
+if [ "${TIZEN_SDK_VERSION}" = "2.3.1" ];then
     PKG_CONFIG_PATH="${TIZEN_SDK}/tools/efl-tools/lib/pkgconfig/"
 else
     PKG_CONFIG_PATH="${TIZEN_SDK}/platforms/tizen-${TIZEN_SDK_SHORT_VERSION}/common/efl-tool/efl-tools/lib/pkgconfig/"

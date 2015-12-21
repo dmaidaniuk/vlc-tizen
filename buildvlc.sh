@@ -10,7 +10,7 @@ if [ "$BUILDCOMMONDONE" != 1 ]; then
 fi
 
 # atomics are broken for x86 on 2.3, dirty hacks since it's used only from emulator
-if [ ${TIZEN_SDK_VERSION} = "2.3.1" -a "${TIZEN_ABI}" = "x86" ];then
+if [ "${TIZEN_SDK_VERSION}" = "2.3.1" -a "${TIZEN_ABI}" = "x86" ];then
 VLC_INCLUDE_HACKS=" -I${PROJECTPATH}/hacks/vlc/2.3-x86-include"
 else
 VLC_INCLUDE_HACKS=""

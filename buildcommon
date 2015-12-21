@@ -154,7 +154,7 @@ TIZEN_SDK_MAJOR=`echo "${TIZEN_SDK_VERSION}" | cut -d. -f1`
 TIZEN_SDK_MINOR=`echo "${TIZEN_SDK_VERSION}" | cut -d. -f2`
 TIZEN_SDK_REV=`echo "${TIZEN_SDK_VERSION}" | cut -d. -f3`
 
-if [ ${TIZEN_SDK_VERSION} = "2.3.1" ];then
+if [ "${TIZEN_SDK_VERSION}" = "2.3.1" ];then
     TIZEN_CORE="${TIZEN_SDK}/platforms/mobile-${TIZEN_SDK_VERSION}/rootstraps/mobile-${TIZEN_SDK_VERSION}-${TIZEN_DEVICE}.core"
 else
     TIZEN_SDK_SHORT_VERSION="${TIZEN_SDK_MAJOR}.${TIZEN_SDK_MINOR}"
