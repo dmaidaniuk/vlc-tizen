@@ -168,9 +168,6 @@ browse(view_sys *dv, const char* path)
     /* Browse the current directory */
     while ((current_folder = readdir(rep)) != NULL)
     {
-        if (!current_folder->d_name)
-            continue;
-
         /* Avoid genlist item append for "." and ".." d_name */
 	    if (strcmp(current_folder->d_name, ".") == 0 || strcmp(current_folder->d_name, "..") == 0)
         {
