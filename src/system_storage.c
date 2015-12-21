@@ -135,7 +135,7 @@ media_storage_get_path(media_storage *p_ms, media_directory_e type)
 {
     int error, storage_type;
 
-    if (type < 0 || type >= MEDIA_DIRECTORY_MAX)
+    if (type >= MEDIA_DIRECTORY_MAX)
         type = MEDIA_DIRECTORY;
 
     /* Return precomputed values, it should not change at runtime */
