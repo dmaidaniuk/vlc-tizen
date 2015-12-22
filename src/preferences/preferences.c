@@ -93,7 +93,7 @@ void
 preferences_set_bool(pref_bool key, bool value)
 {
     pref_id key_id;
-    key_id.t_enum = key;
+    key_id.t_bool = key;
 
     preference_set_boolean(preferences_get_key(key_id), value);
 }
