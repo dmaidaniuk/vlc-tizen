@@ -34,6 +34,7 @@
 #include "directory_view.h"
 #include "ui/interface.h"
 #include "ui/utils.h"
+#include "system_storage.h"
 
 struct view_sys {
     interface *p_intf;
@@ -99,7 +100,124 @@ static int compare_sort_items(const void *data1, const void *data2)
 }
 
 bool
+browse_directory(view_sys *dv, const char* path);
+
+void
+browse_main(view_sys *dv, const char *path_internal, Eina_List *path_external);
+
+bool
 browse(view_sys *dv, const char* path)
+{
+    char *cpath;
+    bool ret = false;
+
+    /* Use realpath to get the canonicalized absolute path */
+    cpath = realpath(path, NULL);
+
+    if (cpath == NULL)
+    {
+        LOGE("realpath failed");
+        return false;
+    }
+
+    /* Path the the internal memory */
+    const char *internal = application_get_media_path(intf_get_application(dv->p_intf), MEDIA_DIRECTORY);
+    /* List of paths to the external memory */
+    Eina_List *ext = media_storage_external_list_get(application_get_media_storage(intf_get_application(dv->p_intf)));
+
+    if (strncmp(cpath, internal, strlen(internal)) == 0)
+    {
+        /* Valid path to the internal memory */
+        ret = browse_directory(dv, cpath);
+    }
+    else
+    {
+        Eina_List *l;
+        char *path;
+
+        EINA_LIST_FOREACH(ext, l, path)
+        {
+            if (strncmp(cpath, path, strlen(path)) == 0)
+            {
+                /* Valid path to an external memory */
+                ret = browse_directory(dv, cpath);
+                break;
+            }
+        }
+    }
+
+    if (!ret)
+    {
+        ret = !ret;
+        /* Show the entry points (internal and external memory) */
+        browse_main(dv, internal, ext);
+    }
+
+    eina_list_free(ext);
+    free(cpath);
+    return ret;
+}
+
+directory_data*
+new_directory_data(view_sys *dv, const char* path)
+{
+    directory_data *dd = malloc(sizeof(*dd));
+    dd->dv = dv;
+    dd->is_file = false;
+    dd->file_path = strdup(path);
+
+    return dd;
+}
+
+void
+browse_main(view_sys *dv, const char *path_internal, Eina_List *path_external)
+{
+    Evas_Object *file_list;
+    directory_data *dd;
+    Elm_Object_Item *item;
+
+    // Set the current path to 'main'
+    strcpy(dv->current_path, "main");
+
+    /* Clear the layout */
+    elm_box_clear(dv->p_box);
+
+    /* Create the list */
+    file_list = elm_list_add(dv->p_box);
+
+    // Item: User's media directory
+    dd = new_directory_data(dv, path_internal);
+
+    /* Set and append new item in the list */
+    item = elm_list_item_append(file_list, "Internal memory", NULL, NULL, list_selected_cb, dd);
+
+    elm_object_item_del_cb_set(item, free_list_item_data);
+
+    Eina_List *l;
+    char *path;
+
+    EINA_LIST_FOREACH(path_external, l, path)
+    {
+        dd = new_directory_data(dv, path);
+        /* Set and append new item in the list */
+        item = elm_list_item_append(file_list, "External memory", NULL, NULL, list_selected_cb, dd);
+        elm_object_item_del_cb_set(item, free_list_item_data);
+    }
+
+    /* */
+
+    elm_list_go(file_list);
+
+    elm_box_pack_end(dv->p_box, file_list);
+    evas_object_size_hint_weight_set(file_list, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+    /* The next line is required or the list won't show up */
+    evas_object_size_hint_align_set(file_list, EVAS_HINT_FILL, EVAS_HINT_FILL);
+
+    evas_object_show(file_list);
+}
+
+bool
+browse_directory(view_sys *dv, const char* path)
 {
     Elm_Object_Item *item;
     Evas_Object *file_list;
@@ -108,28 +226,23 @@ browse(view_sys *dv, const char* path)
     struct dirent* current_folder = NULL;
     struct stat st;
     char tmppath[PATH_MAX];
-    char *cpath;
     bool is_file;
 
-    /* Make a realpath to use a clean path in the function */
-    cpath = realpath(path, NULL);
-
-    if (cpath == NULL)
+    if (path == NULL)
     {
-        LOGE("realpath failed");
+        LOGE("browse_directory: given path is null");
         return false;
     }
-    else if (MAX(strlen(path), strlen(cpath)) + 1 > PATH_MAX - 1)
+    else if (strlen(path) + 1 > PATH_MAX - 1)
     {
-        free(cpath);
         LOGE("Given path exceeds the maximum length of %d", PATH_MAX);
         return false;
     }
 
-    strcpy(dv->current_path, cpath);
+    strcpy(dv->current_path, path);
 
     /* Open the path repository then put it as a dirent variable */
-    rep = opendir(cpath);
+    rep = opendir(path);
 
     if  (rep == NULL)
     {
@@ -137,14 +250,11 @@ browse(view_sys *dv, const char* path)
         error = strerror(errno);
         LOGI("Empty repository or Error due to %s", error);
 
-        if (strcmp(cpath, "/") == 0)
+        if (strcmp(path, "/") == 0)
         {
             /* We're already on the root directory don't open the parent directory */
-            free(cpath);
             return false;
         }
-
-        free(cpath);
 
         /* Try to open the parent directory */
         if (strlen(path) + 1 + 3 > PATH_MAX - 1)
@@ -158,7 +268,7 @@ browse(view_sys *dv, const char* path)
 
     /* Create the current directory label */
     Evas_Object *directory =  elm_label_add(dv->p_box);
-    elm_object_text_set(directory, cpath);
+    elm_object_text_set(directory, path);
     elm_box_pack_end(dv->p_box, directory);
     evas_object_show(directory);
 
@@ -177,7 +287,7 @@ browse(view_sys *dv, const char* path)
 	    char *file_path;
 
         /* Concatenate the file path and the selected folder or file name */
-        asprintf(&file_path, "%s/%s", cpath, current_folder->d_name);
+        asprintf(&file_path, "%s/%s", path, current_folder->d_name);
 
         if (stat(file_path, &st) != 0)
         {
@@ -212,7 +322,7 @@ browse(view_sys *dv, const char* path)
     dd = malloc(sizeof(*dd));
     dd->dv = dv;
     dd->is_file = false;
-    asprintf(&dd->file_path, "%s/..", cpath);
+    asprintf(&dd->file_path, "%s/..", path);
     item = elm_list_item_prepend(file_list, "..", NULL, NULL, list_selected_cb, dd);
     elm_object_item_del_cb_set(item, free_list_item_data);
 
@@ -225,15 +335,13 @@ browse(view_sys *dv, const char* path)
 
     evas_object_show(file_list);
 
-    free(cpath);
-
     return true;
 }
 
 static bool
 directory_event(view_sys *p_view_sys, interface_view_event event)
 {
-    if(event == INTERFACE_VIEW_EVENT_BACK && strcmp(p_view_sys->current_path, "/") != 0)
+    if(event == INTERFACE_VIEW_EVENT_BACK && strcmp(p_view_sys->current_path, "main") != 0)
     {
         char *parent_dir;
         if (asprintf(&parent_dir, "%s/..", p_view_sys->current_path) == -1)
@@ -281,8 +389,7 @@ create_directory_view(interface *intf, Evas_Object *parent)
     dv->p_box = box;
     view->view = layout;
 
-    const char *psz_path = application_get_media_path(intf_get_application(intf), MEDIA_DIRECTORY);
-    browse(dv, psz_path);
+    browse(dv, "/");
     return view;
 }
 
