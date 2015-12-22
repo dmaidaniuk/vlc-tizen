@@ -44,19 +44,19 @@ typedef struct pref_key_id_map
 pref_key_id_map mapping[] =
 {
         // type enum
-        {{PREF_HWACCELERATION}, "HWACCELERATION"},
-        {{PREF_ORIENTATION}, "ORIENTATION"},
-        {{PREF_DEBLOCKING}, "DEBLOCKING"},
+        {{.t_enum = PREF_HWACCELERATION}, "HWACCELERATION"},
+        {{.t_enum = PREF_ORIENTATION}, "ORIENTATION"},
+        {{.t_enum = PREF_DEBLOCKING}, "DEBLOCKING"},
 
         // type index
-        {{PREF_SUBSENC}, "SUBSENC"},
-        {{PREF_CURRENT_VIEW}, "CURRENT_VIEW"},
+        {{.t_index = PREF_SUBSENC}, "SUBSENC"},
+        {{.t_index = PREF_CURRENT_VIEW}, "CURRENT_VIEW"},
 
         // type bool
-        {{PREF_FRAME_SKIP}, "FRAME_SKIP"},
-        {{PREF_AUDIO_STRETCH}, "AUDIO_STRETCH"},
-        {{PREF_DIRECTORIES_INTERNAL}, "DIRECTORIES_INTERNAL"},
-        {{PREF_DEVELOPER_VERBOSE}, "PREF_DEVELOPER_VERBOSE"},
+        {{.t_bool = PREF_FRAME_SKIP}, "FRAME_SKIP"},
+        {{.t_bool = PREF_AUDIO_STRETCH}, "AUDIO_STRETCH"},
+        {{.t_bool = PREF_DIRECTORIES_INTERNAL}, "DIRECTORIES_INTERNAL"},
+        {{.t_bool = PREF_DEVELOPER_VERBOSE}, "PREF_DEVELOPER_VERBOSE"},
         {{0}}
 };
 
