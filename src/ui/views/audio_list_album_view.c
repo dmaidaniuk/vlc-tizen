@@ -113,7 +113,7 @@ genlist_text_get_cb(void *data, Evas_Object *obj, const char *part)
         }
         else if (!strcmp(part, "elm.text.sub.left.bottom")) {
             if (p_view_item->p_album_item->i_release_date) {
-                asprintf(&buf, "%d", p_view_item->p_album_item->i_release_date);
+                asprintf(&buf, "%lld", (long long)p_view_item->p_album_item->i_release_date);
                 return buf;
             }
         }
