@@ -53,4 +53,7 @@ system_storage_appdata_get();
 void
 media_storage_start_discovery(media_storage *p_ms);
 
+Eina_List *
+media_storage_external_list_get(const media_storage *p_ms);
+
 #endif /* SYSTEM_STORAGE_H_ */

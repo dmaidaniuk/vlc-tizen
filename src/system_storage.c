@@ -36,6 +36,8 @@ struct media_storage {
     application *p_app;
     int i_internal_storage_id;
     char *psz_paths[MEDIA_DIRECTORY_MAX];
+
+    Eina_List *external_directories;
 };
 
 static int
@@ -57,7 +59,8 @@ discover_storage(application *app, int storage_id, storage_directory_e type)
 static bool
 media_storage_device_supported_cb(int storage_id, storage_type_e type, storage_state_e state, const char *path, void *user_data)
 {
-    application *app = user_data;
+    media_storage *p_ms = user_data;
+    application *app = p_ms->p_app;
 
     if (state != STORAGE_STATE_MOUNTED && state != STORAGE_STATE_MOUNTED_READ_ONLY)
     {
@@ -80,15 +83,36 @@ media_storage_device_supported_cb(int storage_id, storage_type_e type, storage_s
         LOGD("Discovered external memory: %s", path);
         // Scan everything on the external memory
         media_library_discover(application_get_media_library(app), path);
+
+        p_ms->external_directories = eina_list_append(p_ms->external_directories, strdup(path));
     }
 
     return true;
 }
 
+Eina_List *
+media_storage_external_list_get(const media_storage *p_ms)
+{
+    // Resulting list must be freed by the caller
+    return eina_list_clone(p_ms->external_directories);
+}
+
 void
 media_storage_start_discovery(media_storage *p_ms)
 {
-    storage_foreach_device_supported(media_storage_device_supported_cb, p_ms->p_app);
+    Eina_List *l;
+    char *data;
+
+    /* Clear the previous external directory list */
+    if (p_ms->external_directories != NULL)
+    {
+        EINA_LIST_FOREACH(p_ms->external_directories, l, data)
+            free(data);
+        eina_list_free(p_ms->external_directories);
+        p_ms->external_directories = NULL;
+    }
+
+    storage_foreach_device_supported(media_storage_device_supported_cb, p_ms);
 }
 
 static bool storage_cb(int storage_id, storage_type_e type, storage_state_e state, const char *path, void *user_data)
@@ -125,6 +149,15 @@ media_storage_create(application *p_app)
 void
 media_storage_destroy(media_storage *p_ms)
 {
+    if (p_ms->external_directories != NULL)
+    {
+        Eina_List *l;
+        char *data;
+
+        EINA_LIST_FOREACH(p_ms->external_directories, l, data)
+            free(data);
+        eina_list_free(p_ms->external_directories);
+    }
     for (unsigned int i = 0; i < MEDIA_DIRECTORY_MAX; ++i)
         free(p_ms->psz_paths[i]);
     free(p_ms);
@@ -175,7 +208,8 @@ media_storage_get_path(media_storage *p_ms, media_directory_e type)
         /* Concatenate the media path with .. to access the general media directory */
         asprintf(&device_storage_path,"%s/%s", directory, "..");
         free(directory);
-        directory = device_storage_path;
+        directory = realpath(device_storage_path, NULL);
+        free(device_storage_path);
     }
 
     /* Store, Log out and return */
