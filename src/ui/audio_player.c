@@ -551,60 +551,60 @@ play_pause_mouse_up_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
     }
 }
 
-static void
-fs_save_player_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
-{
-    audio_player *mpd = data;
+//static void
+//fs_save_player_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
+//{
+//    audio_player *mpd = data;
+//
+//    if(audio_player_save_state(mpd) == false)
+//    {
+//        /* Change the save button img */
+//        elm_image_file_set(mpd->fs_save_btn, ICON_DIR"ic_save_pressed.png", NULL);
+//        /* */
+//        evas_object_show(mpd->fs_save_btn);
+//
+//        /* Update the save button state of the player */
+//        mpd->save_state = true;
+//    }
+//    else
+//    {
+//        /* Change the save button img */
+//        elm_image_file_set(mpd->fs_save_btn, ICON_DIR"ic_save_normal.png", NULL);
+//        /* */
+//        evas_object_show(mpd->fs_save_btn);
+//
+//        /* Update the save button state of the player */
+//        mpd->save_state = false;
+//    }
+//}
 
-    if(audio_player_save_state(mpd) == false)
-    {
-        /* Change the save button img */
-        elm_image_file_set(mpd->fs_save_btn, ICON_DIR"ic_save_pressed.png", NULL);
-        /* */
-        evas_object_show(mpd->fs_save_btn);
-
-        /* Update the save button state of the player */
-        mpd->save_state = true;
-    }
-    else
-    {
-        /* Change the save button img */
-        elm_image_file_set(mpd->fs_save_btn, ICON_DIR"ic_save_normal.png", NULL);
-        /* */
-        evas_object_show(mpd->fs_save_btn);
-
-        /* Update the save button state of the player */
-        mpd->save_state = false;
-    }
-}
-
-static void
-fs_playlist_player_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
-{
-    audio_player *mpd = data;
-
-    if(audio_player_playlist_state(mpd) == false)
-    {
-        /* Change the playlist button img */
-        elm_image_file_set(mpd->fs_playlist_btn, ICON_DIR"ic_playlist_pressed.png", NULL);
-        /* */
-        evas_object_show(mpd->fs_playlist_btn);
-
-        /* Update the playlist button state of the player */
-        mpd->playlist_state = true;
-    }
-    else
-    {
-        /* Change the playlist button img */
-        elm_image_file_set(mpd->fs_playlist_btn, ICON_DIR"ic_playlist_normal.png", NULL);
-        /* */
-        evas_object_show(mpd->fs_playlist_btn);
-
-        /* Update the playlist button state of the player */
-        mpd->playlist_state = false;
-    }
-
-}
+//static void
+//fs_playlist_player_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
+//{
+//    audio_player *mpd = data;
+//
+//    if(audio_player_playlist_state(mpd) == false)
+//    {
+//        /* Change the playlist button img */
+//        elm_image_file_set(mpd->fs_playlist_btn, ICON_DIR"ic_playlist_pressed.png", NULL);
+//        /* */
+//        evas_object_show(mpd->fs_playlist_btn);
+//
+//        /* Update the playlist button state of the player */
+//        mpd->playlist_state = true;
+//    }
+//    else
+//    {
+//        /* Change the playlist button img */
+//        elm_image_file_set(mpd->fs_playlist_btn, ICON_DIR"ic_playlist_normal.png", NULL);
+//        /* */
+//        evas_object_show(mpd->fs_playlist_btn);
+//
+//        /* Update the playlist button state of the player */
+//        mpd->playlist_state = false;
+//    }
+//
+//}
 
 static void
 audio_player_more_popup_close_cb(void *data, Evas_Object *obj, void *event_info)
