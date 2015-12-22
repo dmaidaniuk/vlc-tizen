@@ -318,14 +318,7 @@ browse_directory(view_sys *dv, const char* path)
     }
     closedir(rep);
 
-    /* Prepend the '..' item */
-    dd = malloc(sizeof(*dd));
-    dd->dv = dv;
-    dd->is_file = false;
-    asprintf(&dd->file_path, "%s/..", path);
-    item = elm_list_item_prepend(file_list, "..", NULL, NULL, list_selected_cb, dd);
-    elm_object_item_del_cb_set(item, free_list_item_data);
-
+    /* */
     elm_list_go(file_list);
 
     elm_box_pack_end(dv->p_box, file_list);
