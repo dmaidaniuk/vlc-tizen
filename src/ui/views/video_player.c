@@ -62,6 +62,9 @@ struct view_sys
     int display_distance;
     int base_volume;
 
+    /* Orientation */
+    bool is_locked;
+
 };
 
 static void video_player_stop(view_sys *p_sys);
@@ -111,8 +114,22 @@ clicked_forward(void *data, Evas_Object *obj, void *event_info)
 static void
 clicked_lock(void *data, Evas_Object *obj, void *event_info)
 {
-    /* TODO lock action */
-	LOGD("lock button");
+    view_sys *p_sys = data;
+
+    if (!p_sys->is_locked)
+    {
+        int rotation = elm_win_rotation_get(p_sys->win);
+        elm_win_wm_rotation_available_rotations_set(p_sys->win, &rotation, 1);
+        elm_image_file_set(p_sys->lock_button, ICON_DIR"ic_locked_circle_normal_o.png", NULL);
+        p_sys->is_locked = true;
+    }
+    else
+    {
+        int rots[4] = { 0, 90, 180, 270 };
+        elm_win_wm_rotation_available_rotations_set(p_sys->win, (const int *)(&rots), 4);
+        elm_image_file_set(p_sys->lock_button, ICON_DIR"ic_lock_circle_normal_o.png", NULL);
+        p_sys->is_locked = false;
+    }
 }
 
 void clear_popup_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
@@ -360,8 +377,17 @@ video_player_start(view_sys *p_sys, const char* file_path)
         }
 
         if (rotation >= 0)
+        {
             elm_win_wm_rotation_available_rotations_set(p_sys->win, &rotation, 1);
+            p_sys->is_locked = true;
+        }
     }
+
+    /* Lock button */
+    if (p_sys->is_locked)
+        elm_image_file_set(p_sys->lock_button, ICON_DIR"ic_locked_circle_normal_o.png", NULL);
+    else
+        elm_image_file_set(p_sys->lock_button, ICON_DIR"ic_lock_circle_normal_o.png", NULL);
 
     /* */
     elm_object_part_text_set(p_sys->layout, "duration", "--:--:--");
@@ -442,6 +468,7 @@ video_player_stop(view_sys *p_sys)
     if (elm_win_wm_rotation_supported_get(p_sys->win)) {
         int rots[4] = { 0, 90, 180, 270 };
         elm_win_wm_rotation_available_rotations_set(p_sys->win, (const int *)(&rots), 4);
+        p_sys->is_locked = false;
     }
 }
 
@@ -587,8 +614,8 @@ video_player_create_ui(view_sys *p_sys, Evas_Object *parent)
 
     /* create lock button */
     p_sys->lock_button = elm_image_add(layout);
-    elm_image_file_set(p_sys->lock_button, ICON_DIR"ic_lock_circle_normal_o.png", NULL);
-    elm_object_part_content_set(layout, "swallow.lock_button", p_sys->lock_button);
+    if (elm_win_wm_rotation_supported_get(p_sys->win))
+        elm_object_part_content_set(layout, "swallow.lock_button", p_sys->lock_button);
 
     /* create more button */
     p_sys->more_button = elm_image_add(layout);
