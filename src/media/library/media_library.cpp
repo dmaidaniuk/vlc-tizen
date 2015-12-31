@@ -101,9 +101,9 @@ media_library::onReloadCompleted()
 }
 
 void
-media_library::onParsingStatsUpdated( uint32_t nbParsed, uint32_t nbToParse )
+media_library::onParsingStatsUpdated( uint32_t percent )
 {
-    LOGI("Parser progress: %d/%d", nbParsed, nbToParse);
+    LOGI("Parser progress: %d%%", percent);
 }
 
 void

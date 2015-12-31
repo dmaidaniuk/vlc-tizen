@@ -77,7 +77,7 @@ public:
     virtual void onReloadStarted() override;
     virtual void onReloadCompleted() override;
 
-    virtual void onParsingStatsUpdated( uint32_t nbParsed, uint32_t nbToParse ) override;
+    virtual void onParsingStatsUpdated( uint32_t percent ) override;
 
     void registerOnChange(media_library_file_list_changed_cb cb, void* cbUserData);
     void unregisterOnChange(media_library_file_list_changed_cb cb, void* cbUserData);
