@@ -429,7 +429,6 @@ video_player_start(view_sys *p_sys, const char* file_path)
         return false;
     }
 
-    LOGE("playback_service_start: %s", p_mi->psz_path);
     playback_service_set_context(p_sys->p_ps, PLAYLIST_CONTEXT_VIDEO);
 
     playback_service_list_append(p_sys->p_ps, p_mi);
