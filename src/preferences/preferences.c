@@ -56,6 +56,7 @@ pref_key_id_map mapping[] =
         {{.t_bool = PREF_FRAME_SKIP}, "FRAME_SKIP"},
         {{.t_bool = PREF_AUDIO_STRETCH}, "AUDIO_STRETCH"},
         {{.t_bool = PREF_DIRECTORIES_INTERNAL}, "DIRECTORIES_INTERNAL"},
+        {{.t_bool = PREF_DIRECTORIES_EXTERNAL}, "DIRECTORIES_EXTERNAL"},
         {{.t_bool = PREF_DEVELOPER_VERBOSE}, "PREF_DEVELOPER_VERBOSE"},
         {{0}}
 };
