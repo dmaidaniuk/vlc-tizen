@@ -37,6 +37,7 @@
 
 #include "playback_service.h"
 #include "media/media_list.h"
+#include "preferences/preferences.h"
 
 #include "ui/interface.h"
 
@@ -283,6 +284,22 @@ ml_on_media_selected_cb(media_list *p_ml, void *p_user_data, int i_pos,
 static Evas_Object *
 ps_emotion_create(playback_service *p_ps, Evas *p_evas, bool b_mute_video)
 {
+    char *options;
+
+    /* Prepare libvlc options */
+    if ((options = preferences_get_libvlc_options()) != NULL)
+    {
+        unsetenv("EMOTION_LIBVLC_ARGS");
+        if (setenv("EMOTION_LIBVLC_ARGS", options, 0) != 0)
+            LOGE("Failed setting environment");
+        LOGD("libvlc options: %s", options);
+        free(options);
+    }
+    else
+    {
+        LOGE("Unable to allocate memory");
+    }
+
     Evas_Object *p_e = emotion_object_add(p_evas);
     if (!p_e)
     {
