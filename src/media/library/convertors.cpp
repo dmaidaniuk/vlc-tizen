@@ -103,8 +103,8 @@ fileToMediaItem( MediaPtr file )
             mi->i_w = vtrack->width();
             mi->i_h = vtrack->height();
         }
-        if (file->snapshot().length() > 0)
-            mi->psz_snapshot = strdup(file->snapshot().c_str());
+        if (file->thumbnail().length() > 0)
+            mi->psz_snapshot = strdup(file->thumbnail().c_str());
     }
     else if ( file->type() == IMedia::Type::AudioType )
     {
@@ -120,16 +120,16 @@ fileToMediaItem( MediaPtr file )
                 {
                     media_item_set_meta(mi, MEDIA_ITEM_META_YEAR, std::to_string(year).c_str());
                 }
-                auto artwork = file->snapshot();
+                auto artwork = file->thumbnail();
                 if ( artwork.empty() == true )
-                    artwork = album->artworkUrl();
+                    artwork = album->artworkMrl();
                 mi->psz_snapshot = path_from_url(artwork.c_str());
             }
             mi->i_track_number = albumTrack->trackNumber();
+            auto artist = albumTrack->artist();
+            if (artist != nullptr)
+                media_item_set_meta(mi, MEDIA_ITEM_META_ARTIST, artist->name().c_str());
         }
-        auto artist = file->artist();
-        if (artist.length() > 0)
-            media_item_set_meta(mi, MEDIA_ITEM_META_ARTIST, artist.c_str());
     }
     return mi;
 }
@@ -143,7 +143,7 @@ albumToAlbumItem( AlbumPtr album )
     p_item->i_id = album->id();
     p_item->i_release_date = album->releaseYear();
     p_item->i_nb_tracks = album->nbTracks();
-    p_item->psz_artwork = path_from_url(album->artworkUrl().c_str());
+    p_item->psz_artwork = path_from_url(album->artworkMrl().c_str());
     return p_item;
 }
 
@@ -154,8 +154,8 @@ artistToArtistItem( ArtistPtr artist )
     if (p_item == nullptr)
         return nullptr;
     p_item->i_id = artist->id();
-    if (artist->artworkUrl().empty() == false)
-        p_item->psz_artwork = path_from_url( artist->artworkUrl().c_str() );
+    if (artist->artworkMrl().empty() == false)
+        p_item->psz_artwork = path_from_url( artist->artworkMrl().c_str() );
 
     auto albums = artist->albums();
     p_item->i_nb_albums = albums.size();
