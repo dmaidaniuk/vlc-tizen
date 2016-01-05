@@ -182,9 +182,9 @@ preferences_get_libvlc_options()
     strcat(buf, "--subsdec-encoding system "); //TODO find a way to pass the value
     strcat(buf, "--stats ");
     if (preferences_get_bool(PREF_DEVELOPER_VERBOSE, false))
-        strcat(buf, "-vv");
-    else
         strcat(buf, "-vvv");
+    else
+        strcat(buf, "-v");
 
     return buf;
 }
