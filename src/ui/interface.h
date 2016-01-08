@@ -61,6 +61,7 @@ typedef enum view_e {
     VIEW_VIDEO,
     VIEW_AUDIO,
     VIEW_FILES,
+    VIEW_STREAM,
     VIEW_SETTINGS,
     VIEW_ABOUT,
     VIEW_MAX,

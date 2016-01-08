@@ -59,8 +59,9 @@ static const menu_entry menu_entries[] = {
         { "Video",      "ic_menu_video.png",        "ic_menu_video_selected.png" },
         { "Audio",      "ic_menu_audio.png",        "ic_menu_audio_selected.png" },
         { "Directory",  "ic_menu_folder.png",       "ic_menu_folder_selected.png" },
+        { "Stream",     "ic_menu_goto.png",         "ic_menu_goto_selected.png" },
         { "Settings",   "ic_menu_preferences.png",  "ic_menu_preferences_selected.png" },
-        { "About",      "ic_menu_cone.png",         "ic_menu_cone_selected.png" }
+        { "About",      "ic_menu_cone.png",         "ic_menu_cone_selected.png" },
 };
 
 static char *
@@ -129,6 +130,10 @@ sidebar_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 
     case VIEW_FILES:
         intf_show_view(cd->intf, VIEW_FILES);
+        break;
+
+    case VIEW_STREAM:
+        intf_show_view(cd->intf, VIEW_STREAM);
         break;
 
     case VIEW_SETTINGS:

@@ -47,6 +47,7 @@
 #include "views/settings_view.h"
 #include "views/about_view.h"
 #include "views/video_player.h"
+#include "views/stream_view.h"
 
 struct interface {
     application *p_app;      /* Reference to the application */
@@ -83,6 +84,7 @@ struct
     { "Video",     create_video_view,       destroy_video_view},
     { "Audio",     create_audio_view,       destroy_audio_view},
     { "Directory", create_directory_view,   destroy_directory_view},
+    { "Stream",    create_stream_view,      destroy_stream_view},
     { "Settings",  create_settings_view,    destroy_settings_view},
     { "About",     create_about_view,       destroy_about_view},
 };
