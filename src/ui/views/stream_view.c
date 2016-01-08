@@ -25,6 +25,7 @@
  *****************************************************************************/
 
 #include "common.h"
+#include "stream_view.h"
 
 #include "ui/interface.h"
 #include "ui/utils.h"
