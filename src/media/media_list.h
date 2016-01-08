@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Copyright © 2015 VideoLAN, VideoLabs SAS
+ * Copyright © 2015-2016 VideoLAN, VideoLabs SAS
  *****************************************************************************
  *
  * This program is free software; you can redistribute it and/or modify

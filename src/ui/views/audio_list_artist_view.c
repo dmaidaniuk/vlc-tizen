@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Copyright © 2015 VideoLAN, VideoLabs SAS
+ * Copyright © 2015-2016 VideoLAN, VideoLabs SAS
  *****************************************************************************
  *
  * Authors: Hugo Beauzée-Luyssen <hugo@beauzee.fr>
