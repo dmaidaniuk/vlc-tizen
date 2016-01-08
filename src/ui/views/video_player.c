@@ -642,6 +642,7 @@ video_player_callback(view_sys *p_view_sys, interface_view_event event)
     case INTERFACE_VIEW_EVENT_BACK:
         if (p_view_sys->p_current_popup) {
             evas_object_del(p_view_sys->p_current_popup);
+            p_view_sys->p_current_popup = NULL;
             return true;
         }
         return false;
