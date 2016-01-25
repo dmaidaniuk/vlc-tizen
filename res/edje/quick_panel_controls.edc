@@ -1,0 +1,153 @@
+/*****************************************************************************
+ * Copyright © 2015-2016 VideoLAN, VideoLabs SAS
+ *****************************************************************************
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin Street, Fifth Floor, Boston MA 02110-1301, USA.
+ *****************************************************************************/
+/*
+ * By committing to this project, you allow VideoLAN and VideoLabs to relicense
+ * the code to a different OSI approved license, in case it is required for
+ * compatibility with the Store
+ *****************************************************************************/
+collections {
+   base_scale: 1.8;
+   group {
+      name: "quick_panel_controls";
+      parts {
+         part{
+            name: "hub_background";
+            type: RECT;
+            description{
+               state: "default" 0.0;
+               color: 245 245 245 255; // grey
+               aspect: 6.0 1.0;
+               aspect_preference: HORIZONTAL;
+               min: 0 120;
+               max: 9999 120;
+               }
+            }
+         part {
+            name: "swallow.cover";
+            type: SWALLOW;
+            description {
+               aspect: 1.0 1.0;
+               color: 255 0 0 255;
+               aspect: 1.0 1.0;
+               rel1 {
+                  relative: 0.17 0.05;
+                  to: "hub_background";
+                  }
+               rel2 {
+                  relative: 0.0 0.95;
+                  to: "hub_background";
+                  }
+               }
+            }
+         part {
+                name: "swallow.title";
+                type: TEXT;
+                description {
+                    color: 0 0 0 255; // black
+                    visible: 1;
+                    rel1 {
+                        relative: 1.1 0.0;
+                        to: "swallow.cover";
+                    }
+                    rel2 {
+                        relative: 1.0 1.0;
+                        to: "hub_background";
+                    }
+                     text {
+                        text: "";
+                        size: 30;
+                        ellipsis: 0;
+                        align: 0 0;
+                    }
+                }
+            }
+         part {
+            name: "swallow.progress";
+            type: SWALLOW;
+            description {
+               aspect_preference: VERTICAL;
+               color: 255 0 0 255;
+               rel1 {
+                  relative: 1.0 0.4;
+                  to: "swallow.cover";
+               }
+               rel2 {
+                  relative: 0.99 0.5;
+                  to: "hub_background";
+               }
+            }
+         }
+            part {
+                name: "swallow.previous";
+                type: SWALLOW;
+                description {
+                    aspect: 0.9 0.9;
+                    aspect_preference: VERTICAL;
+                    color: 255 0 0 255; // transparent grey
+                    aspect: 1.0 1.0;
+                    rel1 {
+                        relative: -3.0 0.0;
+                        to: "swallow.play";
+                    }
+                    rel2 {
+                        relative: 1.0 1.0;
+                        to: "swallow.play";
+                    }
+                }
+            }
+            part {
+                name: "swallow.play";
+                type: SWALLOW;
+                description {
+                    aspect: 0.9 0.9;
+                    aspect_preference: VERTICAL;
+                    color: 255 0 0 255; // transparent grey
+                    aspect: 1.0 1.0;
+                    rel1 {
+                        relative: 1.0 0.45;
+                        to: "swallow.cover";
+                    }
+                    rel2 {
+                        relative: 1.0 1.0;
+                        to: "hub_background";
+                    }
+                }
+            }
+            part {
+                name: "swallow.next";
+                type: SWALLOW;
+                description {
+                    aspect: 0.9 0.9;
+                    aspect_preference: VERTICAL;
+                    color: 255 0 0 255; // transparent grey
+                    align: 0.5 0.5;
+                    aspect: 1.0 1.0;
+                    rel1 {
+                        relative: 3.0 0.0;
+                        to: "swallow.play";
+                    }
+                    rel2 {
+                        relative: 1.0 1.0;
+                        to: "swallow.play";
+                    }
+                }
+            }
+        } //parts
+    }
+}

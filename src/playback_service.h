@@ -88,6 +88,9 @@ playback_service_start(playback_service *p_ps, double i_time);
 int
 playback_service_stop(playback_service *p_ps);
 
+int
+playback_service_stop_notify(playback_service *p_ps, bool b_notify);
+
 bool
 playback_service_is_started(playback_service *p_ps);
 

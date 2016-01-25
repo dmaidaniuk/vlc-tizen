@@ -40,6 +40,7 @@
 #include "preferences/preferences.h"
 
 #include "ui/interface.h"
+#include "ui/views/minicontrol_view.h"
 
 #define PLAYLIST_CONTEXT_COUNT (PLAYLIST_CONTEXT_OTHERS)
 
@@ -81,9 +82,8 @@ struct playback_service
     bool b_auto_exit;
     bool b_restart_emotion;
 
-    notification_h  p_notification;
+    minicontrol     *p_minicontrol;
     double          i_last_notification_pos;
-    app_control_h   p_app_control;
 
     ps_on_emotion_restart   emotion_restart_cb;
     void                    *emotion_restart_cb_data;
@@ -111,8 +111,6 @@ struct playback_service
     } \
 } while(0)
 
-static int playback_service_stop_notify(playback_service *, bool);
-
 void
 ps_register_on_emotion_restart_cb(playback_service *p_ps, ps_on_emotion_restart func, void *data)
 {
@@ -123,24 +121,7 @@ ps_register_on_emotion_restart_cb(playback_service *p_ps, ps_on_emotion_restart 
 static void
 ps_notification_create(playback_service *p_ps)
 {
-    notification_h previous = notification_load_by_tag("vlc_ps");
-    if (previous)
-    {
-        notification_delete(previous);
-        notification_free(previous);
-    }
-
-    if ((p_ps->p_notification = notification_create(NOTIFICATION_TYPE_ONGOING)) == NULL)
-        LOGE("Failed to create the notification");
-
-    // Note: notification_* are noop if p_notification is NULL
-    notification_set_tag(p_ps->p_notification, "vlc_ps");
-    notification_set_display_applist(p_ps->p_notification, NOTIFICATION_DISPLAY_APP_NOTIFICATION_TRAY);
-    notification_set_image(p_ps->p_notification, NOTIFICATION_IMAGE_TYPE_ICON, ICON_DIR"cone.png");
-
-    app_control_create(&p_ps->p_app_control);
-    app_control_set_app_id(p_ps->p_app_control, PACKAGE);
-    notification_set_launch_option(p_ps->p_notification, NOTIFICATION_LAUNCH_OPTION_APP_CONTROL, (void *)p_ps->p_app_control);
+    p_ps->p_minicontrol = mini_control_view_create(p_ps);
 }
 
 static void
@@ -150,23 +131,11 @@ ps_notification_update_meta(playback_service *p_ps, media_item *p_mi)
     const char *psz_meta_artist = media_item_artist(p_mi);
 
     if (psz_meta_title)
-        notification_set_text(p_ps->p_notification, NOTIFICATION_TEXT_TYPE_TITLE, psz_meta_title, NULL, NOTIFICATION_VARIABLE_TYPE_NONE);
+        mini_control_title_set(p_ps->p_minicontrol, psz_meta_title);
     else if (psz_meta_artist)
-        notification_set_text(p_ps->p_notification, NOTIFICATION_TEXT_TYPE_TITLE, psz_meta_artist, NULL, NOTIFICATION_VARIABLE_TYPE_NONE);
-    else
-        notification_set_text(p_ps->p_notification, NOTIFICATION_TEXT_TYPE_TITLE, media_item_get_filename(p_mi), NULL, NOTIFICATION_VARIABLE_TYPE_NONE);
+        mini_control_title_set(p_ps->p_minicontrol, psz_meta_artist);
 
-    if (psz_meta_title && psz_meta_artist)
-        notification_set_text(p_ps->p_notification, NOTIFICATION_TEXT_TYPE_CONTENT, psz_meta_artist, NULL, NOTIFICATION_VARIABLE_TYPE_NONE);
-    else
-        notification_set_text(p_ps->p_notification, NOTIFICATION_TEXT_TYPE_CONTENT, "", NULL, NOTIFICATION_VARIABLE_TYPE_NONE);
-
-    if (p_mi->psz_snapshot)
-        notification_set_image(p_ps->p_notification, NOTIFICATION_IMAGE_TYPE_ICON, p_mi->psz_snapshot);
-    else
-        notification_set_image(p_ps->p_notification, NOTIFICATION_IMAGE_TYPE_ICON, ICON_DIR"cone.png");
-
-    notification_update(p_ps->p_notification);
+    mini_control_cover_set(p_ps->p_minicontrol, p_mi->psz_snapshot);
 }
 
 static void
@@ -198,9 +167,8 @@ ps_emotion_position_update_cb(void *data, Evas_Object *obj, void *event)
         if (p_ps->i_ctx != PLAYLIST_CONTEXT_VIDEO
          && fabs(p_ps->i_last_notification_pos - i_pos) > 0.01f)
         {
-            notification_set_progress(p_ps->p_notification, i_pos);
-            notification_update(p_ps->p_notification);
             p_ps->i_last_notification_pos = i_pos;
+            mini_control_progress_set(p_ps->p_minicontrol, i_pos);
         }
 
         PS_SEND_CALLBACK(pf_on_new_time, i_time, i_pos);
@@ -223,13 +191,20 @@ ps_emotion_play_started_cb(void *data, Evas_Object *obj, void *event)
 
     PS_SEND_CALLBACK(pf_on_started, p_mi);
 
+    mini_control_playing_set(p_ps->p_minicontrol, EINA_TRUE);
+
     if (p_ps->i_ctx != PLAYLIST_CONTEXT_VIDEO)
     {
         p_ps->i_last_notification_pos = 0.0001f;
-        notification_post(p_ps->p_notification);
-        notification_set_progress(p_ps->p_notification, p_ps->i_last_notification_pos);
 
         ps_notification_update_meta(p_ps, p_mi);
+
+        mini_control_visibility_set(p_ps->p_minicontrol, EINA_TRUE);
+        mini_control_progress_set(p_ps->p_minicontrol, 0);
+    }
+    else
+    {
+        mini_control_visibility_set(p_ps->p_minicontrol, EINA_FALSE);
     }
 }
 
@@ -423,8 +398,7 @@ playback_service_destroy(playback_service *p_ps)
     if (p_ps->p_ev)
         ps_emotion_destroy(p_ps, p_ps->p_ev);
 
-    app_control_destroy(p_ps->p_app_control);
-    notification_free(p_ps->p_notification);
+    mini_control_destroy(p_ps->p_minicontrol);
 
     free(p_ps);
 }
@@ -687,7 +661,7 @@ playback_service_start(playback_service *p_ps, double i_time)
     return playback_service_play(p_ps);
 }
 
-static int
+int
 playback_service_stop_notify(playback_service *p_ps, bool b_notify)
 {
     if (!p_ps->b_started)
@@ -706,7 +680,8 @@ playback_service_stop_notify(playback_service *p_ps, bool b_notify)
     if (b_notify)
         PS_SEND_VOID_CALLBACK(pf_on_stopped);
 
-    notification_delete(p_ps->p_notification);
+    mini_control_playing_set(p_ps->p_minicontrol, EINA_FALSE);
+    mini_control_visibility_set(p_ps->p_minicontrol, EINA_FALSE);
 
     if (p_ps->b_auto_exit)
         ui_app_exit();
@@ -734,6 +709,7 @@ playback_service_play(playback_service *p_ps)
 
     emotion_object_play_set(p_ps->p_e, true);
     PS_SEND_CALLBACK(pf_on_playpause, true);
+    mini_control_playing_set(p_ps->p_minicontrol, EINA_TRUE);
     return 0;
 }
 
@@ -745,6 +721,7 @@ playback_service_pause(playback_service *p_ps)
 
     emotion_object_play_set(p_ps->p_e, false);
     PS_SEND_CALLBACK(pf_on_playpause, false);
+    mini_control_playing_set(p_ps->p_minicontrol, EINA_FALSE);
     return 0;
 }
 
@@ -758,6 +735,7 @@ playback_service_toggle_play_pause(playback_service *p_ps)
     b_new_state = !emotion_object_play_get(p_ps->p_e);
     emotion_object_play_set(p_ps->p_e, b_new_state);
     PS_SEND_CALLBACK(pf_on_playpause, b_new_state);
+    mini_control_playing_set(p_ps->p_minicontrol, b_new_state);
     return b_new_state;
 }
 
