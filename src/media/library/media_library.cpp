@@ -257,7 +257,7 @@ void
 media_library_get_audio_files( media_library* p_ml, media_library_list_cb cb, void* p_user_data )
 {
     media_library_common_getter(cb, p_user_data,
-            std::bind(&IMediaLibrary::audioFiles, p_ml->ml),
+            [p_ml](){ return p_ml->ml->audioFiles(); },
             fileToMediaItem);
 }
 
@@ -265,7 +265,7 @@ void
 media_library_get_video_files( media_library* p_ml, media_library_list_cb cb, void* p_user_data )
 {
     media_library_common_getter(cb, p_user_data,
-            std::bind(&IMediaLibrary::videoFiles, p_ml->ml),
+            [p_ml](){ return p_ml->ml->videoFiles(); },
             fileToMediaItem);
 }
 
