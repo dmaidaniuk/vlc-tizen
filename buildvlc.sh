@@ -75,6 +75,7 @@ VLC_BOOTSTRAP_ARGS="\
     --disable-libdsm \
     --enable-libarchive \
     --enable-libtasn1 \
+    --disable-nfs
 "
 
 ###########################
