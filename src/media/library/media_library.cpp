@@ -273,16 +273,15 @@ void
 media_library_get_albums(media_library* p_ml, media_library_list_cb cb, void* p_user_data)
 {
     media_library_common_getter(cb, p_user_data,
-            std::bind(&IMediaLibrary::albums, p_ml->ml),
+            [p_ml](){ return p_ml->ml->albums(); },
             albumToAlbumItem);
 }
 
 void
 media_library_get_artists( media_library* p_ml, media_library_list_cb cb, void* p_user_data )
 {
-    auto ml = p_ml->ml;
     media_library_common_getter(cb, p_user_data,
-                [&ml](){ return ml->artists(); },
+                [p_ml](){ return p_ml->ml->artists(); },
                 artistToArtistItem);
 }
 
@@ -296,7 +295,7 @@ media_library_get_artist_albums( media_library* p_ml, unsigned int i_artist_id, 
         return;
     }
     media_library_common_getter(cb, p_user_data,
-                [&artist](){ return artist->albums(); },
+                [artist](){ return artist->albums(); },
                 &albumToAlbumItem);
 }
 
@@ -310,7 +309,7 @@ media_library_get_album_songs(media_library* p_ml, unsigned int i_album_id, medi
         return;
     }
     media_library_common_getter(cb, p_user_data,
-            [&album](){ return album->tracks(); },
+            [album](){ return album->tracks(); },
             fileToMediaItem);
 }
 
@@ -324,7 +323,7 @@ media_library_get_artist_songs(media_library* p_ml, unsigned int i_artist_id, me
         return;
     }
     media_library_common_getter(cb, p_user_data,
-                [&artist](){ return artist->media(); },
+                [artist](){ return artist->media(); },
                 &fileToMediaItem);
 }
 
