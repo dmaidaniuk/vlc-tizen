@@ -370,7 +370,7 @@ intf_mini_player_visible_set(interface *intf, bool visible)
 {
     if(intf->mini_player_layout == NULL)
     {
-        LOGE("Mini Player not existant!");
+        LOGE("No mini player instance");
         return false;
     }
     if(visible)
