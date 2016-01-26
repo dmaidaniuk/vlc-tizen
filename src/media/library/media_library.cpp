@@ -31,6 +31,7 @@
 #include "IMediaLibrary.h"
 #include "IVideoTrack.h"
 #include "IArtist.h"
+#include "IAlbum.h"
 #include "media_library_private.hpp"
 #include "system_storage.h"
 
@@ -43,7 +44,7 @@ media_library::media_library()
 }
 
 void
-media_library::onFileAdded( MediaPtr file )
+media_library::onMediaAdded( MediaPtr file )
 {
     sendFileUpdate( file, true );
 }
@@ -85,15 +86,21 @@ media_library::onDiscoveryCompleted( const std::string& entryPoint )
 }
 
 void
-media_library::onReloadStarted()
+media_library::onReloadStarted( const std::string& entryPoint )
 {
-    LOGI("Reloading media library...");
+    if ( entryPoint.empty() == true )
+        LOGI( "Reloading media library..." );
+    else
+        LOGI( "Reloading media library folder %s...", entryPoint.c_str() );
 }
 
 void
-media_library::onReloadCompleted()
+media_library::onReloadCompleted( const std::string& entryPoint )
 {
-    LOGI("Media library reload completed.");
+    if ( entryPoint.empty() == true )
+        LOGI( "Media library reload completed" );
+    else
+        LOGI( "Media library folder %s reload completed", entryPoint.c_str() );
     for (auto &p : m_onChangeCb)
     {
         ecore_main_loop_thread_safe_call_async( p.first, p.second );

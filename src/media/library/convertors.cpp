@@ -33,6 +33,7 @@
 #include "IAlbum.h"
 #include "IAlbumTrack.h"
 #include "IArtist.h"
+#include "IFile.h"
 
 static char*
 path_from_url(const char* psz_str)
@@ -64,10 +65,10 @@ path_from_url(const char* psz_str)
 
 
 media_item*
-fileToMediaItem( MediaPtr file )
+fileToMediaItem( MediaPtr media )
 {
     auto type = MEDIA_ITEM_TYPE_UNKNOWN;
-    switch ( file->type() )
+    switch ( media->type() )
     {
     case IMedia::Type::VideoType:
         type = MEDIA_ITEM_TYPE_VIDEO;
@@ -76,39 +77,47 @@ fileToMediaItem( MediaPtr file )
         type = MEDIA_ITEM_TYPE_AUDIO;
         break;
     default:
-        LOGW( "Unknown file type: %d", file->type() );
+        LOGW( "Unknown file type: %d", media->type() );
         return nullptr;
     }
+    auto files = media->files();
+    if ( files.size() == 0 )
+    {
+        LOGE("Can't add a media with no files representation");
+        return NULL;
+    }
+    const auto& file = files[0];
+
     auto mi = media_item_create( file->mrl().c_str(), type );
     if ( mi == nullptr )
     {
         //FIXME: What should we do? This won't be run again until the next time
         //we restore the media library. Also, do we care? This is likely E_NOMEM, so we
         //might have bigger problems than a missing file...
-        LOGE( "Failed to create media_item for file %s", file->mrl().c_str() );
+        LOGE( "Failed to create media_item for media %s", file->mrl().c_str() );
         return nullptr;
     }
-    mi->i_id = file->id();
-    media_item_set_meta(mi, MEDIA_ITEM_META_TITLE, file->title().c_str());
+    mi->i_id = media->id();
+    media_item_set_meta(mi, MEDIA_ITEM_META_TITLE, media->title().c_str());
 
-    mi->i_duration = file->duration();
-    if ( file->type() == IMedia::Type::VideoType )
+    mi->i_duration = media->duration();
+    if ( media->type() == IMedia::Type::VideoType )
     {
-        auto vtracks = file->videoTracks();
+        auto vtracks = media->videoTracks();
         if ( vtracks.size() != 0 )
         {
             if ( vtracks.size() > 1 )
-                LOGW( "Ignoring file [%s] extra video tracks for file description", file->mrl().c_str() );
+                LOGW( "Ignoring file [%s] extra video tracks for media description", file->mrl().c_str() );
             auto vtrack = vtracks[0];
             mi->i_w = vtrack->width();
             mi->i_h = vtrack->height();
         }
-        if (file->thumbnail().length() > 0)
-            mi->psz_snapshot = strdup(file->thumbnail().c_str());
+        if (media->thumbnail().length() > 0)
+            mi->psz_snapshot = strdup(media->thumbnail().c_str());
     }
-    else if ( file->type() == IMedia::Type::AudioType )
+    else if ( media->type() == IMedia::Type::AudioType )
     {
-        auto albumTrack = file->albumTrack();
+        auto albumTrack = media->albumTrack();
         if (albumTrack != nullptr)
         {
             auto album = albumTrack->album();
@@ -120,7 +129,7 @@ fileToMediaItem( MediaPtr file )
                 {
                     media_item_set_meta(mi, MEDIA_ITEM_META_YEAR, std::to_string(year).c_str());
                 }
-                auto artwork = file->thumbnail();
+                auto artwork = media->thumbnail();
                 if ( artwork.empty() == true )
                     artwork = album->artworkMrl();
                 mi->psz_snapshot = path_from_url(artwork.c_str());

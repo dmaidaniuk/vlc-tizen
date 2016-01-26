@@ -68,14 +68,14 @@ public:
     virtual ~media_library() = default;
 
     // IMediaLibraryCb
-    virtual void onFileAdded( MediaPtr file ) override;
+    virtual void onMediaAdded( MediaPtr file ) override;
     virtual void onFileUpdated( MediaPtr file ) override;
 
     virtual void onDiscoveryStarted( const std::string& entryPoint ) override;
     virtual void onDiscoveryCompleted( const std::string& entryPoint ) override;
 
-    virtual void onReloadStarted() override;
-    virtual void onReloadCompleted() override;
+    virtual void onReloadStarted( const std::string& entryPoint ) override;
+    virtual void onReloadCompleted( const std::string& entryPoint ) override;
 
     virtual void onParsingStatsUpdated( uint32_t percent ) override;
 
