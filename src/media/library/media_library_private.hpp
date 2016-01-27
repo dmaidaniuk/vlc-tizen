@@ -85,6 +85,8 @@ public:
     void registerOnItemUpdated(media_library_item_updated_cb cb, void* userData);
     void unregisterOnItemUpdated(media_library_item_updated_cb cb, void* userData);
 
+    void registerProgressCb( media_library_scan_progress_cb pf_progress, void* p_data );
+
 public:
     // Logger needs to be before ml, since ml will take a raw pointer to the logger.
     // yes, it sucks, but unique_ptr is too restrictive, and shared_ptr is overkill.
@@ -107,7 +109,22 @@ private:
         bool added;
     };
 
+    struct ProgressUpdateCallbackCtx
+    {
+        ProgressUpdateCallbackCtx(media_library* ml, uint8_t percent)
+            : ml( ml )
+            , wml( ml->ml )
+            , percent( percent )
+        {
+        }
+        media_library* ml;
+        std::weak_ptr<IMediaLibrary> wml;
+        uint8_t percent;
+    };
+
 private:
     std::vector<std::pair<media_library_file_list_changed_cb, void*>> m_onChangeCb;
     std::vector<std::pair<media_library_item_updated_cb, void*>> m_onItemUpdatedCb;
+    media_library_scan_progress_cb m_progressCb;
+    void* m_progressData;
 };

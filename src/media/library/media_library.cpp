@@ -38,6 +38,9 @@
 
 media_library::media_library()
     : ml( NewMediaLibrary() )
+    , m_progressCb( nullptr )
+    , m_progressData( nullptr )
+
 {
     if ( ml == nullptr )
         throw std::runtime_error( "Failed to initialize MediaLibrary" );
@@ -110,7 +113,14 @@ media_library::onReloadCompleted( const std::string& entryPoint )
 void
 media_library::onParsingStatsUpdated( uint32_t percent )
 {
-    LOGI("Parser progress: %d%%", percent);
+    auto ctx = new ProgressUpdateCallbackCtx{ this, (uint8_t)percent };
+    ecore_main_loop_thread_safe_call_async( [](void* p_data) {
+        std::unique_ptr<ProgressUpdateCallbackCtx> ctx( reinterpret_cast<ProgressUpdateCallbackCtx*>( p_data ) );
+        auto mlptr = ctx->wml.lock();
+        if ( mlptr == nullptr )
+            return;
+        ctx->ml->m_progressCb( ctx->ml->m_progressData, ctx->percent );
+    }, ctx);
 }
 
 void
@@ -151,6 +161,12 @@ media_library::unregisterOnItemUpdated(media_library_item_updated_cb cb, void* u
             return;
         }
     }
+}
+
+void media_library::registerProgressCb( media_library_scan_progress_cb pf_progress, void* p_data )
+{
+    m_progressCb = pf_progress;
+    m_progressData = p_data;
 }
 
 media_library *
@@ -349,6 +365,12 @@ void
 media_library_unregister_item_updated(media_library* ml, media_library_item_updated_cb cb, void* p_data )
 {
     ml->unregisterOnItemUpdated(cb, p_data);
+}
+
+void
+media_library_register_progress_cb( media_library* ml, media_library_scan_progress_cb pf_progress, void* p_data )
+{
+    ml->registerProgressCb( pf_progress, p_data );
 }
 
 void

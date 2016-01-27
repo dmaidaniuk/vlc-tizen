@@ -123,15 +123,6 @@ intf_ml_file_changed( void* p_user_data );
 void
 intf_propagate_event(interface *intf, interface_view_event event);
 
-void
-intf_scan_progress_start_cb(interface *intf);
-
-void
-intf_scan_progress_done_cb(interface *intf);
-
-void
-intf_scan_progress_set_cb(interface *intf, uint8_t percentage);
-
 /* List view items */
 typedef struct list_sys list_sys;
 typedef struct list_view list_view;

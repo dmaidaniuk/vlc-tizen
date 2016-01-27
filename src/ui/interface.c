@@ -415,31 +415,27 @@ intf_start_audio_player(interface *intf, Eina_Array *array, int pos)
     audio_player_start(intf->p_mini_player, array, pos);
 }
 
-void
-intf_scan_progress_start_cb(interface *intf)
+static void
+intf_scan_progress_set_cb(void *p_data, uint8_t percentage)
 {
-    if (evas_object_visible_get(intf->scan_progress) == EINA_FALSE)
+    interface* intf = (interface*)p_data;
+    if ( percentage < 100 )
     {
-        elm_box_pack_after(intf->main_box, intf->scan_progress, intf->nf_content);
-        evas_object_show(intf->scan_progress);
+        if (evas_object_visible_get(intf->scan_progress) == EINA_FALSE)
+        {
+            elm_box_pack_after(intf->main_box, intf->scan_progress, intf->nf_content);
+            evas_object_show(intf->scan_progress);
+        }
+        elm_progressbar_value_set(intf->scan_progress, (double)percentage / 100);
     }
-    elm_progressbar_value_set(intf->scan_progress, 0);
-}
-
-void
-intf_scan_progress_done_cb(interface *intf)
-{
-    if (evas_object_visible_get(intf->scan_progress) == EINA_TRUE)
+    else
     {
-        evas_object_hide(intf->scan_progress);
-        elm_box_unpack(intf->main_box, intf->scan_progress);
+        if (evas_object_visible_get(intf->scan_progress) == EINA_TRUE)
+        {
+            evas_object_hide(intf->scan_progress);
+            elm_box_unpack(intf->main_box, intf->scan_progress);
+        }
     }
-}
-
-void
-intf_scan_progress_set_cb(interface *intf, uint8_t percentage)
-{
-    elm_progressbar_value_set(intf->scan_progress, (double)percentage / 100);
 }
 
 static Evas_Object*
@@ -604,6 +600,9 @@ intf_create(application *app)
     intf_show_view(intf, view_type);
 
     ps_register_on_emotion_restart_cb(application_get_playback_service(intf->p_app), intf_on_emotion_restart_cb, intf);
+
+    media_library* p_ml = (media_library*)application_get_media_library(intf->p_app);
+    media_library_register_progress_cb( p_ml, &intf_scan_progress_set_cb, intf );
 
     /* */
     evas_object_show(intf->win);

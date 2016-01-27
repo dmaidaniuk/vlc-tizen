@@ -47,6 +47,8 @@ typedef void (*media_library_list_cb)( Eina_List*, void *p_user_data );
  */
 typedef bool (*media_library_item_updated_cb)( void *p_user_data, const library_item* p_item, bool b_new );
 
+typedef void (*media_library_scan_progress_cb)( void*, uint8_t );
+
 media_library*
 media_library_create(application* p_app);
 
@@ -91,6 +93,9 @@ media_library_register_item_updated(media_library* ml, media_library_item_update
 
 void
 media_library_unregister_item_updated(media_library* ml, media_library_item_updated_cb cb, void* p_data );
+
+void
+media_library_register_progress_cb( media_library* ml, media_library_scan_progress_cb pf_progress, void* p_data );
 
 void
 media_library_reload(media_library* ml);
