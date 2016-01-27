@@ -69,6 +69,9 @@ struct interface {
     /* Context popup-menu */
     Evas_Object *popup_toggle_btn;
 
+    /* Library scan progress */
+    Evas_Object *scan_progress;
+
     /* Miniplayer */
     audio_player *p_mini_player;
     Evas_Object *mini_player_layout;
@@ -412,6 +415,33 @@ intf_start_audio_player(interface *intf, Eina_Array *array, int pos)
     audio_player_start(intf->p_mini_player, array, pos);
 }
 
+void
+intf_scan_progress_start_cb(interface *intf)
+{
+    if (evas_object_visible_get(intf->scan_progress) == EINA_FALSE)
+    {
+        elm_box_pack_after(intf->main_box, intf->scan_progress, intf->nf_content);
+        evas_object_show(intf->scan_progress);
+    }
+    elm_progressbar_value_set(intf->scan_progress, 0);
+}
+
+void
+intf_scan_progress_done_cb(interface *intf)
+{
+    if (evas_object_visible_get(intf->scan_progress) == EINA_TRUE)
+    {
+        evas_object_hide(intf->scan_progress);
+        elm_box_unpack(intf->main_box, intf->scan_progress);
+    }
+}
+
+void
+intf_scan_progress_set_cb(interface *intf, uint8_t percentage)
+{
+    elm_progressbar_value_set(intf->scan_progress, (double)percentage / 100);
+}
+
 static Evas_Object*
 create_main_box(interface *intf, Evas_Object *parent)
 {
@@ -426,6 +456,14 @@ create_main_box(interface *intf, Evas_Object *parent)
     evas_object_size_hint_weight_set(intf->nf_content, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
     evas_object_size_hint_align_set(intf->nf_content, EVAS_HINT_FILL, EVAS_HINT_FILL);
     elm_box_pack_end(intf->main_box, intf->nf_content);
+
+    /* Library scan progress */
+    intf->scan_progress = elm_progressbar_add(intf->main_box);
+    elm_progressbar_unit_format_set(intf->scan_progress, "Scanning... %.0f%%");
+    elm_progressbar_horizontal_set(intf->scan_progress, EINA_TRUE);
+    evas_object_size_hint_weight_set(intf->scan_progress, EVAS_HINT_EXPAND, EVAS_HINT_FILL);
+    evas_object_size_hint_align_set(intf->scan_progress, EVAS_HINT_FILL, EVAS_HINT_FILL);
+    evas_object_hide(intf->scan_progress);
 
     /* Mini Player creation */
     intf->mini_player_layout = elm_layout_add(intf->main_box);
