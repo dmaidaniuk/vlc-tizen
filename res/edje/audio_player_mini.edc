@@ -84,7 +84,7 @@ collections
                         to: "swallow.previous";
                     }
                      text {
-                        text: "title bla bla bla bla bla bla moulaf gruik pwet";
+                        text: "<title>";
                         size: 22;
                         ellipsis: 0;
                         align: 0 0;
@@ -105,7 +105,7 @@ collections
                         to: "swallow.previous";
                     }
                     text {
-                        text: "subtitle bla bla bla bla bla bla moulaf gruik pwet";
+                        text: "<artist>";
                         size: 20;
                         ellipsis: 0;
                         align: 0 0;
