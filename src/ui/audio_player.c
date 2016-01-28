@@ -478,6 +478,8 @@ update_player_display(audio_player* mpd)
     {
         if ((psz_meta = media_item_title(p_mi)) != NULL)
             update_player_title_display(mpd, psz_meta);
+        else
+            update_player_title_display(mpd, basename(p_mi->psz_path));
 
         if ((psz_meta = media_item_artist(p_mi)) != NULL)
             update_player_artist_display(mpd, psz_meta);
