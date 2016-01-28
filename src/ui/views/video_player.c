@@ -491,6 +491,9 @@ line_start(void *data, void *event_info)
           p->angle, p->momentum.x1, p->momentum.y1, p->momentum.x2, p->momentum.y2,
           p->momentum.tx, p->momentum.ty, p->momentum.n);
 
+   if (p->momentum.y1 < 50 || p->momentum.y2 < 50)
+       return EVAS_EVENT_FLAG_NONE;
+
    view_sys *p_sys = data;
 
    if (p->momentum.n == 1 && (p->angle > 315 || p->angle < 45 || (p->angle > 135 && p->angle < 225)))
