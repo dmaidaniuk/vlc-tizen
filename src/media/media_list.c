@@ -162,7 +162,7 @@ media_list_insert(media_list *p_ml, int i_index, media_item *p_mi)
     {
         unsigned int i_count;
         /* increase array size */
-        if (!eina_array_push(p_ml->p_item_array, NULL))
+        if (!eina_array_push(p_ml->p_item_array, p_mi)) // dummy data
             return -1;
 
         /* "memmove" */
