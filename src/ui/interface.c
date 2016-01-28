@@ -254,7 +254,7 @@ intf_pop_view(interface *intf)
 
     /* Pop the top view */
     elm_naviframe_item_pop(intf->nf_content);
-    elm_win_indicator_mode_set(intf->win, ELM_WIN_INDICATOR_SHOW);
+    elm_win_indicator_opacity_set(intf->win, ELM_WIN_INDICATOR_OPAQUE);
 
     Evas_Object *sidebar_toggle_btn = create_button(intf->nf_content, "naviframe/drawers");
     evas_object_smart_callback_add(sidebar_toggle_btn, "clicked", left_panel_button_clicked_cb, intf);
@@ -353,7 +353,7 @@ intf_video_player_play(interface *intf, const char *psz_path)
     video_player_start(intf->video_player->p_view_sys, psz_path);
 
     /* We want fullscreen */
-    elm_win_indicator_mode_set(intf->win, ELM_WIN_INDICATOR_HIDE);
+    elm_win_indicator_opacity_set(intf->win, ELM_WIN_INDICATOR_TRANSPARENT);
 }
 
 /* Mini Player */
