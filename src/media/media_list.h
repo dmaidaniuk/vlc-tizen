@@ -96,6 +96,9 @@ media_list_set_repeat_mode(media_list *p_ml, enum PLAYLIST_REPEAT i_repeat);
 enum PLAYLIST_REPEAT
 media_list_get_repeat_mode(media_list *p_ml);
 
+int
+media_list_copy_list(media_list *p_ml_src, media_list *p_ml_dst);
+
 /*****************/
 /* static helpers */
 /*****************/

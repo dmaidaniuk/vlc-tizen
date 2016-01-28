@@ -196,4 +196,7 @@ playback_service_get_play_speed(playback_service *p_ps);
 void
 playback_service_set_play_speed(playback_service *p_ps, double rate);
 
+void
+playback_service_enable_background_playback(playback_service *p_ps);
+
 #endif /* PLAYBACK_SERVICE_H */

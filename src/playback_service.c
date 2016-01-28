@@ -959,3 +959,19 @@ playback_service_set_play_speed(playback_service *p_ps, double rate)
 {
     emotion_object_play_speed_set(p_ps->p_e, rate);
 }
+
+void
+playback_service_enable_background_playback(playback_service *p_ps)
+{
+    if (p_ps->i_ctx != PLAYLIST_CONTEXT_VIDEO)
+        return;
+
+    double time = playback_service_get_time(p_ps);
+
+    if (!media_list_copy_list(get_media_list(p_ps, PLAYLIST_CONTEXT_VIDEO), get_media_list(p_ps, PLAYLIST_CONTEXT_AUDIO)))
+        LOGE("Copying video playlist to audio failed");
+    if (!playback_service_set_context(p_ps, PLAYLIST_CONTEXT_AUDIO))
+        LOGE("Switching from video context to audio failed");
+
+    playback_service_start(p_ps, time);
+}

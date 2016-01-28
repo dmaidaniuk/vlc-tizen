@@ -161,6 +161,17 @@ audio_channel_selected(void *data, Evas_Object *obj, void *event_info)
 }
 
 void
+clicked_background_playback(void *data, Evas_Object *obj, void *event_info)
+{
+    view_sys *p_sys = data;
+
+    if (p_sys->p_current_popup)
+        evas_object_del(p_sys->p_current_popup);
+
+    playback_service_enable_background_playback(p_sys->p_ps);
+}
+
+void
 clicked_audio_tracks(void *data, Evas_Object *obj, void *event_info)
 {
     Eina_List *channel_list, *p_it = NULL;
@@ -265,8 +276,9 @@ clicked_spu(void *data, Evas_Object *obj, void *event_info)
 
 static popup_menu menu_more[] =
 {
-        {"Subtitles",       NULL, clicked_spu},
-        {"Audio Tracks",    NULL, clicked_audio_tracks},
+        {"Subtitles",           NULL, clicked_spu},
+        {"Audio Tracks",        NULL, clicked_audio_tracks},
+        {"Background playback", NULL, clicked_background_playback},
         {0}
 };
 

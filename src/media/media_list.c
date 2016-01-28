@@ -355,3 +355,27 @@ media_list_get_repeat_mode(media_list *p_ml)
 {
     return p_ml->i_repeat;
 }
+
+// Copy a media list src to a media list dst, removing any previous element in dst.
+int
+media_list_copy_list(media_list *p_ml_src, media_list *p_ml_dst)
+{
+    // Clear the destination
+    media_list_clear(p_ml_dst);
+    //while (media_list_get_count(p_ml_dst) > 0)
+    //    media_list_remove_index(p_ml_dst, 0);
+
+    p_ml_dst->i_repeat = p_ml_src->i_repeat;
+
+    unsigned int items = media_list_get_count(p_ml_src);
+
+    for (int i = 0; i < items; i++)
+    {
+        media_item *item = media_list_get_item_at(p_ml_src, i);
+        if (item == NULL)
+            return -1;
+        if (!media_list_insert(p_ml_dst, -1, media_item_copy(item)))
+            return -1;
+    }
+    return 0;
+}
