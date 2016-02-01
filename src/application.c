@@ -246,6 +246,12 @@ application_get_playback_service(application *app)
     return app->p_ps;
 }
 
+interface *
+application_get_interface(application *app)
+{
+    return app->p_intf;
+}
+
 int
 main(int argc, char *argv[])
 {
