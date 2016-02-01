@@ -30,10 +30,12 @@
 #include "ui/utils.h"
 
 #include <minicontrol-provider.h>
+#include <sys/time.h>
 
 struct minicontrol
 {
     playback_service *p_ps;
+    application *p_app;
     Evas_Object *win;
 
     Evas_Object *layout;
@@ -42,6 +44,8 @@ struct minicontrol
     Evas_Object *prev_button;
     Evas_Object *cover;
     Evas_Object *progress;
+
+    struct timeval button_last_event;
 };
 
 void
@@ -77,26 +81,53 @@ mini_control_cover_set(minicontrol *mc, const char* path)
         elm_object_part_content_set(mc->layout, "swallow.cover", create_image(mc->layout, path));
 }
 
-static void
-mini_control_play_pause_toggle_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
+long
+elapsed_msec(struct timeval t0, struct timeval t1)
 {
-    minicontrol *mc = data;
-
-    playback_service_toggle_play_pause(mc->p_ps);
+    return (t1.tv_sec - t0.tv_sec) +
+            ((t1.tv_usec - t0.tv_usec)/1000000.0);
 }
 
 static void
-mini_control_next_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
+mini_control_background_action_cb(void *data, Evas_Object *obj, const char *emission, const char *source)
 {
     minicontrol *mc = data;
-    playback_service_list_set_next(mc->p_ps);
+
+    struct timeval t;
+    gettimeofday(&t, 0);
+
+    if (elapsed_msec(mc->button_last_event, t) <= 5)
+        return;
+
+    interface *p_intf = application_get_interface(mc->p_app);
+
+    intf_raise(p_intf);
+    playback_service_set_auto_exit(mc->p_ps, false);
 }
 
 static void
-mini_control_prev_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
+mini_control_action_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
     minicontrol *mc = data;
-    playback_service_list_set_prev(mc->p_ps);
+
+    if (obj == mc->play_button)
+    {
+        playback_service_toggle_play_pause(mc->p_ps);
+    }
+    else if (obj == mc->next_button)
+    {
+        playback_service_list_set_next(mc->p_ps);
+    }
+    else if (obj == mc->prev_button)
+    {
+        playback_service_list_set_prev(mc->p_ps);
+    }
+    else
+    {
+        return;
+    }
+
+    gettimeofday(&mc->button_last_event, 0);
 }
 
 // mini_control_event_cb doesn't provide an embedded opaque object...
@@ -110,10 +141,11 @@ mini_control_event_cb(minicontrol_viewer_event_e event_type, bundle *event_arg)
 }
 
 minicontrol*
-mini_control_view_create(playback_service *p_ps)
+mini_control_view_create(playback_service *p_ps, application *p_app)
 {
     minicontrol *mc = calloc(1, sizeof(*mc));
     mc->p_ps = p_ps;
+    mc->p_app = p_app;
     ps = p_ps;
 
     const Evas_Coord width = 720;
@@ -159,9 +191,12 @@ mini_control_view_create(playback_service *p_ps)
     elm_object_part_content_set(layout, "swallow.previous", mc->prev_button);
     elm_object_part_content_set(layout, "swallow.next", mc->next_button);
 
-    evas_object_smart_callback_add(mc->play_button, "clicked", mini_control_play_pause_toggle_cb, mc);
-    evas_object_smart_callback_add(mc->next_button, "clicked", mini_control_next_cb, mc);
-    evas_object_smart_callback_add(mc->prev_button, "clicked", mini_control_prev_cb, mc);
+    evas_object_event_callback_add(mc->play_button, EVAS_CALLBACK_MOUSE_UP, mini_control_action_cb, mc);
+    evas_object_event_callback_add(mc->next_button, EVAS_CALLBACK_MOUSE_UP, mini_control_action_cb, mc);
+    evas_object_event_callback_add(mc->prev_button, EVAS_CALLBACK_MOUSE_UP, mini_control_action_cb, mc);
+
+    Evas_Object *edje = elm_layout_edje_get(layout);
+    edje_object_signal_callback_add(edje, "mouse,clicked,1", "hub_background", mini_control_background_action_cb, mc);
 
     /* */
     Evas_Object *progress = mc->progress = elm_slider_add(layout);

@@ -149,5 +149,11 @@ collections {
                 }
             }
         } //parts
+      program {
+         name: "mouse_click";
+         signal: "mouse,clicked,1";
+         source: "hub_background";
+         action: SIGNAL_EMIT "hub_background,clicked" "";
+      }
     }
 }

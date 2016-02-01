@@ -28,7 +28,6 @@
 
 #include <Elementary.h>
 #include <Emotion.h>
-#include <notification.h>
 #include <app.h>
 #include <app_control.h>
 
@@ -39,7 +38,6 @@
 #include "media/media_list.h"
 #include "preferences/preferences.h"
 
-#include "ui/interface.h"
 #include "ui/views/minicontrol_view.h"
 
 #define PLAYLIST_CONTEXT_COUNT (PLAYLIST_CONTEXT_OTHERS)
@@ -119,9 +117,9 @@ ps_register_on_emotion_restart_cb(playback_service *p_ps, ps_on_emotion_restart 
 }
 
 static void
-ps_notification_create(playback_service *p_ps)
+ps_notification_create(playback_service *p_ps, application *p_app)
 {
-    p_ps->p_minicontrol = mini_control_view_create(p_ps);
+    p_ps->p_minicontrol = mini_control_view_create(p_ps, p_app);
 }
 
 static void
@@ -364,7 +362,7 @@ playback_service_create(application *p_app)
             p_ps->p_e = p_ps->p_ea;
     }
 
-    ps_notification_create(p_ps);
+    ps_notification_create(p_ps, p_app);
 
     return p_ps;
 
