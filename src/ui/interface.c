@@ -438,6 +438,12 @@ intf_scan_progress_set_cb(void *p_data, uint8_t percentage)
     }
 }
 
+void
+intf_raise(interface *p_intf)
+{
+    elm_win_raise(p_intf->win);
+}
+
 static Evas_Object*
 create_main_box(interface *intf, Evas_Object *parent)
 {

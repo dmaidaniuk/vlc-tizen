@@ -94,6 +94,9 @@ intf_video_player_play(interface *intf, const char *psz_path);
 void
 intf_start_audio_player(interface *intf, Eina_Array *array, int pos);
 
+void
+intf_raise(interface *p_intf);
+
 /* Mini Player */
 bool
 intf_mini_player_visible_get(interface *);
