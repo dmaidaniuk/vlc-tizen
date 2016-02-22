@@ -196,7 +196,9 @@ LDFLAGS="${LDFLAGS} -L${SYSROOT}/lib"
 
 # Release or not?
 if [ "$RELEASE" = 1 ]; then
-    EXTRA_CFLAGS="${EXTRA_CFLAGS} -DNDEBUG "
+    EXTRA_CFLAGS="${EXTRA_CFLAGS} -DNDEBUG -O3 "
+else
+    EXTRA_CFLAGS="${EXTRA_CFLAGS} -O0 "
 fi
 
 echo -e "\e[1m\e[36mCFLAGS:            ${CFLAGS}\e[0m"
