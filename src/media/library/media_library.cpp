@@ -32,9 +32,9 @@
 #include "IVideoTrack.h"
 #include "IArtist.h"
 #include "IAlbum.h"
+#include "IGenre.h"
 #include "media_library_private.hpp"
 #include "system_storage.h"
-
 
 media_library::media_library()
     : ml( NewMediaLibrary() )
@@ -341,6 +341,15 @@ media_library_get_artists( media_library* p_ml, media_library_list_cb cb, void* 
 }
 
 void
+media_library_get_genres( media_library* p_ml, media_library_list_cb cb, void* p_user_data )
+{
+    media_library_common_getter(cb, p_user_data,
+            [p_ml](){ return p_ml->ml->genres();
+        }, genreToGenreItem);
+}
+
+
+void
 media_library_get_artist_albums( media_library* p_ml, unsigned int i_artist_id, media_library_list_cb cb, void* p_user_data )
 {
     ArtistPtr artist = p_ml->ml->artist( i_artist_id );
@@ -380,6 +389,18 @@ media_library_get_artist_songs(media_library* p_ml, unsigned int i_artist_id, me
     media_library_common_getter(cb, p_user_data,
                 [artist](){ return artist->media(); },
                 &fileToMediaItem);
+}
+
+void
+media_library_get_genres_songs(media_library* p_ml, unsigned int i_genre_id, media_library_list_cb cb, void* p_user_data)
+{
+    GenrePtr genre = p_ml->ml->genre(i_genre_id);
+    if ( genre == nullptr )
+    {
+        LOGE("Can't find genre %u", i_genre_id);
+        return;
+    }
+    media_library_common_getter(cb, p_user_data, [genre]{ return genre->tracks(); }, &fileToMediaItem);
 }
 
 void

@@ -65,7 +65,6 @@ album_item_identical(const album_item* p_left, const album_item* p_right)
     return p_left->i_id == p_right->i_id;
 }
 
-
 void
 album_item_destroy(album_item* p_item)
 {

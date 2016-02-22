@@ -38,6 +38,7 @@ struct list_sys
     LIST_VIEW_COMMON
     unsigned int i_artist_id;
     unsigned int i_album_id;
+    unsigned int i_genre_id;
 };
 
 struct list_view_item
@@ -200,6 +201,13 @@ audio_list_song_get_album_songs_cb(media_library* p_ml, media_library_list_cb cb
     media_library_get_album_songs(p_ml, p_list_sys->i_album_id, cb, p_list_sys->p_ctrl);
 }
 
+static void
+audio_list_song_get_genre_songs_cb(media_library* p_ml, media_library_list_cb cb, void* p_user_data)
+{
+    list_sys* p_list_sys = (list_sys*)p_user_data;
+    media_library_get_genres_songs(p_ml, p_list_sys->i_genre_id, cb, p_list_sys->p_ctrl);
+}
+
 static list_view*
 audio_list_song_view_create(interface* p_intf, Evas_Object* p_parent, list_view_create_option opts)
 {
@@ -259,4 +267,15 @@ audio_list_song_view_album_create(interface* p_intf, Evas_Object* p_parent, unsi
     media_library_controller_refresh(p_view->p_sys->p_ctrl);
     return p_view;
 }
+
+list_view*
+audio_list_song_view_genre_create(interface* p_intf, Evas_Object* p_parent, unsigned int i_genre_id, list_view_create_option opts )
+{
+    list_view* p_view = audio_list_song_view_create(p_intf, p_parent, opts);
+    p_view->p_sys->i_genre_id = i_genre_id;
+    media_library_controller_set_content_callback(p_view->p_sys->p_ctrl, audio_list_song_get_genre_songs_cb, p_view->p_sys);
+    media_library_controller_refresh(p_view->p_sys->p_ctrl);
+    return p_view;
+}
+
 

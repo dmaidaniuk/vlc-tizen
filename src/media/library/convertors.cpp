@@ -34,6 +34,8 @@
 #include "IAlbumTrack.h"
 #include "IArtist.h"
 #include "IFile.h"
+#include "IGenre.h"
+#include "media/genre_item.h"
 
 static char*
 path_from_url(const char* psz_str)
@@ -168,5 +170,15 @@ artistToArtistItem( ArtistPtr artist )
 
     auto albums = artist->albums();
     p_item->i_nb_albums = albums.size();
+    return p_item;
+}
+
+genre_item*
+genreToGenreItem( GenrePtr genre )
+{
+    auto p_item = genre_item_create( genre->name().c_str() );
+    if ( p_item == nullptr )
+        return nullptr;
+    p_item->i_id = genre->id();
     return p_item;
 }
