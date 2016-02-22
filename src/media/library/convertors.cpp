@@ -124,7 +124,7 @@ fileToMediaItem( MediaPtr media )
             if (album != nullptr)
             {
                 media_item_set_meta(mi, MEDIA_ITEM_META_ALBUM, album->title().c_str());
-                auto year = albumTrack->releaseYear();
+                auto year = media->releaseDate();
                 if (year != 0)
                 {
                     media_item_set_meta(mi, MEDIA_ITEM_META_YEAR, std::to_string(year).c_str());
