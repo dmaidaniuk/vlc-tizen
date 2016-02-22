@@ -47,15 +47,46 @@ media_library::media_library()
 }
 
 void
-media_library::onMediaAdded( MediaPtr file )
+media_library::onMediaAdded( std::vector<MediaPtr> media )
 {
-    sendFileUpdate( file, true );
+    for ( const auto& m : media )
+        sendFileUpdate( m, true );
 }
 
 void
-media_library::onFileUpdated( MediaPtr file )
+media_library::onMediaUpdated( std::vector<MediaPtr> media )
 {
-    sendFileUpdate( file, false );
+    for ( const auto& m : media )
+        sendFileUpdate( m, false );
+}
+
+void media_library::onMediaDeleted( std::vector<int64_t> ids )
+{
+}
+
+
+void media_library::onArtistsAdded( std::vector<ArtistPtr> artists )
+{
+}
+
+void media_library::onArtistsModified( std::vector<ArtistPtr> artist )
+{
+}
+
+void media_library::onArtistsDeleted( std::vector<int64_t> ids )
+{
+}
+
+void media_library::onAlbumsAdded( std::vector<AlbumPtr> albums )
+{
+}
+
+void media_library::onAlbumsModified( std::vector<AlbumPtr> albums )
+{
+}
+
+void media_library::onAlbumsDeleted( std::vector<int64_t> ids )
+{
 }
 
 void
@@ -161,6 +192,14 @@ media_library::unregisterOnItemUpdated(media_library_item_updated_cb cb, void* u
             return;
         }
     }
+}
+
+void media_library::onTracksAdded( std::vector<AlbumTrackPtr> tracks )
+{
+}
+
+void media_library::onTracksDeleted( std::vector<int64_t> trackIds )
+{
 }
 
 void media_library::registerProgressCb( media_library_scan_progress_cb pf_progress, void* p_data )

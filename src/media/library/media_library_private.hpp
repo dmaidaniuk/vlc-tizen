@@ -68,8 +68,20 @@ public:
     virtual ~media_library() = default;
 
     // IMediaLibraryCb
-    virtual void onMediaAdded( MediaPtr file ) override;
-    virtual void onFileUpdated( MediaPtr file ) override;
+    virtual void onMediaAdded( std::vector<MediaPtr> media ) override;
+    virtual void onMediaUpdated( std::vector<MediaPtr> media ) override;
+    virtual void onMediaDeleted( std::vector<int64_t> media ) override;
+
+    virtual void onArtistsAdded( std::vector<ArtistPtr> artists ) override;
+    virtual void onArtistsModified( std::vector<ArtistPtr> artist ) override;
+    virtual void onArtistsDeleted( std::vector<int64_t> ids ) override;
+
+    virtual void onAlbumsAdded( std::vector<AlbumPtr> albums ) override;
+    virtual void onAlbumsModified( std::vector<AlbumPtr> albums ) override;
+    virtual void onAlbumsDeleted( std::vector<int64_t> ids ) override;
+
+    virtual void onTracksAdded( std::vector<AlbumTrackPtr> tracks ) override;
+    virtual void onTracksDeleted( std::vector<int64_t> trackIds ) override;
 
     virtual void onDiscoveryStarted( const std::string& entryPoint ) override;
     virtual void onDiscoveryCompleted( const std::string& entryPoint ) override;
