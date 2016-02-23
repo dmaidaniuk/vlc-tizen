@@ -32,6 +32,7 @@
 #include "media/artist_item.h"
 #include "media/album_item.h"
 #include "media/genre_item.h"
+#include "media/playlist_item.h"
 #include "ui/views/video_view.h"
 #include "ui/views/audio_view.h"
 
@@ -67,6 +68,12 @@ static bool
 genre_controller_accept_item( const library_item* p_item )
 {
     return p_item->i_library_item_type == LIBRARY_ITEM_GENRE;
+}
+
+static bool
+playlist_controller_accept_item( const library_item* p_item )
+{
+    return p_item->i_library_item_type == LIBRARY_ITEM_PLAYLIST;
 }
 
 media_library_controller*
@@ -131,5 +138,18 @@ genre_controller_create(application* p_app, list_view* p_list_view)
     p_ctrl->pf_item_duplicate = (pf_item_duplicate_cb)&genre_item_copy;
     p_ctrl->pf_item_compare = (pf_item_compare_cb)&genre_item_identical;
     p_ctrl->pf_accept_item = &genre_controller_accept_item;
+    return p_ctrl;
+}
+
+media_library_controller*
+playlist_controller_create(application* p_app, list_view* p_list_view)
+{
+    media_library_controller* p_ctrl = media_library_controller_create( p_app, p_list_view );
+    if ( p_ctrl == NULL )
+        return NULL;
+    p_ctrl->pf_media_library_get_content = (pf_media_library_get_content_cb)&media_library_get_playlists;
+    p_ctrl->pf_item_duplicate = (pf_item_duplicate_cb)&playlist_item_copy;
+    p_ctrl->pf_item_compare = (pf_item_compare_cb)&playlist_item_identical;
+    p_ctrl->pf_accept_item = &playlist_controller_accept_item;
     return p_ctrl;
 }

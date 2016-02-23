@@ -80,6 +80,9 @@ void
 media_library_get_genres( media_library* p_ml, media_library_list_cb cb, void* p_user_data );
 
 void
+media_library_get_playlists( media_library* p_ml, media_library_list_cb cb, void* p_user_data );
+
+void
 media_library_get_album_songs(media_library* p_ml, unsigned int i_album_id, media_library_list_cb cb, void* p_user_data);
 
 void
@@ -87,6 +90,9 @@ media_library_get_artist_songs(media_library* p_ml, unsigned int i_artist_id, me
 
 void
 media_library_get_genres_songs(media_library* p_ml, unsigned int i_genre_id, media_library_list_cb cb, void* p_user_data);
+
+void
+media_library_get_playlist_songs(media_library* p_ml, unsigned int i_playlist_id, media_library_list_cb cb, void* p_user_data);
 
 void
 media_library_register_on_change(media_library* ml, media_library_file_list_changed_cb cb, void* p_data);

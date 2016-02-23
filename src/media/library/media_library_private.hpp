@@ -34,11 +34,13 @@
 #include "media/album_item.h"
 #include "media/artist_item.h"
 #include "media/genre_item.h"
+#include "media/playlist_item.h"
 
 media_item* fileToMediaItem( MediaPtr file );
 album_item* albumToAlbumItem( AlbumPtr album );
 artist_item* artistToArtistItem( ArtistPtr album );
 genre_item* genreToGenreItem( GenrePtr genre );
+playlist_item* playlistToPlaylistItem( PlaylistPtr playlist );
 
 class TizenLogger : public ILogger
 {

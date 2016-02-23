@@ -24,31 +24,47 @@
  * compatibility with the Store
  *****************************************************************************/
 
-#ifndef MEDIA_CONTROLLER_H_
-# define MEDIA_CONTROLLER_H_
+#include "common.h"
+#include "playlist_item.h"
 
-#include "application.h"
-#include "ui/interface.h"
+playlist_item*
+playlist_item_create(const char* psz_name)
+{
+    playlist_item* p_item = calloc(1, sizeof(*p_item));
+    if (p_item == NULL)
+        return NULL;
+    p_item->i_library_item_type = LIBRARY_ITEM_PLAYLIST;
+    p_item->psz_name = strdup(psz_name);
+    if (p_item->psz_name == NULL)
+    {
+        free(p_item);
+        return NULL;
+    }
+    return p_item;
+}
 
-// Allow one file to include "media_controller.h" and still get public media_library_controller API
-#include "media_library_controller.h"
+playlist_item*
+playlist_item_copy(const playlist_item* p_item)
+{
+    playlist_item* p_new_item = playlist_item_create(p_item->psz_name);
+    if (p_new_item == NULL)
+        return NULL;
+    p_new_item->i_id = p_item->i_id;
+    return p_new_item;
+}
 
-media_library_controller*
-video_controller_create(application* p_app, list_view* p_list_view);
+bool
+playlist_item_identical(const playlist_item* p_left, const playlist_item* p_right)
+{
+    return p_left->i_id == p_right->i_id;
+}
 
-media_library_controller*
-audio_controller_create(application* p_app, list_view* p_list_view);
 
-media_library_controller*
-artist_controller_create(application* p_app, list_view* p_list_view);
-
-media_library_controller*
-album_controller_create(application* p_app, list_view* p_list_view);
-
-media_library_controller*
-genre_controller_create(application* p_app, list_view* p_list_view);
-
-media_library_controller*
-playlist_controller_create(application* p_app, list_view* p_list_view);
-
-#endif // MEDIA_CONTROLLER_H_
+void
+playlist_item_destroy(playlist_item* p_item)
+{
+    if (p_item == NULL)
+        return;
+    free(p_item->psz_name);
+    free(p_item);
+}

@@ -54,11 +54,19 @@ audio_list_song_view_album_create(interface* p_intf, Evas_Object* p_parent, unsi
 list_view*
 audio_list_song_view_genre_create(interface* p_intf, Evas_Object* p_parent, unsigned int i_genre_id, list_view_create_option opts );
 
+// Creates a view that lists a playlist's songs
+list_view*
+audio_list_song_view_playlist_create(interface* p_intf, Evas_Object* p_parent, unsigned int i_playlist_id, list_view_create_option opts );
+
+
 list_view*
 video_view_list_create(interface *intf, Evas_Object *p_parent, list_view_create_option opts );
 
 list_view*
 audio_list_genres_view_create(interface* p_intf, Evas_Object* p_parent, list_view_create_option opts);
+
+list_view*
+audio_list_playlists_view_create(interface* p_intf, Evas_Object* p_parent, list_view_create_option opts);
 
 // Create a view that lists albums.
 // If psz_artist_name is non-NULL, only this artist's albums are listed.

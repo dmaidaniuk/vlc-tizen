@@ -42,7 +42,7 @@ typedef enum audio_view_type
     AUDIO_VIEW_ALBUM,
     AUDIO_VIEW_SONG,
     AUDIO_VIEW_GENRE,
-    //AUDIO_VIEW_PLAYLIST,
+    AUDIO_VIEW_PLAYLIST,
     AUDIO_VIEW_MAX,
 } audio_view_type;
 
@@ -78,6 +78,9 @@ create_audio_list_type(view_sys *p_view_sys, audio_view_type type )
         break;
     case AUDIO_VIEW_GENRE:
         p_view = audio_list_genres_view_create(p_view_sys->p_intf, p_view_sys->nf_toolbar, LIST_CREATE_ALL);
+        break;
+    case AUDIO_VIEW_PLAYLIST:
+        p_view = audio_list_playlists_view_create(p_view_sys->p_intf, p_view_sys->nf_toolbar, LIST_CREATE_ALL);
         break;
     }
 
@@ -145,6 +148,7 @@ create_toolbar(view_sys *p_view_sys, Evas_Object *parent)
     toolbar_item_append(tabbar, AUDIO_VIEW_ALBUM,   "Albums",   tabbar_item_cb, p_view_sys);
     toolbar_item_append(tabbar, AUDIO_VIEW_SONG,    "Songs",    tabbar_item_cb, p_view_sys);
     toolbar_item_append(tabbar, AUDIO_VIEW_GENRE,   "Genre",    tabbar_item_cb, p_view_sys);
+    toolbar_item_append(tabbar, AUDIO_VIEW_PLAYLIST,"Playlist",    tabbar_item_cb, p_view_sys);
 
     // Select the first tab.
     elm_toolbar_item_selected_set(it, EINA_TRUE);

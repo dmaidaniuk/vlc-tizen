@@ -33,6 +33,7 @@
 #include "IArtist.h"
 #include "IAlbum.h"
 #include "IGenre.h"
+#include "IPlaylist.h"
 #include "media_library_private.hpp"
 #include "system_storage.h"
 
@@ -348,6 +349,13 @@ media_library_get_genres( media_library* p_ml, media_library_list_cb cb, void* p
         }, genreToGenreItem);
 }
 
+void
+media_library_get_playlists( media_library* p_ml, media_library_list_cb cb, void* p_user_data )
+{
+    media_library_common_getter( cb, p_user_data,
+            [p_ml](){ return p_ml->ml->playlists();
+        }, playlistToPlaylistItem );
+}
 
 void
 media_library_get_artist_albums( media_library* p_ml, unsigned int i_artist_id, media_library_list_cb cb, void* p_user_data )
@@ -401,6 +409,18 @@ media_library_get_genres_songs(media_library* p_ml, unsigned int i_genre_id, med
         return;
     }
     media_library_common_getter(cb, p_user_data, [genre]{ return genre->tracks(); }, &fileToMediaItem);
+}
+
+void
+media_library_get_playlist_songs(media_library* p_ml, unsigned int i_playlist_id, media_library_list_cb cb, void* p_user_data)
+{
+    PlaylistPtr playlist = p_ml->ml->playlist(i_playlist_id);
+    if ( playlist == nullptr )
+    {
+        LOGE("Can't find playlist %u", i_playlist_id);
+        return;
+    }
+    media_library_common_getter(cb, p_user_data, [playlist]{ return playlist->media(); }, &fileToMediaItem);
 }
 
 void

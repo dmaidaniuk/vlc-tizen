@@ -39,7 +39,8 @@ typedef enum library_item_type
     LIBRARY_ITEM_MEDIA = 1,
     LIBRARY_ITEM_ALBUM,
     LIBRARY_ITEM_ARTIST,
-    LIBRARY_ITEM_GENRE
+    LIBRARY_ITEM_GENRE,
+    LIBRARY_ITEM_PLAYLIST
 } library_item_type;
 
 #define LIBRARY_ITEM_COMMON \

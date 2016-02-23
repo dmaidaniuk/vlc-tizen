@@ -35,6 +35,7 @@
 #include "IArtist.h"
 #include "IFile.h"
 #include "IGenre.h"
+#include "IPlaylist.h"
 #include "media/genre_item.h"
 
 static char*
@@ -180,5 +181,16 @@ genreToGenreItem( GenrePtr genre )
     if ( p_item == nullptr )
         return nullptr;
     p_item->i_id = genre->id();
+    return p_item;
+}
+
+
+playlist_item*
+playlistToPlaylistItem( PlaylistPtr playlist )
+{
+    auto p_item = playlist_item_create( playlist->name().c_str() );
+    if ( p_item == nullptr )
+        return nullptr;
+    p_item->i_id = playlist->id();
     return p_item;
 }
