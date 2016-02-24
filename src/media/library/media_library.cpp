@@ -358,7 +358,7 @@ media_library_get_playlists( media_library* p_ml, media_library_list_cb cb, void
 }
 
 void
-media_library_get_artist_albums( media_library* p_ml, unsigned int i_artist_id, media_library_list_cb cb, void* p_user_data )
+media_library_get_artist_albums( media_library* p_ml, int64_t i_artist_id, media_library_list_cb cb, void* p_user_data )
 {
     ArtistPtr artist = p_ml->ml->artist( i_artist_id );
     if (artist == nullptr)
@@ -372,7 +372,7 @@ media_library_get_artist_albums( media_library* p_ml, unsigned int i_artist_id, 
 }
 
 void
-media_library_get_album_songs(media_library* p_ml, unsigned int i_album_id, media_library_list_cb cb, void* p_user_data)
+media_library_get_album_songs(media_library* p_ml, int64_t i_album_id, media_library_list_cb cb, void* p_user_data)
 {
     auto album = p_ml->ml->album(i_album_id);
     if (album == nullptr)
@@ -386,7 +386,7 @@ media_library_get_album_songs(media_library* p_ml, unsigned int i_album_id, medi
 }
 
 void
-media_library_get_artist_songs(media_library* p_ml, unsigned int i_artist_id, media_library_list_cb cb, void* p_user_data)
+media_library_get_artist_songs(media_library* p_ml, int64_t i_artist_id, media_library_list_cb cb, void* p_user_data)
 {
     ArtistPtr artist = p_ml->ml->artist(i_artist_id);
     if (artist == nullptr)
@@ -400,7 +400,7 @@ media_library_get_artist_songs(media_library* p_ml, unsigned int i_artist_id, me
 }
 
 void
-media_library_get_genres_songs(media_library* p_ml, unsigned int i_genre_id, media_library_list_cb cb, void* p_user_data)
+media_library_get_genres_songs(media_library* p_ml, int64_t i_genre_id, media_library_list_cb cb, void* p_user_data)
 {
     GenrePtr genre = p_ml->ml->genre(i_genre_id);
     if ( genre == nullptr )
@@ -412,7 +412,7 @@ media_library_get_genres_songs(media_library* p_ml, unsigned int i_genre_id, med
 }
 
 void
-media_library_get_playlist_songs(media_library* p_ml, unsigned int i_playlist_id, media_library_list_cb cb, void* p_user_data)
+media_library_get_playlist_songs(media_library* p_ml, int64_t i_playlist_id, media_library_list_cb cb, void* p_user_data)
 {
     PlaylistPtr playlist = p_ml->ml->playlist(i_playlist_id);
     if ( playlist == nullptr )

@@ -33,7 +33,7 @@
 struct list_sys
 {
     LIST_VIEW_COMMON
-    unsigned int i_artist_id;
+    int64_t i_artist_id;
 };
 
 struct list_view_item

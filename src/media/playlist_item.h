@@ -36,7 +36,7 @@ extern "C" {
 typedef struct playlist_item {
     LIBRARY_ITEM_COMMON
 
-    unsigned int i_id;
+    int64_t i_id;
     char* psz_name;
 } playlist_item;
 
