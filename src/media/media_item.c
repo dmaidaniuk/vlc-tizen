@@ -52,6 +52,7 @@ media_item_copy(const media_item* p_item)
     media_item* p_new = media_item_create(p_item->psz_path, p_item->i_type);
     if (p_new == NULL)
         return NULL;
+    p_new->i_id = p_item->i_id;
     p_new->i_duration = p_item->i_duration;
     p_new->i_w = p_item->i_w;
     p_new->i_h = p_item->i_h;
