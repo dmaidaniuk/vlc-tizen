@@ -110,6 +110,21 @@ audio_player_close_popup(audio_player *mpd)
     mpd->popup = NULL;
 }
 
+static void
+audio_player_on_new_playlist_background_touched(void *data, Evas_Object *obj, void *event_info)
+{
+    audio_player* mpd = (audio_player*)data;
+    evas_object_del(mpd->new_playlist_popup);
+    mpd->new_playlist_popup = NULL;
+    audio_player_close_popup(mpd);
+}
+
+static void
+audio_player_on_background_touched(void *data, Evas_Object *obj, void *event_info)
+{
+    audio_player_close_popup((audio_player*)data);
+}
+
 double
 audio_player_convert_slider_rate(double slider_value)
 {
@@ -262,6 +277,8 @@ audio_player_new_playlist_popup(audio_player* mpd)
     /* */
     elm_object_content_set(mpd->new_playlist_popup, layout);
     evas_object_show(mpd->new_playlist_popup);
+    evas_object_smart_callback_add(mpd->new_playlist_popup, "block,clicked",
+            audio_player_on_new_playlist_background_touched, mpd);
 }
 
 static void
@@ -437,6 +454,8 @@ popup_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
         audio_player_popup_playlists(apd->mpd);
         break;
     }
+
+    evas_object_smart_callback_add(apd->mpd->popup, "block,clicked", audio_player_on_background_touched, apd->mpd);
 }
 
 static void
