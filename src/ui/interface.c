@@ -338,7 +338,7 @@ intf_on_emotion_restart_cb(void *data)
 }
 
 void
-intf_video_player_play(interface *intf, const char *psz_path)
+intf_video_player_play(interface *intf, const char *psz_path, double time)
 {
     audio_player_stop(intf->p_mini_player);
 
@@ -350,7 +350,7 @@ intf_video_player_play(interface *intf, const char *psz_path)
     /* Hide the title bar of the naviframe */
     elm_naviframe_item_title_enabled_set(it, EINA_FALSE, EINA_TRUE);
 
-    video_player_start(intf->video_player->p_view_sys, psz_path);
+    video_player_start(intf->video_player->p_view_sys, psz_path, time);
 
     /* We want fullscreen */
     elm_win_indicator_opacity_set(intf->win, ELM_WIN_INDICATOR_TRANSPARENT);

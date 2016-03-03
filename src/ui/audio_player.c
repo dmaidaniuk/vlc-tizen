@@ -1155,7 +1155,24 @@ audio_player_show_fullscreen(audio_player *mpd)
 static void
 audio_player_fullscreen_edge_cb(void *data, Evas_Object *o, const char *emission, const char *source)
 {
-    audio_player_show_fullscreen(data);
+    audio_player *mpd = data;
+
+    if (playback_service_is_background_playback(mpd->p_ps))
+    {
+        // Background playback, switch back to video
+        double time = playback_service_get_time(mpd->p_ps);
+        char *path = strdup(playback_service_current_file_path_get(mpd->p_ps));
+        if (!path)
+            return;
+        playback_service_disable_background_playback(mpd->p_ps);
+        intf_video_player_play(mpd->intf, path, time);
+        free(path);
+    }
+    else
+    {
+        // Audio, show the advanced view
+        audio_player_show_fullscreen(mpd);
+    }
 }
 
 static void

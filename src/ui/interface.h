@@ -89,7 +89,7 @@ intf_show_previous_view(interface *);
 
 /* Video and Audio players */
 void
-intf_video_player_play(interface *intf, const char *psz_path);
+intf_video_player_play(interface *intf, const char *psz_path, double time);
 
 void
 intf_start_audio_player(interface *intf, Eina_Array *array, int pos);

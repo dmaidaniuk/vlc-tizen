@@ -33,7 +33,7 @@ interface_view*
 create_video_player(interface *, playback_service *p_ps, Evas_Object *parent);
 
 bool
-video_player_start(view_sys*, const char*);
+video_player_start(view_sys*, const char*, double);
 
 void
 destroy_video_player(interface_view *);

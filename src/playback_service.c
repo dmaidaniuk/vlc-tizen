@@ -79,6 +79,7 @@ struct playback_service
 
     bool b_auto_exit;
     bool b_restart_emotion;
+    bool b_video_background;
 
     minicontrol     *p_minicontrol;
     double          i_last_notification_pos;
@@ -668,6 +669,7 @@ playback_service_stop_notify(playback_service *p_ps, bool b_notify)
     playback_service_pause(p_ps);
     emotion_object_file_set(p_ps->p_e, NULL);
     p_ps->b_started = false;
+    p_ps->b_video_background = false;
     ps_release_lock(p_ps);
 
     sound_manager_unset_session_interrupted_cb();
@@ -971,5 +973,28 @@ playback_service_enable_background_playback(playback_service *p_ps)
     if (!playback_service_set_context(p_ps, PLAYLIST_CONTEXT_AUDIO))
         LOGE("Switching from video context to audio failed");
 
+    p_ps->b_video_background = true;
     playback_service_start(p_ps, time);
+}
+
+void
+playback_service_disable_background_playback(playback_service *p_ps)
+{
+    if (p_ps->i_ctx != PLAYLIST_CONTEXT_AUDIO || p_ps->b_video_background == false)
+        return;
+
+    p_ps->b_video_background = false;
+    playback_service_stop(p_ps);
+}
+
+bool
+playback_service_is_background_playback(playback_service *p_ps)
+{
+    return p_ps->b_video_background;
+}
+
+const char*
+playback_service_current_file_path_get(playback_service *p_ps)
+{
+    return emotion_object_file_get(p_ps->p_e);
 }

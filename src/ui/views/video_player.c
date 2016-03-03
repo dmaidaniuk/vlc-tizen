@@ -359,7 +359,7 @@ ps_on_playpause_cb(playback_service *p_ps, void *p_user_data, bool b_playing)
 }
 
 bool
-video_player_start(view_sys *p_sys, const char* file_path)
+video_player_start(view_sys *p_sys, const char* file_path, double time)
 {
     /* Screen orientation */
     if (elm_win_wm_rotation_supported_get(p_sys->win)) {
@@ -444,7 +444,7 @@ video_player_start(view_sys *p_sys, const char* file_path)
     playback_service_set_context(p_sys->p_ps, PLAYLIST_CONTEXT_VIDEO);
 
     playback_service_list_append(p_sys->p_ps, p_mi);
-    playback_service_start(p_sys->p_ps, 0);
+    playback_service_start(p_sys->p_ps, time);
     elm_object_signal_emit(p_sys->layout, "hub_background,show", "");
 
     return true;

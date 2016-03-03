@@ -199,4 +199,13 @@ playback_service_set_play_speed(playback_service *p_ps, double rate);
 void
 playback_service_enable_background_playback(playback_service *p_ps);
 
+void
+playback_service_disable_background_playback(playback_service *p_ps);
+
+bool
+playback_service_is_background_playback(playback_service *p_ps);
+
+const char*
+playback_service_current_file_path_get(playback_service *p_ps);
+
 #endif /* PLAYBACK_SERVICE_H */

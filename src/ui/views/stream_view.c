@@ -84,7 +84,7 @@ stream_view_play(view_sys *p_sys, const char *psz_path)
     }
 
 play:
-    intf_video_player_play(p_sys->p_intf, psz_path);
+    intf_video_player_play(p_sys->p_intf, psz_path, 0);
 
     if (rc == SQLITE_DONE || rc == SQLITE_OK)
     {

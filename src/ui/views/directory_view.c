@@ -59,7 +59,7 @@ list_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
     if (dd->is_file)
     {
         /* Start the playback of the given file */
-        intf_video_player_play(dd->dv->p_intf, dd->file_path);
+        intf_video_player_play(dd->dv->p_intf, dd->file_path, 0);
     }
     else
     {

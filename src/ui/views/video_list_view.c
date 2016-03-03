@@ -56,7 +56,7 @@ genlist_item_selected_cb(void *data, Evas_Object *obj, void *event_info)
 {
     list_view_item *p_view_item = (list_view_item*)data;
 
-    intf_video_player_play(p_view_item->p_list_sys->p_intf, p_view_item->p_media_item->psz_path);
+    intf_video_player_play(p_view_item->p_list_sys->p_intf, p_view_item->p_media_item->psz_path, 0);
 }
 
 static void
