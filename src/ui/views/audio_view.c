@@ -148,7 +148,7 @@ create_toolbar(view_sys *p_view_sys, Evas_Object *parent)
     toolbar_item_append(tabbar, AUDIO_VIEW_ALBUM,   "Albums",   tabbar_item_cb, p_view_sys);
     toolbar_item_append(tabbar, AUDIO_VIEW_SONG,    "Songs",    tabbar_item_cb, p_view_sys);
     toolbar_item_append(tabbar, AUDIO_VIEW_GENRE,   "Genre",    tabbar_item_cb, p_view_sys);
-    toolbar_item_append(tabbar, AUDIO_VIEW_PLAYLIST,"Playlist",    tabbar_item_cb, p_view_sys);
+    toolbar_item_append(tabbar, AUDIO_VIEW_PLAYLIST,"Playlist", tabbar_item_cb, p_view_sys);
 
     // Select the first tab.
     elm_toolbar_item_selected_set(it, EINA_TRUE);

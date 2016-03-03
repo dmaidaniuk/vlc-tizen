@@ -424,6 +424,24 @@ media_library_get_playlist_songs(media_library* p_ml, int64_t i_playlist_id, med
 }
 
 void
+media_library_add_to_playlist( media_library* p_ml, int64_t i_playlist_id, int64_t i_media_id )
+{
+    auto pl = p_ml->ml->playlist( i_playlist_id);
+    if ( pl == nullptr )
+        return;
+    pl->append( i_media_id );
+}
+
+void
+media_library_create_add_to_playlist( media_library* p_ml, const char* psz_name, int64_t i_media_id )
+{
+    auto pl = p_ml->ml->createPlaylist( psz_name );
+    if ( pl == nullptr )
+        return;
+    pl->append( i_media_id );
+}
+
+void
 media_library_register_on_change(media_library* ml, media_library_file_list_changed_cb cb, void* p_data)
 {
     ml->registerOnChange(cb, p_data);

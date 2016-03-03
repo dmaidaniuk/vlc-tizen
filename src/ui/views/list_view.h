@@ -65,8 +65,14 @@ video_view_list_create(interface *intf, Evas_Object *p_parent, list_view_create_
 list_view*
 audio_list_genres_view_create(interface* p_intf, Evas_Object* p_parent, list_view_create_option opts);
 
+const void*
+audio_list_playlists_item_get_playlist_item(list_view_item* p_item);
+
 list_view*
 audio_list_playlists_view_create(interface* p_intf, Evas_Object* p_parent, list_view_create_option opts);
+
+list_view*
+audio_list_add_to_playlists_view_create(interface* p_intf, Evas_Object* p_parent, list_view_create_option opts );
 
 // Create a view that lists albums.
 // If psz_artist_name is non-NULL, only this artist's albums are listed.

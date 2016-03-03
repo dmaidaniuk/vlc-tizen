@@ -32,7 +32,9 @@
 #include "playback_service.h"
 #include "interface.h"
 #include "audio_player.h"
+#include "media/playlist_item.h"
 #include "ui/utils.h"
+#include "ui/views/list_view.h"
 
 struct audio_player {
     interface *intf;
@@ -45,6 +47,7 @@ struct audio_player {
 
     Evas_Object *layout, *fs_layout;
     Evas_Object *popup;
+    Evas_Object *new_playlist_popup;
     Evas_Object *slider, *fs_slider;
     Evas_Object *fs_time, *fs_total_time;
     Evas_Object *fs_title, *fs_sub_title;
@@ -56,6 +59,8 @@ struct audio_player {
     Evas_Object *fs_repeat_btn, *fs_shuffle_btn;
 
     Evas_Object *speed_popup_layout, *speed_popup_progress;
+
+    Evas_Object *p_playlist_input;
 
     Ecore_Timer *long_press_timer, *mini_player_hide_timer;
 };
@@ -85,14 +90,25 @@ typedef struct more_menu {
 #define MORE_JUMPTO 1
 #define MORE_SPEED 2
 #define MORE_SLEEP 3
+#define MORE_PLAYLISTS 4
 #define MORE_END -1
 
 more_menu more_menu_list[] = {
         //{ MORE_JUMPTO,  "Jump to Time",    "ic_jumpto_normal.png" }, // Not implemented
         { MORE_SPEED,   "Playback Speed",  "ic_speed_normal.png"  },
         //{ MORE_SLEEP,   "Sleep in",        "ic_sleep_normal.png"  }, // Not implemented
+        { MORE_PLAYLISTS, "Add to playlist", "ic_save_normal.png" },
         { MORE_END },
 };
+
+static void
+audio_player_close_popup(audio_player *mpd)
+{
+    mpd->more_state = false;
+    elm_image_file_set(mpd->fs_more_btn, ICON_DIR"ic_more_circle_normal_o.png", NULL);
+    evas_object_del(mpd->popup);
+    mpd->popup = NULL;
+}
 
 double
 audio_player_convert_slider_rate(double slider_value)
@@ -163,6 +179,163 @@ audio_player_popup_playback_speed(audio_player *mpd)
     elm_object_content_set(mpd->popup, layout);
     evas_object_show(mpd->popup);
 }
+
+static void
+on_create_playlist(void* data, Evas_Object* obj, void* event_info)
+{
+    audio_player* mpd = (audio_player*)data;
+    application* p_app = intf_get_application(mpd->intf);
+    media_library* p_ml = (media_library*)application_get_media_library(p_app);
+    media_item *p_media = playback_service_list_get_item(mpd->p_ps);
+    media_library_create_add_to_playlist(p_ml, elm_entry_entry_get(mpd->p_playlist_input), p_media->i_id);
+
+    evas_object_del(mpd->new_playlist_popup);
+    mpd->new_playlist_popup = NULL;
+    audio_player_close_popup(mpd);
+}
+
+static void
+on_playlist_selected(void* data, Evas_Object* obj, void* event_info)
+{
+    Elm_Object_Item* p_list_item = (Elm_Object_Item*)event_info;
+    list_view_item* p_list_view_item = (list_view_item*)elm_object_item_data_get(p_list_item);
+    audio_player* mpd = (audio_player*)data;
+    application* p_app = intf_get_application(mpd->intf);
+    media_library* p_ml = (media_library*)application_get_media_library(p_app);
+    media_item *p_media = playback_service_list_get_item(mpd->p_ps);
+    const playlist_item* p_playlist_item = (const playlist_item*)audio_list_playlists_item_get_playlist_item(p_list_view_item);
+    media_library_add_to_playlist(p_ml, p_playlist_item->i_id, p_media->i_id);
+    audio_player_close_popup(mpd);
+}
+
+static void
+audio_player_new_playlist_popup(audio_player* mpd)
+{
+    /* */
+    mpd->new_playlist_popup = elm_popup_add(intf_get_main_naviframe(mpd->intf));
+    elm_popup_orient_set(mpd->new_playlist_popup, ELM_POPUP_ORIENT_CENTER);
+
+    /* */
+    Evas_Object* layout = elm_layout_add(mpd->new_playlist_popup);
+    elm_layout_theme_set(layout, "layout", "application", "default");
+    evas_object_size_hint_weight_set(layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+    evas_object_size_hint_align_set(layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
+    evas_object_show(layout);
+
+    /* Create the background */
+    Evas_Object *bg = elm_bg_add(layout);
+    elm_bg_color_set(bg, 255, 255, 255);
+    evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+    evas_object_size_hint_align_set(bg, EVAS_HINT_FILL, EVAS_HINT_FILL);
+    evas_object_show(bg);
+
+    /* Set the background to the theme */
+    elm_object_part_content_set(layout, "elm.swallow.bg", bg);
+
+    Evas_Object *box = elm_box_add(layout);
+    evas_object_show(box);
+
+    /* */
+    Evas_Object *new_playlist_input = mpd->p_playlist_input = elm_entry_add(box);
+    elm_entry_single_line_set(new_playlist_input, EINA_TRUE);
+    elm_entry_scrollable_set(new_playlist_input, EINA_TRUE);
+    elm_entry_input_panel_layout_set(new_playlist_input, ELM_INPUT_PANEL_LAYOUT_NORMAL);
+    elm_entry_input_panel_return_key_type_set(new_playlist_input, ELM_INPUT_PANEL_RETURN_KEY_TYPE_GO);
+    elm_entry_prediction_allow_set(new_playlist_input, EINA_FALSE);
+    evas_object_size_hint_weight_set(new_playlist_input, 0.9, EVAS_HINT_EXPAND);
+    evas_object_size_hint_align_set(new_playlist_input, EVAS_HINT_FILL, EVAS_HINT_FILL);
+    elm_object_part_text_set(new_playlist_input, "guide", "New playlist name");
+    evas_object_smart_callback_add(new_playlist_input, "activated", on_create_playlist, mpd);
+    elm_box_pack_end(box, new_playlist_input);
+    evas_object_show(new_playlist_input);
+
+    Evas_Object *button = elm_button_add(box);
+    elm_object_text_set(button, "Create");
+    evas_object_size_hint_weight_set(button, 0.1, EVAS_HINT_EXPAND);
+    evas_object_size_hint_align_set(button, EVAS_HINT_FILL, EVAS_HINT_FILL);
+    evas_object_show(button);
+    evas_object_smart_callback_add(button, "clicked", on_create_playlist, mpd);
+    elm_box_pack_end(box, button);
+
+    elm_object_part_content_set(layout, "elm.swallow.content", box);
+
+    /* */
+    elm_object_content_set(mpd->new_playlist_popup, layout);
+    evas_object_show(mpd->new_playlist_popup);
+}
+
+static void
+audio_player_on_new_playlist_clicked(void* data, Evas_Object* obj, void* event_info)
+{
+    audio_player* mpd = (audio_player*)data;
+    audio_player_close_popup(mpd);
+    audio_player_new_playlist_popup(mpd);
+}
+
+static void
+audio_player_popup_playlists(audio_player *mpd)
+{
+    Evas_Object *layout;
+
+    /* */
+    mpd->popup = elm_popup_add(intf_get_main_naviframe(mpd->intf));
+    elm_popup_orient_set(mpd->popup, ELM_POPUP_ORIENT_CENTER);
+
+    /* */
+    layout = elm_layout_add(mpd->popup);
+    elm_layout_theme_set(layout, "layout", "application", "default");
+    evas_object_size_hint_weight_set(layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+    evas_object_size_hint_align_set(layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
+
+    /* Create the background */
+    Evas_Object *bg = elm_bg_add(layout);
+    elm_bg_color_set(bg, 255, 255, 255);
+    evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+    evas_object_size_hint_align_set(bg, EVAS_HINT_FILL, EVAS_HINT_FILL);
+    evas_object_show(bg);
+
+    /* Set the background to the theme */
+    elm_object_part_content_set(layout, "elm.swallow.bg", bg);
+
+    Evas_Object* table = elm_table_add(layout);
+    evas_object_size_hint_weight_set(table, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+    evas_object_size_hint_align_set(table, EVAS_HINT_FILL, EVAS_HINT_FILL);
+    evas_object_show(table);
+
+    Evas_Object *button = elm_button_add(table);
+    elm_object_text_set(button, "New playlist");
+    evas_object_size_hint_weight_set(button, 0.1, EVAS_HINT_EXPAND);
+    evas_object_size_hint_align_set(button, EVAS_HINT_FILL, EVAS_HINT_FILL);
+    evas_object_show(button);
+    evas_object_smart_callback_add(button, "clicked", audio_player_on_new_playlist_clicked, mpd);
+    elm_table_pack(table, button, 0, 0, 1, 1);
+
+    /* */
+    Evas_Object* label = elm_label_add(table);
+    evas_object_size_hint_align_set(label, EVAS_HINT_FILL, EVAS_HINT_FILL);
+    evas_object_size_hint_weight_set(label, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+    elm_object_text_set(label, "Add to playlist...");
+    evas_object_show(label);
+    elm_table_pack(table, label, 0, 1, 1, 1);
+
+    list_view* playlists = audio_list_add_to_playlists_view_create(mpd->intf, table, LIST_CREATE_ALL);
+    Evas_Object* playlist_widget = playlists->pf_get_widget(playlists->p_sys);
+    Evas_Object* playlist_genlist = playlists->pf_get_list(playlists->p_sys);
+    evas_object_size_hint_weight_set(playlist_widget, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+    evas_object_size_hint_align_set(playlist_widget, EVAS_HINT_FILL, EVAS_HINT_FILL);
+    elm_scroller_content_min_limit(playlist_genlist, EINA_TRUE, EINA_TRUE );
+    evas_object_size_hint_min_set(playlist_genlist, 500, 500);
+    evas_object_smart_callback_add(playlist_genlist, "selected", &on_playlist_selected, mpd);
+    evas_object_show(playlist_widget);
+    elm_table_pack(table, playlist_widget, 0, 2, 1, 1);
+    elm_object_part_content_set(layout, "elm.swallow.content", table);
+    evas_object_show(layout);
+
+    /* */
+    elm_object_content_set(mpd->popup, layout);
+    evas_object_show(mpd->popup);
+}
+
 
 static char *
 gl_text_get_cb(void *data, Evas_Object *obj, const char *part)
@@ -250,6 +423,18 @@ popup_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
         apd->mpd->more_state = false;
 
         //TODO : Add a Sleep fcn of the current list
+        break;
+    case MORE_PLAYLISTS:
+        /* */
+        evas_object_del(apd->mpd->popup);
+        /* */
+        elm_image_file_set(apd->mpd->fs_more_btn, ICON_DIR"ic_more_circle_normal_o.png", NULL);
+        /* */
+        evas_object_show(apd->mpd->fs_more_btn);
+        /* Update the button state (pressed or not) */
+        apd->mpd->more_state = false;
+
+        audio_player_popup_playlists(apd->mpd);
         break;
     }
 }
@@ -409,12 +594,16 @@ audio_player_fs_state(audio_player *mpd)
 bool
 audio_player_handle_back_key(audio_player *mpd)
 {
+    if (mpd->new_playlist_popup)
+    {
+        evas_object_del(mpd->new_playlist_popup);
+        mpd->new_playlist_popup = NULL;
+        audio_player_popup_playlists(mpd);
+        return true;
+    }
     if (mpd->popup)
     {
-        mpd->more_state = false;
-        elm_image_file_set(mpd->fs_more_btn, ICON_DIR"ic_more_circle_normal_o.png", NULL);
-        evas_object_del(mpd->popup);
-        mpd->popup = NULL;
+        audio_player_close_popup(mpd);
         return true;
     }
     if (audio_player_fs_state(mpd) == true)

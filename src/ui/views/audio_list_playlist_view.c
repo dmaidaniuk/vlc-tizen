@@ -34,9 +34,12 @@
 #include "ui/utils.h"
 #include "media/playlist_item.h"
 
+typedef void (*playlists_selected_cb)(void *data, Evas_Object *obj, void *event_info);
+
 struct list_sys
 {
     LIST_VIEW_COMMON
+    playlists_selected_cb pf_selected;
 };
 
 struct list_view_item
@@ -74,7 +77,7 @@ genlist_text_get_cb(void *data, Evas_Object *obj, const char *part)
     return NULL;
 }
 
-static const void*
+const void*
 audio_list_playlists_item_get_playlist_item(list_view_item* p_item)
 {
     return p_item->p_playlist_item;
@@ -124,7 +127,6 @@ audio_list_playlists_item_selected(void *data, Evas_Object *obj, void *event_inf
     elm_naviframe_item_title_enabled_set(it, EINA_FALSE, EINA_FALSE);
 }
 
-
 static list_view_item*
 audio_list_playlists_view_append_item(list_sys *p_sys, void* p_data)
 {
@@ -141,7 +143,7 @@ audio_list_playlists_view_append_item(list_sys *p_sys, void* p_data)
             ali,                                        /* genlist item class user data     */
             NULL,                                       /* genlist parent item              */
             ELM_GENLIST_ITEM_NONE,                      /* genlist item type                */
-            audio_list_playlists_item_selected,         /* genlist select smart callback    */
+            p_sys->pf_selected,                         /* genlist select smart callback    */
             ali);                                       /* genlist smart callback user data */
 
     /* */
@@ -158,8 +160,8 @@ audio_list_playlists_view_delete(list_sys* p_list_sys)
     free(p_list_sys);
 }
 
-list_view*
-audio_list_playlists_view_create(interface* p_intf, Evas_Object* p_parent, list_view_create_option opts)
+static list_view*
+audio_list_playlists_view_create_private(interface* p_intf, Evas_Object* p_parent, list_view_create_option opts, bool list_items_on_selected )
 {
     list_view* p_view = calloc(1, sizeof(*p_view));
     if (p_view == NULL)
@@ -168,6 +170,10 @@ audio_list_playlists_view_create(interface* p_intf, Evas_Object* p_parent, list_
     if (p_sys == NULL)
         return NULL;
 
+    if ( list_items_on_selected == true )
+        p_sys->pf_selected = &audio_list_playlists_item_selected;
+    else
+        p_sys->pf_selected = NULL;
     /* Setup common parts */
     list_view_common_setup(p_view, p_sys, p_intf, p_parent, opts);
 
@@ -188,4 +194,16 @@ audio_list_playlists_view_create(interface* p_intf, Evas_Object* p_parent, list_
     media_library_controller_refresh(p_view->p_sys->p_ctrl);
 
     return p_view;
+}
+
+list_view*
+audio_list_playlists_view_create(interface* p_intf, Evas_Object* p_parent, list_view_create_option opts)
+{
+    return audio_list_playlists_view_create_private( p_intf, p_parent, opts, true );
+}
+
+list_view*
+audio_list_add_to_playlists_view_create(interface* p_intf, Evas_Object* p_parent, list_view_create_option opts)
+{
+    return audio_list_playlists_view_create_private( p_intf, p_parent, opts, false );
 }

@@ -55,6 +55,12 @@ list_view_get_widget(list_sys* p_list_sys)
     return p_list_sys->p_container;
 }
 
+static Evas_Object*
+list_view_get_list(list_sys* p_list_sys)
+{
+    return p_list_sys->p_list;
+}
+
 void
 list_view_toggle_empty(list_sys* p_list_sys, bool b_empty)
 {
@@ -117,6 +123,7 @@ list_view_common_setup(list_view* p_list_view, list_sys* p_list_sys, interface* 
     p_list_view->pf_del = &list_view_destroy;
     p_list_view->pf_clear = &list_view_clear;
     p_list_view->pf_get_widget = &list_view_get_widget;
+    p_list_view->pf_get_list = &list_view_get_list;
 
     /* Ensure the initial update takes place (keep in mind that b_empty is 0 initialized) */
     list_view_toggle_empty(p_list_sys, true);
