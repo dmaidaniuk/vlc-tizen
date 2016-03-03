@@ -13,5 +13,7 @@
 /emotion/
 /libvlcpp/
 /medialibrary/
+*.tmp
 *~
 res/edje/*.edj
+
