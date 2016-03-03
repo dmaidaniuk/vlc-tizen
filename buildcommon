@@ -65,7 +65,8 @@ if [ -z "$TIZEN_ABI" ]; then
     exit 1
 fi
 
-. ${TIZEN_SDK}/sdk.version
+cat "${TIZEN_SDK}/sdk.version" | sed -e 's|\([^=]*\)=\(.*\)|\1="\2"|g'  > sdk.version.tmp
+. sdk.version.tmp
 
 mkdir -p ${PROJECTPATH}/lib
 
