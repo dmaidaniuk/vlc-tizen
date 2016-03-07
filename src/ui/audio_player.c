@@ -854,13 +854,6 @@ fs_more_player_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
         /* Add the more list in the popup */
         popup_list = audio_player_create_popup(mpd); //FIXME
 
-        if (application_get_system_version() >= TIZEN_VERSION_2_4_0)
-        {
-            // Workaround: popup menu are blank when shown in landscape
-            // on devices running Tizen 2.4 and compiled with the 2.3 SDK.
-            evas_object_size_hint_min_set(popup_list, 600, 100);
-        }
-
         elm_object_content_set(mpd->popup, popup_list);
         evas_object_show(popup_list);
         /* */
