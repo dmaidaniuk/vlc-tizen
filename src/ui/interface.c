@@ -376,20 +376,19 @@ intf_mini_player_visible_set(interface *intf, bool visible)
         LOGE("No mini player instance");
         return false;
     }
+
     if(visible)
     {
         /* show */
         elm_box_pack_end(intf->main_box, intf->mini_player_layout);
         evas_object_show(intf->mini_player_layout);
-        elm_box_recalculate(intf->main_box);
     }
     else
     {
         elm_box_unpack(intf->main_box, intf->mini_player_layout);
         evas_object_hide(intf->mini_player_layout);
-        elm_box_recalculate(intf->main_box);
     }
-    evas_object_image_source_visible_set(intf->mini_player_layout, visible);
+    elm_box_recalculate(intf->main_box);
     return true;
 }
 
