@@ -647,33 +647,38 @@ update_player_play_pause(audio_player* mpd)
 static void
 update_player_title_display(audio_player* mpd, const char *title)
 {
-    elm_object_part_text_set(mpd->layout, "swallow.title", title);
+    elm_object_part_text_set(mpd->layout, "title_text", title);
     elm_object_part_text_set(mpd->fs_layout, "title_text", title);
 }
 
 static void
 update_player_artist_display(audio_player* mpd, const char *artist)
 {
-    elm_object_part_text_set(mpd->layout, "swallow.subtitle", artist);
+    elm_object_part_text_set(mpd->layout, "subtitle_text", artist);
     elm_object_part_text_set(mpd->fs_layout, "subtitle_text", artist);
 }
 
 static void
 update_player_cover_display(audio_player* mpd, const char *path)
 {
-    evas_object_del(elm_object_part_content_get(mpd->layout, "swallow.cover"));
-    evas_object_del(elm_object_part_content_get(mpd->fs_layout, "cover"));
+    Evas_Object *cover, *fs_cover;
+
+    evas_object_del(elm_object_part_content_unset(mpd->layout, "cover"));
+    evas_object_del(elm_object_part_content_unset(mpd->fs_layout, "cover"));
 
     if (path)
     {
-        elm_object_part_content_set(mpd->layout, "swallow.cover", create_image(mpd->layout, path));
-        elm_object_part_content_set(mpd->fs_layout, "cover", create_image(mpd->fs_layout, path));
+        cover = create_image(mpd->layout, path);
+        fs_cover = create_image(mpd->fs_layout, path);
     }
     else
     {
-        elm_object_part_content_set(mpd->layout, "swallow.cover", create_icon(mpd->layout, "background_cone.png"));
-        elm_object_part_content_set(mpd->fs_layout, "cover", create_icon(mpd->fs_layout, "background_cone.png"));
+        cover = create_icon(mpd->layout, "background_cone.png");
+        fs_cover = create_icon(mpd->fs_layout, "background_cone.png");
     }
+
+    elm_object_part_content_set(mpd->layout, "cover", cover);
+    elm_object_part_content_set(mpd->fs_layout, "cover", fs_cover);
 }
 
 static void
@@ -1007,7 +1012,7 @@ swallow_mini_player(audio_player *mpd, Evas_Object *layout)
 
     /* set the cover image */
     Evas_Object *placeholder = create_icon(layout, "background_cone.png");
-    elm_object_part_content_set(layout, "swallow.cover", placeholder);
+    elm_object_part_content_set(layout, "cover", placeholder);
 
     /* set the play/pause button */
     mpd->play_pause_img = create_icon(layout, "ic_pause_circle_normal_o.png");
