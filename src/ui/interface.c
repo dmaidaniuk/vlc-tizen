@@ -460,7 +460,6 @@ create_main_box(interface *intf, Evas_Object *parent)
 
     /* Library scan progress */
     intf->scan_progress = elm_progressbar_add(intf->main_box);
-    elm_progressbar_unit_format_set(intf->scan_progress, "Scanning... %.0f%%");
     elm_progressbar_horizontal_set(intf->scan_progress, EINA_TRUE);
     evas_object_size_hint_weight_set(intf->scan_progress, EVAS_HINT_EXPAND, EVAS_HINT_FILL);
     evas_object_size_hint_align_set(intf->scan_progress, EVAS_HINT_FILL, EVAS_HINT_FILL);
