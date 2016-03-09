@@ -34,7 +34,7 @@ collections
                 description{
                     state: "default" 0.0;
                     color: 245 245 245 255; // grey
-                    aspect: 5.0 15.0;
+                    aspect: 7.0 15.0;
                     aspect_preference: HORIZONTAL;
                     min: 0 80;
                 }
