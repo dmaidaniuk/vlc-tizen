@@ -51,6 +51,7 @@ struct application {
 };
 
 static tizen_version system_version; /* Tizen system version */
+static int screen_dpi;
 static void app_terminate(void *data);
 
 void
@@ -72,12 +73,27 @@ initialize_system_info()
     {
         system_version = TIZEN_VERSION_UNKNOWN;
     }
+
+    system_info_get_platform_int("tizen.org/feature/screen.dpi", &screen_dpi);
+    if (ret == SYSTEM_INFO_ERROR_NONE)
+    {
+        LOGD("DPI: %d", screen_dpi);
+    }
 }
 
 tizen_version
 application_get_system_version()
 {
     return system_version;
+}
+
+int
+application_get_dpi()
+{
+    // Reference:
+    // Z1: 233
+    // Z3: 294
+    return screen_dpi;
 }
 
 static bool

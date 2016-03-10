@@ -64,6 +64,9 @@ application_get_playback_service(application *app);
 tizen_version
 application_get_system_version();
 
+int
+application_get_dpi();
+
 interface *
 application_get_interface(application *app);
 
