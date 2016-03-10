@@ -433,6 +433,15 @@ media_library_add_to_playlist( media_library* p_ml, int64_t i_playlist_id, int64
 }
 
 void
+media_library_delete_from_playlist( media_library* p_ml, int64_t i_playlist_id, int64_t i_media_id )
+{
+    auto pl = p_ml->ml->playlist( i_playlist_id);
+    if ( pl == nullptr )
+        return;
+    pl->remove( i_media_id );
+}
+
+void
 media_library_delete_playlist( media_library* p_ml, int64_t i_playlist_id )
 {
     p_ml->ml->deletePlaylist( i_playlist_id );

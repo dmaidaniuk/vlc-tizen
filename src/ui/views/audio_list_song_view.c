@@ -32,6 +32,7 @@
 #include "list_view_private.h"
 #include "ui/interface.h"
 #include "ui/utils.h"
+#include "ui/menu/popup_menu.h"
 
 struct list_sys
 {
@@ -40,6 +41,9 @@ struct list_sys
     int64_t i_album_id;
     int64_t i_genre_id;
     int64_t i_playlist_id;
+
+    Evas_Object *current_popup;
+    Elm_Object_Item *current_item;
 };
 
 struct list_view_item
@@ -154,6 +158,54 @@ genlist_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
     intf_start_audio_player(ali->p_list->p_intf, array, pos);
 }
 
+void
+audio_list_song_playlists_longpress_remove_callback(void *data, Evas_Object *obj, void *event_info)
+{
+    list_sys *p_sys = data;
+    application* p_app = intf_get_application(p_sys->p_intf);
+    media_library* p_ml = (media_library*)application_get_media_library(p_app);
+    list_view_item *ali = elm_object_item_data_get(p_sys->current_item);
+
+    if (p_ml != NULL && ali != NULL)
+        media_library_delete_from_playlist(p_ml, p_sys->i_playlist_id, ali->p_media_item->i_id);
+
+    media_library_controller_refresh(p_sys->p_ctrl);
+    evas_object_del(p_sys->current_popup);
+    p_sys->current_popup = NULL;
+    p_sys->current_item = NULL;
+}
+
+static popup_menu audio_list_song_playlists_longpress_menu[] =
+{
+        {"Remove",  NULL,   audio_list_song_playlists_longpress_remove_callback},
+        {0}
+};
+
+void audio_list_song_clear_popup_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+    list_sys *p_sys = data;
+    p_sys->current_popup = NULL;
+    p_sys->current_item = NULL;
+}
+
+static void
+audio_list_song_longpress_callback(void *data, Evas_Object *obj, void *event_info)
+{
+    list_sys* p_sys = data;
+    Elm_Object_Item *it = event_info;
+
+    if (p_sys->i_playlist_id == 0)
+    {
+        /* Only playlists support longpress action */
+        return;
+    }
+
+    p_sys->current_item = it;
+
+    Evas_Object *popup = p_sys->current_popup = popup_menu_orient_add(audio_list_song_playlists_longpress_menu, ELM_POPUP_ORIENT_CENTER, p_sys, p_sys->p_parent);
+    evas_object_show(popup);
+    evas_object_event_callback_add(popup, EVAS_CALLBACK_FREE, audio_list_song_clear_popup_cb, p_sys);
+}
 
 static list_view_item*
 audio_list_song_view_append_item(list_sys *p_sys, void* p_data)
@@ -235,6 +287,7 @@ audio_list_song_view_create(interface* p_intf, Evas_Object* p_parent, list_view_
 
     evas_object_size_hint_weight_set(p_sys->p_list, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
     evas_object_size_hint_align_set(p_sys->p_list, EVAS_HINT_FILL, EVAS_HINT_FILL);
+    evas_object_smart_callback_add(p_sys->p_list, "longpressed", audio_list_song_longpress_callback, p_sys);
 
     p_view->pf_append_item = &audio_list_song_view_append_item;
     p_view->pf_get_item = &audio_list_song_item_get_media_item;
