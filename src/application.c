@@ -110,6 +110,9 @@ app_create(void *data)
     emotion_init();
 
     /* */
+    elm_app_base_scale_set((application_get_dpi() / 90) * 0.7);
+
+    /* */
     sound_manager_set_session_type(SOUND_SESSION_TYPE_MEDIA);
     sound_manager_set_media_session_option(SOUND_SESSION_OPTION_PAUSE_OTHERS_WHEN_START,
             SOUND_SESSION_OPTION_INTERRUPTIBLE_DURING_PLAY);
