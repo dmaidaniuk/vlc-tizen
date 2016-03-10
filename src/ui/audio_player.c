@@ -659,26 +659,37 @@ update_player_artist_display(audio_player* mpd, const char *artist)
 }
 
 static void
-update_player_cover_display(audio_player* mpd, const char *path)
+update_cover(Evas_Object *layout, const char *path)
 {
-    Evas_Object *cover, *fs_cover;
+    Evas_Object *cover;
 
-    evas_object_del(elm_object_part_content_unset(mpd->layout, "cover"));
-    evas_object_del(elm_object_part_content_unset(mpd->fs_layout, "cover"));
+    evas_object_del(elm_object_part_content_unset(layout, "cover"));
 
     if (path)
     {
-        cover = create_image(mpd->layout, path);
-        fs_cover = create_image(mpd->fs_layout, path);
+        cover = create_image(layout, path);
     }
     else
     {
-        cover = create_icon(mpd->layout, "background_cone.png");
-        fs_cover = create_icon(mpd->fs_layout, "background_cone.png");
+        cover = create_icon(layout, "background_cone.png");
     }
 
-    elm_object_part_content_set(mpd->layout, "cover", cover);
-    elm_object_part_content_set(mpd->fs_layout, "cover", fs_cover);
+    elm_object_part_content_set(layout, "cover", cover);
+}
+
+static void
+update_player_cover_display(audio_player* mpd, const char *path)
+{
+    if (application_get_dpi() > 233)
+    {
+        // Bug workaround:
+        // There's an issue on the Z1 caused by multiple calls to
+        // elm_object_part_content_set that makes some parts of the
+        // mini player parts to disappear for no reason.
+        update_cover(mpd->layout, path);
+    }
+
+    update_cover(mpd->fs_layout, path);
 }
 
 static void
