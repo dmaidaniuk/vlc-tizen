@@ -33,6 +33,7 @@
 #include "ui/interface.h"
 #include "ui/utils.h"
 #include "media/playlist_item.h"
+#include "ui/menu/popup_menu.h"
 
 typedef void (*playlists_selected_cb)(void *data, Evas_Object *obj, void *event_info);
 
@@ -40,6 +41,9 @@ struct list_sys
 {
     LIST_VIEW_COMMON
     playlists_selected_cb pf_selected;
+
+    Evas_Object *current_popup;
+    Elm_Object_Item *current_item;
 };
 
 struct list_view_item
@@ -160,6 +164,49 @@ audio_list_playlists_view_delete(list_sys* p_list_sys)
     free(p_list_sys);
 }
 
+void
+audio_list_playlists_longpress_remove_callback(void *data, Evas_Object *obj, void *event_info)
+{
+    list_sys *p_sys = data;
+    application* p_app = intf_get_application(p_sys->p_intf);
+    media_library* p_ml = (media_library*)application_get_media_library(p_app);
+    list_view_item *ali = elm_object_item_data_get(p_sys->current_item);
+
+    if (p_ml != NULL && ali != NULL)
+        media_library_delete_playlist(p_ml, ali->p_playlist_item->i_id);
+
+    media_library_controller_refresh(p_sys->p_ctrl);
+    evas_object_del(p_sys->current_popup);
+    p_sys->current_popup = NULL;
+    p_sys->current_item = NULL;
+}
+
+static popup_menu audio_list_playlists_longpress_menu[] =
+{
+        {"Remove",  NULL,   audio_list_playlists_longpress_remove_callback},
+        {0}
+};
+
+void audio_list_playlists_clear_popup_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+    list_sys *p_sys = data;
+    p_sys->current_popup = NULL;
+    p_sys->current_item = NULL;
+}
+
+static void
+audio_list_playlists_longpress_callback(void *data, Evas_Object *obj, void *event_info)
+{
+    list_sys* p_sys = data;
+    Elm_Object_Item *it = event_info;
+
+    p_sys->current_item = it;
+
+    Evas_Object *popup = p_sys->current_popup = popup_menu_orient_add(audio_list_playlists_longpress_menu, ELM_POPUP_ORIENT_CENTER, p_sys, p_sys->p_parent);
+    evas_object_show(popup);
+    evas_object_event_callback_add(popup, EVAS_CALLBACK_FREE, audio_list_playlists_clear_popup_cb, p_sys);
+}
+
 static list_view*
 audio_list_playlists_view_create_private(interface* p_intf, Evas_Object* p_parent, list_view_create_option opts, bool list_items_on_selected )
 {
@@ -192,6 +239,8 @@ audio_list_playlists_view_create_private(interface* p_intf, Evas_Object* p_paren
     application* p_app = intf_get_application( p_intf );
     p_sys->p_ctrl = playlist_controller_create(p_app, p_view);
     media_library_controller_refresh(p_view->p_sys->p_ctrl);
+
+    evas_object_smart_callback_add(p_sys->p_list, "longpressed", audio_list_playlists_longpress_callback, p_sys);
 
     return p_view;
 }

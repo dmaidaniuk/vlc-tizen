@@ -59,7 +59,6 @@ playlist_item_identical(const playlist_item* p_left, const playlist_item* p_righ
     return p_left->i_id == p_right->i_id;
 }
 
-
 void
 playlist_item_destroy(playlist_item* p_item)
 {

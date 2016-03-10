@@ -98,6 +98,9 @@ void
 media_library_add_to_playlist( media_library* p_ml, int64_t i_playlist_id, int64_t i_media_id );
 
 void
+media_library_delete_playlist( media_library* p_ml, int64_t i_playlist_id );
+
+void
 media_library_create_add_to_playlist( media_library* p_ml, const char* psz_name, int64_t i_media_id );
 
 void
