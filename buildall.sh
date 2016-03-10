@@ -1,10 +1,5 @@
 #!/bin/bash
 
-
-[ "" != "${TIZEN_SDK}" ] || TIZEN_SDK="${HOME}/tizen-sdk"
-[ "" != "${TIZEN_ABI}" ] || TIZEN_ABI="armv7l"
-
-
 SCRIPT=$(readlink -f "$0")
 PROJECTPATH=$(dirname "$SCRIPT")
 . ${PROJECTPATH}/buildcommon
