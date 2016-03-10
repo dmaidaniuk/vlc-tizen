@@ -1301,9 +1301,6 @@ audio_player_create(interface *intf, playback_service *p_ps, Evas_Object *layout
 
     edje_object_signal_callback_add(edje, "*clicked*", "expand_region", audio_player_fullscreen_edge_cb, mpd);
 
-    /* Put the mini player at the bottom of the content_box */
-    evas_object_size_hint_align_set(layout, EVAS_HINT_FILL, 1.0);
-
     update_player_display(mpd);
     return mpd;
 }
