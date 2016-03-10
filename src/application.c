@@ -109,6 +109,10 @@ app_create(void *data)
     ecore_evas_init();
     emotion_init();
 
+    char* psz_res = app_get_resource_path();
+    setenv("VLC_DATA_PATH", psz_res, 1);
+    free(psz_res);
+
     /* */
     elm_app_base_scale_set((application_get_dpi() / 90) * 0.7);
 
