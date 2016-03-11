@@ -46,22 +46,22 @@ class TizenLogger : public ILogger
 {
     virtual void Error( const std::string& msg ) override
     {
-        dlog_print( DLOG_ERROR, "medialibrary", msg.c_str() );
+        dlog_print( DLOG_ERROR, "medialibrary", "%s", msg.c_str() );
     }
 
     virtual void Warning( const std::string& msg ) override
     {
-        dlog_print( DLOG_WARN, "medialibrary", msg.c_str() );
+        dlog_print( DLOG_WARN, "medialibrary", "%s", msg.c_str() );
     }
 
     virtual void Info( const std::string& msg ) override
     {
-        dlog_print( DLOG_INFO, "medialibrary", msg.c_str() );
+        dlog_print( DLOG_INFO, "medialibrary", "%s", msg.c_str() );
     }
 
     virtual void Debug( const std::string& msg ) override
     {
-        dlog_print( DLOG_DEBUG, "medialibrary", msg.c_str() );
+        dlog_print( DLOG_DEBUG, "medialibrary", "%s", msg.c_str() );
     }
 };
 
