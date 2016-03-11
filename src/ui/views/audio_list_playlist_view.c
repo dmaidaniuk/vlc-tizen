@@ -123,6 +123,14 @@ audio_list_playlists_item_selected(void *data, Evas_Object *obj, void *event_inf
     list_view_item* p_view_item = (list_view_item*)data;
     list_view* p_view;
 
+    if (p_view_item->p_list_sys->current_popup)
+    {
+        // A popup is already open, discard the click event.
+        // Because a longpress trigger a longpress event + a click
+        // we have to handle that manually.
+        return;
+    }
+
     p_view = audio_list_song_view_playlist_create(p_view_item->p_list_sys->p_intf,
             p_view_item->p_list_sys->p_parent,
             p_view_item->p_playlist_item->i_id, LIST_CREATE_ALL);
