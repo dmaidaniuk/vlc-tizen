@@ -139,6 +139,15 @@ static void
 genlist_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
     list_view_item *ali = data;
+
+    if (ali->p_list->current_popup || playlists_is_popup_open(ali->p_list->p_playlists))
+    {
+        // A popup is already open, discard the click event.
+        // Because a longpress trigger a longpress event + a click
+        // we have to handle that manually.
+        return;
+    }
+
     int items = elm_genlist_items_count(ali->p_list->p_list);
     Eina_Array *array = eina_array_new(items);
     Elm_Object_Item *it;
