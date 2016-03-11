@@ -161,6 +161,24 @@ genlist_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
     intf_start_audio_player(ali->p_list->p_intf, array, pos);
 }
 
+bool
+audio_list_song_back_callback(list_sys *p_sys)
+{
+    if (p_sys->current_popup != NULL)
+    {
+        evas_object_del(p_sys->current_popup);
+        p_sys->current_popup = NULL;
+        return true;
+    }
+    if (playlists_is_popup_open(p_sys->p_playlists))
+    {
+        playlists_popup_destroy(p_sys->p_playlists);
+        p_sys->p_playlists = NULL;
+        return true;
+    }
+    return false;
+}
+
 void
 audio_list_song_playlists_longpress_add_callback(void *data, Evas_Object *obj, void *event_info)
 {
@@ -320,6 +338,7 @@ audio_list_song_view_create(interface* p_intf, Evas_Object* p_parent, list_view_
     p_view->pf_get_item = &audio_list_song_item_get_media_item;
     p_view->pf_set_item = &audio_list_song_item_set_media_item;
     p_view->pf_del = &audio_list_song_view_delete;
+    p_view->pf_view_event_back = &audio_list_song_back_callback;
 
     application* p_app = intf_get_application( p_intf );
     p_sys->p_ctrl = audio_controller_create(p_app, p_view);

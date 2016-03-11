@@ -140,6 +140,7 @@ typedef struct list_view
     void            (*pf_set_item)(list_view_item* p_list_item, void* p_item);
     Evas_Object*    (*pf_get_widget)(list_sys* p_sys);
     Evas_Object*    (*pf_get_list)(list_sys* p_list_sys);
+    bool            (*pf_view_event_back)(list_sys* p_sys);
 } list_view;
 
 #endif /* INTERFACE_H_ */

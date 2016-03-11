@@ -129,6 +129,7 @@ audio_list_playlists_item_selected(void *data, Evas_Object *obj, void *event_inf
     Evas_Object* p_new_list = p_view->pf_get_widget(p_view->p_sys);
     Elm_Object_Item *it = elm_naviframe_item_push(p_view_item->p_list_sys->p_parent, "", NULL, NULL, p_new_list, NULL);
     elm_naviframe_item_title_enabled_set(it, EINA_FALSE, EINA_FALSE);
+    elm_object_item_data_set(it, p_view);
 }
 
 static list_view_item*

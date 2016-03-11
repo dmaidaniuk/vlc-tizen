@@ -56,6 +56,7 @@ audio_list_album_item_selected(void *data, Evas_Object *obj /*EINA_UNUSED*/, voi
     Evas_Object* p_new_list = p_songs_view->pf_get_widget(p_songs_view->p_sys);
     Elm_Object_Item *it = elm_naviframe_item_push(p_view_item->p_list_sys->p_parent, "", NULL, NULL, p_new_list, NULL);
     elm_naviframe_item_title_enabled_set(it, EINA_FALSE, EINA_FALSE);
+    elm_object_item_data_set(it, p_songs_view);
 }
 
 static void

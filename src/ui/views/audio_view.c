@@ -90,6 +90,7 @@ create_audio_list_type(view_sys *p_view_sys, audio_view_type type )
     Evas_Object* p_list = p_view->pf_get_widget(p_view->p_sys);
     Elm_Object_Item *it = elm_naviframe_item_push(p_view_sys->nf_toolbar, "", NULL, NULL, p_list, NULL);
     elm_naviframe_item_title_enabled_set(it, EINA_FALSE, EINA_FALSE);
+    elm_object_item_data_set(it, p_view);
     evas_object_show(p_list);
 
     return p_view;
@@ -207,17 +208,29 @@ audio_view_callback(view_sys *p_view_sys, interface_view_event event)
         return true;
     }
     case INTERFACE_VIEW_EVENT_BACK:
+    {
+        /* Hide overflow menu */
         if (p_view_sys->p_overflow_menu) {
             evas_object_del(p_view_sys->p_overflow_menu);
             p_view_sys->p_overflow_menu = NULL;
             return true;
         }
+
+        /* Handle back button for sub views */
+        Elm_Object_Item *it = elm_naviframe_top_item_get(p_view_sys->nf_toolbar);
+        list_view* p_view = (list_view *)elm_object_item_data_get(it);
+        if (p_view && p_view->pf_view_event_back)
+            if (p_view->pf_view_event_back(p_view->p_sys) == true)
+                return true;
+
+        /* Pop view */
         if (naviframe_count(p_view_sys->nf_toolbar) > 1)
         {
             elm_naviframe_item_pop(p_view_sys->nf_toolbar);
             return true;
         }
         return false;
+    }
     default:
         break;
     }
