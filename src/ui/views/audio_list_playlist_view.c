@@ -165,6 +165,18 @@ audio_list_playlists_view_delete(list_sys* p_list_sys)
     free(p_list_sys);
 }
 
+bool
+audio_list_playlists_back_callback(list_sys *p_sys)
+{
+    if (p_sys->current_popup != NULL)
+    {
+        evas_object_del(p_sys->current_popup);
+        p_sys->current_popup = NULL;
+        return true;
+    }
+    return false;
+}
+
 void
 audio_list_playlists_longpress_remove_callback(void *data, Evas_Object *obj, void *event_info)
 {
@@ -236,6 +248,7 @@ audio_list_playlists_view_create_private(interface* p_intf, Evas_Object* p_paren
     p_view->pf_get_item = &audio_list_playlists_item_get_playlist_item;
     p_view->pf_set_item = &audio_list_playlists_item_set_playlist_item;
     p_view->pf_del = &audio_list_playlists_view_delete;
+    p_view->pf_view_event_back = &audio_list_playlists_back_callback;
 
     application* p_app = intf_get_application( p_intf );
     p_sys->p_ctrl = playlist_controller_create(p_app, p_view);
