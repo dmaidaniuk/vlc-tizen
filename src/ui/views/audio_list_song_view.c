@@ -32,6 +32,7 @@
 #include "list_view_private.h"
 #include "ui/interface.h"
 #include "ui/utils.h"
+#include "ui/playlists.h"
 #include "ui/menu/popup_menu.h"
 
 struct list_sys
@@ -44,6 +45,8 @@ struct list_sys
 
     Evas_Object *current_popup;
     Elm_Object_Item *current_item;
+
+    playlists *p_playlists;
 };
 
 struct list_view_item
@@ -159,6 +162,20 @@ genlist_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 }
 
 void
+audio_list_song_playlists_longpress_add_callback(void *data, Evas_Object *obj, void *event_info)
+{
+    list_sys *p_sys = data;
+    list_view_item *ali = elm_object_item_data_get(p_sys->current_item);
+
+    playlists_popup_destroy(p_sys->p_playlists);
+    p_sys->p_playlists = playlists_popup_show(p_sys->p_intf, ali->p_media_item->i_id);
+
+    evas_object_del(p_sys->current_popup);
+    p_sys->current_popup = NULL;
+    p_sys->current_item = NULL;
+}
+
+void
 audio_list_song_playlists_longpress_remove_callback(void *data, Evas_Object *obj, void *event_info)
 {
     list_sys *p_sys = data;
@@ -175,9 +192,16 @@ audio_list_song_playlists_longpress_remove_callback(void *data, Evas_Object *obj
     p_sys->current_item = NULL;
 }
 
+static popup_menu audio_list_song_longpress_menu[] =
+{
+        {"Add to playlist",  "ic_save_normal.png",   audio_list_song_playlists_longpress_add_callback},
+        {0}
+};
+
 static popup_menu audio_list_song_playlists_longpress_menu[] =
 {
-        {"Remove",  NULL,   audio_list_song_playlists_longpress_remove_callback},
+        {"Remove from this playlist",  NULL,   audio_list_song_playlists_longpress_remove_callback},
+        {"Add to playlist",  "ic_save_normal.png",   audio_list_song_playlists_longpress_add_callback},
         {0}
 };
 
@@ -191,18 +215,21 @@ void audio_list_song_clear_popup_cb(void *data, Evas *e, Evas_Object *obj, void 
 static void
 audio_list_song_longpress_callback(void *data, Evas_Object *obj, void *event_info)
 {
+    Evas_Object *popup;
     list_sys* p_sys = data;
     Elm_Object_Item *it = event_info;
 
-    if (p_sys->i_playlist_id == 0)
+    if (p_sys->i_playlist_id != 0)
     {
-        /* Only playlists support longpress action */
-        return;
+        popup = p_sys->current_popup = popup_menu_orient_add(audio_list_song_playlists_longpress_menu, ELM_POPUP_ORIENT_CENTER, p_sys, p_sys->p_parent);
+    }
+    else
+    {
+        popup = p_sys->current_popup = popup_menu_orient_add(audio_list_song_longpress_menu, ELM_POPUP_ORIENT_CENTER, p_sys, p_sys->p_parent);
     }
 
     p_sys->current_item = it;
 
-    Evas_Object *popup = p_sys->current_popup = popup_menu_orient_add(audio_list_song_playlists_longpress_menu, ELM_POPUP_ORIENT_CENTER, p_sys, p_sys->p_parent);
     evas_object_show(popup);
     evas_object_event_callback_add(popup, EVAS_CALLBACK_FREE, audio_list_song_clear_popup_cb, p_sys);
 }
