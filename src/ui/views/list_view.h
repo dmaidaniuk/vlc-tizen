@@ -32,6 +32,7 @@
 typedef enum list_view_create_option
 {
     LIST_CREATE_LIST             = 1 << 1,
+    LIST_CREATE_PLACEHOLDER      = 1 << 2,
     LIST_CREATE_ALL              = ~0
 } list_view_create_option;
 

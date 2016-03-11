@@ -103,8 +103,11 @@ list_view_common_setup(list_view* p_list_view, list_sys* p_list_sys, interface* 
     Evas_Object *box = p_list_sys->p_box = elm_box_add(layout);
 
     /* Empty list label */
-    p_list_sys->p_empty_label = elm_label_add(box);
-    elm_object_text_set(p_list_sys->p_empty_label, "No content to display");
+    if (opts & LIST_CREATE_PLACEHOLDER)
+    {
+        p_list_sys->p_empty_label = elm_label_add(box);
+        elm_object_text_set(p_list_sys->p_empty_label, "No content to display");
+    }
 
     /* Create genlist (if required) */
     if (opts & LIST_CREATE_LIST)
