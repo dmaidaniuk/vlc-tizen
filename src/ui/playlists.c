@@ -157,6 +157,9 @@ playlists_new_playlist_popup(playlists* pl)
     evas_object_show(pl->new_playlist_popup);
     evas_object_smart_callback_add(pl->new_playlist_popup, "block,clicked",
             on_new_playlist_background_touched, pl);
+
+    // Give focus to the input
+    elm_object_focus_set(new_playlist_input, EINA_TRUE);
 }
 
 static void
