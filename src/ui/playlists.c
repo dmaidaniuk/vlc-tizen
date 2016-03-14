@@ -206,23 +206,23 @@ playlists_popup_show(interface *intf, int64_t media_id)
     evas_object_size_hint_align_set(table, EVAS_HINT_FILL, EVAS_HINT_FILL);
     evas_object_show(table);
 
-    Evas_Object *button = elm_button_add(table);
-    elm_object_text_set(button, "New playlist");
-    evas_object_size_hint_weight_set(button, 0.1, EVAS_HINT_EXPAND);
-    evas_object_size_hint_align_set(button, EVAS_HINT_FILL, EVAS_HINT_FILL);
-    evas_object_show(button);
-    evas_object_smart_callback_add(button, "clicked", audio_player_on_new_playlist_clicked, pl);
-    elm_table_pack(table, button, 0, 0, 1, 1);
-
     /* */
     Evas_Object* label = elm_label_add(table);
     evas_object_size_hint_align_set(label, EVAS_HINT_FILL, EVAS_HINT_FILL);
     evas_object_size_hint_weight_set(label, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
     elm_object_text_set(label, "Add to playlist...");
     evas_object_show(label);
-    elm_table_pack(table, label, 0, 1, 1, 1);
+    elm_table_pack(table, label, 0, 0, 1, 1);
 
-    list_view* playlists = audio_list_add_to_playlists_view_create(intf, table, LIST_CREATE_ALL);
+    Evas_Object *button = elm_button_add(table);
+    elm_object_text_set(button, "New playlist");
+    evas_object_size_hint_weight_set(button, 0.1, EVAS_HINT_EXPAND);
+    evas_object_size_hint_align_set(button, EVAS_HINT_FILL, EVAS_HINT_FILL);
+    evas_object_show(button);
+    evas_object_smart_callback_add(button, "clicked", audio_player_on_new_playlist_clicked, pl);
+    elm_table_pack(table, button, 0, 1, 1, 1);
+
+    list_view* playlists = audio_list_add_to_playlists_view_create(intf, table, LIST_CREATE_ALL ^ LIST_CREATE_PLACEHOLDER);
     Evas_Object* playlist_widget = playlists->pf_get_widget(playlists->p_sys);
     Evas_Object* playlist_genlist = playlists->pf_get_list(playlists->p_sys);
     evas_object_size_hint_weight_set(playlist_widget, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
