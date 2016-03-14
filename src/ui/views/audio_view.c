@@ -28,30 +28,21 @@
 #include "system_storage.h"
 
 #include "ui/utils.h"
-#include "ui/interface.h"
 #include "ui/views/audio_view.h"
+#include "ui/interface.h"
 #include "ui/views/list_view.h"
 #include "ui/menu/popup_menu.h"
 
 #include <Elementary.h>
 
-typedef enum audio_view_type
-{
-    AUDIO_VIEW_NONE = -1,
-    AUDIO_VIEW_ARTIST,
-    AUDIO_VIEW_ALBUM,
-    AUDIO_VIEW_SONG,
-    AUDIO_VIEW_GENRE,
-    AUDIO_VIEW_PLAYLIST,
-    AUDIO_VIEW_MAX,
-} audio_view_type;
-
 struct view_sys
 {
     interface*              p_intf;
     Evas_Object*            nf_toolbar;
+    Evas_Object*            p_tabbar;
     Evas_Object*            p_overflow_menu;
     audio_view_type         i_current_tab;
+    bool                    b_tab_noreload;
 };
 
 typedef struct toolbar_tab {
@@ -68,6 +59,7 @@ create_audio_list_type(view_sys *p_view_sys, audio_view_type type )
     {
     case AUDIO_VIEW_SONG:
     default:
+        type = AUDIO_VIEW_SONG;
         p_view = audio_list_song_view_all_create(p_view_sys->p_intf, p_view_sys->nf_toolbar, LIST_CREATE_ALL);
         break;
     case AUDIO_VIEW_ARTIST:
@@ -83,6 +75,9 @@ create_audio_list_type(view_sys *p_view_sys, audio_view_type type )
         p_view = audio_list_playlists_view_create(p_view_sys->p_intf, p_view_sys->nf_toolbar, LIST_CREATE_ALL);
         break;
     }
+
+    /* Set the view's tab type so we can restore it on back press (since it's not part of the naviframe) */
+    p_view->type = type;
 
     // Purge the audio view naviframe when switching tabs
     naviframe_clear(p_view_sys->nf_toolbar);
@@ -100,7 +95,7 @@ static void
 tabbar_item_cb(void *data, Evas_Object *obj, void *event_info)
 {
     toolbar_tab *item = data;
-    if (item->p_view_sys->i_current_tab == item->type)
+    if (item->p_view_sys->i_current_tab == item->type || item->p_view_sys->b_tab_noreload)
         return;
 
     item->p_view_sys->i_current_tab = item->type;
@@ -133,7 +128,7 @@ static Evas_Object*
 create_toolbar(view_sys *p_view_sys, Evas_Object *parent)
 {
     /* Create and set the toolbar */
-    Evas_Object *tabbar = elm_toolbar_add(parent);
+    Evas_Object *tabbar = p_view_sys->p_tabbar = elm_toolbar_add(parent);
 
     /* Set the toolbar shrink mode */
     elm_toolbar_shrink_mode_set(tabbar, ELM_TOOLBAR_SHRINK_EXPAND);
@@ -227,6 +222,26 @@ audio_view_callback(view_sys *p_view_sys, interface_view_event event)
         if (naviframe_count(p_view_sys->nf_toolbar) > 1)
         {
             elm_naviframe_item_pop(p_view_sys->nf_toolbar);
+
+            /* Restore the selected tab */
+            Elm_Object_Item *it = elm_naviframe_top_item_get(p_view_sys->nf_toolbar);
+            list_view* p_view = (list_view *)elm_object_item_data_get(it);
+
+            Elm_Object_Item* tab = elm_toolbar_first_item_get(p_view_sys->p_tabbar);
+            do
+            {
+                toolbar_tab *it_data = (toolbar_tab *)elm_object_item_data_get(tab);
+                if (it_data->type == p_view->type)
+                {
+                    // Don't trigger a view reload while we manually switch tab
+                    p_view_sys->b_tab_noreload = true;
+                    elm_toolbar_item_selected_set(tab, EINA_TRUE);
+                    p_view_sys->b_tab_noreload = false;
+                    break;
+                }
+            }
+            while ((tab = elm_toolbar_item_next_get(tab)) != NULL);
+
             return true;
         }
         return false;

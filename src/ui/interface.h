@@ -67,6 +67,17 @@ typedef enum view_e {
     VIEW_MAX,
 } view_e;
 
+typedef enum audio_view_type
+{
+    AUDIO_VIEW_NONE = -1,
+    AUDIO_VIEW_ARTIST,
+    AUDIO_VIEW_ALBUM,
+    AUDIO_VIEW_SONG,
+    AUDIO_VIEW_GENRE,
+    AUDIO_VIEW_PLAYLIST,
+    AUDIO_VIEW_MAX,
+} audio_view_type;
+
 typedef struct interface_view {
     Evas_Object *view;                      /* The Evas View prepared to be stacked */
     view_sys *p_view_sys;                   /* The view private data */
@@ -133,6 +144,7 @@ typedef struct list_view_item list_view_item;
 typedef struct list_view
 {
     list_sys* p_sys;
+    audio_view_type type;
     void            (*pf_del)(list_sys* p_sys);
     list_view_item* (*pf_append_item)(list_sys* p_sys, void* p_item);
     void            (*pf_clear)(list_sys* p_sys);
