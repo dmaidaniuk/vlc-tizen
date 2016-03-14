@@ -30,15 +30,25 @@
 
 #include <vlc/vlc.h>
 
+typedef struct band_slider
+{
+    Evas_Object* p_slider;
+    Evas_Object* p_label;
+    float f_freq;
+} band_slider;
+
 struct equalizer
 {
     Evas_Object* p_view;
     Evas_Object* p_layout;
-    Evas_Object* p_box;
+    Evas_Object* p_table;
+    Evas_Object* p_sliders_box;
     Evas_Object* p_preset_button;
 
     unsigned int i_nb_bands;
-    Evas_Object** pp_sliders;
+    band_slider* p_bands;
+
+    Evas_Object* p_preamp_label;
     Evas_Object* p_preamp_slider;
 
     playback_service* p_ps;
@@ -51,18 +61,47 @@ equalizer_dismiss_preset_popup(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-equalizer_set_preset(equalizer* p_eq, unsigned int i_preset)
+equalizer_update_preamp_slider( equalizer* p_eq, float f_value )
+{
+    char* psz_text;
+    if ( asprintf( &psz_text, "Preamp: %1.1f dB", f_value ) < 0 )
+        return;
+    elm_object_text_set( p_eq->p_preamp_label, psz_text );
+    elm_slider_value_set( p_eq->p_preamp_slider, f_value );
+    free( psz_text );
+}
+
+static void
+equalizer_update_slider_label( band_slider* p_band, float f_value )
+{
+    // ensure we always use positive 0
+    if ( f_value >= -0.001f && f_value <= .001f )
+        f_value = +.0f;
+    char* psz_label;
+    if ( asprintf(&psz_label, "%.1f %s: %1.1f dB",
+            p_band->f_freq >= 1000.f ? p_band->f_freq / 1000.f : p_band->f_freq,
+            p_band->f_freq >= 1000.f ? "kHz" : "Hz",
+                    f_value ) < 0 )
+        return;
+    elm_object_text_set( p_band->p_label, psz_label );
+    free( psz_label );
+}
+
+static void
+equalizer_set_preset( equalizer* p_eq, unsigned int i_preset )
 {
     libvlc_equalizer_t* p_vlc_eq = libvlc_audio_equalizer_new_from_preset( i_preset );
     float f_preamp = libvlc_audio_equalizer_get_preamp( p_vlc_eq );
-    elm_slider_value_set( p_eq->p_preamp_slider, f_preamp );
+    equalizer_update_preamp_slider( p_eq, f_preamp );
     float f_bands[p_eq->i_nb_bands];
     for ( unsigned int i = 0; i < p_eq->i_nb_bands; ++i )
     {
         f_bands[i] = libvlc_audio_equalizer_get_amp_at_index( p_vlc_eq, i );
-        elm_slider_value_set( p_eq->pp_sliders[i], f_bands[i] );
+        elm_slider_value_set( p_eq->p_bands[i].p_slider, f_bands[i] );
+        equalizer_update_slider_label( &p_eq->p_bands[i], f_bands[i] );
     }
     playback_service_eq_set( p_eq->p_ps, f_preamp, p_eq->i_nb_bands, f_bands );
+    libvlc_audio_equalizer_release( p_vlc_eq );
 }
 
 static void
@@ -119,21 +158,21 @@ equalizer_list_presets(void *data, Evas_Object *obj, void *event_info)
 static void
 equalizer_add_presets(equalizer* p_eq)
 {
-    Evas_Object* p_label = elm_label_add(p_eq->p_box);
+    Evas_Object* p_label = elm_label_add(p_eq->p_table);
     elm_object_text_set(p_label, "Presets");
     evas_object_size_hint_weight_set(p_label, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
     evas_object_size_hint_align_set(p_label, EVAS_HINT_FILL, EVAS_HINT_FILL);
-    elm_box_pack_end(p_eq->p_box, p_label);
     evas_object_show(p_label);
+    elm_table_pack( p_eq->p_table, p_label, 0, 0, 1, 1 );
 
-    p_eq->p_preset_button = elm_button_add(p_eq->p_box);
+    p_eq->p_preset_button = elm_button_add(p_eq->p_table);
     elm_object_style_set(p_eq->p_preset_button, "dropdown");
     evas_object_smart_callback_add(p_eq->p_preset_button, "clicked", equalizer_list_presets, p_eq);
     elm_object_text_set(p_eq->p_preset_button, libvlc_audio_equalizer_get_preset_name(0));
     evas_object_size_hint_weight_set(p_eq->p_preset_button, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
     evas_object_size_hint_align_set(p_eq->p_preset_button, EVAS_HINT_FILL, EVAS_HINT_FILL);
     evas_object_show(p_eq->p_preset_button);
-    elm_box_pack_after(p_eq->p_box, p_eq->p_preset_button, p_label);
+    elm_table_pack( p_eq->p_table, p_eq->p_preset_button, 1, 0, 1, 1 );
 }
 
 static void
@@ -141,53 +180,79 @@ equalizer_slider_changed_cb( void *data, Evas_Object *obj, void *event_info )
 {
     equalizer* p_eq = (equalizer*)data;
     float f_preamp = elm_slider_value_get( p_eq->p_preamp_slider );
+    equalizer_update_preamp_slider( p_eq, f_preamp );
     float f_bands[p_eq->i_nb_bands];
     for ( unsigned int i = 0; i < p_eq->i_nb_bands; ++i )
     {
-        f_bands[i] = elm_slider_value_get( p_eq->pp_sliders[i] );
+        f_bands[i] = elm_slider_value_get( p_eq->p_bands[i].p_slider );
+        equalizer_update_slider_label( &p_eq->p_bands[i], f_bands[i] );
     }
     playback_service_eq_set( p_eq->p_ps, f_preamp, p_eq->i_nb_bands, f_bands );
 }
 
 static void
+equalizer_slider_changed_update_label_cb( void *data, Evas_Object *obj, void *event_info )
+{
+    equalizer_update_slider_label( (band_slider*)data, elm_slider_value_get( obj ) );
+}
+
+static void
+equalizer_preamp_slider_changed_update_label_cb( void *data, Evas_Object *obj, void *event_info )
+{
+    equalizer_update_preamp_slider( (equalizer*)data, elm_slider_value_get(obj) );
+}
+
+static void
 equalizer_init_sliders(equalizer* p_eq)
 {
-    Evas_Object* p_preamp_slider = p_eq->p_preamp_slider = elm_slider_add( p_eq->p_box );
+    Evas_Object* p_box = p_eq->p_sliders_box = elm_box_add( p_eq->p_table );
+    evas_object_size_hint_weight_set( p_box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND );
+    evas_object_size_hint_align_set( p_box, EVAS_HINT_FILL, EVAS_HINT_FILL );
+
+    Evas_Object* p_preamp_label = p_eq->p_preamp_label = elm_label_add( p_box );
+    evas_object_size_hint_weight_set( p_preamp_label, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND );
+    evas_object_size_hint_align_set( p_preamp_label, EVAS_HINT_FILL, EVAS_HINT_FILL );
+    evas_object_show( p_preamp_label );
+    elm_box_pack_end( p_box, p_preamp_label );
+
+    Evas_Object* p_preamp_slider = p_eq->p_preamp_slider = elm_slider_add( p_box );
     elm_slider_value_set( p_preamp_slider, 0.0 );
     elm_slider_min_max_set( p_preamp_slider, -20.0, 20.0 );
-    evas_object_size_hint_weight_set( p_preamp_slider, 0.8, EVAS_HINT_EXPAND );
+    evas_object_size_hint_weight_set( p_preamp_slider, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND );
     evas_object_size_hint_align_set( p_preamp_slider, EVAS_HINT_FILL, EVAS_HINT_FILL );
-    elm_slider_unit_format_set( p_preamp_slider, "%f dB" );
-    elm_object_part_text_set( p_preamp_slider, "default", "Preamp" );
     evas_object_smart_callback_add( p_preamp_slider, "delay,changed", equalizer_slider_changed_cb, p_eq );
+    evas_object_smart_callback_add( p_preamp_slider, "changed", equalizer_preamp_slider_changed_update_label_cb, p_eq );
     evas_object_show( p_preamp_slider );
-    elm_box_pack_end( p_eq->p_box, p_preamp_slider );
+    elm_box_pack_end( p_box, p_preamp_slider );
+
+    equalizer_update_preamp_slider( p_eq, 0.0f );
 
     p_eq->i_nb_bands = libvlc_audio_equalizer_get_band_count();
-    p_eq->pp_sliders = malloc( p_eq->i_nb_bands * sizeof( *p_eq->pp_sliders ) );
+    p_eq->p_bands = malloc( p_eq->i_nb_bands * sizeof( *p_eq->p_bands ) );
     for ( unsigned int i = 0; i < p_eq->i_nb_bands; ++i )
     {
-        float f_band_freq = libvlc_audio_equalizer_get_band_frequency( i );
-        char* psz_label;
+        p_eq->p_bands[i].f_freq = libvlc_audio_equalizer_get_band_frequency( i );
 
-        if ( asprintf(&psz_label, "%f %s", f_band_freq >= 1000.f ? f_band_freq / 1000.f : f_band_freq,
-                f_band_freq >= 1000.f ? "kHz" : "Hz") < 0 )
-            continue;
+        Evas_Object* p_label = p_eq->p_bands[i].p_label = elm_label_add( p_box );
+        evas_object_size_hint_weight_set( p_label, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND );
+        evas_object_size_hint_align_set( p_label, EVAS_HINT_FILL, EVAS_HINT_FILL );
+        evas_object_show( p_label );
+        elm_box_pack_end( p_box, p_label );
 
-        Evas_Object* p_slider = p_eq->pp_sliders[i] = elm_slider_add( p_eq->p_box );
+        Evas_Object* p_slider = p_eq->p_bands[i].p_slider = elm_slider_add( p_box );
         evas_object_size_hint_weight_set( p_slider, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND );
         evas_object_size_hint_align_set( p_slider, EVAS_HINT_FILL, EVAS_HINT_FILL );
-        elm_object_part_text_set( p_slider, "default", psz_label );
         elm_slider_value_set( p_slider, 0.0 );
         elm_slider_min_max_set(p_slider, -20.0, 20.0);
-        elm_slider_unit_format_set( p_slider, "%1.2f dB" );
-        evas_object_smart_callback_add( p_preamp_slider, "delay,changed", equalizer_slider_changed_cb, p_eq );
+        evas_object_smart_callback_add( p_slider, "delay,changed", equalizer_slider_changed_cb, p_eq );
+        evas_object_smart_callback_add( p_slider, "changed", equalizer_slider_changed_update_label_cb, &p_eq->p_bands[i] );
         evas_object_show( p_slider );
-        elm_box_pack_end( p_eq->p_box, p_slider );
+        elm_box_pack_end( p_box, p_slider );
 
-        free( psz_label );
+        equalizer_update_slider_label( &p_eq->p_bands[i], 0.0 );
     }
-
+    evas_object_show( p_box );
+    elm_table_pack( p_eq->p_table, p_box, 0, 1, 2, 1 );
 }
 
 equalizer*
@@ -217,9 +282,9 @@ equalizer_create(interface* p_intf, playback_service* p_ps)
     /* Set the background to the theme */
     elm_object_part_content_set(p_layout, "elm.swallow.bg", bg);
 
-    p_eq->p_box = elm_box_add(p_layout);
-    evas_object_show(p_eq->p_box);
-    elm_object_part_content_set(p_layout, "elm.swallow.content", p_eq->p_box);
+    p_eq->p_table = elm_table_add(p_layout);
+    evas_object_show(p_eq->p_table);
+    elm_object_part_content_set(p_layout, "elm.swallow.content", p_eq->p_table);
 
     equalizer_add_presets(p_eq);
     equalizer_init_sliders(p_eq);
@@ -235,6 +300,6 @@ void
 equalizer_destroy(equalizer* p_eq)
 {
     evas_object_del(p_eq->p_view);
-    free(p_eq->pp_sliders);
+    free(p_eq->p_bands);
     free(p_eq);
 }
