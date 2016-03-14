@@ -126,6 +126,7 @@ playlists_new_playlist_popup(playlists* pl)
     elm_object_part_content_set(layout, "elm.swallow.bg", bg);
 
     Evas_Object *box = elm_box_add(layout);
+    elm_box_padding_set(box, ELM_SCALE_SIZE(20), ELM_SCALE_SIZE(20));
     evas_object_show(box);
 
     /* */
@@ -204,6 +205,7 @@ playlists_popup_show(interface *intf, int64_t media_id)
     Evas_Object* table = elm_table_add(layout);
     evas_object_size_hint_weight_set(table, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
     evas_object_size_hint_align_set(table, EVAS_HINT_FILL, EVAS_HINT_FILL);
+    elm_table_padding_set(table, 0, ELM_SCALE_SIZE(20));
     evas_object_show(table);
 
     /* */
@@ -228,7 +230,7 @@ playlists_popup_show(interface *intf, int64_t media_id)
     evas_object_size_hint_weight_set(playlist_widget, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
     evas_object_size_hint_align_set(playlist_widget, EVAS_HINT_FILL, EVAS_HINT_FILL);
     elm_scroller_content_min_limit(playlist_genlist, EINA_TRUE, EINA_TRUE );
-    evas_object_size_hint_min_set(playlist_genlist, 500, 500);
+    evas_object_size_hint_min_set(playlist_genlist, 480, 480);
     evas_object_smart_callback_add(playlist_genlist, "selected", &on_playlist_selected, pl);
     evas_object_show(playlist_widget);
     elm_table_pack(table, playlist_widget, 0, 2, 1, 1);
