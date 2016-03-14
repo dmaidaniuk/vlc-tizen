@@ -36,12 +36,14 @@
 #include "ui/utils.h"
 #include "ui/views/list_view.h"
 #include "ui/playlists.h"
+#include "ui/equalizer.h"
 
 struct audio_player {
     interface *intf;
     playback_service *p_ps;
     playback_service_cbs_id *p_ps_cbs_id;
     playlists *p_playlists;
+    equalizer* p_equalizer;
 
     bool save_state, shuffle_state, playlist_state, more_state, fs_state;
     double slider_event_time;
@@ -92,6 +94,7 @@ typedef struct more_menu {
 #define MORE_SPEED 2
 #define MORE_SLEEP 3
 #define MORE_PLAYLISTS 4
+#define MORE_EQUALIZER 5
 #define MORE_END -1
 
 more_menu more_menu_list[] = {
@@ -99,6 +102,7 @@ more_menu more_menu_list[] = {
         { MORE_SPEED,   "Playback Speed",  "ic_speed_normal.png"  },
         //{ MORE_SLEEP,   "Sleep in",        "ic_sleep_normal.png"  }, // Not implemented
         { MORE_PLAYLISTS, "Add to playlist", "ic_save_normal.png" },
+        { MORE_EQUALIZER, "Equalizer",       "ic_equalizer_normal.png" },
         { MORE_END },
 };
 
@@ -291,6 +295,10 @@ popup_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
         if (p_media)
             apd->mpd->p_playlists = playlists_popup_show(apd->mpd->intf, p_media->i_id);
         break;
+    case MORE_EQUALIZER:
+        evas_object_del(apd->mpd->popup);
+        apd->mpd->p_equalizer = equalizer_create(apd->mpd->intf, apd->mpd->p_ps);
+        break;
     }
 
     evas_object_smart_callback_add(apd->mpd->popup, "block,clicked", audio_player_on_background_touched, apd->mpd);
@@ -456,6 +464,11 @@ audio_player_handle_back_key(audio_player *mpd)
         playlists_popup_destroy(mpd->p_playlists);
         mpd->p_playlists = NULL;
         return true;
+    }
+    if (mpd->p_equalizer != NULL)
+    {
+        equalizer_destroy(mpd->p_equalizer);
+        mpd->p_equalizer = NULL;
     }
     if (mpd->popup)
     {

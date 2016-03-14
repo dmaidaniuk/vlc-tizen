@@ -998,3 +998,15 @@ playback_service_current_file_path_get(playback_service *p_ps)
 {
     return emotion_object_file_get(p_ps->p_e);
 }
+
+void
+playback_service_eq_set(playback_service* p_ps, float f_preamp, unsigned int i_nb_bands, float* f_bands )
+{
+    emotion_object_equalizer_set( p_ps->p_e, f_preamp, i_nb_bands, f_bands );
+}
+
+void
+playback_service_eq_get(playback_service* p_ps, float* f_preamp, unsigned int* i_nb_bands, float** f_bands )
+{
+    emotion_object_equalizer_get( p_ps->p_e, f_preamp, i_nb_bands, f_bands );
+}

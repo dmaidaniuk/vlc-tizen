@@ -208,4 +208,10 @@ playback_service_is_background_playback(playback_service *p_ps);
 const char*
 playback_service_current_file_path_get(playback_service *p_ps);
 
+void
+playback_service_eq_set(playback_service* p_ps, float f_preamp, unsigned int i_nb_bands, float* f_bands );
+
+void
+playback_service_eq_get(playback_service* p_ps, float* f_preamp, unsigned int* i_nb_bands, float** f_bands );
+
 #endif /* PLAYBACK_SERVICE_H */
