@@ -296,6 +296,7 @@ popup_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
             apd->mpd->p_playlists = playlists_popup_show(apd->mpd->intf, p_media->i_id);
         break;
     case MORE_EQUALIZER:
+        elm_image_file_set(apd->mpd->fs_more_btn, ICON_DIR"ic_more_circle_normal_o.png", NULL);
         evas_object_del(apd->mpd->popup);
         apd->mpd->p_equalizer = equalizer_create(apd->mpd->intf, apd->mpd->p_ps);
         break;
