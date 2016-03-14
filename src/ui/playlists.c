@@ -69,13 +69,6 @@ playlists_popup_destroy(playlists *pl)
 }
 
 static void
-on_new_playlist_background_touched(void *data, Evas_Object *obj, void *event_info)
-{
-    playlists* pl = (playlists*)data;
-    playlists_popup_close(pl);
-}
-
-static void
 on_create_playlist(void* data, Evas_Object* obj, void* event_info)
 {
     playlists* pl = (playlists*)data;
@@ -156,8 +149,6 @@ playlists_new_playlist_popup(playlists* pl)
     /* */
     elm_object_content_set(pl->new_playlist_popup, layout);
     evas_object_show(pl->new_playlist_popup);
-    evas_object_smart_callback_add(pl->new_playlist_popup, "block,clicked",
-            on_new_playlist_background_touched, pl);
 
     // Give focus to the input
     elm_object_focus_set(new_playlist_input, EINA_TRUE);
