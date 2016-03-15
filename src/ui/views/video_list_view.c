@@ -170,7 +170,6 @@ video_view_append_item(list_sys *p_list_sys, void* p_data)
 {
     media_item* p_item = (media_item*)p_data;
     /* */
-    LOGE("Adding media item %s", p_item->psz_path);
     list_view_item *vli = calloc(1, sizeof(*vli));
     if (vli == NULL)
         return NULL;
