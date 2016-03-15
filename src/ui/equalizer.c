@@ -396,18 +396,16 @@ equalizer_add_enable_button(equalizer* p_eq)
 }
 
 equalizer*
-equalizer_create(interface* p_intf, playback_service* p_ps)
+equalizer_create(interface* p_intf, playback_service* p_ps, Evas_Object *parent)
 {
     equalizer* p_eq = calloc(1, sizeof(*p_eq));
     if ( p_eq == NULL )
         return NULL;
 
     p_eq->p_ps = p_ps;
-    p_eq->p_view = elm_popup_add(intf_get_main_naviframe(p_intf));
-    elm_popup_orient_set(p_eq->p_view, ELM_POPUP_ORIENT_CENTER);
 
     /* */
-    Evas_Object* p_layout = p_eq->p_layout = elm_layout_add(p_eq->p_view);
+    Evas_Object* p_layout = p_eq->p_view = elm_layout_add(parent);
     elm_layout_theme_set(p_layout, "layout", "application", "default");
     evas_object_size_hint_weight_set(p_layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
     evas_object_size_hint_align_set(p_layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -422,9 +420,18 @@ equalizer_create(interface* p_intf, playback_service* p_ps)
     /* Set the background to the theme */
     elm_object_part_content_set(p_layout, "elm.swallow.bg", bg);
 
-    p_eq->p_table = elm_table_add(p_layout);
+    Evas_Object *scroller = elm_scroller_add(p_layout);
+    evas_object_size_hint_weight_set(scroller, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+    evas_object_size_hint_align_set(scroller, EVAS_HINT_FILL, EVAS_HINT_FILL);
+    elm_scroller_bounce_set(scroller, EINA_FALSE, EINA_TRUE);
+
+    p_eq->p_table = elm_table_add(scroller);
+    evas_object_size_hint_weight_set(p_eq->p_table, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+    evas_object_size_hint_align_set(p_eq->p_table, EVAS_HINT_FILL, EVAS_HINT_FILL);
     evas_object_show(p_eq->p_table);
-    elm_object_part_content_set(p_layout, "elm.swallow.content", p_eq->p_table);
+
+    elm_object_content_set(scroller, p_eq->p_table);
+    elm_object_part_content_set(p_layout, "elm.swallow.content", scroller);
 
     equalizer_add_enable_button(p_eq);
     equalizer_add_presets(p_eq);
@@ -441,8 +448,7 @@ equalizer_create(interface* p_intf, playback_service* p_ps)
     }
 
     evas_object_show(p_layout);
-    elm_object_content_set(p_eq->p_view, p_layout);
-    evas_object_show(p_eq->p_view);
+    elm_naviframe_item_push(intf_get_main_naviframe(p_intf), "Equalizer", NULL, NULL, p_layout, NULL);
 
     return p_eq;
 }

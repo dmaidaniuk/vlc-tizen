@@ -32,7 +32,7 @@
 typedef struct equalizer equalizer;
 
 equalizer*
-equalizer_create(interface* p_intf, playback_service* p_ps);
+equalizer_create(interface* p_intf, playback_service* p_ps, Evas_Object *parent);
 
 void
 equalizer_destroy(equalizer* p_eq);

@@ -305,7 +305,7 @@ popup_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
         /* Update the button state (pressed or not) */
         apd->mpd->more_state = false;
 
-        apd->mpd->p_equalizer = equalizer_create(apd->mpd->intf, apd->mpd->p_ps);
+        apd->mpd->p_equalizer = equalizer_create(apd->mpd->intf, apd->mpd->p_ps, apd->mpd->fs_layout);
         break;
     }
 
@@ -475,6 +475,7 @@ audio_player_handle_back_key(audio_player *mpd)
     }
     if (mpd->p_equalizer != NULL)
     {
+        elm_naviframe_item_pop(intf_get_main_naviframe(mpd->intf));
         equalizer_destroy(mpd->p_equalizer);
         mpd->p_equalizer = NULL;
         return true;
