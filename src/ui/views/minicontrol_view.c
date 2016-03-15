@@ -136,7 +136,7 @@ static playback_service* ps = NULL;
 static void
 mini_control_event_cb(minicontrol_viewer_event_e event_type, bundle *event_arg)
 {
-    if (event_type == MINICONTROL_VIEWER_EVENT_HIDE || event_type == MINICONTROL_EVENT_REQUEST_HIDE)
+    if (event_type == MINICONTROL_EVENT_REQUEST_HIDE)
         playback_service_stop_notify(ps, true);
 }
 
