@@ -477,6 +477,7 @@ audio_player_handle_back_key(audio_player *mpd)
     {
         equalizer_destroy(mpd->p_equalizer);
         mpd->p_equalizer = NULL;
+        return true;
     }
     if (mpd->popup)
     {
