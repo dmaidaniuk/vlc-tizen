@@ -40,5 +40,11 @@ equalizer_destroy(equalizer* p_eq);
 bool
 equalizer_is_enabled();
 
+float
+equalizer_get_preamp_value();
+
+static float
+equalizer_get_band_value( unsigned int i_band );
+
 
 #endif // EQUALIZER_H_
