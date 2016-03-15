@@ -37,5 +37,8 @@ equalizer_create(interface* p_intf, playback_service* p_ps);
 void
 equalizer_destroy(equalizer* p_eq);
 
+bool
+equalizer_is_enabled();
+
 
 #endif // EQUALIZER_H_

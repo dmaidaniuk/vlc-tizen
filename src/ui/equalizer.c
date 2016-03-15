@@ -28,7 +28,10 @@
 #include "equalizer.h"
 #include "playback_service.h"
 
+#include <app_preference.h>
 #include <vlc/vlc.h>
+
+#define EQUALIZER_ENABLED_SETTING "equalizer-enabled"
 
 typedef struct band_slider
 {
@@ -42,8 +45,12 @@ struct equalizer
     Evas_Object* p_view;
     Evas_Object* p_layout;
     Evas_Object* p_table;
+
+    Evas_Object* p_enable_check;
+
     Evas_Object* p_sliders_box;
     Evas_Object* p_preset_button;
+    Evas_Object* p_preset_label;
 
     unsigned int i_nb_bands;
     band_slider* p_bands;
@@ -53,6 +60,15 @@ struct equalizer
 
     playback_service* p_ps;
 };
+
+bool
+equalizer_is_enabled()
+{
+    bool b_enabled;
+    if ( preference_get_boolean( EQUALIZER_ENABLED_SETTING, &b_enabled ) != PREFERENCE_ERROR_NONE )
+        b_enabled = false;
+    return b_enabled;
+}
 
 static void
 equalizer_dismiss_preset_popup(void *data, Evas_Object *obj, void *event_info)
@@ -158,12 +174,12 @@ equalizer_list_presets(void *data, Evas_Object *obj, void *event_info)
 static void
 equalizer_add_presets(equalizer* p_eq)
 {
-    Evas_Object* p_label = elm_label_add(p_eq->p_table);
+    Evas_Object* p_label = p_eq->p_preset_label = elm_label_add(p_eq->p_table);
     elm_object_text_set(p_label, "Presets");
     evas_object_size_hint_weight_set(p_label, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
     evas_object_size_hint_align_set(p_label, EVAS_HINT_FILL, EVAS_HINT_FILL);
     evas_object_show(p_label);
-    elm_table_pack( p_eq->p_table, p_label, 0, 0, 1, 1 );
+    elm_table_pack( p_eq->p_table, p_label, 0, 1, 1, 1 );
 
     p_eq->p_preset_button = elm_button_add(p_eq->p_table);
     elm_object_style_set(p_eq->p_preset_button, "dropdown");
@@ -172,7 +188,7 @@ equalizer_add_presets(equalizer* p_eq)
     evas_object_size_hint_weight_set(p_eq->p_preset_button, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
     evas_object_size_hint_align_set(p_eq->p_preset_button, EVAS_HINT_FILL, EVAS_HINT_FILL);
     evas_object_show(p_eq->p_preset_button);
-    elm_table_pack( p_eq->p_table, p_eq->p_preset_button, 1, 0, 1, 1 );
+    elm_table_pack( p_eq->p_table, p_eq->p_preset_button, 1, 1, 1, 1 );
 }
 
 static void
@@ -252,7 +268,39 @@ equalizer_init_sliders(equalizer* p_eq)
         equalizer_update_slider_label( &p_eq->p_bands[i], 0.0 );
     }
     evas_object_show( p_box );
-    elm_table_pack( p_eq->p_table, p_box, 0, 1, 2, 1 );
+    elm_table_pack( p_eq->p_table, p_box, 0, 2, 2, 1 );
+}
+
+static void
+equalizer_enable_changed( equalizer* p_eq, bool b_enabled )
+{
+    elm_object_disabled_set( p_eq->p_sliders_box, !b_enabled );
+    elm_object_disabled_set( p_eq->p_preamp_label, !b_enabled );
+    elm_object_disabled_set( p_eq->p_preamp_slider, !b_enabled );
+    elm_object_disabled_set( p_eq->p_preset_label, !b_enabled );
+    elm_object_disabled_set( p_eq->p_preset_button, !b_enabled );
+}
+
+static void
+equalizer_enable_changed_cb( void *data, Evas_Object *obj, void *event_info )
+{
+    equalizer* p_eq = (equalizer*)data;
+    bool b_enabled = elm_check_state_get( p_eq->p_enable_check );
+    equalizer_enable_changed( p_eq, b_enabled );
+    preference_set_boolean( EQUALIZER_ENABLED_SETTING, b_enabled );
+}
+
+void
+equalizer_add_enable_button(equalizer* p_eq)
+{
+    Evas_Object* p_check = p_eq->p_enable_check = elm_check_add( p_eq->p_table );
+    elm_object_style_set( p_check, "on&off" );
+    elm_object_text_set( p_check, "Enable equalizer" );
+    evas_object_size_hint_weight_set( p_check, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND );
+    evas_object_size_hint_align_set( p_check, EVAS_HINT_FILL, 1.0 );
+    evas_object_smart_callback_add( p_check, "changed", equalizer_enable_changed_cb, p_eq );
+    evas_object_show( p_check );
+    elm_table_pack( p_eq->p_table, p_check, 0, 0, 2, 1 );
 }
 
 equalizer*
@@ -286,8 +334,11 @@ equalizer_create(interface* p_intf, playback_service* p_ps)
     evas_object_show(p_eq->p_table);
     elm_object_part_content_set(p_layout, "elm.swallow.content", p_eq->p_table);
 
+    equalizer_add_enable_button(p_eq);
     equalizer_add_presets(p_eq);
     equalizer_init_sliders(p_eq);
+
+    equalizer_enable_changed( p_eq, equalizer_is_enabled() );
 
     evas_object_show(p_layout);
     elm_object_content_set(p_eq->p_view, p_layout);
