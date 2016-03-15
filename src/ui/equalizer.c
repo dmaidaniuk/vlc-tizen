@@ -139,6 +139,12 @@ equalizer_set_preset_value( const char* psz_value )
         preference_remove( EQUALIZER_PRESET_SETTING );
 }
 
+unsigned int
+equalizer_get_nb_bands()
+{
+    return libvlc_audio_equalizer_get_band_count();
+}
+
 static void
 equalizer_dismiss_preset_popup(void *data, Evas_Object *obj, void *event_info)
 {
@@ -327,7 +333,7 @@ equalizer_init_sliders(equalizer* p_eq)
 
     equalizer_update_preamp_slider( p_eq, f_value );
 
-    p_eq->i_nb_bands = libvlc_audio_equalizer_get_band_count();
+    p_eq->i_nb_bands = equalizer_get_nb_bands();
     p_eq->p_bands = malloc( p_eq->i_nb_bands * sizeof( *p_eq->p_bands ) );
     for ( unsigned int i = 0; i < p_eq->i_nb_bands; ++i )
     {

@@ -43,8 +43,10 @@ equalizer_is_enabled();
 float
 equalizer_get_preamp_value();
 
-static float
+float
 equalizer_get_band_value( unsigned int i_band );
 
+unsigned int
+equalizer_get_nb_bands();
 
 #endif // EQUALIZER_H_

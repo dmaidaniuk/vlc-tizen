@@ -37,6 +37,7 @@
 #include "playback_service.h"
 #include "media/media_list.h"
 #include "preferences/preferences.h"
+#include "ui/equalizer.h"
 
 #include "ui/views/minicontrol_view.h"
 
@@ -302,6 +303,17 @@ ps_emotion_create(playback_service *p_ps, Evas *p_evas, bool b_mute_video)
     //evas_object_smart_callback_add(p_e, "progress_change", ps_emotion_progress_change_cb, p_ps);
     //evas_object_smart_callback_add(p_e, "audio_level_change", ps_emotion_audio_change, p_ps);
     //evas_object_smart_callback_add(p_e, "channels_change", ps_emotion_channels_change, p_ps);
+
+    if ( equalizer_is_enabled() )
+    {
+        float f_preamp = equalizer_get_preamp_value();
+        unsigned int i_nb_bands = equalizer_get_nb_bands();
+        float f_bands[i_nb_bands];
+        for ( unsigned int i = 0; i < i_nb_bands; ++i )
+            f_bands[i] = equalizer_get_band_value( i );
+        // Don't use playback_service_eq_set since we haven't assigned p_e yet
+        emotion_object_equalizer_set( p_e, f_preamp, i_nb_bands, f_bands );
+    }
 
     return p_e;
 }
