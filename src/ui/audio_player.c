@@ -824,6 +824,8 @@ fs_repeat_player_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 
         playback_service_set_repeat_mode(mpd->p_ps, REPEAT_NONE);
     }
+
+    update_player_next_prev(mpd);
 }
 
 static void
