@@ -291,6 +291,8 @@ equalizer_slider_changed_cb( void *data, Evas_Object *obj, void *event_info )
     }
     // Since an individual slider was moved, we consider this not to be a preset anymore
     equalizer_set_preset_value( NULL );
+    // Clearly notify the UI that this is not a preset anymore
+    elm_object_text_set( p_eq->p_preset_button, "" );
     playback_service_eq_set( p_eq->p_ps, f_preamp, p_eq->i_nb_bands, f_bands );
 }
 
