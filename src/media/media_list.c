@@ -285,6 +285,8 @@ media_list_set_pos(media_list *p_ml, int i_index)
     if (i_index != p_ml->i_pos || p_ml->i_repeat == REPEAT_ONE)
     {
         p_ml->i_pos = i_index;
+        if (p_ml->i_pos < 0 && p_ml->i_repeat == REPEAT_ALL)
+            p_ml->i_pos = media_list_get_count(p_ml) - 1;
         p_ml->p_mi = p_ml->i_pos >= 0 ? eina_array_data_get(p_ml->p_item_array, p_ml->i_pos) : NULL;
         media_list_on_new_pos(p_ml);
         return true;
