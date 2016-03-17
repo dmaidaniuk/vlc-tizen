@@ -198,11 +198,13 @@ intf_show_view(interface *intf, view_e view_type)
         LOGD("New interface view %i", view_type);
         intf->nf_views[view_type] = interface_views[view_type].pf_create(intf, nf_content);
         intf->nf_views[view_type]->i_type = view_type;
+        intf->nf_views[view_type]->nf_item = intf_push_view(intf, intf->nf_views[view_type], interface_views[view_type].title);
     }
     else
+    {
         LOGD("Recycling interface view %i", view_type);
-
-    intf_push_view(intf, intf->nf_views[view_type], interface_views[view_type].title);
+        elm_naviframe_item_promote(intf->nf_views[view_type]->nf_item);
+    }
 
     /* Create then set the panel toggle btn and add its callbacks */
     Evas_Object *sidebar_toggle_btn = create_button(nf_content, "naviframe/drawers");
@@ -230,25 +232,17 @@ intf_pop_view(interface *intf)
         return;
     }
 
+    view_e view_type = -1;
+
     /* Get the top of the NaviFrame Stack */
     Elm_Object_Item *it = elm_naviframe_top_item_get(intf->nf_content);
     interface_view *view = (interface_view *)elm_object_item_data_get(it);
     if (view) {
+        view_type = view->i_type;
         if(view->pf_stop != NULL) {
             view->pf_stop(view->p_view_sys);
         }
     }
-
-    // NOTE: When pop() is called a naviframe will free the content of the item
-    //       unless elm_naviframe_content_preserve_on_pop_set is set but this
-    //       function seems broken or underspecified (at least in Tizen 2.3 SDK).
-    //       To workaround this issue there's two options:
-    //
-    //       * Don't recycle view and instantiate a new one instead
-    //       * Remove the view from the item before calling pop()
-    //
-    //       The second option has one drawback though, once unset the part
-    //       will be flying and needs to be hidden until it's reattached.
 
     evas_object_hide(elm_object_part_content_unset(intf->nf_content, "elm.swallow.content"));
 
@@ -256,24 +250,19 @@ intf_pop_view(interface *intf)
     elm_naviframe_item_pop(intf->nf_content);
     elm_win_indicator_opacity_set(intf->win, ELM_WIN_INDICATOR_OPAQUE);
 
-    Evas_Object *sidebar_toggle_btn = create_button(intf->nf_content, "naviframe/drawers");
-    evas_object_smart_callback_add(sidebar_toggle_btn, "clicked", left_panel_button_clicked_cb, intf);
-    elm_object_part_content_set(intf->nf_content, "title_left_btn", sidebar_toggle_btn);
+    if (view_type >= 0)
+    {
+        LOGD("Destroying view %d", intf->current_view);
+        interface_views[intf->current_view].pf_destroy(intf->nf_views[intf->current_view]);
+        intf->nf_views[intf->current_view] = NULL;
+    }
 
     view = (interface_view *)elm_object_item_data_get(elm_naviframe_top_item_get(intf->nf_content));
     if (view)
     {
         intf->current_view = view->i_type;
         sidebar_set_selected_view(intf->sidebar, intf->current_view);
-
-        if (view->pf_has_menu && view->pf_has_menu(view->p_view_sys) == true)
-        {
-            Evas_Object *popup_toggle_btn = create_button(intf->nf_content, "naviframe/custom_more");
-            evas_object_smart_callback_add(popup_toggle_btn, "clicked", right_panel_button_clicked_cb, intf);
-            elm_object_part_content_set(intf->nf_content, "title_right_btn", popup_toggle_btn);
-            evas_object_show(popup_toggle_btn);
-        }
-
+        elm_naviframe_item_simple_promote(intf->nf_content, view->view);
         evas_object_show(view->view);
     }
     else
@@ -436,6 +425,7 @@ create_main_box(interface *intf, Evas_Object *parent)
 
     /* Main View Naviframe */
     intf->nf_content = elm_naviframe_add(intf->main_box);
+    elm_naviframe_content_preserve_on_pop_set(intf->nf_content, EINA_TRUE);
 
     /* Put the naviframe at the top of the content_box */
     evas_object_size_hint_weight_set(intf->nf_content, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);

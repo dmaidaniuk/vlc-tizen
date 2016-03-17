@@ -57,6 +57,7 @@ typedef enum interface_view_event {
 }interface_view_event;
 
 typedef enum view_e {
+    VIEW_UNKNOWN = -2,
     VIEW_AUTO = -1,
     VIEW_VIDEO,
     VIEW_AUDIO,
@@ -82,6 +83,7 @@ typedef struct interface_view {
     Evas_Object *view;                      /* The Evas View prepared to be stacked */
     view_sys *p_view_sys;                   /* The view private data */
     view_e i_type;                          /* The view type */
+    Elm_Object_Item *nf_item;
 
     void (*pf_start)(view_sys *p_view_sys);    /* CB when the view is started/resumed */
     void (*pf_stop) (view_sys *p_view_sys);    /* CB when the view is stoped/paused */

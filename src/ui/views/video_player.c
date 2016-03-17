@@ -684,6 +684,7 @@ create_video_player(interface *intf, playback_service *p_ps, Evas_Object *parent
     view->p_view_sys = p_sys;
     view->pf_event = video_player_callback;
     view->pf_stop = video_player_stop;
+    view->i_type = VIEW_UNKNOWN;
 
     return view;
 }
