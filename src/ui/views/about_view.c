@@ -242,6 +242,10 @@ void
 destroy_about_view(interface_view *view)
 {
     view_sys* p_sys = view->p_view_sys;
+
+    Evas_Object *win = intf_get_window(p_sys->p_intf);
+    evas_object_smart_callback_del(win, "wm,rotation,changed", rotation_cb);
+
     free(p_sys->p_anim);
     free(p_sys);
     free(view);
