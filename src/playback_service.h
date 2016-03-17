@@ -163,6 +163,12 @@ playback_service_list_set_next(playback_service *p_ps);
 void
 playback_service_list_set_prev(playback_service *p_ps);
 
+bool
+playback_service_has_next(playback_service *p_ps);
+
+bool
+playback_service_has_prev(playback_service *p_ps);
+
 media_item *
 playback_service_list_get_item(playback_service *p_ps);
 

@@ -897,6 +897,18 @@ playback_service_list_set_prev(playback_service *p_ps)
     media_list_set_prev(p_ps->p_ml);
 }
 
+bool
+playback_service_has_next(playback_service *p_ps)
+{
+    return media_list_has_next(p_ps->p_ml);
+}
+
+bool
+playback_service_has_prev(playback_service *p_ps)
+{
+    return media_list_has_prev(p_ps->p_ml);
+}
+
 media_item *
 playback_service_list_get_item(playback_service *p_ps)
 {

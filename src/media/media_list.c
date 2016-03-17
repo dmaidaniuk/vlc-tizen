@@ -326,6 +326,26 @@ media_list_set_prev(media_list *p_ml)
     }
 }
 
+bool
+media_list_has_next(media_list *p_ml)
+{
+    if (p_ml->i_repeat != REPEAT_NONE)
+        return true;
+    if (media_list_get_pos(p_ml) + 1 >= media_list_get_count(p_ml))
+        return false;
+    return true;
+}
+
+bool
+media_list_has_prev(media_list *p_ml)
+{
+    if (p_ml->i_repeat != REPEAT_NONE)
+        return true;
+    if (media_list_get_pos(p_ml) <= 0)
+        return false;
+    return true;
+}
+
 media_item *
 media_list_get_item(media_list *p_ml)
 {

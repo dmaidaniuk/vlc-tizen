@@ -84,6 +84,12 @@ media_list_set_next(media_list *p_ml);
 bool
 media_list_set_prev(media_list *p_ml);
 
+bool
+media_list_has_next(media_list *p_ml);
+
+bool
+media_list_has_prev(media_list *p_ml);
+
 media_item *
 media_list_get_item(media_list *p_ml);
 

@@ -505,6 +505,34 @@ update_player_play_pause(audio_player* mpd)
 }
 
 static void
+update_player_next_prev(audio_player* mpd)
+{
+    Evas_Object *edje = elm_layout_edje_get(mpd->layout);
+    Evas_Object *fs_edje = elm_layout_edje_get(mpd->fs_layout);
+
+    if (playback_service_has_next(mpd->p_ps))
+    {
+        edje_object_signal_emit(edje, "swallow.next,show", "");
+        edje_object_signal_emit(fs_edje, "next_button,show", "");
+    }
+    else
+    {
+        edje_object_signal_emit(edje, "swallow.next,hide", "");
+        edje_object_signal_emit(fs_edje, "next_button,hide", "");
+    }
+    if (playback_service_has_prev(mpd->p_ps))
+    {
+        edje_object_signal_emit(edje, "swallow.previous,show", "");
+        edje_object_signal_emit(fs_edje, "previous_button,show", "");
+    }
+    else
+    {
+        edje_object_signal_emit(edje, "swallow.previous,hide", "");
+        edje_object_signal_emit(fs_edje, "previous_button,hide", "");
+    }
+}
+
+static void
 update_player_title_display(audio_player* mpd, const char *title)
 {
     elm_object_part_text_set(mpd->layout, "title_text", title);
@@ -579,6 +607,9 @@ update_player_display(audio_player* mpd)
 
     /* Change the play/pause button img */
     update_player_play_pause(mpd);
+
+    /* Update the next / previous buttons */
+    update_player_next_prev(mpd);
 }
 
 static void
