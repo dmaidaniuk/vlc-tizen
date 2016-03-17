@@ -372,6 +372,18 @@ equalizer_enable_changed( equalizer* p_eq, bool b_enabled )
     elm_object_disabled_set( p_eq->p_preamp_slider, !b_enabled );
     elm_object_disabled_set( p_eq->p_preset_label, !b_enabled );
     elm_object_disabled_set( p_eq->p_preset_button, !b_enabled );
+    if ( b_enabled == false )
+        playback_service_eq_set( p_eq->p_ps, .0f, 0, NULL );
+    else
+    {
+        float f_preamp = elm_slider_value_get( p_eq->p_preamp_slider );
+        float f_bands[p_eq->i_nb_bands];
+        for ( unsigned int i = 0; i < p_eq->i_nb_bands; ++i )
+        {
+            f_bands[i] = elm_slider_value_get( p_eq->p_bands[i].p_slider );
+        }
+        playback_service_eq_set( p_eq->p_ps, f_preamp, p_eq->i_nb_bands, f_bands );
+    }
 }
 
 static void
