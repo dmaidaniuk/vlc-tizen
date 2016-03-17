@@ -227,7 +227,7 @@ static void
 equalizer_list_presets(void *data, Evas_Object *obj, void *event_info)
 {
     equalizer* p_eq = (equalizer*)data;
-    Evas_Object* p_parent = p_eq->p_layout;
+    Evas_Object* p_parent = p_eq->p_table;
 
     Evas_Object* p_popup = elm_ctxpopup_add(p_parent);
 
