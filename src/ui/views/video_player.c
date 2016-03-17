@@ -420,7 +420,7 @@ video_player_start(view_sys *p_sys, const char* file_path, double time)
     evas_object_smart_callback_add(p_sys->lock_button, "clicked", clicked_lock, p_sys);
     evas_object_smart_callback_add(p_sys->more_button, "clicked", clicked_more, p_sys);
 
-    /*slider callbacks */
+    /* slider callbacks */
     evas_object_smart_callback_add(p_sys->progress_slider, "slider,drag,stop", _on_slider_changed_cb, p_sys);
     evas_object_smart_callback_add(p_sys->progress_slider, "changed", _on_slider_changed_cb, p_sys);
 
