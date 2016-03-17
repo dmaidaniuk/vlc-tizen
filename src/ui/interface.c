@@ -392,22 +392,6 @@ intf_mini_player_visible_set(interface *intf, bool visible)
     return true;
 }
 
-//FIXME REMOVE
-void
-intf_update_mini_player(interface *intf)
-{
-    if((audio_player_play_state(intf->p_mini_player) == true) && (intf_mini_player_visible_get(intf) == false))
-    {
-        intf_mini_player_visible_set(intf, true);
-    }
-
-    if((audio_player_play_state(intf->p_mini_player) == false) && (audio_player_fs_state(intf->p_mini_player) == true))
-    {
-        audio_player_stop(intf->p_mini_player);
-    }
-}
-
-
 void
 intf_start_audio_player(interface *intf, Eina_Array *array, int pos)
 {

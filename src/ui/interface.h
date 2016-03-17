@@ -115,10 +115,6 @@ intf_mini_player_visible_get(interface *);
 bool
 intf_mini_player_visible_set(interface *intf, bool visible);
 
-//FIXME REMOVE
-void
-intf_update_mini_player(interface *);
-
 /* Other */
 Evas_Object *
 intf_get_main_naviframe(interface *intf);

@@ -117,8 +117,6 @@ sidebar_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
         return;
     }
 
-    intf_update_mini_player(cd->intf);
-
     switch(cd->index){
     case VIEW_VIDEO:
         intf_show_view(cd->intf, VIEW_VIDEO);
