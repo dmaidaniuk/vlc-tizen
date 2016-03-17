@@ -640,6 +640,8 @@ playback_service_start(playback_service *p_ps, double i_time)
         return -1;
     }
 
+    p_ps->b_video_background = false;
+
     p_mi = media_list_get_item(p_ps->p_ml);
     if (!p_mi || !p_mi->psz_path)
     {
@@ -988,8 +990,8 @@ playback_service_enable_background_playback(playback_service *p_ps)
     if (!playback_service_set_context(p_ps, PLAYLIST_CONTEXT_AUDIO))
         LOGE("Switching from video context to audio failed");
 
-    p_ps->b_video_background = true;
     playback_service_start(p_ps, time);
+    p_ps->b_video_background = true;
 }
 
 void
