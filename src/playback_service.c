@@ -129,11 +129,14 @@ ps_notification_update_meta(playback_service *p_ps, media_item *p_mi)
 {
     const char *psz_meta_title = media_item_title(p_mi);
     const char *psz_meta_artist = media_item_artist(p_mi);
+    const char *psz_meta_filename = media_item_get_filename(p_mi);
 
     if (psz_meta_title)
         mini_control_title_set(p_ps->p_minicontrol, psz_meta_title);
     else if (psz_meta_artist)
         mini_control_title_set(p_ps->p_minicontrol, psz_meta_artist);
+    else
+        mini_control_title_set(p_ps->p_minicontrol, psz_meta_filename);
 
     mini_control_cover_set(p_ps->p_minicontrol, p_mi->psz_snapshot);
 }
