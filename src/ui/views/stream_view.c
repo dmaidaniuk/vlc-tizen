@@ -399,6 +399,7 @@ destroy_stream_view(interface_view *view)
 {
     view_sys* p_sys = view->p_view_sys;
     sqlite3_close(p_sys->db);
+    evas_object_del(view->view);
     free(p_sys);
     free(view);
 }

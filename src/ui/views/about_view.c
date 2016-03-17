@@ -245,7 +245,7 @@ destroy_about_view(interface_view *view)
 
     Evas_Object *win = intf_get_window(p_sys->p_intf);
     evas_object_smart_callback_del(win, "wm,rotation,changed", rotation_cb);
-
+    evas_object_del(view->view);
     free(p_sys->p_anim);
     free(p_sys);
     free(view);
