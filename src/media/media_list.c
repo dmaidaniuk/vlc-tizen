@@ -50,7 +50,7 @@ struct media_list
 } while (0)
 
 #define ML_CLIP_POS(i_pos) do { \
-    if (i_pos >= eina_array_count(p_ml->p_item_array)) \
+    if (i_pos >= (int)eina_array_count(p_ml->p_item_array)) \
         i_pos = eina_array_count(p_ml->p_item_array) - 1; \
 } while (0)
 
