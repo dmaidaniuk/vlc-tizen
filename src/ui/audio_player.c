@@ -668,61 +668,6 @@ play_pause_mouse_up_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
     }
 }
 
-//static void
-//fs_save_player_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
-//{
-//    audio_player *mpd = data;
-//
-//    if(audio_player_save_state(mpd) == false)
-//    {
-//        /* Change the save button img */
-//        elm_image_file_set(mpd->fs_save_btn, ICON_DIR"ic_save_pressed.png", NULL);
-//        /* */
-//        evas_object_show(mpd->fs_save_btn);
-//
-//        /* Update the save button state of the player */
-//        mpd->save_state = true;
-//    }
-//    else
-//    {
-//        /* Change the save button img */
-//        elm_image_file_set(mpd->fs_save_btn, ICON_DIR"ic_save_normal.png", NULL);
-//        /* */
-//        evas_object_show(mpd->fs_save_btn);
-//
-//        /* Update the save button state of the player */
-//        mpd->save_state = false;
-//    }
-//}
-
-//static void
-//fs_playlist_player_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
-//{
-//    audio_player *mpd = data;
-//
-//    if(audio_player_playlist_state(mpd) == false)
-//    {
-//        /* Change the playlist button img */
-//        elm_image_file_set(mpd->fs_playlist_btn, ICON_DIR"ic_playlist_pressed.png", NULL);
-//        /* */
-//        evas_object_show(mpd->fs_playlist_btn);
-//
-//        /* Update the playlist button state of the player */
-//        mpd->playlist_state = true;
-//    }
-//    else
-//    {
-//        /* Change the playlist button img */
-//        elm_image_file_set(mpd->fs_playlist_btn, ICON_DIR"ic_playlist_normal.png", NULL);
-//        /* */
-//        evas_object_show(mpd->fs_playlist_btn);
-//
-//        /* Update the playlist button state of the player */
-//        mpd->playlist_state = false;
-//    }
-//
-//}
-
 static void
 audio_player_more_popup_close_cb(void *data, Evas_Object *obj, void *event_info)
 {
@@ -1033,8 +978,6 @@ add_fullscreen_item_table(audio_player *mpd, Evas_Object *parent)
     evas_object_smart_callback_add(mpd->fs_repeat_btn, "clicked", fs_repeat_player_cb, mpd);
     evas_object_smart_callback_add(mpd->fs_previous_img, "clicked", fs_previous_cb, mpd);
     evas_object_smart_callback_add(mpd->fs_next_img, "clicked", fs_next_cb, mpd);
-    //    evas_object_smart_callback_add(mpd->fs_save_btn, "clicked", fs_save_player_cb, mpd);
-    //    evas_object_smart_callback_add(mpd->fs_playlist_btn, "clicked", fs_playlist_player_cb, mpd);
     evas_object_smart_callback_add(mpd->fs_more_btn, "clicked", fs_more_player_cb, mpd);
 
     return layout;
