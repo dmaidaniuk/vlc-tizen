@@ -535,15 +535,29 @@ update_player_next_prev(audio_player* mpd)
 static void
 update_player_title_display(audio_player* mpd, const char *title)
 {
-    elm_object_part_text_set(mpd->layout, "title_text", title);
-    elm_object_part_text_set(mpd->fs_layout, "title_text", title);
+    // This is not the recommended way to update the text
+    // but "elm_object_part_text_set" doesn't work correctly
+    // on the Samsung Z1.
+
+    Evas_Object *edje = elm_layout_edje_get(mpd->layout);
+    Evas_Object *fs_edje = elm_layout_edje_get(mpd->fs_layout);
+
+    edje_object_part_text_set(edje, "title_text", title);
+    edje_object_part_text_set(fs_edje, "title_text", title);
 }
 
 static void
 update_player_artist_display(audio_player* mpd, const char *artist)
 {
-    elm_object_part_text_set(mpd->layout, "subtitle_text", artist);
-    elm_object_part_text_set(mpd->fs_layout, "subtitle_text", artist);
+    // This is not the recommended way to update the text
+    // but "elm_object_part_text_set" doesn't work correctly
+    // on the Samsung Z1.
+
+    Evas_Object *edje = elm_layout_edje_get(mpd->layout);
+    Evas_Object *fs_edje = elm_layout_edje_get(mpd->fs_layout);
+
+    edje_object_part_text_set(edje, "subtitle_text", artist);
+    edje_object_part_text_set(fs_edje, "subtitle_text", artist);
 }
 
 static void
