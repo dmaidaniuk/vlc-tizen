@@ -55,7 +55,7 @@ video_view_refresh_cb(void *data, Evas_Object *obj, void *event_info)
         media_library_reload(p_ml);
 
     /* */
-    evas_object_del(obj);
+    popup_close(p_sys->p_overflow_menu);
     p_sys->p_overflow_menu = NULL;
 }
 
@@ -63,7 +63,7 @@ static void
 video_view_popup_close_cb(void *data, Evas_Object *obj, void *event_info)
 {
     view_sys *p_view_sys = data;
-    evas_object_del(p_view_sys->p_overflow_menu);
+    popup_close(p_view_sys->p_overflow_menu);
     p_view_sys->p_overflow_menu = NULL;
 }
 
@@ -81,7 +81,7 @@ video_view_callback(view_sys *p_view_sys, interface_view_event event)
     {
         if (p_view_sys->p_overflow_menu)
         {
-            evas_object_del(p_view_sys->p_overflow_menu);
+            popup_close(p_view_sys->p_overflow_menu);
             p_view_sys->p_overflow_menu = NULL;
         }
         else
@@ -94,7 +94,7 @@ video_view_callback(view_sys *p_view_sys, interface_view_event event)
     }
     case INTERFACE_VIEW_EVENT_BACK:
         if (p_view_sys->p_overflow_menu) {
-            evas_object_del(p_view_sys->p_overflow_menu);
+            popup_close(p_view_sys->p_overflow_menu);
             p_view_sys->p_overflow_menu = NULL;
             return true;
         }

@@ -32,6 +32,7 @@
 #include "playback_service.h"
 #include "media/playlist_item.h"
 #include "ui/views/list_view.h"
+#include "ui/popup.h"
 
 struct playlists {
     interface *intf;
@@ -55,8 +56,8 @@ playlists_popup_close(playlists *pl)
     if (!pl)
         return;
 
-    evas_object_del(pl->popup);
-    evas_object_del(pl->new_playlist_popup);
+    popup_close(pl->popup);
+    popup_close(pl->new_playlist_popup);
     pl->popup = NULL;
     pl->new_playlist_popup = NULL;
 }
@@ -76,7 +77,7 @@ on_create_playlist(void* data, Evas_Object* obj, void* event_info)
     media_library* p_ml = (media_library*)application_get_media_library(p_app);
     media_library_create_add_to_playlist(p_ml, elm_entry_entry_get(pl->p_playlist_input), pl->media_id);
 
-    evas_object_del(pl->new_playlist_popup);
+    popup_close(pl->new_playlist_popup);
     pl->new_playlist_popup = NULL;
     playlists_popup_close(pl);
 }

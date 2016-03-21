@@ -105,9 +105,9 @@ popup_menu_del_cb(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-popup_menu_close_cb(void *data, Evas_Object *obj, void *event_info)
+popup_menu_close(void *data, Evas_Object *obj, void *event_info)
 {
-    evas_object_del(obj);
+    popup_close(obj);
 }
 
 Evas_Object *
@@ -175,7 +175,7 @@ popup_menu_orient_add(popup_menu *menu, Elm_Popup_Orient orient, void *data, Eva
 
     elm_object_content_set(popup, genlist);
 
-    evas_object_smart_callback_add(popup, "block,clicked", popup_menu_close_cb, NULL);
+    evas_object_smart_callback_add(popup, "block,clicked", popup_menu_close, NULL);
 
     return popup;
 }

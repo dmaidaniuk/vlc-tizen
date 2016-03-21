@@ -157,7 +157,7 @@ audio_channel_selected(void *data, Evas_Object *obj, void *event_info)
     int index = elm_genlist_item_index_get(it_parent);
 
     playback_service_audio_channel_set(p_sys->p_ps, index - 1);
-    evas_object_del(obj);
+    popup_close(obj);
 }
 
 void
@@ -166,7 +166,7 @@ clicked_background_playback(void *data, Evas_Object *obj, void *event_info)
     view_sys *p_sys = data;
 
     if (p_sys->p_current_popup)
-        evas_object_del(p_sys->p_current_popup);
+        popup_close(p_sys->p_current_popup);
 
     playback_service_enable_background_playback(p_sys->p_ps);
 }
@@ -180,7 +180,7 @@ clicked_audio_tracks(void *data, Evas_Object *obj, void *event_info)
     popup_menu *menu;
 
     if (p_sys->p_current_popup)
-        evas_object_del(p_sys->p_current_popup);
+        popup_close(p_sys->p_current_popup);
 
     // Get the list of channels
     channel_list = playback_service_audio_channel_get_list(p_sys->p_ps);
@@ -225,7 +225,7 @@ spu_selected(void *data, Evas_Object *obj, void *event_info)
 
     // Disable subtitles is -1, first is 0 so index -2.
     playback_service_spu_channel_set(p_sys->p_ps, index - 2);
-    evas_object_del(obj);
+    popup_close(obj);
 }
 
 void
@@ -237,7 +237,7 @@ clicked_spu(void *data, Evas_Object *obj, void *event_info)
     popup_menu *menu;
 
     if (p_sys->p_current_popup)
-        evas_object_del(p_sys->p_current_popup);
+        popup_close(p_sys->p_current_popup);
 
     // Get the list of spu
     spu_list = playback_service_spu_channel_get_list(p_sys->p_ps);
@@ -656,7 +656,7 @@ video_player_callback(view_sys *p_view_sys, interface_view_event event)
     }
     case INTERFACE_VIEW_EVENT_BACK:
         if (p_view_sys->p_current_popup) {
-            evas_object_del(p_view_sys->p_current_popup);
+            popup_close(p_view_sys->p_current_popup);
             p_view_sys->p_current_popup = NULL;
             return true;
         }

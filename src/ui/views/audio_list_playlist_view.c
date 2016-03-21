@@ -178,7 +178,7 @@ audio_list_playlists_back_callback(list_sys *p_sys)
 {
     if (p_sys->current_popup != NULL)
     {
-        evas_object_del(p_sys->current_popup);
+        popup_close(p_sys->current_popup);
         p_sys->current_popup = NULL;
         return true;
     }
@@ -197,7 +197,7 @@ audio_list_playlists_longpress_remove_callback(void *data, Evas_Object *obj, voi
         media_library_delete_playlist(p_ml, ali->p_playlist_item->i_id);
 
     media_library_controller_refresh(p_sys->p_ctrl);
-    evas_object_del(p_sys->current_popup);
+    popup_close(p_sys->current_popup);
     p_sys->current_popup = NULL;
     p_sys->current_item = NULL;
 }

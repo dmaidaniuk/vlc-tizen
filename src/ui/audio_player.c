@@ -37,6 +37,7 @@
 #include "ui/views/list_view.h"
 #include "ui/playlists.h"
 #include "ui/equalizer.h"
+#include "ui/popup.h"
 
 struct audio_player {
     interface *intf;
@@ -111,7 +112,7 @@ audio_player_close_popup(audio_player *mpd)
 {
     mpd->more_state = false;
     elm_image_file_set(mpd->fs_more_btn, ICON_DIR"ic_more_circle_normal_o.png", NULL);
-    evas_object_del(mpd->popup);
+    popup_close(mpd->popup);
     mpd->popup = NULL;
 }
 
@@ -240,7 +241,7 @@ popup_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 
     case MORE_JUMPTO:
         /* */
-        evas_object_del(apd->mpd->popup);
+        popup_close(apd->mpd->popup);
         /* */
         elm_image_file_set(apd->mpd->fs_more_btn, ICON_DIR"ic_more_circle_normal_o.png", NULL);
         /* */
@@ -254,7 +255,7 @@ popup_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 
     case MORE_SPEED:
         /* */
-        evas_object_del(apd->mpd->popup);
+        popup_close(apd->mpd->popup);
         /* */
         elm_image_file_set(apd->mpd->fs_more_btn, ICON_DIR"ic_more_circle_normal_o.png", NULL);
         /* */
@@ -268,7 +269,7 @@ popup_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 
     case MORE_SLEEP:
         /* */
-        evas_object_del(apd->mpd->popup);
+        popup_close(apd->mpd->popup);
         /* */
         elm_image_file_set(apd->mpd->fs_more_btn, ICON_DIR"ic_more_circle_normal_o.png", NULL);
         /* */
@@ -280,7 +281,7 @@ popup_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
         break;
     case MORE_PLAYLISTS:
         /* */
-        evas_object_del(apd->mpd->popup);
+        popup_close(apd->mpd->popup);
         /* */
         elm_image_file_set(apd->mpd->fs_more_btn, ICON_DIR"ic_more_circle_normal_o.png", NULL);
         /* */
@@ -297,7 +298,7 @@ popup_selected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
         break;
     case MORE_EQUALIZER:
         /* */
-        evas_object_del(apd->mpd->popup);
+        popup_close(apd->mpd->popup);
         /* */
         elm_image_file_set(apd->mpd->fs_more_btn, ICON_DIR"ic_more_circle_normal_o.png", NULL);
         /* */
@@ -689,7 +690,7 @@ audio_player_more_popup_close_cb(void *data, Evas_Object *obj, void *event_info)
 
     mpd->more_state = false;
     elm_image_file_set(mpd->fs_more_btn, ICON_DIR"ic_more_circle_normal_o.png", NULL);
-    evas_object_del(obj);
+    popup_close(obj);
 }
 
 static void
@@ -739,7 +740,7 @@ fs_more_player_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
     else
     {
         /* */
-        evas_object_del(mpd->popup);
+        popup_close(mpd->popup);
 
         /* Change the more button img */
         elm_image_file_set(mpd->fs_more_btn, ICON_DIR"ic_more_circle_normal_o.png", NULL);

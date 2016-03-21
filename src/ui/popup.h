@@ -2,8 +2,7 @@
  * Copyright © 2015-2016 VideoLAN, VideoLabs SAS
  *****************************************************************************
  *
- * Authors: Nicolas Rechatin <nicolas@videolabs.io>
- *          Ludovic Fauvet <etix@videolan.org>
+ * Authors: Ludovic Fauvet <etix@videolan.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,27 +24,12 @@
  * compatibility with the Store
  *****************************************************************************/
 
-#ifndef POPUP_MENU_H_
-#define POPUP_MENU_H_
+#ifndef POPUP_H_
+#define POPUP_H_
 
 #include "common.h"
-#include "ui/interface.h"
-#include "ui/popup.h"
 
-typedef struct popup_menu
-{
-    char* title;
-    char* icon;
+void
+popup_close(Evas_Object *popup);
 
-    Evas_Smart_Cb cb;
-
-    Eina_Bool hidden;
-} popup_menu;
-
-Evas_Object *
-popup_menu_add(popup_menu *menu, void *data, Evas_Object *parent);
-
-Evas_Object *
-popup_menu_orient_add(popup_menu *menu, Elm_Popup_Orient orient, void *data, Evas_Object *parent);
-
-#endif
+#endif // POPUP_H_

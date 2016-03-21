@@ -120,7 +120,7 @@ clicked_reuse(void *data, Evas_Object *obj, void *event_info)
     item_data *item_data = elm_object_item_data_get(p_sys->current_item);
 
     elm_entry_entry_set(p_sys->uri, item_data->uri);
-    evas_object_del(p_sys->current_popup);
+    popup_close(p_sys->current_popup);
     p_sys->current_popup = NULL;
 }
 
@@ -154,7 +154,7 @@ clicked_remove(void *data, Evas_Object *obj, void *event_info)
     }
 
     elm_object_item_del(p_sys->current_item);
-    evas_object_del(p_sys->current_popup);
+    popup_close(p_sys->current_popup);
     p_sys->current_popup = NULL;
 }
 
@@ -292,7 +292,7 @@ stream_view_callback(view_sys *p_view_sys, interface_view_event event)
     switch (event) {
     case INTERFACE_VIEW_EVENT_BACK:
             if (p_view_sys->current_popup) {
-                evas_object_del(p_view_sys->current_popup);
+                popup_close(p_view_sys->current_popup);
                 p_view_sys->current_popup = NULL;
                 return true;
             }
