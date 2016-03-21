@@ -88,6 +88,8 @@ struct playback_service
 
     ps_on_emotion_restart   emotion_restart_cb;
     void                    *emotion_restart_cb_data;
+
+    Ecore_Timer *media_key_timer;
 };
 
 #define PS_SEND_CALLBACK(pf_cb, ...) do { \
@@ -343,10 +345,38 @@ get_media_list(playback_service *p_ps, enum PLAYLIST_CONTEXT i_ctx)
     return p_ps->p_ml_list[i_ctx - 1];
 }
 
+static Eina_Bool
+playback_service_media_key_long(void *data)
+{
+    playback_service *p_ps = data;
+    p_ps->media_key_timer = NULL;
+    playback_service_list_set_next(p_ps);
+    return ECORE_CALLBACK_CANCEL;
+}
+
 static void
 playback_service_media_key_event(media_key_e key, media_key_event_e status, void *user_data)
 {
     playback_service *p_ps = user_data;
+
+    if (key == MEDIA_KEY_MEDIA)
+    {
+        if (status == MEDIA_KEY_STATUS_PRESSED)
+        {
+            ecore_timer_del(p_ps->media_key_timer);
+            p_ps->media_key_timer = ecore_timer_add(1.0, playback_service_media_key_long, p_ps);
+        }
+        else if (status == MEDIA_KEY_STATUS_RELEASED)
+        {
+            if (p_ps->media_key_timer != NULL)
+            {
+                ecore_timer_del(p_ps->media_key_timer);
+                p_ps->media_key_timer = NULL;
+                playback_service_toggle_play_pause(p_ps);
+            }
+        }
+        return;
+    }
 
     if (status != MEDIA_KEY_STATUS_PRESSED)
         return;
@@ -359,7 +389,6 @@ playback_service_media_key_event(media_key_e key, media_key_event_e status, void
         playback_service_pause(p_ps);
         break;
     case MEDIA_KEY_PLAYPAUSE:
-    case MEDIA_KEY_MEDIA:
         playback_service_toggle_play_pause(p_ps);
         break;
     case MEDIA_KEY_STOP:
