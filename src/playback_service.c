@@ -33,6 +33,7 @@
 
 #include <device/power.h>
 #include <sound_manager.h>
+#include <media_key.h>
 
 #include "playback_service.h"
 #include "media/media_list.h"
@@ -342,6 +343,39 @@ get_media_list(playback_service *p_ps, enum PLAYLIST_CONTEXT i_ctx)
     return p_ps->p_ml_list[i_ctx - 1];
 }
 
+static void
+playback_service_media_key_event(media_key_e key, media_key_event_e status, void *user_data)
+{
+    playback_service *p_ps = user_data;
+
+    if (status != MEDIA_KEY_STATUS_PRESSED)
+        return;
+
+    switch(key) {
+    case MEDIA_KEY_PLAY:
+        playback_service_play(p_ps);
+        break;
+    case MEDIA_KEY_PAUSE:
+        playback_service_pause(p_ps);
+        break;
+    case MEDIA_KEY_PLAYPAUSE:
+    case MEDIA_KEY_MEDIA:
+        playback_service_toggle_play_pause(p_ps);
+        break;
+    case MEDIA_KEY_STOP:
+        playback_service_stop(p_ps);
+        break;
+    case MEDIA_KEY_PREVIOUS:
+        playback_service_list_set_prev(p_ps);
+        break;
+    case MEDIA_KEY_NEXT:
+        playback_service_list_set_next(p_ps);
+        break;
+    default:
+        break;
+    }
+}
+
 playback_service *
 playback_service_create(application *p_app)
 {
@@ -379,6 +413,7 @@ playback_service_create(application *p_app)
     }
 
     ps_notification_create(p_ps, p_app);
+    media_key_reserve(playback_service_media_key_event, p_ps);
 
     return p_ps;
 
@@ -392,6 +427,8 @@ playback_service_destroy(playback_service *p_ps)
 {
     Eina_List *p_el;
     void *p_id;
+
+    media_key_release();
 
     for (unsigned int i = 0; i < PLAYLIST_CONTEXT_COUNT; ++i)
     {
