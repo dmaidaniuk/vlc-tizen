@@ -273,7 +273,7 @@ settings_list_add_styled(settings_item *menu, int len, Settings_menu_callback gl
 }
 
 static void
-popup_close_cb(void *data, Evas_Object *obj, void *event_info)
+settings_popup_del(void *data, Evas_Object *obj, void *event_info)
 {
     evas_object_del(obj);
 }
@@ -286,10 +286,20 @@ settings_popup_add(settings_item *menu, int menu_len, Settings_menu_callback glo
 
     elm_scroller_content_min_limit(genlist, EINA_TRUE, EINA_TRUE);
 
-    evas_object_smart_callback_add(popup, "block,clicked", popup_close_cb, NULL);
+    evas_object_smart_callback_add(popup, "block,clicked", settings_popup_del, NULL);
 
     elm_object_content_set(popup, genlist);
     evas_object_show(genlist);
 
     return popup;
+}
+
+void
+settings_popup_close(Evas_Object *popup)
+{
+    if (!popup)
+        return;
+
+    evas_object_smart_callback_add(popup, "dismissed", settings_popup_del, NULL);
+    elm_popup_dismiss(popup);
 }
