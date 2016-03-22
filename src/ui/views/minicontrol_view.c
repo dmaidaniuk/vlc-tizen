@@ -49,6 +49,22 @@ struct minicontrol
 };
 
 void
+mini_control_update_next_prev(minicontrol *p_minicontrol, playback_service *p_ps)
+{
+    Evas_Object *edje = elm_layout_edje_get(p_minicontrol->layout);
+
+    if (playback_service_has_next(p_ps))
+        edje_object_signal_emit(edje, "swallow.next,show", "");
+    else
+        edje_object_signal_emit(edje, "swallow.next,hide", "");
+
+    if (playback_service_has_prev(p_ps))
+        edje_object_signal_emit(edje, "swallow.previous,show", "");
+    else
+        edje_object_signal_emit(edje, "swallow.previous,hide", "");
+}
+
+void
 mini_control_visibility_set(minicontrol *mc, Eina_Bool visible)
 {
     visible ? evas_object_show(mc->win) : evas_object_hide(mc->win);

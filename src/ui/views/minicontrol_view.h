@@ -53,4 +53,7 @@ mini_control_progress_set(minicontrol *mc, double progress);
 void
 mini_control_cover_set(minicontrol *mc, const char* path);
 
+void
+mini_control_update_next_prev(minicontrol *p_minicontrol, playback_service *p_ps);
+
 #endif /* MINICONTROL_VIEW_H_ */

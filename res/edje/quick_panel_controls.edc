@@ -110,6 +110,11 @@ collections {
                         to: "swallow.play";
                     }
                 }
+                description {
+                  state: "hidden" 0.0;
+                  inherit: "default" 0.0;
+                  visible: 0;
+                }
             }
             part {
                 name: "swallow.play";
@@ -147,13 +152,49 @@ collections {
                         to: "swallow.play";
                     }
                 }
+                description {
+                  state: "hidden" 0.0;
+                  inherit: "default" 0.0;
+                  visible: 0;
+                }
             }
         } //parts
-      program {
-         name: "mouse_click";
-         signal: "mouse,clicked,1";
-         source: "hub_background";
-         action: SIGNAL_EMIT "hub_background,clicked" "";
+
+      programs {
+         program {
+            name: "mouse_click";
+            signal: "mouse,clicked,1";
+            source: "hub_background";
+            action: SIGNAL_EMIT "hub_background,clicked" "";
+         }
+         program {
+            name: "swallow.previous,hide";
+            signal: "swallow.previous,hide";
+            source: "";
+            action: STATE_SET "hidden" 0.0;
+            target: "swallow.previous";
+         }
+         program {
+            name: "swallow.previous,show";
+            signal: "swallow.previous,show";
+            source: "";
+            action: STATE_SET "default" 0.0;
+            target: "swallow.previous";
+         }
+         program {
+            name: "swallow.next,hide";
+            signal: "swallow.next,hide";
+            source: "";
+            action: STATE_SET "hidden" 0.0;
+            target: "swallow.next";
+         }
+         program {
+            name: "swallow.next,show";
+            signal: "swallow.next,show";
+            source: "";
+            action: STATE_SET "default" 0.0;
+            target: "swallow.next";
+         }
       }
     }
 }

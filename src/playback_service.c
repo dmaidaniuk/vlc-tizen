@@ -142,6 +142,7 @@ ps_notification_update_meta(playback_service *p_ps, media_item *p_mi)
         mini_control_title_set(p_ps->p_minicontrol, psz_meta_filename);
 
     mini_control_cover_set(p_ps->p_minicontrol, p_mi->psz_snapshot);
+    mini_control_update_next_prev(p_ps->p_minicontrol, p_ps);
 }
 
 static void
