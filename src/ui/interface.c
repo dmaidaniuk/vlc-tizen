@@ -262,7 +262,6 @@ intf_pop_view(interface *intf)
     {
         intf->current_view = view->i_type;
         sidebar_set_selected_view(intf->sidebar, intf->current_view);
-        elm_naviframe_item_simple_promote(intf->nf_content, view->view);
         evas_object_show(view->view);
     }
     else
