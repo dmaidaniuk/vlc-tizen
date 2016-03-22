@@ -897,6 +897,13 @@ audio_player_collapse_fullscreen_player(audio_player *mpd){
     mpd->fs_state = false;
     /* Show the mini player */
     intf_mini_player_visible_set(mpd->intf, true);
+
+    Evas_Object *win = intf_get_window(mpd->intf);
+    if (elm_win_wm_rotation_supported_get(win)) {
+        int rots[4] = { 0, 90, 180, 270 };
+        elm_win_wm_rotation_available_rotations_set(win, (const int *)(&rots), 4);
+        elm_win_wm_rotation_preferred_rotation_set(win, -1);
+    }
 }
 
 static Evas_Object*
@@ -1007,6 +1014,14 @@ audio_player_show_fullscreen(audio_player *mpd)
     /* Show the fullcreen box in the content naviframe */
     update_player_display(mpd);
     elm_naviframe_item_simple_push(intf_get_main_naviframe(mpd->intf), mpd->fs_layout);
+
+    // Lock the rotation
+    Evas_Object *win = intf_get_window(mpd->intf);
+    if (elm_win_wm_rotation_supported_get(win)) {
+        int rotation = 0; // Portrait
+        elm_win_wm_rotation_available_rotations_set(win, &rotation, 1);
+        elm_win_wm_rotation_preferred_rotation_set(win, 0);
+    }
 
     /* Update fullscreen state bool */
     mpd->fs_state = true;
