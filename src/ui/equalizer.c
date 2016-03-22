@@ -200,17 +200,25 @@ equalizer_set_preset( equalizer* p_eq, unsigned int i_preset )
 static void
 equalizer_preset_selected(equalizer* p_eq, const char* psz_preset)
 {
-    unsigned int i_nb_presets = libvlc_audio_equalizer_get_preset_count();
-    for ( unsigned int i = 0; i < i_nb_presets; ++i )
+    if ( *psz_preset != 0 )
     {
-        const char* psz_name = libvlc_audio_equalizer_get_preset_name( i );
-        if ( strcmp( psz_name, psz_preset ) == 0 )
+        unsigned int i_nb_presets = libvlc_audio_equalizer_get_preset_count();
+        for ( unsigned int i = 0; i < i_nb_presets; ++i )
         {
-            equalizer_set_preset( p_eq, i );
-            elm_object_text_set(p_eq->p_preset_button, psz_preset);
-            equalizer_set_preset_value( psz_preset );
-            break;
+            const char* psz_name = libvlc_audio_equalizer_get_preset_name( i );
+            if ( strcmp( psz_name, psz_preset ) == 0 )
+            {
+                equalizer_set_preset( p_eq, i );
+                elm_object_text_set(p_eq->p_preset_button, psz_preset);
+                equalizer_set_preset_value( psz_preset );
+                break;
+            }
         }
+    }
+    else
+    {
+        elm_object_text_set( p_eq->p_preset_button, "" );
+        equalizer_set_preset_value( psz_preset );
     }
 }
 
@@ -270,8 +278,7 @@ equalizer_add_presets(equalizer* p_eq)
     evas_object_smart_callback_add(p_eq->p_preset_button, "clicked", equalizer_list_presets, p_eq);
     evas_object_size_hint_weight_set(p_eq->p_preset_button, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
     evas_object_size_hint_align_set(p_eq->p_preset_button, EVAS_HINT_FILL, EVAS_HINT_FILL);
-    // Force the default preset name, even though it will be overriden if one was saved from a previous run
-    elm_object_text_set( p_eq->p_preset_button, libvlc_audio_equalizer_get_preset_name( 0 ) );
+
     evas_object_show(p_eq->p_preset_button);
     elm_table_pack( p_eq->p_table, p_eq->p_preset_button, 1, 1, 1, 1 );
 }
@@ -290,7 +297,7 @@ equalizer_slider_changed_cb( void *data, Evas_Object *obj, void *event_info )
         equalizer_set_band_value( i, f_bands[i] );
     }
     // Since an individual slider was moved, we consider this not to be a preset anymore
-    equalizer_set_preset_value( NULL );
+    equalizer_set_preset_value( "" );
     // Clearly notify the UI that this is not a preset anymore
     elm_object_text_set( p_eq->p_preset_button, "" );
     playback_service_eq_set( p_eq->p_ps, f_preamp, p_eq->i_nb_bands, f_bands );
@@ -459,6 +466,11 @@ equalizer_create(interface* p_intf, playback_service* p_ps, Evas_Object *parent)
     {
         equalizer_preset_selected( p_eq, psz_preset );
         free( psz_preset );
+    }
+    else
+    {
+        // Otherwise force "Flat" setting
+        equalizer_preset_selected( p_eq, libvlc_audio_equalizer_get_preset_name( 0 ) );
     }
 
     evas_object_show(p_layout);
