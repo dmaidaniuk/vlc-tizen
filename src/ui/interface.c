@@ -237,7 +237,7 @@ intf_pop_view(interface *intf)
     /* Get the top of the NaviFrame Stack */
     Elm_Object_Item *it = elm_naviframe_top_item_get(intf->nf_content);
     interface_view *view = (interface_view *)elm_object_item_data_get(it);
-    if (view) {
+    if (view && intf->nf_views[intf->current_view] != NULL) {
         view_type = view->i_type;
         if(view->pf_stop != NULL) {
             view->pf_stop(view->p_view_sys);
@@ -294,7 +294,7 @@ win_back_key_cb(void *data, Evas_Object *obj, void *event_info)
         /* Get the top of the NaviFrame Stack */
         Elm_Object_Item *it = elm_naviframe_top_item_get(intf->nf_content);
         interface_view *view = (interface_view *)elm_object_item_data_get(it);
-        if (view) {
+        if (view && intf->nf_views[intf->current_view] != NULL) {
             if (view->pf_event != NULL &&
                 view->pf_event(view->p_view_sys, INTERFACE_VIEW_EVENT_BACK) == true) {
                 /* View has accepted the event */
