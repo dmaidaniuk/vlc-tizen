@@ -440,6 +440,7 @@ ${CC} -fPIC -rdynamic -shared \
     -lmodplug \
     -lupnp -lthreadutil -lixml \
     -larchive \
+    -lvncclient \
     -levas -lecore \
     -llua \
     ${EXTRA_LDFLAGS}
