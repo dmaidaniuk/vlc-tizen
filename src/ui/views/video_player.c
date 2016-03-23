@@ -157,7 +157,8 @@ audio_channel_selected(void *data, Evas_Object *obj, void *event_info)
     int index = elm_genlist_item_index_get(it_parent);
 
     playback_service_audio_channel_set(p_sys->p_ps, index - 1);
-    popup_close(obj);
+    popup_close(p_sys->p_current_popup);
+    p_sys->p_current_popup = NULL;
 }
 
 void
@@ -166,7 +167,10 @@ clicked_background_playback(void *data, Evas_Object *obj, void *event_info)
     view_sys *p_sys = data;
 
     if (p_sys->p_current_popup)
+    {
         popup_close(p_sys->p_current_popup);
+        p_sys->p_current_popup = NULL;
+    }
 
     playback_service_enable_background_playback(p_sys->p_ps);
 }
@@ -209,7 +213,7 @@ clicked_audio_tracks(void *data, Evas_Object *obj, void *event_info)
 
     // Register a callback to free the memory allocated for the menu
     evas_object_event_callback_add(popup, EVAS_CALLBACK_FREE, channel_menu_free_cb, menu);
-    evas_object_event_callback_add(popup, EVAS_CALLBACK_FREE, clear_popup_cb, p_sys);
+    evas_object_smart_callback_add(popup, "block,clicked", clear_popup_cb, p_sys);
 
     eina_list_free(channel_list);
 }
@@ -225,7 +229,8 @@ spu_selected(void *data, Evas_Object *obj, void *event_info)
 
     // Disable subtitles is -1, first is 0 so index -2.
     playback_service_spu_channel_set(p_sys->p_ps, index - 2);
-    popup_close(obj);
+    popup_close(p_sys->p_current_popup);
+    p_sys->p_current_popup = NULL;
 }
 
 void
@@ -269,7 +274,7 @@ clicked_spu(void *data, Evas_Object *obj, void *event_info)
 
     // Register a callback to free the memory allocated for the menu
     evas_object_event_callback_add(popup, EVAS_CALLBACK_FREE, channel_menu_free_cb, menu);
-    evas_object_event_callback_add(popup, EVAS_CALLBACK_FREE, clear_popup_cb, p_sys);
+    evas_object_smart_callback_add(popup, "block,clicked", clear_popup_cb, p_sys);
 
     eina_list_free(spu_list);
 }
@@ -307,7 +312,7 @@ clicked_more(void *data, Evas_Object *obj, void *event_info)
 
     Evas_Object *popup = p_sys->p_current_popup = popup_menu_orient_add(menu_more, ELM_POPUP_ORIENT_CENTER, p_sys, p_sys->p_evas_video);
     evas_object_show(popup);
-    evas_object_event_callback_add(popup, EVAS_CALLBACK_FREE, clear_popup_cb, p_sys);
+    evas_object_smart_callback_add(popup, "block,clicked", clear_popup_cb, p_sys);
 }
 
 static void
