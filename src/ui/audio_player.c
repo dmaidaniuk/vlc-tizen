@@ -51,7 +51,7 @@ struct audio_player {
 
 
     Evas_Object *layout, *fs_layout;
-    Evas_Object *popup;
+    Evas_Object *popup, *speed_popup;
     Evas_Object *slider, *fs_slider;
     Evas_Object *fs_time, *fs_total_time;
     Evas_Object *fs_title, *fs_sub_title;
@@ -113,7 +113,9 @@ audio_player_close_popup(audio_player *mpd)
     mpd->more_state = false;
     elm_image_file_set(mpd->fs_more_btn, ICON_DIR"ic_more_circle_normal_o.png", NULL);
     popup_close(mpd->popup);
+    popup_close(mpd->speed_popup);
     mpd->popup = NULL;
+    mpd->speed_popup = NULL;
 }
 
 static void
@@ -168,11 +170,11 @@ audio_player_popup_playback_speed(audio_player *mpd)
     Evas_Object *layout;
 
     /* */
-    mpd->popup = elm_popup_add(intf_get_main_naviframe(mpd->intf));
-    elm_popup_orient_set(mpd->popup, ELM_POPUP_ORIENT_CENTER);
+    mpd->speed_popup = elm_popup_add(intf_get_main_naviframe(mpd->intf));
+    elm_popup_orient_set(mpd->speed_popup, ELM_POPUP_ORIENT_CENTER);
 
     /* */
-    mpd->speed_popup_layout = layout = elm_layout_add(mpd->popup);
+    mpd->speed_popup_layout = layout = elm_layout_add(mpd->speed_popup);
 
     /* */
     elm_layout_file_set(layout, AUDIOPLAYERSPEED_EDJ, "audio_player_speed");
@@ -188,8 +190,8 @@ audio_player_popup_playback_speed(audio_player *mpd)
     evas_object_smart_callback_add(slider, "slider,drag,stop", audio_player_speed_slider_drag_stop_cb, mpd);
 
     /* */
-    elm_object_content_set(mpd->popup, layout);
-    evas_object_show(mpd->popup);
+    elm_object_content_set(mpd->speed_popup, layout);
+    evas_object_show(mpd->speed_popup);
 }
 
 static char *
@@ -481,7 +483,7 @@ audio_player_handle_back_key(audio_player *mpd)
         mpd->p_equalizer = NULL;
         return true;
     }
-    if (mpd->popup)
+    if (mpd->popup || mpd->speed_popup)
     {
         audio_player_close_popup(mpd);
         return true;
